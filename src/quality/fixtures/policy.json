@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "simpleRoute": {
+    "recommendedMaxFiles": 5,
+    "recommendedMaxChangedLines": 200
+  },
+  "mode": "automatic",
+  "repository": "example/project",
+  "base": "master",
+  "authors": [
+    "maintainer"
+  ],
+  "branchPrefixes": [
+    "bugfix/daily-bug-scan-",
+    "feature/daily-verify-tests-",
+    "codex/daily-bug-scan/",
+    "codex/daily-verify-tests/"
+  ],
+  "producers": [
+    {
+      "author": "maintainer",
+      "branchPrefixes": [
+        "bugfix/",
+        "feature/",
+        "codex/daily-bug-scan/",
+        "codex/daily-verify-tests/"
+      ]
+    },
+    {
+      "author": "dependabot[bot]",
+      "branchPrefixes": [
+        "dependabot/"
+      ]
+    }
+  ],
+  "maxFiles": 40,
+  "maxChangedLines": 2000,
+  "maxRepairCycles": 2,
+  "reviewGates": [
+    "security",
+    "correctness",
+    "code-quality",
+    "test-integrity"
+  ],
+  "requiredJobs": [
+    "Build and Test",
+    "Help Site",
+    "Quality scans"
+  ],
+  "projectFileReview": "verified-changes-v1",
+  "humanPathPatterns": [
+    "^\\.github/",
+    "^\\.agents/",
+    "(^|/)(AGENTS|CLAUDE)\\.md$",
+    "^scripts/",
+    "^devops/",
+    "(^|/)(Directory\\.Build\\.|global\\.json|NuGet\\.Config)",
+    "(Auth|Clerk|Tenant|Permission|AccessControl|Billing|Stripe|Refund|Payment|Retention|Gdpr|Deletion|Migration)",
+    "(^|/)(Models|SystemPrompts)/",
+    "\\.(props|targets)$",
+    "(^|/)(\\.npmrc|\\.gitleaks.*)$"
+  ],
+  "uiPathPatterns": [
+    "\\.razor(\\.cs|\\.css)?$",
+    "(^|/)(wwwroot|ClientApp)/",
+    "\\.(tsx|jsx)$"
+  ]
+}

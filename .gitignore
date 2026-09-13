@@ -1,0 +1,7 @@
+node_modules/
+**/obj/
+**/bin/
+.quality/
+.marc/state/
+*.received.*
+.DS_Store

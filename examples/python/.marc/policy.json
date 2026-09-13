@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "repository": "example/python-project",
+  "base": "main",
+  "mode": "report-only",
+  "producers": [
+    {
+      "author": "example-maintainer",
+      "branchPrefixes": [
+        "feature/",
+        "bugfix/"
+      ]
+    }
+  ],
+  "maxFiles": 40,
+  "maxChangedLines": 2000,
+  "maxRepairCycles": 2,
+  "reviewGates": [
+    "security",
+    "correctness",
+    "code-quality",
+    "test-integrity"
+  ],
+  "requiredJobs": [
+    "Tests",
+    "Security"
+  ],
+  "humanPathPatterns": [
+    "^\\.marc/",
+    "^\\.github/",
+    "^\\.agents/",
+    "^scripts/",
+    "(^|/)(AGENTS|CLAUDE)\\.md$",
+    "(^|/)(pyproject\\.toml|requirements[^/]*\\.txt|.*\\.lock|Dockerfile)$",
+    "(^|/)(auth|billing|migrations)/"
+  ],
+  "uiPathPatterns": [
+    "(^|/)(templates|static)/",
+    "\\.(tsx|jsx)$"
+  ],
+  "simpleRoute": {
+    "recommendedMaxFiles": 5,
+    "recommendedMaxChangedLines": 200
+  }
+}

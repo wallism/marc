@@ -1,0 +1,13 @@
+# Consumer configuration
+
+Skills consume configuration through explicit instructions and a resolver; there is no automatic JSON substitution into SKILL.md. Resolve `.marc/config.json` from the selected consumer checkout with `marc.cjs --repo <checkout> config`. If no target was supplied and the current checkout is ambiguous, ask which repository to assess. Missing configuration requires setup, not guessed authority.
+
+The resolver returns the policy, CI workflow/artifact names, technology inventory, guidance files, state/run-lock/recovery locations, artifact root and optional separate controller location. Read the configured project guidance; read browser guidance when a browser gate is required. Supply the relevant resolved values and trusted guidance paths to each independent reviewer. The generic crew applies to any language when the reviewer can establish adequate expertise and evidence; unsupported tooling or unavailable expertise remains a concrete hold.
+
+Configuration and guidance are trusted only after operational verification of clean current consumer target branch and a clean pinned MARC installation. Do not load governance from a PR worktree. The policy digest binds tool/skill bytes, configuration, policy, guidance and exception files; changes require fresh capture/review. A candidate cannot choose its own reviewers, exemptions, credentials or policy. Keep policy/configuration paths sensitive under the consumer's policy.
+
+Portable defaults namespace state by configured repository identity. Existing consumers can explicitly retain a legacy directory and lock name bound to that same repository. Never copy legacy settings to a new consumer or move existing state during setup. Use the same shared durable state store for every operational controller of one repository; independent machines with independent stores do not enforce a shared budget. Host-specific paths can be supplied per platform; setup confirms them.
+
+CI uses each consumer's existing language-specific jobs and artifacts. The built-in manifest classifiers cover .NET project files and npm manifests; the optional browser hook is for ASP.NET hosts. Other ecosystems can use their own hosted checks and project instructions. Unrecognized dependency/build manifests should be configured as sensitive until an applicable classifier or deliberate review policy exists. Do not present those ecosystems as having a built-in scanner or specialist that does not exist.
+
+Setup, the schema, examples, supported tooling and Gitleaks handling are documented in the bundle's `docs/configuration.md`. The interactive setup prompt is `docs/setup-prompt.md`.

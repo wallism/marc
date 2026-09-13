@@ -1,0 +1,8 @@
+{
+  "schema": 1,
+  "policy": ".marc/policy.json",
+  "ci": { "workflow": "checks.yml", "requiredArtifacts": ["pytest-results", "security-results"] },
+  "technologies": ["Python"],
+  "guidance": { "project": ".marc/project.md" },
+  "scans": { "secretExceptions": ".marc/gitleaksignore" }
+}

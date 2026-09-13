@@ -1,0 +1,5 @@
+# MARC secret-scan exceptions: empty by default.
+# Add only explicitly reviewed exact historical fingerprints, with a reason.
+# Format: full-commit-sha:repository-relative-file:rule-id:line-number
+# Never copy another repository's exceptions or ignore a live credential.
+# Keep this file tracked and set scans.secretExceptions in .marc/config.json.
