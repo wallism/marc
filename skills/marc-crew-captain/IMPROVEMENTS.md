@@ -1,5 +1,11 @@
 # marc-crew-captain improvements
 
+## 2026-09-13 — Automatic master updates
+
+Disclosed that automatic updates include generated integration files in the PR, including paths outside `.marc`, and instructed the Captain to show the changed-file list. Users can opt out if that becomes distracting.
+
+Made default-on updates and the opt-out visible in setup and operational guidance. The executable controller performs master checks and eligible PR pin updates before capture; the Captain retains target-branch trust during review and adopts merged pins before the next assessment. Existing merge gates and cumulative budgets remain authoritative. Installation migrations and new member activation remain separate. See [update behavior](../../docs/installation.md#automatic-updates).
+
 ## 2026-09-13 — Skills.sh setup entry
 
 Made the Captain discoverable for setup and added a packaged getting-started reference for catalogue-only installs. It hands off to the complete selected bundle's existing setup workflow, including Claude Code/Codex/Cursor selection, confirmation, preserved reruns and pinned operational instructions. The README uses a separate starter directory to avoid wrapper collisions and documents discovery telemetry. Validation: local catalogue and CLI packaging checks plus the focused pinned-consumer installation checks; no live harness/model evaluation, hosted CI, consumer activation or indexing is implied. This instruction change alters bundle identity and needs the ordinary approved consumer upgrade.

@@ -1,5 +1,6 @@
 {
   "schema": 1,
+  "autoUpdate": true,
   "policy": ".marc/policy.json",
   "ci": { "workflow": "checks.yml", "requiredArtifacts": ["pytest-results", "security-results"] },
   "technologies": ["Python"],

@@ -43,6 +43,7 @@ The consumer owns `.marc/config.json`. File references below use forward slashes
 | `artifactRoot` | Absolute disposable evidence/build root, or per-platform map. Default OS temp directory under `marc/<repository-namespace>`. Durable state is separate. |
 | `controllerDirectory` | Optional absolute separate trusted checkout location, or per-platform map. The Captain uses it; the resolver does not create it. |
 | `toolCommit` | Full immutable MARC Git commit for an external bundle. Required by operational commands when the bundle is outside the consumer checkout. |
+| `autoUpdate` | Boolean, defaults to `true` when omitted. Before queue/capture, check the latest full commit on `wallism/marc`'s `master`. Capture automatically commits and pushes eligible PR pin updates before capturing evidence. Set `false` on the trusted consumer target branch to skip checks and updates. See [automatic updates](installation.md#automatic-updates). |
 
 The policy sets `repository` (`owner/name` on github.com), `base`, `mode` (`report-only` or `automatic`), paired `producers` (`author` and `branchPrefixes`), required CI jobs/review gates, scope/repair limits, and sensitive/UI path patterns. Preserve required gates and protect configuration, instructions, scripts, CI and exception paths. New setups propose report-only mode. Existing authorization, routing and cumulative limits survive a configuration migration. The legacy flat producer fields serve older launchers; queue admission uses paired `producers`.
 

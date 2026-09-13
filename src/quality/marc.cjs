@@ -363,6 +363,9 @@ function createController(context, adapters = {}) {
     if (action === 'capture' && !second) throw Error('An external evidence path is required');
     checkTrustedCheckout();
     const { policy: p, policyHash: hash } = trustedPolicy(context);
+    // Mandatory intake preflight; updates never run during evidence evaluation or merge.
+    const updater = require('./auto-update.cjs');
+    const latest = ['queue', 'capture'].includes(action) ? updater.checkLatest(context, command) : null;
     if (action === 'queue') {
       if (!first) throw Error('External queue output path required');
       const prs = JSON.parse(command('gh', ['api', '--paginate', '--slurp', `repos/${REPO}/pulls?state=open&per_page=100`])).flat();
@@ -372,7 +375,15 @@ function createController(context, adapters = {}) {
       fs.writeFileSync(first, encode(queue));
       console.log(encode(queue)); return;
     }
-    if (action === 'capture') { fs.writeFileSync(second, encode(capture(Number(first), p, hash))); return; }
+    if (action === 'capture') {
+      reportPaths(Number(first), 'a'.repeat(40));
+      if (latest) {
+        const live = api(`repos/${REPO}/pulls/${Number(first)}`);
+        const result = updater.updatePullRequest(context, live, latest, { registered: registeredProducer });
+        console.log(encode({ autoUpdate: result, activeToolCommit: context.toolCommit }));
+      }
+      fs.writeFileSync(second, encode(capture(Number(first), p, hash))); return;
+    }
     const e = JSON.parse(fs.readFileSync(first, 'utf8'));
     if (action === 'recover-ci') {
       const { recoverCi } = require('./ci-recovery.cjs');

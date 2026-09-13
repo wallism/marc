@@ -1,5 +1,11 @@
 # Shared controller improvements
 
+## 2026-09-13 — Automatic master updates
+
+Automatic updates also use the installer's shared deterministic renderer to add/refresh command and skill forwarding files for installed harnesses, preserving customizations by stopping on conflicts. The result lists every changed path and explains opt-out. Integration files can appear under `.marc`, `scripts/quality`, `.agents/skills` and `.claude/skills` in the same PR; this is an accepted default-on tradeoff. The real Git regression covers both harnesses, new discovery and refreshed bootstrap content.
+
+Added `autoUpdate`, enabled when omitted, with mandatory upstream master resolution during queue/capture. Capture uses an isolated Git index to commit the exact gitlink, config pin and existing compatible member versions to an eligible PR branch, then captures its new head. No candidate code is executed. Canonical upstream checks, pin consistency, installation-contract compatibility and non-force pushes preserve existing trust and merge gates. The trusted target adopts the pin only after merge. Opt-out skips update contact; availability errors stop intake. Tests cover defaults/validation, offline checks, real Git publication, idempotence, dirty-work preservation, ineligible branches and concurrent pushes. Local validation only; no consumer update, hosted CI or deployment.
+
 ## 2026-09-13 — Historical secret guidance
 
 Explained why old commits trigger secret findings, where to review GitHub alerts, and how verified revocation precedes an exact historical Gitleaks exclusion. Added [consumer guidance](../../docs/historical-secrets.md) with official GitHub references and clarified that alert closure and Gitleaks exclusions are separate. Documentation only; scan behavior and exception rules are unchanged.

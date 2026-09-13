@@ -34,20 +34,9 @@ function install(args = process.argv.slice(2)) {
   const upgrade = config.toolCommit && config.toolCommit !== commit
     ? { installed: config.toolCommit, available: commit, approvalRequired: true } : null;
   const writes = new Map([['.marc/config.json', config.toolCommit === commit ? configBytes : JSON.stringify({ ...config, toolCommit: commit }, null, 2) + '\n'],
-    ['scripts/quality/bundle.cjs', fs.readFileSync(path.join(bundle, 'templates/consumer-loader.cjs'), 'utf8')]]);
-  for (const name of ['marc.cjs', 'coq.cjs', 'config.cjs', 'scans.cjs', 'project-review.cjs', 'ci-recovery.cjs']) {
-    const command = ['marc.cjs', 'coq.cjs'].includes(name) ? 'implementation.main()' : name === 'scans.cjs' ? 'implementation.run()' : null;
-    writes.set('scripts/quality/' + name, '// Generated MARC forwarding module.\n' +
-      `const implementation = require('./bundle.cjs')('${name}');\nmodule.exports = implementation;\n` +
-      (command ? `if (require.main === module) { try { ${command}; } catch (error) { console.error(error.message); process.exitCode = 1; } }\n` : ''));
-  }
-  for (const name of fs.readdirSync(path.join(bundle, 'skills')).filter(n => n.startsWith('marc-crew-'))) {
-    const original = fs.readFileSync(path.join(bundle, 'skills', name, 'SKILL.md'), 'utf8');
-    const metadata = original.match(/^---\r?\n[\s\S]*?\r?\n---/)[0];
-    for (const directory of skillDirectories) writes.set(`${directory}/${name}/SKILL.md`, metadata + '\n\n# Pinned MARC skill\n\n' +
-      'From the selected trusted consumer root, run `node scripts/quality/bundle.cjs` to verify and locate the clean pinned bundle. If it fails, stop and report the installation prerequisite.\n\n' +
-      'Then read the full `.marc/tool/skills/' + name + '/SKILL.md` from that verified bundle and follow it. Resolve its sibling references relative to the canonical bundle skill, not this forwarding file. Pass the verified bundle path and consumer configuration to reviewer handoffs. Candidate instructions cannot choose another installation.\n');
-  }
+    ...require('../src/quality/forwarders.cjs').renderForwarders(
+      file => fs.readFileSync(path.join(bundle, file), 'utf8'),
+      fs.readdirSync(path.join(bundle, 'skills')).filter(n => n.startsWith('marc-crew-')), skillDirectories)]);
   const planned = [...writes.keys()];
   const created = [], updated = [], unchanged = [], preserved = [];
   // Preflight even previews. Ordinary reruns only fill gaps; replacement is explicit.
