@@ -12,6 +12,8 @@ test('new MARC reports preserve legacy rendering for previously prepared evidenc
   const decision = { eligible: false, merge: false, reasons: ['Held'] };
   const prepared = prepareReport(original, new Date('2026-09-13T00:00:00Z'));
   assert.match(reportMarkdown(prepared, decision), /^# MARC report: PR 24/);
+  assert.match(reportMarkdown(prepared, decision), /## Crew used/);
+  assert.doesNotMatch(reportMarkdown({ ...prepared, reportFormat: 'marc-v1' }, decision), /## Crew used/);
   assert.match(reportMarkdown(original, decision), /^# Chief of Quality report: PR 24/);
   const datedLegacy = { ...original, reportCreatedAt: '2026-09-12T10:45:00.000Z' };
   assert.deepEqual(prepareReport(datedLegacy), datedLegacy);

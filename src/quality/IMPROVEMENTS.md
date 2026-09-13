@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-14 — Optional crew model selections
+
+Added optional validated agent settings and resolved per-role selections, preserving absent consumer defaults. Current captures require host-record execution attestations; decisions reject stale settings and observed substitutions. New report rendering lists each recorded crew session's model and reasoning provenance while retaining historical report bytes. Focused Node tests cover precedence, invalid configuration, report labels and decision enforcement; no live models or hosted CI were run. See [Captain register](../../skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections).
+
 ## 2026-09-14 — Migration fixture dependency
 
 The trusted-policy migration test copied the controller and crew modules without their required `host-instructions.cjs` dependency, causing `MODULE_NOT_FOUND` before any digest assertions ran. Added the dependency to the synthetic repository and verified that modifying it changes the policy hash. The existing migration test reproduced the failure before the fix and all four migration tests passed afterward on Node.js 24.10.0. This is internal test-fixture maintenance; runtime behavior and user help are unchanged. Hosted CI and consumer activation remain unverified.

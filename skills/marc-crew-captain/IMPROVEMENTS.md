@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-14 — Optional crew model selections
+
+Added trusted per-member/default model and reasoning dispatch instructions with host-record evidence. Setup leaves overrides absent. Final reports disclose Captain inheritance, configured defaults, overrides and unavailable actual telemetry for core, specialist, routing and repair sessions. Unsupported selections hold without substitution. Local resolver/report/gate tests validate the contract; live harness dispatch was not evaluated. Existing merge authority is unchanged; activation requires the consumer's normal pinned bundle upgrade. See [configuration](../../docs/configuration.md#optional-crew-model-overrides).
+
 ## 2026-09-13 — Automatic master updates
 
 Disclosed that automatic updates include generated integration files in the PR, including paths outside `.marc`, and instructed the Captain to show the changed-file list. Users can opt out if that becomes distracting.

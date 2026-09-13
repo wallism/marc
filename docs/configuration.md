@@ -32,6 +32,7 @@ The consumer owns `.marc/config.json`. File references below use forward slashes
 | `ci.requiredArtifacts` | Nonempty exact artifact-name list used for CI recovery and reviewer instructions. Reviewers inspect contents; job success alone does not prove artifact adequacy. |
 | `technologies` | Discovered languages, frameworks and data stores; guides review, does not install specialists. |
 | `crew` | Optional schema-1 member/version list and source-backed impact areas; see the [crew contract](crew.md). Omission preserves legacy generic review and must be disclosed during setup. |
+| `agents` | Optional crew model/reasoning overrides; omit by default. See below. |
 | `guidance` | Named paths to project, browser, workflow or improvements instructions. Empty only when no additional guidance is needed. |
 | `scans.secretExceptions` | Optional reviewed fingerprint file. Omitted means no exceptions; a configured missing/invalid file blocks scanning. |
 | `scans.npmExceptions` | Optional consumer-owned JSON: `schema: 1`, matching `repository`, and `exceptions` array. Each entry specifies `manifest`, `package`, `severity: "high"`, exact `advisories`, `reviewBy` UTC date and `reason`. No exceptions are inherited by default. |
@@ -48,6 +49,24 @@ The consumer owns `.marc/config.json`. File references below use forward slashes
 The policy sets `repository` (`owner/name` on github.com), `base`, `mode` (`report-only` or `automatic`), paired `producers` (`author` and `branchPrefixes`), required CI jobs/review gates, scope/repair limits, and sensitive/UI path patterns. Preserve required gates and protect configuration, instructions, scripts, CI and exception paths. New setups propose report-only mode. Existing authorization, routing and cumulative limits survive a configuration migration. The legacy flat producer fields serve older launchers; queue admission uses paired `producers`.
 
 The digest binds reusable tool/skill bytes, every configured policy, guidance and exception file, and tracked consumer harness instructions described in [installation](installation.md). Changing them invalidates prior evidence. Global and untracked host instructions are outside that digest and require separate inspection. Load governance from trusted source, never a candidate PR. Use one durable state store and one coordinated controller location per repository; separate machines with separate stores cannot enforce a shared recovery/repair budget. Do not copy a legacy directory into another consumer or reset existing state to adopt new branding. Coordinate any state migration with the operator before activating a new host.
+
+## Optional crew model overrides
+
+Leave `agents` absent to use the Captain's model and reasoning settings. MARC does not add model defaults during setup. To opt in, add this section to the consumer's `.marc/config.json` (replace the illustrative values):
+
+```json
+"agents": {
+  "defaults": { "model": "your-available-model", "reasoningEffort": "high" },
+  "members": {
+    "security": { "model": "your-review-model", "reasoningEffort": "max" },
+    "csharp": { "reasoningEffort": "high" }
+  }
+}
+```
+
+Each field uses the member override, then `defaults`, then the Captain's setting. If a model is selected but no reasoning effort is set, use that model's harness default. Member keys are core role IDs (`simplicity`, `simple-tests`, `security`, `correctness`, `code-quality`, `test-integrity`, `browser`, `repair`) or configured specialist IDs such as `csharp`; the Captain itself is controlled by its launching task. Both the model and reasoning level must be available in the chosen harness. Unsupported overrides hold the run; MARC never silently substitutes a model.
+
+The final **Crew used** table shows model and reasoning for each recorded session: **Same model (Captain)** / **Same reasoning effort (Captain)**, configured default, member override, or model default. Actual values are included when the harness exposes them; otherwise requested values are labelled as such. Missing execution evidence is shown as unconfirmed. Changing configuration requires fresh review evidence.
 
 ## Gitleaks exceptions and CI
 

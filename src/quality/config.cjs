@@ -67,12 +67,18 @@ function loadConfig(repositoryRoot) {
   if (config.toolCommit !== undefined && !/^[a-f0-9]{40}$/.test(config.toolCommit)) throw Error('Invalid pinned tool commit');
   if (config.autoUpdate !== undefined && typeof config.autoUpdate !== 'boolean') throw Error('autoUpdate must be a boolean');
   if (config.crew !== undefined) require('./crew.cjs').validateCrewConfig(config.crew);
+  const agentMembers = [...new Set(['simplicity', 'simple-tests', 'security', 'correctness', 'code-quality',
+    'test-integrity', 'browser', 'repair', ...policy.reviewGates, ...(config.crew?.members || []).map(m => m.id)])];
+  const { validateAgentSettings, resolveAgentSettings } = require('./agent-settings.cjs');
+  validateAgentSettings(config.agents, agentMembers);
   const controllerDirectory = platformPath(config.controllerDirectory) || null;
   if (controllerDirectory && !path.isAbsolute(controllerDirectory)) throw Error('Controller directory must be absolute');
   return { repoRoot, bundleRoot, configPath, policyPath, policy, ci: config.ci, technologies: config.technologies,
     guidance, scans, consumerFiles: [...new Set(consumerFiles)].sort(), stateDirectory, artifactRoot, mergeLockName,
     runLock: path.join(stateDirectory, 'run.lock'), ciRecoveryDirectory: path.join(stateDirectory, 'ci-recovery'),
-    controllerDirectory, toolCommit: config.toolCommit || null, autoUpdate: config.autoUpdate !== false, crew: config.crew || null };
+    controllerDirectory, toolCommit: config.toolCommit || null, autoUpdate: config.autoUpdate !== false, crew: config.crew || null,
+    agents: config.agents || null,
+    agentSelections: Object.fromEntries(agentMembers.map(id => [id, resolveAgentSettings(config.agents, id)])) };
 }
 function discoverRoot(cwd = process.cwd()) {
   return execFileSync('git', ['rev-parse', '--show-toplevel'], { cwd, encoding: 'utf8', windowsHide: true }).trim();

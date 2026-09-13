@@ -23,8 +23,15 @@ test('separate consumers resolve their own repository, base, CI and state', t =>
   assert.equal(a.ci.workflow, 'checks.yml'); assert.notEqual(a.stateDirectory, b.stateDirectory);
   assert.equal(a.scans.nugetSolution, undefined);
   assert.equal(a.autoUpdate, true);
+  assert.equal(a.agents, null);
+  assert.equal(a.agentSelections.security.model.source, 'captain');
   const settingsPath = path.join(a.repoRoot, '.marc/config.json');
   const settings = JSON.parse(fs.readFileSync(settingsPath));
+  fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, agents: { members: { security: { model: 'host-model' } } } }));
+  assert.equal(loadConfig(a.repoRoot).agentSelections.security.model.value, 'host-model');
+  assert.equal(loadConfig(a.repoRoot).agentSelections.correctness.model.source, 'captain');
+  fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, agents: { members: { securty: { model: 'host-model' } } } }));
+  assert.throws(() => loadConfig(a.repoRoot), /Unknown agent member/);
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, autoUpdate: false }));
   assert.equal(loadConfig(a.repoRoot).autoUpdate, false);
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, autoUpdate: 'false' }));

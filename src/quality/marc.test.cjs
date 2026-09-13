@@ -3,6 +3,22 @@ const assert = require('node:assert/strict');
 const { evaluate, reportMarkdown, reportPaths, registeredProducer, selectQueue } = require('./marc.cjs');
 const policy = require('./fixtures/policy.json');
 const A = 'a'.repeat(40), B = 'b'.repeat(40);
+
+test('current dispatch contract requires execution evidence even when capture fields are removed', () => {
+  const { resolveAgentSettings } = require('./agent-settings.cjs');
+  const p = { ...policy, agentExecutionSchema: 1, agents: { members: { security: { model: 'chosen' } } } };
+  const e = fixture();
+  e.agentExecutionSchema = 1; e.repairExecutions = [];
+  for (const [name, gate] of Object.entries(e.gates)) gate.execution = {
+    settings: resolveAgentSettings(p.agents, name), applied: true, evidence: 'host spawn record',
+    ...(name === 'security' ? { actual: { model: 'chosen' } } : {})
+  };
+  assert.equal(evaluate(e, p, e.policyHash).eligible, true);
+  e.gates.security.execution.actual.model = 'fallback';
+  assert.match(evaluate(e, p, e.policyHash).reasons.join('\n'), /substituted model/);
+  delete e.agentExecutionSchema;
+  assert.match(evaluate(e, { ...policy, agentExecutionSchema: 1 }, e.policyHash).reasons.join('\n'), /schema/);
+});
 test('CI collection reuses exact-SHA hosted results and describes missing/pending/failing evidence', () => {
   const { collectCi } = require('./marc.cjs');
   const jobs = policy.requiredJobs.map(name => ({ name, conclusion: 'success' }));

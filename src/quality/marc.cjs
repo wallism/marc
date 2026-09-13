@@ -5,6 +5,7 @@ const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const { collectProjectChanges, verifyProjectChanges, dependencyReviewPasses, dependencyFile } = require('./project-review.cjs');
 const { loadCatalogue, selectCrew, collectImpact } = require('./crew.cjs');
+const { executionReasons, agentTable } = require('./agent-settings.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -46,7 +47,7 @@ function reportPaths(pr, head, reportCreatedAt) {
   return ['json', 'md'].map(ext => `.quality/reports/pr-${pr}/${name}.${ext}`);
 }
 function prepareReport(e, now = new Date()) {
-  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v1' } : {}),
+  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v2' } : {}),
     reportCreatedAt: e.reportCreatedAt === undefined ?
     now.toISOString().slice(0, 16) + ':00.000Z' : e.reportCreatedAt };
   reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt);
@@ -173,12 +174,24 @@ function evaluate(e, p, policyHash, expectedCrew) {
       g.evidence.length > 0 && g.evidence.every(x => typeof x === 'string' && x.length > 0) &&
       Array.isArray(g.findings) && g.findings.every(f => f.severity === 'advisory'), `${name}: missing, stale or blocking evidence`);
   }
+  if (p.agentExecutionSchema === 1 || p.agents || e.agentExecutionSchema !== undefined) {
+    requireThat(e.agentExecutionSchema === 1, 'Agent execution schema missing or invalid');
+    for (const name of new Set([...gates, ...Object.keys(e.gates || {})]))
+      reasons.push(...executionReasons(p.agents, name, e.gates?.[name]?.execution));
+    if (e.routing?.reviewer) reasons.push(...executionReasons(p.agents, 'simplicity', e.routing.execution));
+    const repairs = e.repairExecutions;
+    requireThat(Array.isArray(repairs) && repairs.length >= e.repairCycles, 'Repair model execution history required');
+    if (Array.isArray(repairs)) for (const repair of repairs) {
+      requireThat(typeof repair?.reviewer === 'string' && repair.reviewer.trim(), 'Repair execution session required');
+      reasons.push(...executionReasons(p.agents, 'repair', repair?.execution));
+    }
+  }
   return { eligible: reasons.length === 0, merge: reasons.length === 0 && p.mode === 'automatic', reasons };
 }
 function reportMarkdown(e, decision) {
-  if (e.reportFormat !== undefined && e.reportFormat !== 'marc-v1') throw Error('Unknown report format');
+  if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2'].includes(e.reportFormat)) throw Error('Unknown report format');
   // Missing format identifies immutable reports produced before the MARC cutover.
-  const name = e.reportFormat === 'marc-v1' ? 'MARC' : 'Chief of Quality';
+  const name = e.reportFormat?.startsWith('marc-') ? 'MARC' : 'Chief of Quality';
   const clean = x => String(x ?? '').replace(/[\r\n|]/g, ' ');
   return `# ${name} report: PR ${e.pr}\n\n` +
     (e.reportCreatedAt === undefined ? '' : `Report created: ${e.reportCreatedAt.slice(0, 16).replace('T', ' ')} UTC\n\n`) +
@@ -199,7 +212,8 @@ function reportMarkdown(e, decision) {
     '| Gate | Verdict | Reviewer | Summary |\n| --- | --- | --- | --- |\n' +
     Object.entries(e.gates || {}).map(([name, g]) => `| ${clean(name)} | ${clean(g.verdict)} | ${clean(g.reviewer)} | ${clean(g.summary)} |`).join('\n') +
     '\n\n' + decision.reasons.map(x => `- ${x}`).join('\n') +
-    '\n\nThe adjacent JSON contains findings and evidence references. This report assesses the source commit; it is not proof of merge or deployment.\n';
+    '\n\nThe adjacent JSON contains findings and evidence references. This report assesses the source commit; it is not proof of merge or deployment.\n' +
+    (e.reportFormat === 'marc-v2' ? agentTable(e) : '');
 }
 function changedFiles(base, head, pr, readGit) {
   // Prior MARC reports may accumulate on the PR. Only additions of regular files in
@@ -306,7 +320,8 @@ function trustedPolicy(context = loadConfig(discoverRoot())) {
     for (const name of ['crew.json', 'SKILL.md', 'IMPROVEMENTS.md'])
       if (!bundleFiles.includes(`skills/marc-crew-${member.id}/${name}`)) throw Error('Crew inputs must be tracked');
   }
-  return { policy: context.crew ? { ...context.policy, crew: context.crew } : context.policy, policyHash: digest(Buffer.concat(chunks)) };
+  return { policy: { ...context.policy, agentExecutionSchema: 1, ...(context.crew ? { crew: context.crew } : {}),
+    ...(context.agents ? { agents: context.agents } : {}) }, policyHash: digest(Buffer.concat(chunks)) };
 }
 function createController(context, adapters = {}) {
   const ROOT = context.repoRoot, REPO = context.policy.repository;
@@ -337,7 +352,7 @@ function createController(context, adapters = {}) {
     try { git('merge-base', '--is-ancestor', base, head); baseIncluded = true; } catch {}
     const files = changedFiles(base, head, pr, git);
     const lineCount = changedLines(base, head, files, p.maxChangedLines, git);
-    const evidence = { schema: 1, repository: REPO, pr, sourceHead: head, base, policyHash: hash,
+    const evidence = { schema: 1, agentExecutionSchema: 1, repairExecutions: [], repository: REPO, pr, sourceHead: head, base, policyHash: hash,
       state: live.state, draft: live.draft, author: live.user.login, headRepository: live.head.repo?.full_name,
       branch: live.head.ref, target: live.base.ref, baseIncluded, files, changedLines: lineCount, repairCycles: 0,
       projectChanges: collectProjectChanges(base, head, files, git),

@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-14 | Controller and Captain | Added optional crew model/reasoning overrides and explicit inheritance/override reporting, with no configured model defaults. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections), [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections) |
 | 2026-09-14 | Prompt research | Documented prioritized prompt improvements, source comparisons and a phased validation plan; implementation remains proposed. | [Work plan](docs/work/20260914-prompt-improvements-work.md), [creator record](skills/marc-crew-creator/IMPROVEMENTS.md#2026-09-14--prompt-improvement-research-plan) |
 | 2026-09-14 | Migration tests | Included the host-instruction dependency in the synthetic policy repository and checked its policy-hash coverage. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-14--migration-fixture-dependency) |
 | 2026-09-13 | Controller and Captain | Added default-on master checks and guarded PR pin/integration-file updates before capture, with visible changed paths, opt-out and target-branch activation after merge. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-13--automatic-master-updates), [update contract](docs/installation.md#automatic-updates) |

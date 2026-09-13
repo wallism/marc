@@ -6,6 +6,8 @@ Copy the prompt below into an agent session with filesystem access. Optionally a
 
 Set up MARC (Merge Assurance and Review Crew) for the repository I want it to review. Produce a working consumer configuration and appropriate crew guidance using the installed MARC README, docs/configuration.md and resolver as the configuration contract. Preserve an existing installation's behavior, approved exceptions, historical reports, shared locks and cumulative budgets.
 
+Omit `agents` model/reasoning overrides unless I request them; preserve any existing overrides on reruns. Briefly point to the optional JSON example in `docs/configuration.md`. Models and reasoning levels must be available in the chosen harness.
+
 If I have not told you which repository to review, ask for its path or URL and wait. Do not assume the MARC source repository or the current working directory is the consumer. Establish the local consumer checkout and the MARC installation separately. If the target is inaccessible, ask for the missing access/location rather than inventing settings.
 
 Before making setup changes, inspect the target read-only:
