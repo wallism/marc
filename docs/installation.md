@@ -4,6 +4,8 @@ MARC uses one pinned skill catalogue and Node.js controller across harnesses. Th
 
 ## Setup
 
+If you arrived from skills.sh, start with the Captain's [getting-started reference](../skills/marc-crew-captain/references/getting-started.md). It is packaged with the Captain so the setup handoff also works when only that skill folder was downloaded.
+
 First run the [setup prompt](setup-prompt.md). Confirm the target repository, policy, guidance, CI requirements, state locations, exception paths and operating authority. The prompt creates consumer configuration only after confirmation. MARC source stays generic.
 
 Use a complete pinned Git checkout. From the consumer repository, add the bundle and select an immutable published commit:
@@ -43,6 +45,16 @@ The bootstrap verifies the Git submodule pin, configured `toolCommit`, actual co
 Tracked consumer harness inputs under `.agents`, `.claude`, `.cursor` and `.codex`, including nested directories, plus `AGENTS.md`, `CLAUDE.md` and legacy `.cursorrules`, enter the trusted policy digest. Changes invalidate previous approvals; symlinked inputs are rejected. Keep local credentials and operational state out of tracked harness directories. Setup must separately inspect effective user/global instructions and permissions, which are outside that repository digest. Preserve or explicitly approve sensitive-path coverage for all installed harness inputs; adding discovery files never grants merge authority.
 
 Installer and bootstrap repository checks resolve Windows 8.3 short paths to their native long spelling before comparing with Git. A short-path temporary directory is supported; a subdirectory passed as the consumer root is still rejected. Existing consumers receive the bootstrap correction when deliberately regenerating forwarding files with the upgraded pinned bundle and `--apply --replace-existing`.
+
+## Skills.sh discovery
+
+Start with `marc-crew-captain`; the [README quickstart](../README.md#install-and-run) installs it in a separate starter directory. CLI `--agent` selects where the downloaded instructions go. MARC installer `--hosts` selects consumer forwarding files later; they are different options for different stages. Claude Code, Codex and Cursor all use the same pinned controller after setup.
+
+For an existing consumer, use its setup rerun workflow directly. Avoid installing catalogue copies over its forwarding files. If that has already happened, inspect the preview and customizations before a reviewed replacement as described in [getting started](../skills/marc-crew-captain/references/getting-started.md). Updating the skills CLI's downloaded copies does not upgrade the consumer's bundle or authorized member versions.
+
+The [skills.sh FAQ](https://skills.sh/docs/faq) says leaderboard listings arise automatically from installs through `npx skills add <owner/repo>`, with ranking based on installation telemetry. No separate leaderboard submission is documented. The source stays in [wallism/marc](https://github.com/wallism/marc); the README badge links to its directory page. A badge is not proof of indexing or endorsement.
+
+Before promoting a release, publish the reviewed setup changes to the public source, verify `npx skills add wallism/marc --list` exposes the current names, and verify a clean Captain installation includes `references/getting-started.md`. Then check the directory page after genuine user installs. Local-path checks do not establish that GitHub has the changes or that skills.sh has indexed them. Do not manufacture installs to affect ranking. The [CLI reference](https://github.com/vercel-labs/skills) documents selection and telemetry controls.
 
 ## Hosted CI
 

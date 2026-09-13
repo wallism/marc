@@ -1,5 +1,7 @@
 # MARC — Merge Assurance and Review Crew
 
+[![skills.sh](https://skills.sh/b/wallism/marc)](https://skills.sh/wallism/marc)
+
 MARC's Captain coordinates independent PR review, hosted CI evidence, bounded repairs and guarded merges. Each consumer supplies its repository policy, technology guidance and operational configuration.
 
 Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). First setup confirms proposed settings. Rerun the same prompt to add missing crew discovery files while preserving existing setup; new activations and available upgrades are proposed for approval.
@@ -23,6 +25,24 @@ The Captain checks the complete diff and affected callers against the captured s
 See [crew selection rules](docs/crew.md#consumer-selection) and the [infographic notes](docs/crew-selection-infographic.md).
 
 ## Install and run
+
+**New here? Start with `marc-crew-captain`.** You can use the [setup prompt](docs/setup-prompt.md) directly, or discover the catalogue through [skills.sh](https://skills.sh/wallism/marc):
+
+```powershell
+npx skills add wallism/marc --list
+```
+
+To install the Captain as a setup entry point, use a separate starter directory outside your consumer repository:
+
+```powershell
+mkdir marc-start
+cd marc-start
+npx skills add wallism/marc --skill marc-crew-captain --agent claude-code --copy
+```
+
+Use `--agent codex` or `--agent cursor` for those harnesses, or `--agent codex claude-code` for both. Open that starter directory in your agent and ask: **“Use marc-crew-captain to set up MARC for the repository at <absolute path or URL>, using <your harnesses>.”** The Captain walks through the existing setup and confirmation workflow. After setup, open the consumer repository to use its pinned Captain.
+
+The skills CLI installs the setup instructions; **a working MARC installation also needs the complete pinned bundle and consumer configuration below**. Individual crew skills depend on shared contracts and Captain handoffs. See [catalogue installation and discovery](docs/installation.md#skillssh-discovery) for existing installations and publication details.
 
 Pin the complete Git bundle in the consumer's `.marc/tool` submodule, and use the same full commit as `toolCommit` in its `.marc/config.json`. Initialize the submodule in local checkouts and CI. Expose the catalogue through the consumer host's skill directories using thin forwarding files; keep the actual skill instructions with the pinned bundle. Discovery does not select a specialist: the trusted configuration pins allowed members and versions. See [installation](docs/installation.md).
 

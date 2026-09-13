@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-13 — Skills.sh setup entry
+
+Made the Captain discoverable for setup and added a packaged getting-started reference for catalogue-only installs. It hands off to the complete selected bundle's existing setup workflow, including Claude Code/Codex/Cursor selection, confirmation, preserved reruns and pinned operational instructions. The README uses a separate starter directory to avoid wrapper collisions and documents discovery telemetry. Validation: local catalogue and CLI packaging checks plus the focused pinned-consumer installation checks; no live harness/model evaluation, hosted CI, consumer activation or indexing is implied. This instruction change alters bundle identity and needs the ordinary approved consumer upgrade.
+
 ## 2026-09-13 — Per-PR selection explanation
 
 Made the distinction between configured and selected specialists explicit in the root README and crew guide, with a dedicated infographic showing a C#/JavaScript-only example plus route-required core reviews. Documented caller/dependency impact and conservative broadening so the example does not imply extension-only routing. Documentation and illustration only; runtime selection and member instructions are unchanged.

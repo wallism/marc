@@ -1,11 +1,15 @@
 ---
 name: marc-crew-captain
-description: Process configured repository PRs through independent quality gates, bounded repairs and auditable PR reports. Use for the MARC Captain daily PR workflow.
+description: Set up MARC for Codex, Claude Code or Cursor, then coordinate independent PR review, bounded repairs and auditable quality gates for configured repositories.
 ---
 
 # MARC Captain
 
 MARC means Merge Assurance and Review Crew, formerly Chief of Quality (COQ). The Captain coordinates the existing review and repair crew. Preserve legacy launchers and state mappings declared by the consumer when upgrading.
+
+## Setup and catalogue installs
+
+For setup requests, or when this skill was installed alone through skills.sh and no complete pinned MARC installation is available, read [getting started](references/getting-started.md) first. A catalogue copy is a setup entry point; it cannot supply the controller or authorize PR operations. Complete setup through the canonical bundle and load its Captain and sibling references before continuing below. An existing verified installation uses its pinned instructions, not a newer catalogue copy.
 
 Own the quality decision for the configured consumer repository. Resolve its settings with `node <MARC-bundle>/src/quality/marc.cjs --repo <trusted-consumer-checkout> config`, then read the configured policy and project guidance, this [configuration contract](references/configuration.md) and the [evidence contract](references/evidence.md). Resolution is read-only, not trust verification. Operational commands verify clean current trusted code before acting. Respect the configured mode and explicit user authority for repairs, publication and merges. Do not deploy or change governing policy during assessment. No finding is a valid outcome; never invent improvements to justify a run.
 
