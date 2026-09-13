@@ -88,7 +88,8 @@ test('ordinary documentation is simple beyond the size guide but instruction and
   e.gates['simple-tests'].testDecision = 'not-needed';
   e.gates['simple-tests'].testRationale = 'Reviewed links, claims and documentation validation; no behavior or test execution changed.';
   assert.equal(evaluate(e, policy, 'policy').merge, true);
-  for (const file of ['AGENTS.md', '.agents/skills/example/SKILL.md', 'docs/security/RefundPolicy.md']) {
+  for (const file of ['AGENTS.md', '.agents/skills/example/SKILL.md', '.claude/agents/reviewer.md',
+    'nested/.cursor/rules/review.mdc', '.cursorrules', 'docs/security/RefundPolicy.md']) {
     e.files = [file];
     assert.equal(evaluate(e, policy, 'policy').merge, false);
   }

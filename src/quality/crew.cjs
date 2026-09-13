@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { consumerFile } = require('./config.cjs');
+const { isHostInstruction } = require('./host-instructions.cjs');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const text = x => typeof x === 'string' && x.trim().length > 0;
 const texts = x => Array.isArray(x) && x.every(text);
@@ -74,7 +75,7 @@ function selectCrew(identity, config, catalogue, impact) {
   return { ...record, selectionHash: hash(JSON.stringify(record)) };
 }
 const documentation = file => /\.(md|txt|rst|adoc)$/i.test(file);
-const governance = file => /(^|\/)(AGENTS\.md|CLAUDE\.md|SKILL\.md|package(-lock)?\.json|[^/]*\.(csproj|sln|props|targets)|global\.json|[^/]*config\.(json|ya?ml|toml)|[^/]*\.lock|pnpm-lock\.yaml)$|^(\.github|\.agents|\.marc|scripts)\//i.test(file);
+const governance = file => isHostInstruction(file) || /(^|\/)(AGENTS\.md|CLAUDE\.md|SKILL\.md|package(-lock)?\.json|[^/]*\.(csproj|sln|props|targets)|global\.json|[^/]*config\.(json|ya?ml|toml)|[^/]*\.lock|pnpm-lock\.yaml)$|^(\.github|\.agents|\.marc|scripts)\//i.test(file);
 function fileTechnologies(file) {
   if (/\.razor(\.cs|\.css)?$/i.test(file)) return ['csharp', 'blazor'];
   if (/\.cs$/i.test(file)) return ['csharp'];

@@ -27,6 +27,15 @@ test('unknown and unavailable expertise hold; uncertainty broadens review', () =
   assert.equal(selection(['csharp'], { uncertain: true }).selected.length, 4);
   assert.equal(selection(['csharp'], { uncertain: true }).requiresFull, true);
 });
+
+test('host instructions broaden review independently of their file extension', () => {
+  for (const file of ['.agents/skills/review/SKILL.md', '.claude/agents/reviewer.md', '.cursor/rules/review.mdc',
+    'nested/.claude/settings.json', 'nested/.cursor/agents/reviewer.md', '.cursorrules', 'nested/CLAUDE.md']) {
+    const result = collectImpact(identity.base, identity.sourceHead, [file], config, catalogue(), () => '');
+    assert.equal(result.uncertain, true, file);
+    assert.equal(selectCrew(identity, config, catalogue(), result).requiresFull, true, file);
+  }
+});
 test('crew configuration rejects permission and path ambiguity', () => {
   assert.throws(() => validateCrewConfig({ ...config, members: [{ id: '../bad', version: '1.0.0' }] }));
   assert.throws(() => validateCrewConfig({ ...config, members: [config.members[0], config.members[0]] }));

@@ -1,6 +1,6 @@
 # Pinned consumer installation
 
-MARC currently supports Codex consumer forwarding skills, GitHub Actions and local Node.js execution. The JavaScript suite has been checked on Windows; Unix paths are supported by the resolver but a hosted Linux run is not claimed for the initial extraction. The optional browser adapter is ASP.NET/.NET 10-specific.
+MARC uses one pinned skill catalogue and Node.js controller across harnesses. The installer supports project-local forwarding skills for Codex and Claude Code; Cursor uses the same discovery directory as Codex. GitHub Actions is the implemented CI provider. Local installer checks do not establish live harness compatibility; see [harness setup and verification](../skills/marc-crew-captain/references/harnesses.md). The optional browser adapter is ASP.NET/.NET 10-specific.
 
 ## Setup
 
@@ -16,6 +16,15 @@ node .marc/tool/scripts/install-consumer.cjs --repo .
 node .marc/tool/scripts/install-consumer.cjs --repo . --apply
 ```
 
+The default remains Codex-compatible `.agents/skills`. For both Codex and Claude Code, use the same host selection for preview and application:
+
+```powershell
+node .marc/tool/scripts/install-consumer.cjs --repo . --hosts codex,claude-code
+node .marc/tool/scripts/install-consumer.cjs --repo . --hosts codex,claude-code --apply
+```
+
+`--hosts claude-code` installs `.claude/skills`; `--hosts cursor` uses `.agents/skills`. Combining Codex and Cursor emits that directory once. Host selection controls only which forwarding files this invocation maintains; it is not saved in runtime configuration. Record the chosen command in the consumer README and reuse it on reruns/upgrades. Omitting a previously selected host never removes its files. All wrappers reference the same verified bundle, and ordinary reruns preserve differing files. Cursor also discovers Claude skills: when both directories exist, verify same-name discovery resolves to the same pinned instructions and disclose conflicting customizations before operation. Do not add a third copy under `.cursor/skills`.
+
 The first installer invocation previews files with `created`, `updated`, `unchanged`, `preserved` and any bundle `upgrade`. Ordinary `--apply` reruns add missing forwarding files and preserve differing existing files. Unchanged files and already-pinned configuration keep their exact bytes and timestamps. First installation adds `toolCommit`; an existing different pin blocks application until an approved upgrade. The installer does not fetch upstream or decide which release is newer; the setup prompt performs that comparison read-only.
 
 Use `--replace-existing` with `--apply` only after reviewing and approving a migration or upgrade. It replaces differing named command and skill forwarding files and updates the pin, so review customizations first. It does not create authority, change policy, import exceptions, move state, publish anything or run a review. Preserve uncommitted user work before setup. Missing discovery files do not automatically activate `crew.members`.
@@ -29,7 +38,9 @@ node scripts/quality/bundle.cjs
 node scripts/quality/marc.cjs --repo . config
 ```
 
-The bootstrap verifies the Git submodule pin, configured `toolCommit`, actual commit and clean bundle before importing executable code. The controller separately verifies the consumer checkout before operational actions. Skills retain their current names under `.agents/skills`, but forward to the verified `skills/` catalogue in the bundle. No review logic is maintained twice. Listing or installing a skill from the catalogue alone does not install the controller.
+The bootstrap verifies the Git submodule pin, configured `toolCommit`, actual commit and clean bundle before importing executable code. The controller separately verifies the consumer checkout before operational actions. Skills retain their names in the selected discovery directories and forward to the verified `skills/` catalogue in the bundle. No review logic is maintained twice. Listing or installing a skill from the catalogue alone does not install the controller.
+
+Tracked consumer harness inputs under `.agents`, `.claude`, `.cursor` and `.codex`, including nested directories, plus `AGENTS.md`, `CLAUDE.md` and legacy `.cursorrules`, enter the trusted policy digest. Changes invalidate previous approvals; symlinked inputs are rejected. Keep local credentials and operational state out of tracked harness directories. Setup must separately inspect effective user/global instructions and permissions, which are outside that repository digest. Preserve or explicitly approve sensitive-path coverage for all installed harness inputs; adding discovery files never grants merge authority.
 
 Installer and bootstrap repository checks resolve Windows 8.3 short paths to their native long spelling before comparing with Git. A short-path temporary directory is supported; a subdirectory passed as the consumer root is still rejected. Existing consumers receive the bootstrap correction when deliberately regenerating forwarding files with the upgraded pinned bundle and `--apply --replace-existing`.
 

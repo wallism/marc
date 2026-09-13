@@ -1,0 +1,36 @@
+# Harness setup and independent review
+
+MARC's canonical skills and Node.js controller are shared. A harness supplies discovery, shell/file access, independent agent sessions and any required candidate isolation. Installing a skill proves none of the other capabilities. Use Node.js 24+, Git and the consumer's authenticated GitHub CLI on the trusted controller; keep candidate execution isolated as required by the Captain.
+
+## Discovery and handoffs
+
+| Harness | Installer selection | Project discovery | Independent review |
+| --- | --- | --- | --- |
+| Codex | Default or `--hosts codex` | `.agents/skills` | A fresh collaboration subagent with `fork_turns: "none"` where available; preserve existing configured model/reasoning. |
+| Claude Code | `--hosts claude-code` | `.claude/skills` | A new non-fork subagent via the available Agent tool; explicitly supply canonical skill and evidence paths because parent skill loading is not inherited. |
+| Cursor | `--hosts cursor` | `.agents/skills` | A new subagent with clean context; pass the same explicit handoff and collect its actual identity and result. |
+
+Select multiple hosts with a comma-separated list. Cursor supports `.agents/skills` and also reads `.claude/skills`; identical wrappers must lead to the same canonical skill. If customizations disagree, report the conflict and resolve it through the consumer's existing setup process before operating. Do not assume which duplicate wins. Do not copy the review logic into harness-specific agents or rules.
+
+Each handoff includes the verified consumer/bundle paths, captured source/base/policy identity, gate name, canonical skill and sibling references, relevant frozen source and CI evidence, read-only review scope, and one external result path. Each specialist also receives its member version/hash and selection hash. The reviewer reads the canonical instructions explicitly. Keep implementation conclusions out of the handoff as authority. A host's built-in agent name is not a reviewer session ID.
+
+Use the actual session/agent identifier returned by the host or its execution record for `reviewer`, and record the actual Captain identity in `coordinator`. Keep repair-session identities in the shared ledger. Never invent IDs, substitute role names, resume a previous reviewer for a new gate/candidate, or approve in the Captain's own context. If the host cannot expose the required identities or launch independent sessions, stop with that prerequisite. Preserve configured model/reasoning; do not silently substitute a faster built-in exploration model. Reviewers need only source/evidence reads and their result output, not merge authority or candidate execution permissions.
+
+Tool limits may require serial fresh reviewers. Retain the same shared run lock and cumulative budgets across harnesses; changing harness does not reset a run or authorize concurrent Captains. Changes to source, base, bundle or policy require fresh evidence. Effective local/global instructions and host permissions must be inspected separately from the tracked policy digest; contradictory instructions are a hold. Harness migration does not authorize publication, merge, deployment, scheduling or broader permissions.
+
+## Verification and evidence limits
+
+Local Node regressions exercise default Codex installation, additive Claude installation, shared Cursor paths, preservation/replacement, pin rejection, rollback and tracked instruction digest changes. They do not launch models or prove skill discovery in a live harness.
+
+When a live harness smoke check is explicitly authorized, use a synthetic pinned consumer in report-only mode:
+
+1. Record harness version/mode and installer command. Confirm the Captain is discoverable (for example `/marc-crew-captain` in Claude Code); inspect duplicate discovery if multiple host directories exist.
+2. Invoke only an installation check: verify the bundle and read the canonical Captain and a sibling reference. Confirm paths and pin; do not process a real PR.
+3. Ask for two fresh read-only synthetic reviews with different bounded inputs. Retain actual Captain/reviewer identities, separate results and evidence that neither reviewer inherited the other's conversation. Verify unavailable capabilities produce a hold.
+4. Record discovery, canonical loading and independent-session results separately. No live merge, hosted CI, model quality claim or automatic authority follows from this smoke check.
+
+Live Codex, Claude Code and Cursor smoke results are not claimed by this change. Required operational capabilities must be checked in the installed harness version/mode before a real run.
+
+## Official references
+
+Checked 2026-09-13: [Claude Code skills](https://code.claude.com/docs/en/skills), [Claude Code subagents](https://code.claude.com/docs/en/sub-agents), [Cursor skills](https://cursor.com/docs/skills), [Cursor subagents](https://cursor.com/docs/subagents). These document discovery and context isolation; actual MARC handoff and identity compatibility still requires the checks above.

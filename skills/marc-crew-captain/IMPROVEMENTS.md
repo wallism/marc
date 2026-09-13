@@ -17,3 +17,9 @@ Added immutable specialist selection, explicit selected/omitted reasons, fresh s
 Moved this member into its own published skill folder, preserving its instructions and sibling references. Consumer configuration remains explicit; controller commands now resolve under `src/quality`. This starts standalone member history without importing consumer reports or inventing historical entries. See [layout decisions](../../docs/repository-layout.md).
 
 Update this file and the [umbrella register](../../IMPROVEMENTS.md) together for an authorized member change.
+
+## 2026-09-13 — Harness handoffs
+
+Reason: support Claude Code alongside Codex and document Cursor's shared discovery mechanism without duplicating review instructions. Added a harness reference covering fresh reviewer contexts, real session identities, explicit canonical skill handoffs, duplicate discovery, shared locks/budgets and a bounded synthetic smoke procedure. The Captain still holds when independent sessions or identities are unavailable; model settings and merge/deployment authority are preserved.
+
+Validation: installer/controller regressions and catalogue validation are local checks; no live Codex, Claude Code or Cursor model run is claimed. The changed Captain/reference content requires a reviewed bundle upgrade and fresh evidence before consumer operation.

@@ -28,7 +28,8 @@
   "humanPathPatterns": [
     "^\\.marc/",
     "^\\.github/",
-    "^\\.agents/",
+    "(^|/)\\.(agents|claude|cursor|codex)/",
+    "(^|/)\\.cursorrules$",
     "^scripts/",
     "(^|/)(AGENTS|CLAUDE)\\.md$",
     "(^|/)(pyproject\\.toml|requirements[^/]*\\.txt|.*\\.lock|Dockerfile)$",

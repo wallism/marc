@@ -50,7 +50,8 @@
   "projectFileReview": "verified-changes-v1",
   "humanPathPatterns": [
     "^\\.github/",
-    "^\\.agents/",
+    "(^|/)\\.(agents|claude|cursor|codex)/",
+    "(^|/)\\.cursorrules$",
     "(^|/)(AGENTS|CLAUDE)\\.md$",
     "^scripts/",
     "^devops/",

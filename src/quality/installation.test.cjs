@@ -30,6 +30,8 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   const installer = path.join(bundle, 'scripts/install-consumer.cjs');
   assert.throws(() => run(installer, '--repo', path.join(consumer, '.marc')), /Consumer repository root required/);
   const plan = JSON.parse(run(installer, '--repo', consumer));
+  assert.ok(plan.planned.some(f => f.startsWith('.agents/skills/')));
+  assert.ok(!plan.planned.some(f => f.startsWith('.claude/')));
   assert.equal(plan.applied, false); assert.equal(fs.existsSync(path.join(consumer, 'scripts/quality/bundle.cjs')), false);
   assert.equal(JSON.parse(run(installer, '--repo', consumer, '--apply')).applied, true);
   const resolved = JSON.parse(run('scripts/quality/marc.cjs', '--repo', consumer, 'config'));
@@ -92,6 +94,45 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   commit(consumer); const originalConsumer = git(consumer, 'rev-parse', 'HEAD');
   const digest = () => JSON.parse(run('-e', "const c=require('./scripts/quality/config.cjs').loadConfig(process.cwd());console.log(JSON.stringify(require('./scripts/quality/marc.cjs').trustedPolicy(c).policyHash))"));
   const before = digest();
+  // Adding another harness must leave the existing Codex forwarders and config untouched.
+  const codexBytes = fs.readFileSync(custom, 'utf8');
+  const settingsBytes = fs.readFileSync(file, 'utf8');
+  for (const hosts of ['unknown', 'codex,', 'claude-code,claude-code'])
+    assert.throws(() => run(installer, '--repo', consumer, '--hosts', hosts, '--apply'), /Invalid MARC hosts/);
+  const claudePlan = JSON.parse(run(installer, '--repo', consumer, '--hosts', 'claude-code'));
+  assert.ok(claudePlan.created.every(f => f.startsWith('.claude/skills/')));
+  assert.equal(fs.existsSync(path.join(consumer, '.claude')), false);
+  const added = JSON.parse(run(installer, '--repo', consumer, '--hosts', 'codex,claude-code,cursor', '--apply'));
+  assert.deepEqual(added.created, claudePlan.created);
+  assert.equal(fs.existsSync(path.join(consumer, '.cursor')), false);
+  assert.equal(fs.readFileSync(custom, 'utf8'), codexBytes);
+  assert.equal(fs.readFileSync(file, 'utf8'), settingsBytes);
+  for (const name of fs.readdirSync(path.join(source, 'skills')))
+    assert.equal(fs.readFileSync(path.join(consumer, '.claude/skills', name, 'SKILL.md'), 'utf8'),
+      fs.readFileSync(path.join(consumer, '.agents/skills', name, 'SKILL.md'), 'utf8'));
+  const claude = path.join(consumer, '.claude/skills/marc-crew-captain/SKILL.md');
+  fs.appendFileSync(claude, '\nLocal Claude guidance.\n');
+  assert.ok(JSON.parse(run(installer, '--repo', consumer, '--hosts', 'claude-code', '--apply')).preserved.includes('.claude/skills/marc-crew-captain/SKILL.md'));
+  run(installer, '--repo', consumer, '--hosts', 'claude-code', '--apply', '--replace-existing');
+  assert.equal(fs.readFileSync(claude, 'utf8'), codexBytes);
+  // Trusted host instructions bind approvals, including nested rules and agent definitions.
+  const hostFiles = ['.claude/skills/marc-crew-captain/SKILL.md', '.agents/skills/marc-crew-captain/SKILL.md',
+    '.cursor/rules/review.mdc', 'nested/.claude/agents/reviewer.md', 'nested/CLAUDE.md', '.cursorrules'];
+  for (const relative of hostFiles) {
+    const target = path.join(consumer, relative);
+    fs.mkdirSync(path.dirname(target), { recursive: true });
+    if (!fs.existsSync(target)) fs.writeFileSync(target, 'Trusted guidance.\n');
+  }
+  git(consumer, 'add', '.');
+  const hostDigest = digest();
+  for (const relative of hostFiles) {
+    const target = path.join(consumer, relative), bytes = fs.readFileSync(target);
+    fs.appendFileSync(target, '\nChanged instructions.\n');
+    assert.notEqual(digest(), hostDigest, relative);
+    fs.writeFileSync(target, bytes);
+  }
+  git(consumer, 'restore', '--source', originalConsumer, '--staged', '--worktree', '--', '.claude', '.cursor', 'nested', '.cursorrules');
+  assert.equal(digest(), before);
   fs.appendFileSync(path.join(bundle, 'src/quality/marc.cjs'), '\n// Synthetic version upgrade.\n');
   git(bundle, 'add', '.'); commit(bundle); const upgrade = git(bundle, 'rev-parse', 'HEAD');
   git(path.join(consumer, '.marc/tool'), 'fetch', 'origin');

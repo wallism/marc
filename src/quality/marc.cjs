@@ -280,7 +280,8 @@ function acquireMergeLock(common, lockName = 'marc-merge.lock') {
   return () => { fs.closeSync(fd); fs.unlinkSync(lock); };
 }
 
-const { loadConfig, discoverRoot } = require('./config.cjs');
+const { loadConfig, discoverRoot, consumerFile } = require('./config.cjs');
+const { isHostInstruction } = require('./host-instructions.cjs');
 function validCiUrl(repository, url) {
   const prefix = 'https://github.com/' + repository + '/actions/runs/';
   return typeof url === 'string' && url.startsWith(prefix) && /^\d+$/.test(url.slice(prefix.length));
@@ -294,8 +295,10 @@ function trustedPolicy(context = loadConfig(discoverRoot())) {
   }
   const tracked = new Set(readGit(context.repoRoot, 'ls-files', '-z').split('\0'));
   if (context.consumerFiles.some(file => !tracked.has(file))) throw Error('Consumer governance must be tracked');
+  const consumerFiles = [...new Set([...context.consumerFiles, ...[...tracked].filter(isHostInstruction)])].sort();
+  for (const file of consumerFiles) consumerFile(context.repoRoot, file);
   const chunks = [Buffer.from(encode({ schema: 1, repository: context.policy.repository }))];
-  for (const [kind, root, files] of [['tool', context.bundleRoot, bundleFiles], ['consumer', context.repoRoot, context.consumerFiles]]) {
+  for (const [kind, root, files] of [['tool', context.bundleRoot, bundleFiles], ['consumer', context.repoRoot, consumerFiles]]) {
     if (!files.length) throw Error('Trusted policy inputs missing');
     for (const file of files) chunks.push(Buffer.from(kind + ':' + file + '\0'), fs.readFileSync(path.join(root, file)));
   }

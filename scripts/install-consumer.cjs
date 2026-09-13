@@ -4,8 +4,18 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const bundle = path.resolve(__dirname, '..');
 function install(args = process.argv.slice(2)) {
-  if (args[0] !== '--repo' || !args[1] || args.slice(2).some(x => !['--apply', '--replace-existing'].includes(x)))
-    throw Error('Usage: node scripts/install-consumer.cjs --repo <consumer> [--apply] [--replace-existing]');
+  const usage = () => { throw Error('Usage: node scripts/install-consumer.cjs --repo <consumer> [--hosts codex,claude-code,cursor] [--apply] [--replace-existing]'); };
+  if (args[0] !== '--repo' || !args[1]) usage();
+  let hosts = ['codex'], hostsSpecified = false;
+  for (let i = 2; i < args.length; i++) {
+    if (args[i] === '--hosts' && !hostsSpecified) {
+      hostsSpecified = true;
+      hosts = (args[++i] || '').split(',');
+      if (hosts.some(host => !['codex', 'claude-code', 'cursor'].includes(host)) || new Set(hosts).size !== hosts.length)
+        throw Error('Invalid MARC hosts: choose codex,claude-code,cursor without duplicates');
+    } else if (!['--apply', '--replace-existing'].includes(args[i])) usage();
+  }
+  const skillDirectories = [...new Set(hosts.map(host => host === 'claude-code' ? '.claude/skills' : '.agents/skills'))];
   // Native realpath expands Windows 8.3 aliases before comparing with Git's long path.
   const root = fs.realpathSync.native(args[1]);
   const git = (cwd, ...argv) => execFileSync('git', argv, { cwd, encoding: 'utf8', windowsHide: true, stdio: 'pipe' }).trim();
@@ -34,7 +44,7 @@ function install(args = process.argv.slice(2)) {
   for (const name of fs.readdirSync(path.join(bundle, 'skills')).filter(n => n.startsWith('marc-crew-'))) {
     const original = fs.readFileSync(path.join(bundle, 'skills', name, 'SKILL.md'), 'utf8');
     const metadata = original.match(/^---\r?\n[\s\S]*?\r?\n---/)[0];
-    writes.set(`.agents/skills/${name}/SKILL.md`, metadata + '\n\n# Pinned MARC skill\n\n' +
+    for (const directory of skillDirectories) writes.set(`${directory}/${name}/SKILL.md`, metadata + '\n\n# Pinned MARC skill\n\n' +
       'From the selected trusted consumer root, run `node scripts/quality/bundle.cjs` to verify and locate the clean pinned bundle. If it fails, stop and report the installation prerequisite.\n\n' +
       'Then read the full `.marc/tool/skills/' + name + '/SKILL.md` from that verified bundle and follow it. Resolve its sibling references relative to the canonical bundle skill, not this forwarding file. Pass the verified bundle path and consumer configuration to reviewer handoffs. Candidate instructions cannot choose another installation.\n');
   }

@@ -26,6 +26,8 @@ See [crew selection rules](docs/crew.md#consumer-selection) and the [infographic
 
 Pin the complete Git bundle in the consumer's `.marc/tool` submodule, and use the same full commit as `toolCommit` in its `.marc/config.json`. Initialize the submodule in local checkouts and CI. Expose the catalogue through the consumer host's skill directories using thin forwarding files; keep the actual skill instructions with the pinned bundle. Discovery does not select a specialist: the trusted configuration pins allowed members and versions. See [installation](docs/installation.md).
 
+The installer defaults to Codex-compatible `.agents/skills`, also supported by Cursor. Select `--hosts codex,claude-code` to add Claude Code's `.claude/skills` wrappers alongside it. All harnesses share the same controller, pin and operational state. See [harness prerequisites and verification limits](skills/marc-crew-captain/references/harnesses.md) before running independent reviews.
+
 ```powershell
 node .marc/tool/src/quality/marc.cjs --repo . config
 ```
