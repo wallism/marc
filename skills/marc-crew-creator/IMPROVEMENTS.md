@@ -1,5 +1,9 @@
 # Crew creator improvements
 
+## 2026-09-14 — Prompt improvement research plan
+
+Recorded a [prompt-improvements work plan](../../docs/work/20260914-prompt-improvements-work.md) from comparative skill research and vendor guidance. It prioritizes baseline cases, Captain structure, calibrated examples, requirement traceability and repair closeout. Reason: turn the requested research into an actionable backlog with explicit evidence and authority boundaries. Documentation only; creator/reviewer instructions and runtime behavior are unchanged, and no model evaluation or consumer activation is claimed.
+
 ## 2026-09-13 — Consistent crew skill naming
 
 Standardized published names, paths and references on `marc-crew-<name>`. Preserved reviewer IDs, manifest versions and operational instructions.

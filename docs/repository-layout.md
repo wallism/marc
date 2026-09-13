@@ -16,6 +16,7 @@ skills/
   marc-crew-captain/       Captain SKILL.md, references and IMPROVEMENTS.md
   marc-crew-*/                 One folder and improvement register per crew member
 docs/                     Configuration, setup prompt and architecture guidance
+  work/                   Dated YYYYMMDD-topic-work.md research and delivery plans
 examples/                 Synthetic consumers with no inherited exceptions
 templates/                Empty consumer defaults
 scripts/                  Installation and JavaScript syntax-check entry points
