@@ -30,7 +30,24 @@ By default, crew members use the Captain's model and reasoning settings; no mode
 
 Reports end with a **Crew used** table showing each session's model and reasoning selection, including **Same model (Captain)** and **Same reasoning effort (Captain)** when inherited. Overrides and configured defaults are labelled; actual values are shown when exposed by the harness, otherwise requested values are identified as such.
 
+## What setup does
+
+The [setup agent](docs/setup-prompt.md) is instructed to:
+
+- Inspect the target repository's source, manifests, architecture guidance, tests and CI to identify its technologies and operational requirements.
+- Propose appropriate available crew members, exact versions and evidence-backed mappings between repository areas and technologies.
+- Explain selected expertise, overlaps, unsupported technologies, uncertainty and omitted specialists.
+- Recommend creating or extending members where coverage is missing, with separate approval for that work.
+- Identify the intended agent harnesses and preserve existing configuration, customizations, reviewed exceptions and shared operational state.
+- Explain default-on automatic updates, their effect on PR files and how to opt out.
+- Present the complete configuration for confirmation on first setup; on reruns, present only changes requiring approval. Missing forwarding files can be repaired without another confirmation.
+- Apply authorized changes, validate the setup and report unresolved prerequisites and the next invocation.
+
+Setup alone does not start PR processing or authorize automatic merging.
+
 ## Install and run
+
+We recommend starting with the supplied skills and process. Once MARC is working well for your team, clone or fork the repository if you want to tailor the skills or workflow to your team or company. Repository-specific policy and settings already belong in your consumer configuration; a maintained fork gives you a place for changes to MARC itself. See [configuration](docs/configuration.md) and [contributing](CONTRIBUTING.md).
 
 **New here? Start with `marc-crew-captain`.** You can use the [setup prompt](docs/setup-prompt.md) directly, or discover the catalogue through [skills.sh](https://skills.sh/wallism/marc):
 

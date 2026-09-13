@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-14 — README setup and customization guide
+
+Summarized the existing setup contract in the README, including discovery, member proposals, confirmation on first setup and reruns, automatic updates and validation. Recommended starting with the supplied skills and process, then cloning or forking for team-specific changes to MARC while keeping consumer settings in consumer configuration. Documentation only; no setup instructions, runtime behavior or authority changes.
+
 ## 2026-09-14 — README model selection guide
 
 Added a brief README explanation of default Captain inheritance, optional consumer overrides, harness availability and final report labels, linking to the existing JSON example. Documentation only; no runtime or default configuration changes.

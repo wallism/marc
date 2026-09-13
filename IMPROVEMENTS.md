@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-14 | README | Summarized setup responsibilities and recommended starting with the supplied process before team-specific customization. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--readme-setup-and-customization-guide) |
 | 2026-09-14 | README | Made optional crew model overrides and report labels visible from the project entry point. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--readme-model-selection-guide) |
 | 2026-09-14 | Controller and Captain | Added optional crew model/reasoning overrides and explicit inheritance/override reporting, with no configured model defaults. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections), [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections) |
 | 2026-09-14 | Prompt research | Documented prioritized prompt improvements, source comparisons and a phased validation plan; implementation remains proposed. | [Work plan](docs/work/20260914-prompt-improvements-work.md), [creator record](skills/marc-crew-creator/IMPROVEMENTS.md#2026-09-14--prompt-improvement-research-plan) |
