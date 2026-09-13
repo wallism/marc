@@ -50,6 +50,8 @@ The digest binds reusable tool/skill bytes, every configured policy, guidance an
 
 ## Gitleaks exceptions and CI
 
+For the GitHub alert location, credential revocation checks and when to add an exclusion, read [reviewing historical secrets](historical-secrets.md).
+
 A Gitleaks ignore file records individual findings that have already been reviewed, such as a confirmed false positive or a historical occurrence of a revoked credential. It is optional when no exceptions exist. Existing projects may need their reviewed entries to avoid repeatedly failing CI on those historical occurrences. Gitleaks supports finding fingerprints and the explicit `--gitleaks-ignore-path` flag. [Gitleaks documentation](https://github.com/gitleaks/gitleaks#configuration).
 
 For a new consumer, copy [the empty default](../templates/gitleaksignore) to `.marc/gitleaksignore`, track it, and set `scans.secretExceptions` to that path. It contains comments and **no suppressions**. Do not copy another repository's exception list. For a migrating consumer, preserve its reviewed entries and reasons exactly, and configure their new location. Never auto-accept newly detected credentials: revoke/rotate a real exposed credential first, then review the exact historical finding and record the decision. Do not put secret values in an ignore file or report.

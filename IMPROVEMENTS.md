@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-13 | Secret-scan documentation | Explained historical findings, GitHub alert navigation and verified revocation before exact Gitleaks exclusions. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-13--historical-secret-guidance), [guide](docs/historical-secrets.md) |
 | 2026-09-13 | Installation and Captain | Added explicit Claude Code forwarding support while preserving the Codex default and shared Cursor discovery; bound tracked harness instructions into policy identity and documented independent handoffs. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-13--harness-compatible-consumer-installation), [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-13--harness-handoffs), [installation](docs/installation.md) |
 | 2026-09-13 | Captain documentation | Clarified configured versus per-PR selected specialists, with a C#/JavaScript example and dedicated infographic covering core reviews and broader impact. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-13--per-pr-selection-explanation), [README](README.md#which-crew-members-run-for-a-pr) |
 | 2026-09-13 | Setup and installation | Made reruns additive, preserved customizations and unchanged files, and required explicit bundle upgrade approval with member-version disclosure. | [Installer register](src/quality/IMPROVEMENTS.md#2026-09-13--additive-setup-reruns), [setup prompt](docs/setup-prompt.md) |

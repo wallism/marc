@@ -42,7 +42,9 @@ External skills used as “mercenary crew members” are deferred. MARC currentl
 
 ## Gitleaks and consumer exceptions
 
-A new consumer starts with the [empty Gitleaks ignore template](templates/gitleaksignore). Existing consumers keep their own explicitly reviewed historical fingerprints and reasons. Set `scans.secretExceptions` to their consumer-relative path; the scan wrapper validates it and passes an explicit ignore-file location to Gitleaks. No consumer exceptions ship with MARC. Read [Gitleaks and CI guidance](docs/configuration.md#gitleaks-exceptions-and-ci) before wiring a scan.
+Secret scans can find credentials in old commits, even after they have been removed from current files. In GitHub, open the repository's **Security and quality → Secret scanning** alerts. Verify that exposed credentials have been replaced where needed and the old values revoked before excluding their historical occurrences from MARC's separate Gitleaks scan. See [reviewing historical secrets](docs/historical-secrets.md) for the steps and official GitHub guidance.
+
+New consumers start with an [empty ignore file](templates/gitleaksignore); reviewed exclusions stay in the consumer repository. See [Gitleaks configuration and CI](docs/configuration.md#gitleaks-exceptions-and-ci) for setup.
 
 ## Development
 
