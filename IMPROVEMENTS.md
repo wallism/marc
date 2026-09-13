@@ -31,6 +31,10 @@
 
 This starts MARC's standalone history. Prior consumer reports, approvals and operational ledgers stay in their original repositories and are not imported. Local validation and publication status belong in the extraction record; a source move does not establish hosted CI or live activation. Each member owns an improvement register; the later specialist entry records the routing change separately from extraction.
 
+## 2026-09-13 — GitHub Actions and deferred mercenaries
+
+Added the basic [GitHub Actions reviewer](skills/marc-crew-github-actions/IMPROVEMENTS.md) and updated [creator lessons](skills/marc-crew-creator/references/creation-review.md). Deferred external mercenary integration until instruction containment, dependency inspection and content-bound approval have an established design. Runtime authority and consumer activation are unchanged.
+
 ## Component registers
 
 - [React](skills/marc-crew-react/IMPROVEMENTS.md)

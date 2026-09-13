@@ -71,3 +71,7 @@ At language boundaries, follow the value into the receiving interpreter and eval
 ## 2026-09-13 — Scratch creation feedback
 
 For non-text source, define provenance and usable finding locations before claiming reviewability. Bind decoded artifacts to original bytes, use actual representation lines plus stable semantic IDs, and keep extraction separate from execution.
+
+## 2026-09-13 — GitHub Actions review boundaries
+
+Distinguish provenance from safety: a pinned dependency is stable, not necessarily safe. Define evidence gaps for referenced implementations and applicability mappings for supporting files. External authoring or validation instructions must not expand a generated reviewer's permissions; mercenary integration is deferred. Applied while reviewing the new GitHub Actions member.

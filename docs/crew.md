@@ -63,6 +63,12 @@ Confirm and replace the example path from actual manifests/imports/callers. Map 
 
 Captured `react` impact conservatively requires full review and independent browser evidence, even without JSX. A `react` area without an available configured React member holds. React Native is outside this member's coverage; do not map it as React web. This adds no React runtime provisioning adapter: the consumer must provide suitable isolated runtime/CI guidance, or required evidence remains blocked. Installing the bundle or its discovery wrappers does not opt an existing consumer into this member. No existing consumer configuration is changed by this addition.
 
+## GitHub Actions
+
+The [GitHub Actions member](../skills/marc-crew-github-actions/SKILL.md), version 1.0.0, provides basic workflow review alongside mandatory gates. Add { "id": "github-actions", "version": "1.0.0" } to the confirmed member list. It matches .github/workflows/*.yml and .github/workflows/*.yaml; generic YAML does not identify the technology. Confirm an area with technology github-actions for relevant invoked scripts or local actions, with language companions where needed. Shared governance changes already broaden configured selection.
+
+It reviews source and supplied evidence only; it cannot dispatch workflows, install tools or establish cloud/runner security from YAML alone. Consumer activation still requires the reviewed bundle pin and confirmed setup. External “mercenary” skills are deferred: URLs and third-party instructions cannot enlist members or replace MARC's validation and completion rules.
+
 ## Contribution contract
 
 When setup discovers missing expertise, propose an available member's activation or a reviewed bundle upgrade if it supplies the required coverage. Otherwise propose creating or extending a member with the crew creator and contributing it through a PR back to MARC. Present the technology evidence, scope, companions, exclusions and validation needs with the setup proposal. Author in a separate MARC source checkout using generic guidance and synthetic examples. Contribution and consumer activation are separate steps; missing-expertise holds remain until the reviewed member is available in the consumer's confirmed pinned configuration and review evidence is recaptured. See the [setup prompt](setup-prompt.md).

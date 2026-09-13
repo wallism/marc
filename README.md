@@ -20,6 +20,12 @@ node .marc/tool/src/quality/marc.cjs --repo . config
 
 Configuration resolution is read-only and does not establish authorization to run the workflow. Operational commands require a clean current trusted consumer target branch and the clean pinned tool bundle.
 
+## Crew foundations and external skills
+
+The [basic GitHub Actions member](skills/marc-crew-github-actions/SKILL.md) reviews workflows using MARC's existing review and evidence rules. See [selection and scope](docs/crew.md#github-actions).
+
+External skills used as “mercenary crew members” are deferred. MARC currently supports reviewed members shipped in its pinned catalogue; a skill URL does not enlist a reviewer. Revisit mercenaries after establishing how to inspect their dependencies, contain conflicting instructions and bind approval to reviewed content. No external skill safety guarantee or loading mechanism is provided today.
+
 ## Gitleaks and consumer exceptions
 
 A new consumer starts with the [empty Gitleaks ignore template](templates/gitleaksignore). Existing consumers keep their own explicitly reviewed historical fingerprints and reasons. Set `scans.secretExceptions` to their consumer-relative path; the scan wrapper validates it and passes an explicit ignore-file location to Gitleaks. No consumer exceptions ship with MARC. Read [Gitleaks and CI guidance](docs/configuration.md#gitleaks-exceptions-and-ci) before wiring a scan.
