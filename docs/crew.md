@@ -4,6 +4,8 @@ The Captain retains the existing full and simple policy routes. Optional technol
 
 ## Consumer selection
 
+Setup uses the [technology discovery and contribution handoff](technology-discovery.md): explicit discovery exclusions, evidence-based language identification, one recommended authoring list and a separate creation decision. Pending contributions retain missing-expertise holds and the existing pin until reviewed bundle activation is confirmed.
+
 Set `crew` in the trusted consumer `.marc/config.json`:
 
 ```json
