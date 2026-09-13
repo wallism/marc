@@ -21,7 +21,7 @@ Workflow files produce check results; branch protection/rulesets must separately
 
 The validator discovers every folder under `skills`, including optional specialists absent from example consumer configurations. It checks the mandatory core skills, skill name/description metadata, improvement registers, specialist manifests, declared permissions, output schema and positive/negative applicability cases. It checks inline local Markdown file links throughout skill folders and their references. External URLs and heading anchors are not fetched or validated. This is a validator for the repository's current single-line frontmatter and inline-link conventions, not a general Markdown/YAML parser.
 
-Run `npm run validate:catalogue`. New specialist folders must include `crew.json`; removing a specialist's manifest cannot silently turn it into an unvalidated core skill. Actual consumer applicability, version pinning and independence are also covered by the existing routing tests. No manifest permission declaration creates a sandbox.
+Run `npm run validate:catalogue`. New specialist folders must include `crew.json`; removing a specialist's manifest cannot silently turn it into an unvalidated core skill. The explicitly recognized `marc-crew-creator` authoring utility has no review manifest and cannot be selected as a reviewer. Its metadata, register and links are still checked. Actual consumer applicability, version pinning and independence are also covered by the existing routing tests. No manifest permission declaration creates a sandbox.
 
 ## Scenario replay
 

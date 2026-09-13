@@ -4,6 +4,8 @@ const path = require('node:path');
 const { validateMember } = require('./crew.cjs');
 const mandatory = ['marc', 'marc-simplicity', 'marc-simple-tests', 'marc-security',
   'marc-correctness', 'marc-code-quality', 'marc-test-integrity', 'marc-repair'];
+// Explicit authoring utilities are discoverable skills, never review members.
+const authoring = ['marc-crew-creator'];
 
 function validateCatalogue(directory) {
   const root = fs.realpathSync(directory), skillsRoot = path.join(root, 'skills');
@@ -42,7 +44,8 @@ function validateCatalogue(directory) {
       throw Error('Invalid skill metadata: ' + name);
     if (!regular(path.join(folder, 'IMPROVEMENTS.md')).trim()) throw Error('Empty improvement register: ' + name);
     const manifestFile = path.join(folder, 'crew.json');
-    if (!mandatory.includes(name) || fs.existsSync(manifestFile)) {
+    if (authoring.includes(name) && fs.existsSync(manifestFile)) throw Error('Authoring skill cannot declare a review manifest: ' + name);
+    if ((!mandatory.includes(name) && !authoring.includes(name)) || fs.existsSync(manifestFile)) {
       const member = JSON.parse(regular(manifestFile));
       validateMember(member, { id: name.slice('marc-'.length), version: member.version });
       members.push(member.id);

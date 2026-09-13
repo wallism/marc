@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-13 — Authoring utility classification
+
+The crew-creation skill is discoverable authoring guidance, not review expertise. The contribution catalogue validator now explicitly recognizes `marc-crew-creator` without a specialist manifest and rejects attempts to attach one. All other non-core skills still require valid member manifests. A red/green test verifies discovery and the missing-member hold if a consumer attempts to select the utility. This extends the contribution-check work in the current checkout; runtime review permissions are unchanged.
+
 ## 2026-09-13 — Contribution CI and manual eval reminders
 
 Added Node 24 syntax/test workflows for every branch push on Linux and Windows, plus PR catalogue validation and an explicit replay command for existing deterministic assurance scenarios. Fork PRs run the complete Node checks because origin receives no fork branch-push event. Catalogue regressions reject missing mandatory skills/manifests, invalid metadata/permissions and broken or escaping local references. Commit-bound prompt-change detection handles deleted inputs and divergent base history; it produces an advisory manual eval plan without model calls or an eval-pass claim. Contribution documentation explains coverage, limitations and the separate self-review activation prerequisites. Existing consumer review and merge authority are unchanged.

@@ -61,6 +61,8 @@ Captured `react` impact conservatively requires full review and independent brow
 
 ## Contribution contract
 
+Use [marc-crew-creator](../skills/marc-crew-creator/SKILL.md) to create or improve a member. It guides primary-source research, technology-specific quality criteria, practical finding thresholds and integration checks. Shared operational safeguards remain fixed; architectural prescriptions can vary with the ecosystem. It is an authoring utility, not a selectable specialist, and has no `crew.json`. Example request: `Use marc-crew-creator to add a Rust member to MARC; research official guidance and leave consumer activation unchanged.`
+
 The [C# review guide](../skills/marc-csharp/references/architectural-review.md) explains the member's practical DRY/SOLID and runtime criteria, evidence threshold and exclusions. Version 1.1.0 expands review guidance without changing applicability, permissions or gate schema. Consumers upgrading from 1.0.0 must update both the bundle pin and their exact C# member version; other members remain at 1.0.0.
 
 Place each specialist under `skills/marc-<id>/` with `SKILL.md`, `crew.json` and `IMPROVEMENTS.md`. Use the [C# member](../skills/marc-csharp/crew.json) as a complete contribution example. Keep supporting references beside the skill. All trusted skill/reference bytes are included in policy identity.
