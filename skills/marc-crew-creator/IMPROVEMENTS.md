@@ -1,5 +1,9 @@
 # Crew creator improvements
 
+## 2026-09-13 — Setup expertise-gap handoff
+
+Setup now proposes this skill when source-backed technology discovery finds missing specialist coverage, with a reusable PR contribution back to MARC. It distinguishes existing-member activation or bundle upgrades from new authoring, includes scope and validation in setup confirmation, and separates contribution from consumer activation. Unavailable members remain prerequisites rather than invented working configuration; missing-expertise holds persist until reviewed configuration and fresh evidence resolve them. This changes setup and crew documentation, not runtime selection or the creator's review authority.
+
 ## 2026-09-13 — Research-led member authoring
 
 The owner requested a reusable skill for creating technology crew members using best-practice and quality-control research, with flexibility across ecosystems. Added authoring guidance covering primary sources, contextual recommendations, practical finding criteria, versioned integration, tests and honest validation. Existing C# and React guidance provide contrasting examples rather than mandatory templates.
