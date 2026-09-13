@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-14 | Migration tests | Included the host-instruction dependency in the synthetic policy repository and checked its policy-hash coverage. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-14--migration-fixture-dependency) |
 | 2026-09-13 | Controller and Captain | Added default-on master checks and guarded PR pin/integration-file updates before capture, with visible changed paths, opt-out and target-branch activation after merge. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-13--automatic-master-updates), [update contract](docs/installation.md#automatic-updates) |
 | 2026-09-13 | Captain and installation | Added a skills.sh discovery quickstart and packaged setup handoff covering Claude Code, Codex and Cursor, with pinned consumer migration and publication boundaries. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-13--skillssh-setup-entry), [installation](docs/installation.md#skillssh-discovery) |
 | 2026-09-13 | Secret-scan documentation | Explained historical findings, GitHub alert navigation and verified revocation before exact Gitleaks exclusions. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-13--historical-secret-guidance), [guide](docs/historical-secrets.md) |
