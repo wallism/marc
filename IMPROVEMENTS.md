@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-13 | C# | Added practical DRY/SOLID and runtime ownership criteria with an explicit exclusion of style disputes. | [Version 1.1.0 scope and validation](skills/marc-csharp/IMPROVEMENTS.md#2026-09-13--practical-architectural-review-version-110) |
 | 2026-09-13 | Documentation | Added a README infographic of the implemented review, specialist, CI, repair and merge flow. | [Image, explanation and generation brief](docs/workflow-infographic.md) |
 | 2026-09-13 | Controller | Enforced the reference collection limit and excluded unrelated data matches. | [Regression and reason](src/quality/IMPROVEMENTS.md#2026-09-13--bound-indirect-reference-collection) |
 | 2026-09-13 | Captain and controller | Added identity-bound specialist selection, fresh-session checks and upgrade/rollback proof. | [Captain](skills/marc/IMPROVEMENTS.md#2026-09-13--versioned-specialist-handoffs), [controller](src/quality/IMPROVEMENTS.md#2026-09-13--trusted-crew-selection-and-upgrade-verification) |

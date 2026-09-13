@@ -6,7 +6,7 @@ const { evaluate } = require('./marc.cjs');
 const fs = require('node:fs');
 const os = require('node:os');
 const { execFileSync } = require('node:child_process');
-const config = { schema: 1, members: ['csharp', 'javascript', 'blazor', 'frontend'].map(id => ({ id, version: '1.0.0' })),
+const config = { schema: 1, members: ['csharp', 'javascript', 'blazor', 'frontend'].map(id => ({ id, version: id === 'csharp' ? '1.1.0' : '1.0.0' })),
   areas: [{ paths: ['^src/Shared/'], technologies: ['blazor'], reason: 'Shared services are consumed by the UI.' }] };
 const catalogue = () => loadCatalogue(path.resolve(__dirname, '../..'), config);
 const identity = { sourceHead: 'a'.repeat(40), base: 'b'.repeat(40), policyHash: 'policy', toolCommit: 'c'.repeat(40) };

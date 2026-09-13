@@ -2,9 +2,9 @@
   "schema": 1,
   "compatibility": "marc-crew-v1",
   "id": "csharp",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "specialty": "C#",
-  "scope": "C# contracts, async lifetimes, nullability, persistence and affected callers.",
+  "scope": "C# architecture, pragmatic DRY/SOLID, contracts, runtime ownership and affected callers; excludes style preferences.",
   "covers": [
     "csharp"
   ],
@@ -22,9 +22,11 @@
     "Exact-source hosted CI and sanitized evidence"
   ],
   "checks": [
-    "Trace changed public contracts through callers and serialization boundaries.",
-    "Check async cancellation, disposal, concurrency and nullability behavior.",
-    "Inspect persistence and authorization invariants against trusted project guidance."
+    "Apply DRY and SOLID to observed business rules, responsibilities and caller contracts without speculative abstractions.",
+    "Trace changed public contracts through callers, implementations and serialization boundaries.",
+    "Check async ownership, cancellation, DI lifetimes, disposal, concurrency and nullability behavior.",
+    "Inspect failure consistency, data access costs, persistence and authorization invariants against trusted project guidance.",
+    "Require concrete consequences and proportionate corrections; exclude style preferences and unrelated design debt."
   ],
   "evidenceRules": [
     "Cite observed owning code and affected callers.",

@@ -10,7 +10,7 @@ Set `crew` in the trusted consumer `.marc/config.json`:
 {
   "schema": 1,
   "members": [
-    { "id": "csharp", "version": "1.0.0" },
+    { "id": "csharp", "version": "1.1.0" },
     { "id": "javascript", "version": "1.0.0" },
     { "id": "blazor", "version": "1.0.0" },
     { "id": "frontend", "version": "1.0.0" }
@@ -34,6 +34,8 @@ The controller records selected and omitted versions and reasons, affected paths
 The Captain checks the scope against the complete diff and affected callers. If a reviewer finds missing expertise, return blocked with source evidence; update the trusted configuration through an authorized change and recapture. Candidate instructions cannot install members, alter trusted areas, select a different version or approve their own policy change. A blocking finding cannot disappear through voting or replacement reviewers.
 
 ## Contribution contract
+
+The [C# review guide](../skills/marc-csharp/references/architectural-review.md) explains the member's practical DRY/SOLID and runtime criteria, evidence threshold and exclusions. Version 1.1.0 expands review guidance without changing applicability, permissions or gate schema. Consumers upgrading from 1.0.0 must update both the bundle pin and their exact C# member version; other members remain at 1.0.0.
 
 Place each specialist under `skills/marc-<id>/` with `SKILL.md`, `crew.json` and `IMPROVEMENTS.md`. Use the [C# member](../skills/marc-csharp/crew.json) as a complete contribution example. Keep supporting references beside the skill. All trusted skill/reference bytes are included in policy identity.
 
