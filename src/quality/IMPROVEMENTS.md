@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-14 — Migration fixture dependency
+
+The trusted-policy migration test copied the controller and crew modules without their required `host-instructions.cjs` dependency, causing `MODULE_NOT_FOUND` before any digest assertions ran. Added the dependency to the synthetic repository and verified that modifying it changes the policy hash. The existing migration test reproduced the failure before the fix and all four migration tests passed afterward on Node.js 24.10.0. This is internal test-fixture maintenance; runtime behavior and user help are unchanged. Hosted CI and consumer activation remain unverified.
+
 ## 2026-09-13 — Automatic master updates
 
 Automatic updates also use the installer's shared deterministic renderer to add/refresh command and skill forwarding files for installed harnesses, preserving customizations by stopping on conflicts. The result lists every changed path and explains opt-out. Integration files can appear under `.marc`, `scripts/quality`, `.agents/skills` and `.claude/skills` in the same PR; this is an accepted default-on tradeoff. The real Git regression covers both harnesses, new discovery and refreshed bootstrap content.
