@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-13 | React and controller | Added a React web reviewer with official-source guidance and confirmed-area selection; retained full review/browser assurance for Hooks without JSX. | [React member](skills/marc-react/IMPROVEMENTS.md), [routing regression](src/quality/IMPROVEMENTS.md#2026-09-13--react-web-impact-requires-browser-evidence) |
 | 2026-09-13 | C# | Added practical DRY/SOLID and runtime ownership criteria with an explicit exclusion of style disputes. | [Version 1.1.0 scope and validation](skills/marc-csharp/IMPROVEMENTS.md#2026-09-13--practical-architectural-review-version-110) |
 | 2026-09-13 | Documentation | Added a README infographic of the implemented review, specialist, CI, repair and merge flow. | [Image, explanation and generation brief](docs/workflow-infographic.md) |
 | 2026-09-13 | Controller | Enforced the reference collection limit and excluded unrelated data matches. | [Regression and reason](src/quality/IMPROVEMENTS.md#2026-09-13--bound-indirect-reference-collection) |
@@ -12,6 +13,8 @@
 This starts MARC's standalone history. Prior consumer reports, approvals and operational ledgers stay in their original repositories and are not imported. Local validation and publication status belong in the extraction record; a source move does not establish hosted CI or live activation. Each member owns an improvement register; the later specialist entry records the routing change separately from extraction.
 
 ## Component registers
+
+- [React](skills/marc-react/IMPROVEMENTS.md)
 
 - [marc](skills/marc/IMPROVEMENTS.md)
 - [marc-code-quality](skills/marc-code-quality/IMPROVEMENTS.md)

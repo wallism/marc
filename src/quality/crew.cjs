@@ -133,7 +133,7 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
     }
   }
   if (shared || uncertain) catalogue.flatMap(m => m.covers).forEach(t => technologies.add(t));
-  const requiresBrowser = technologies.has('blazor') || technologies.has('web') ||
+  const requiresBrowser = technologies.has('blazor') || technologies.has('web') || technologies.has('react') ||
     [...affected].some(f => /(^|\/)(wwwroot|ClientApp)\/|\.(jsx|tsx)$/i.test(f));
   reasons.push(`Inspected ${files.length} changed and ${affected.size - files.length} referenced files in both revisions.`);
   return { files: [...affected].sort(), technologies: [...technologies].sort(), reasons: unique(reasons), holds: unique(holds),

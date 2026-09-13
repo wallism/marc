@@ -4,7 +4,7 @@ MARC's Captain coordinates independent PR review, hosted CI evidence, bounded re
 
 Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). Setup discovers the target repository's values, presents all proposed settings and waits for confirmation and overrides before writing them.
 
-The [Captain](skills/marc/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [C#, JavaScript, Blazor and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.
+The [Captain](skills/marc/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [C#, JavaScript, React, Blazor and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.
 
 ![MARC workflow: the Captain selects independent reviews and relevant specialists, checks CI, records evidence, and routes to guarded merge, bounded repair or a clear hold. Deployment is separate.](docs/assets/marc-workflow.png)
 

@@ -1,6 +1,6 @@
 # Crew configuration and contributions
 
-The Captain retains the existing full and simple policy routes. Optional technology specialists add assurance to either route; they cannot replace security, correctness, test or browser requirements. The initial specialist catalogue covers C#, JavaScript/TypeScript, Blazor and front-end interactions. A language reviewer does not imply a language-specific scanner or runtime adapter exists.
+The Captain retains the existing full and simple policy routes. Optional technology specialists add assurance to either route; they cannot replace security, correctness, test or browser requirements. The specialist catalogue covers C#, JavaScript/TypeScript, React web, Blazor and front-end interactions. A language reviewer does not imply a language-specific scanner or runtime adapter exists.
 
 ## Consumer selection
 
@@ -32,6 +32,32 @@ Capture reads the actual diff and searches both immutable trees for filename and
 The controller records selected and omitted versions and reasons, affected paths, detected technologies, holds and a selection hash. The front-end member applies to web markup/styles or combined Blazor and JavaScript impact. Blazor/web impact and browser-facing JSX/TSX require full review and independent browser evidence. C# or JavaScript alone can retain a valid simple route, with the selected specialist added to the focused test gate. Documentation without runtime/instruction impact can omit optional specialists. Mandatory gates remain governed by the existing policy.
 
 The Captain checks the scope against the complete diff and affected callers. If a reviewer finds missing expertise, return blocked with source evidence; update the trusted configuration through an authorized change and recapture. Candidate instructions cannot install members, alter trusted areas, select a different version or approve their own policy change. A blocking finding cannot disappear through voting or replacement reviewers.
+
+## React web consumers
+
+The [React member](../skills/marc-react/SKILL.md), version 1.0.0, reviews React-specific behavior alongside JavaScript and front-end expertise. Its [review guide](../skills/marc-react/references/react-review.md) links official sources and distinguishes defects from preferences. Add it only to consumers with confirmed React web code. A React consumer's `crew` value can be:
+
+```json
+{
+  "schema": 1,
+  "members": [
+    { "id": "javascript", "version": "1.0.0" },
+    { "id": "frontend", "version": "1.0.0" },
+    { "id": "react", "version": "1.0.0" }
+  ],
+  "areas": [
+    {
+      "paths": ["^client/src/"],
+      "technologies": ["react", "web"],
+      "reason": "Source and imports confirm this area contains React web components and their Hooks."
+    }
+  ]
+}
+```
+
+Confirm and replace the example path from actual manifests/imports/callers. Map Hooks in `.js`/`.ts`, nonstandard component extensions and shared consumers where necessary. JSX/TSX alone selects JavaScript/front-end, not React: other frameworks use that syntax. The top-level descriptive `technologies` list alone does not drive selection. Existing bounded reference discovery reads both revisions; explicit areas cover relationships it cannot infer.
+
+Captured `react` impact conservatively requires full review and independent browser evidence, even without JSX. A `react` area without an available configured React member holds. React Native is outside this member's coverage; do not map it as React web. This adds no React runtime provisioning adapter: the consumer must provide suitable isolated runtime/CI guidance, or required evidence remains blocked. Installing the bundle or its discovery wrappers does not opt an existing consumer into this member. No existing consumer configuration is changed by this addition.
 
 ## Contribution contract
 

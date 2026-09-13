@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "react",
+  "version": "1.0.0",
+  "specialty": "React web",
+  "scope": "React web component and Hook contracts, state, Effects, rendering and server/client boundaries; supplements JavaScript and front-end review, excludes React Native and style preferences.",
+  "covers": ["react"],
+  "applicability": {
+    "anyTechnologies": ["react"],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base and policy identity",
+    "Captured crew selection and affected references",
+    "Trusted consumer guidance and installed React/framework versions",
+    "Exact-source hosted CI and sanitized evidence"
+  ],
+  "checks": [
+    "Trace component and Hook contracts, state ownership, render purity and affected callers.",
+    "Check Effect dependencies, cleanup, async ordering and component identity against actual user transitions.",
+    "Inspect applicable hydration, server/client trust, form and accessibility boundaries.",
+    "Assess behavior-oriented test evidence and request independent browser verification; avoid style and speculative performance findings."
+  ],
+  "evidenceRules": [
+    "Cite owning code, affected interaction and a concrete consequence with a proportionate correction.",
+    "Report missing required evidence as blocked, not a pass.",
+    "Do not infer runtime behavior from source-only review."
+  ],
+  "permissions": ["source:read", "evidence:read", "result:write"],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    { "technologies": ["react"], "files": ["src/useSearch.ts"], "selected": true },
+    { "technologies": ["react", "javascript", "web"], "files": ["src/Search.tsx"], "selected": true },
+    { "technologies": ["javascript", "web"], "files": ["src/OtherFramework.tsx"], "selected": false },
+    { "technologies": ["csharp", "blazor"], "files": ["src/Page.razor"], "selected": false },
+    { "technologies": [], "files": ["docs/react-guide.md"], "selected": false }
+  ]
+}

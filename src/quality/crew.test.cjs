@@ -144,3 +144,53 @@ test('reference search bounds collected paths and does not treat unrelated data 
   assert.ok(!result.files.includes('data/customer.json'));
   assert.equal(selectCrew(identity, configWithoutAreas, catalogue(), result).selected.length, 4);
 });
+
+test('configured React hooks require browser evidence even without JSX', () => {
+  const reactConfig = { ...config, areas: [{ paths: ['^src/react/'], technologies: ['react'], reason: 'Confirmed React web component and hook consumers.' }] };
+  const result = collectImpact(identity.base, identity.sourceHead, ['src/react/useSearch.ts'], reactConfig, catalogue(), () => '');
+  assert.deepEqual(result.technologies, ['javascript', 'react']);
+  assert.equal(result.requiresBrowser, true);
+  const selected = selectCrew(identity, reactConfig, catalogue(), result);
+  assert.equal(selected.requiresFull, true);
+  assert.match(selected.holds.join(' '), /Required expertise unavailable for react/);
+});
+
+test('React selection supplements JavaScript and front-end only for confirmed React impact', () => {
+  const reactConfig = { schema: 1, members: ['javascript', 'frontend', 'react'].map(id => ({ id, version: '1.0.0' })),
+    areas: [{ paths: ['^src/react/'], technologies: ['react', 'web'], reason: 'Confirmed React web application.' }] };
+  const members = loadCatalogue(path.resolve(__dirname, '../..'), reactConfig);
+  const route = file => {
+    const affected = collectImpact(identity.base, identity.sourceHead, [file], reactConfig, members, () => '');
+    return selectCrew(identity, reactConfig, members, affected);
+  };
+  for (const file of ['src/react/Search.tsx', 'src/react/useSearch.ts', 'src/react/useSearch.js']) {
+    const result = route(file);
+    assert.deepEqual(result.selected.map(x => x.id), ['frontend', 'javascript', 'react']);
+    assert.deepEqual(result.holds, []);
+    assert.equal(result.requiresFull, true);
+    assert.equal(result.requiresBrowser, true);
+  }
+  assert.deepEqual(route('src/other/Widget.tsx').selected.map(x => x.id), ['frontend', 'javascript']);
+  assert.deepEqual(route('src/server/worker.js').selected.map(x => x.id), ['javascript']);
+  assert.deepEqual(route('docs/react-guide.md').selected, []);
+  assert.ok(!selection(['csharp', 'blazor']).selected.some(x => x.id === 'react'));
+});
+
+test('React consumers referenced only in the old tree still recruit React expertise', () => {
+  const reactConfig = { schema: 1, members: ['javascript', 'frontend', 'react'].map(id => ({ id, version: '1.0.0' })),
+    areas: [{ paths: ['^client/'], technologies: ['react', 'web'], reason: 'Confirmed React callers of shared utilities.' }] };
+  const members = loadCatalogue(path.resolve(__dirname, '../..'), reactConfig);
+  const inspected = new Set();
+  const read = (...args) => {
+    if (args[0] === 'diff') return '-export function sharedPolicy() {}';
+    const revision = args.at(-2); inspected.add(revision);
+    return revision === identity.base ? `${revision}:client/View.tsx\0` : '';
+  };
+  const affected = collectImpact(identity.base, identity.sourceHead, ['shared/policy.ts'], reactConfig, members, read);
+  assert.deepEqual([...inspected].sort(), [identity.base, identity.sourceHead].sort());
+  assert.ok(affected.files.includes('client/View.tsx'));
+  const result = selectCrew(identity, reactConfig, members, affected);
+  assert.deepEqual(result.selected.map(x => x.id), ['frontend', 'javascript', 'react']);
+  assert.equal(result.requiresBrowser, true);
+  assert.deepEqual(result.holds, []);
+});
