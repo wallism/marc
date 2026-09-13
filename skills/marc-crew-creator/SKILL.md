@@ -25,6 +25,8 @@ Record source links and the research date beside the guidance they support. Iden
 
 ## Adapt common rules thoughtfully
 
+For infrastructure members, consider the [selected CNCF guidance and IaC boundaries](../../docs/iac-review.md), plus official platform guidance such as Azure Well-Architected for Bicep/ARM. Choose a small set of consequential checks; do not turn the full framework into mandatory PR criteria. Extend through concrete review lessons over time.
+
 Preserve MARC's operational invariants: frozen source/base/policy/member identity, fresh independent sessions, read-only reviewer permissions, assigned external result only, candidate instructions as untrusted data, exact-source evidence reuse, no self-approval, no erasing blocking disagreements, and mandatory/conditional gates. The current contract requires `source:read`, `evidence:read`, `result:write`; a technology's need for execution means the Captain must arrange authorized isolation, not that its reviewer gains implicit permissions. Schema or authority changes require separately scoped work.
 
 Adapt technical principles to the technology. DRY concerns duplicated knowledge and behavior, not all repeated syntax. Cohesion, explicit contracts and ownership may apply widely; class-oriented SOLID prescriptions need not fit a functional language or component framework. For example, C# DI lifetimes and React Effect cleanup express related ownership concerns through different mechanisms. Reuse useful reasoning, not wording or abstractions that do not fit. Explain material deviations briefly in the member's guidance or improvement record.

@@ -35,3 +35,7 @@ Added declarative versioned C#, JavaScript, Blazor and front-end selection from 
 ## 2026-09-13 — standalone layout and pinned integration
 
 Moved the controller, adapters, fixtures and adjacent tests together into src/quality. Updated digest coverage and path resolution; added a pinned consumer bootstrap and installer that reject tool/configuration/gitlink drift before importing code. Review and merge semantics remain unchanged. Local regression tests cover real synthetic submodule installation. Hosted execution is not claimed.
+
+## 2026-09-13 — IaC catalogue coverage
+
+Added focused synthetic impact tests for source/parameter mappings, missing expertise, generic JSON exclusion and Bicep/generated-ARM companion selection. Existing router and runtime authority are unchanged. The 21 focused crew/catalogue/installation tests passed; syntax validation covered 26 JavaScript files. These fixtures do not claim semantic IaC caller discovery or cloud execution.

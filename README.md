@@ -39,3 +39,7 @@ Every branch push, including a merge to `master`, runs JavaScript syntax checks 
 The implemented CI provider is GitHub Actions. Built-in dependency adapters/classifiers cover .NET/NuGet and npm; other technologies use their own hosted checks and confirmed project guidance. The Python example demonstrates configuration, not a Python scanner. Missing required evidence or expertise is a hold.
 
 Prompt evals remain manual; these workflows do not call models or authorize merges. Scheduled MARC self-review requires its own trusted controller configuration and operating authority. MIT licensed; see [LICENSE](LICENSE).
+
+## Infrastructure specialists
+
+[Bicep](skills/marc-crew-bicep/SKILL.md), [Terraform](skills/marc-crew-terraform/SKILL.md) and [ARM templates](skills/marc-crew-arm-templates/SKILL.md) provide lean IaC review, each at version 1.0.0. See [scope, extensions, CNCF/Azure guidance and activation mappings](docs/iac-review.md). These reviewers consume supplied evidence and do not run infrastructure commands.

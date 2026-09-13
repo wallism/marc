@@ -75,3 +75,15 @@ For non-text source, define provenance and usable finding locations before claim
 ## 2026-09-13 — GitHub Actions review boundaries
 
 Distinguish provenance from safety: a pinned dependency is stable, not necessarily safe. Define evidence gaps for referenced implementations and applicability mappings for supporting files. External authoring or validation instructions must not expand a generated reviewer's permissions; mercenary integration is deferred. Applied while reviewing the new GitHub Actions member.
+
+## 2026-09-13 — Bicep evidence coverage
+
+Preview success is not complete coverage: check omitted/unevaluated resources and bind evidence to actual inputs and target scope. Keep broad framework guidance selective and consequence-based.
+
+## 2026-09-13 — Terraform safeguard lifetime
+
+Inspect the lifetime of a safeguard itself: a configuration-local protection may vanish when the protected declaration is removed. Avoid claiming safety from a guard name alone.
+
+## 2026-09-13 — ARM parameter ownership
+
+Configuration-only changes can alter runtime authority. Follow parameter files to their owning template and invocation; ambiguous serialization extensions do not establish technology or scope.

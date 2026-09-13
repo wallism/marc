@@ -96,3 +96,7 @@ Change the member version when its contract/instructions change; preserve the ID
 Installation is deliberate: review contribution instructions, references, scope, claimed coverage, permissions and focused tests before adding the bundle version to trusted consumer configuration. The installer creates discovery wrappers, not authority to use every discovered member. Host permissions/isolation must enforce these boundaries; JSON permission declarations do not create a sandbox. Do not ship executable specialist hooks as implicit reviewer setup.
 
 Run `node --test src/quality/crew.test.cjs` and validate each changed skill's metadata. Add meaningful source/caller and gate regressions when extending the router; manifest examples alone do not prove review quality. Update the member and umbrella registers together. Other ecosystems can contribute the same declarative contract, trusted area mappings and synthetic tests without access to any private consumer repository.
+
+## Infrastructure specialists
+
+[Bicep](../skills/marc-crew-bicep/SKILL.md), [Terraform](../skills/marc-crew-terraform/SKILL.md) and [ARM templates](../skills/marc-crew-arm-templates/SKILL.md) provide lean IaC review, each at version 1.0.0. See [scope, extensions, CNCF/Azure guidance and activation mappings](iac-review.md). These reviewers consume supplied evidence and do not run infrastructure commands.

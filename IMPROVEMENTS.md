@@ -48,3 +48,7 @@ Added the basic [GitHub Actions reviewer](skills/marc-crew-github-actions/IMPROV
 - [marc-crew-simplicity](skills/marc-crew-simplicity/IMPROVEMENTS.md)
 - [marc-crew-test-integrity](skills/marc-crew-test-integrity/IMPROVEMENTS.md)
 - [Shared controller and installation](src/quality/IMPROVEMENTS.md)
+
+## 2026-09-13 — Lean infrastructure crew
+
+Created and reviewed [Bicep](skills/marc-crew-bicep/IMPROVEMENTS.md), [Terraform](skills/marc-crew-terraform/IMPROVEMENTS.md), then [ARM templates](skills/marc-crew-arm-templates/IMPROVEMENTS.md), each 1.0.0. Each refinement informed the creator before the next member. [Shared IaC scope](docs/iac-review.md) selects consequential CNCF/Azure guidance, documents file extensions and preserves existing mapping, evidence and execution boundaries. No consumer-specific configuration was imported.
