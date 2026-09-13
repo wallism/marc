@@ -8,7 +8,7 @@ Start with the [setup prompt](docs/setup-prompt.md), then read the [configuratio
 
 The [Captain](skills/marc-crew-captain/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [language, framework and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.
 
-![MARC workflow: the Captain selects independent reviews and relevant specialists, checks CI, records evidence, and routes to guarded merge, bounded repair or a clear hold. Deployment is separate.](docs/assets/marc-workflow.png)
+![MARC workflow: independent reviews and relevant specialists, with C# and JavaScript checked as an example selected subset; optional model settings, source and report CI, guarded merge and target-branch CI verification, bounded repair and clear holds. Deployment is separate.](docs/assets/marc-workflow.png)
 
 MARC is for repositories that want independent PR assurance, auditable decisions and bounded repairs while retaining their own policy and CI. Specialists run when relevant; missing evidence holds the PR. [Read the workflow and diagram notes](docs/workflow-infographic.md).
 
@@ -31,6 +31,10 @@ By default, crew members use the Captain's model and reasoning settings; no mode
 Reports end with a **Crew used** table showing each session's model and reasoning selection, including **Same model (Captain)** and **Same reasoning effort (Captain)** when inherited. Overrides and configured defaults are labelled; actual values are shown when exposed by the harness, otherwise requested values are identified as such.
 
 ## What setup does
+
+![MARC setup: choose a repository and harness, inspect the source and CI, propose crew and policy, confirm settings, install and configure, then validate and hand off. Missing expertise prompts a separate proposal. Setup does not start PR reviews or authorize merging.](docs/assets/marc-setup.png)
+
+[Read the setup diagram notes](docs/setup-infographic.md).
 
 The [setup agent](docs/setup-prompt.md) is instructed to:
 

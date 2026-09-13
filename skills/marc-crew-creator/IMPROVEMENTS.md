@@ -1,5 +1,9 @@
 # Crew creator improvements
 
+## 2026-09-14 — Material process changes only
+
+Limited member/root register updates to material process changes such as new expertise, changed criteria, routing or activation behavior, following the owner's requested register scope. Routine documentation, diagrams and housekeeping no longer require entries. Local metadata/catalogue and whitespace validation only; no model evaluation, hosted CI or consumer activation.
+
 ## 2026-09-14 — Prompt improvement research plan
 
 Recorded a [prompt-improvements work plan](../../docs/work/20260914-prompt-improvements-work.md) from comparative skill research and vendor guidance. It prioritizes baseline cases, Captain structure, calibrated examples, requirement traceability and repair closeout. Reason: turn the requested research into an actionable backlog with explicit evidence and authority boundaries. Documentation only; creator/reviewer instructions and runtime behavior are unchanged, and no model evaluation or consumer activation is claimed.

@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-14 — Material process changes only
+
+Restricted register updates to changes that materially alter process behavior, criteria, gates or capabilities, at the owner's request to keep the register useful. Routine documentation and visual edits no longer trigger entries. Aligned repository guidance and register footers; preserved historical records and ordinary assessment reports. Local metadata/catalogue and whitespace validation only; no model evaluation, hosted CI or consumer activation. The instruction change takes effect for consumers through their normal bundle upgrade.
+
 ## 2026-09-14 — README setup and customization guide
 
 Summarized the existing setup contract in the README, including discovery, member proposals, confirmation on first setup and reruns, automatic updates and validation. Recommended starting with the supplied skills and process, then cloning or forking for team-specific changes to MARC while keeping consumer settings in consumer configuration. Documentation only; no setup instructions, runtime behavior or authority changes.
@@ -38,7 +42,7 @@ Added immutable specialist selection, explicit selected/omitted reasons, fresh s
 
 Moved this member into its own published skill folder, preserving its instructions and sibling references. Consumer configuration remains explicit; controller commands now resolve under `src/quality`. This starts standalone member history without importing consumer reports or inventing historical entries. See [layout decisions](../../docs/repository-layout.md).
 
-Update this file and the [umbrella register](../../IMPROVEMENTS.md) together for an authorized member change.
+Update this file and the [umbrella register](../../IMPROVEMENTS.md#register-scope) together only for an authorized material change to the process; routine documentation, infographic, formatting and housekeeping edits need no entry.
 
 ## 2026-09-13 — Harness handoffs
 

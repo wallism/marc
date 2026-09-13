@@ -1,7 +1,14 @@
 # MARC improvements
 
+## Register scope
+
+Record material changes to MARC's process: review criteria, routing, evidence gates, authority, budgets, supported capabilities and operational behavior. Update the affected member/component register and add a terse linked entry here in the same change.
+
+Do not record routine documentation, infographic, formatting, file moves or repository housekeeping unless they materially change how the process operates. Judge the behavioral effect, not the file type: a skill instruction that changes a review decision qualifies; a diagram explaining existing behavior does not. Keep ordinary PR assessments in reports and preserve historical entries.
+
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-14 | Register policy | Limited entries to material process changes; excluded routine documentation and visual updates. | [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--material-process-changes-only), [creator](skills/marc-crew-creator/IMPROVEMENTS.md#2026-09-14--material-process-changes-only) |
 | 2026-09-14 | README | Summarized setup responsibilities and recommended starting with the supplied process before team-specific customization. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--readme-setup-and-customization-guide) |
 | 2026-09-14 | README | Made optional crew model overrides and report labels visible from the project entry point. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--readme-model-selection-guide) |
 | 2026-09-14 | Controller and Captain | Added optional crew model/reasoning overrides and explicit inheritance/override reporting, with no configured model defaults. | [Controller register](src/quality/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections), [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections) |

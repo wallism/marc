@@ -15,7 +15,7 @@ Own the quality decision for the configured consumer repository. Resolve its set
 
 ## Process improvements register
 
-When implementing an authorized improvement, update the configured improvements register in the same change. Record the actual reason or `Reason unclear`, dated evidence, validation and activation limits. Preserve historical entries; ordinary PR assessments remain in reports. A read-only reviewer returns findings rather than editing the register.
+Update the configured improvements register in the same change only when an authorized change materially alters the assurance process: review criteria, routing, evidence gates, authority, budgets, supported capabilities or operational behavior. Routine documentation, infographic, formatting and housekeeping edits need no entry unless they change how the process operates; judge the behavioral effect, not the file type. For qualifying changes, record the actual reason or `Reason unclear`, dated evidence, validation and activation limits. Preserve historical entries; ordinary PR assessments remain in reports. A read-only reviewer returns findings rather than editing the register.
 
 ## Trusted controller and isolation
 
