@@ -289,8 +289,8 @@ function trustedPolicy(context = loadConfig(discoverRoot())) {
   const readGit = (root, ...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trimEnd();
   const bundleFiles = readGit(context.bundleRoot, 'ls-files', '-z', 'src/quality', 'scripts', 'templates', 'AGENTS.md', 'skills')
     .split('\0').filter(Boolean).filter(x => x !== 'src/quality/policy.json').sort();
-  for (const suffix of ['', '-security', '-correctness', '-code-quality', '-test-integrity', '-repair', '-simplicity', '-simple-tests']) {
-    if (!bundleFiles.includes(`skills/marc${suffix}/SKILL.md`)) throw Error('Required trusted skill missing');
+  for (const suffix of ['-captain', '-security', '-correctness', '-code-quality', '-test-integrity', '-repair', '-simplicity', '-simple-tests']) {
+    if (!bundleFiles.includes(`skills/marc-crew${suffix}/SKILL.md`)) throw Error('Required trusted skill missing');
   }
   const tracked = new Set(readGit(context.repoRoot, 'ls-files', '-z').split('\0'));
   if (context.consumerFiles.some(file => !tracked.has(file))) throw Error('Consumer governance must be tracked');
@@ -301,7 +301,7 @@ function trustedPolicy(context = loadConfig(discoverRoot())) {
   }
   if (context.crew) for (const member of loadCatalogue(context.bundleRoot, context.crew)) {
     for (const name of ['crew.json', 'SKILL.md', 'IMPROVEMENTS.md'])
-      if (!bundleFiles.includes(`skills/marc-${member.id}/${name}`)) throw Error('Crew inputs must be tracked');
+      if (!bundleFiles.includes(`skills/marc-crew-${member.id}/${name}`)) throw Error('Crew inputs must be tracked');
   }
   return { policy: context.crew ? { ...context.policy, crew: context.crew } : context.policy, policyHash: digest(Buffer.concat(chunks)) };
 }

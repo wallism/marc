@@ -2,7 +2,7 @@
 
 MARC coordinates independent PR review, hosted CI evidence, bounded repairs and guarded merges. The Captain and crew read a repository's explicit configuration. Repository identity, technology guidance, artifact paths, runtime settings and accepted scan exceptions belong to that repository.
 
-This guide describes the standalone MARC bundle: `src/quality/` and the `skills/marc*` catalogue. The existing simple/full review routes are preserved, with configured [specialists](crew.md) added when applicable. See [installation](installation.md) for pinned consumer integration.
+This guide describes the standalone MARC bundle: `src/quality/` and the `skills/marc-crew-*` catalogue. The existing simple/full review routes are preserved, with configured [specialists](crew.md) added when applicable. See [installation](installation.md) for pinned consumer integration.
 
 ## Set up a repository
 
@@ -68,7 +68,7 @@ The default scans `HEAD` history; an optional full base SHA limits the scan to `
 
 ## Commands, coverage and validation
 
-The controller supports `queue`, `capture`, `decide`, `report`, `merge` and `recover-ci` after the optional `--repo <checkout>` selector. Follow the Captain and [evidence contract](../skills/marc/references/evidence.md) for authority, independent review and frozen identities. Reports remain at `.quality/reports`; preserve historical bytes. Merge uses the configured target branch. Deployment is separate.
+The controller supports `queue`, `capture`, `decide`, `report`, `merge` and `recover-ci` after the optional `--repo <checkout>` selector. Follow the Captain and [evidence contract](../skills/marc-crew-captain/references/evidence.md) for authority, independent review and frozen identities. Reports remain at `.quality/reports`; preserve historical bytes. Merge uses the configured target branch. Deployment is separate.
 
 GitHub Actions is the implemented provider. Existing CI can validate other technologies, including Python; the bundled dependency adapters/classifiers cover NuGet/.NET and npm. The optional browser startup hook is ASP.NET-specific. Unknown dependency/build manifests should remain sensitive until an applicable review policy exists. Missing required tooling, expertise or evidence produces a hold.
 

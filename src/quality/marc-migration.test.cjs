@@ -53,10 +53,10 @@ test('trusted policy digest covers each renamed crew skill and the compatibility
   fs.mkdirSync(scripts, { recursive: true });
   for (const file of ['marc.cjs', 'coq.cjs', 'project-review.cjs', 'config.cjs', 'crew.cjs'])
     fs.copyFileSync(path.join(__dirname, file), path.join(scripts, file));
-  const skills = fs.readdirSync(path.resolve(__dirname, '../../skills')).filter(name => name === 'marc' || name.startsWith('marc-'));
-  assert.ok(skills.includes('marc') && skills.includes('marc-security') && skills.includes('marc-csharp') && skills.includes('marc-react'));
+  const skills = fs.readdirSync(path.resolve(__dirname, '../../skills')).filter(name => name.startsWith('marc-crew-'));
+  assert.ok(skills.includes('marc-crew-captain') && skills.includes('marc-crew-security') && skills.includes('marc-crew-csharp') && skills.includes('marc-crew-react'));
   const files = skills.map(name => `skills/${name}/SKILL.md`);
-  files.push('skills/marc/references/evidence.md', 'skills/marc/references/browser-runtime.md');
+  files.push('skills/marc-crew-captain/references/evidence.md', 'skills/marc-crew-captain/references/browser-runtime.md');
   for (const file of files) {
     fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     fs.writeFileSync(path.join(root, file), 'synthetic trusted instructions\n');
@@ -83,6 +83,6 @@ test('trusted policy digest covers each renamed crew skill and the compatibility
   run('git', ['rm', '--cached', '.marc/gitleaksignore']);
   assert.throws(hash, /Consumer governance must be tracked/);
   run('git', ['add', '.marc/gitleaksignore']);
-  run('git', ['rm', '--cached', 'skills/marc-security/SKILL.md']);
+  run('git', ['rm', '--cached', 'skills/marc-crew-security/SKILL.md']);
   assert.throws(hash, /Required trusted skill missing/);
 });

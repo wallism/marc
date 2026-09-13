@@ -37,7 +37,7 @@ The Captain checks the scope against the complete diff and affected callers. If 
 
 ## React web consumers
 
-The [React member](../skills/marc-react/SKILL.md), version 1.0.0, reviews React-specific behavior alongside JavaScript and front-end expertise. Its [review guide](../skills/marc-react/references/react-review.md) links official sources and distinguishes defects from preferences. Add it only to consumers with confirmed React web code. A React consumer's `crew` value can be:
+The [React member](../skills/marc-crew-react/SKILL.md), version 1.0.0, reviews React-specific behavior alongside JavaScript and front-end expertise. Its [review guide](../skills/marc-crew-react/references/react-review.md) links official sources and distinguishes defects from preferences. Add it only to consumers with confirmed React web code. A React consumer's `crew` value can be:
 
 ```json
 {
@@ -67,9 +67,9 @@ When setup discovers missing expertise, propose an available member's activation
 
 Use [marc-crew-creator](../skills/marc-crew-creator/SKILL.md) to create or improve a member. It guides primary-source research, technology-specific quality criteria, practical finding thresholds and integration checks. Shared operational safeguards remain fixed; architectural prescriptions can vary with the ecosystem. It is an authoring utility, not a selectable specialist, and has no `crew.json`. Example request: `Use marc-crew-creator to add a Rust member to MARC; research official guidance and leave consumer activation unchanged.`
 
-The [C# review guide](../skills/marc-csharp/references/architectural-review.md) explains the member's practical DRY/SOLID and runtime criteria, evidence threshold and exclusions. Version 1.1.0 expands review guidance without changing applicability, permissions or gate schema. Consumers upgrading from 1.0.0 must update both the bundle pin and their exact C# member version; other members remain at 1.0.0.
+The [C# review guide](../skills/marc-crew-csharp/references/architectural-review.md) explains the member's practical DRY/SOLID and runtime criteria, evidence threshold and exclusions. Version 1.1.0 expands review guidance without changing applicability, permissions or gate schema. Consumers upgrading from 1.0.0 must update both the bundle pin and their exact C# member version; other members remain at 1.0.0.
 
-Place each specialist under `skills/marc-<id>/` with `SKILL.md`, `crew.json` and `IMPROVEMENTS.md`. Use the [C# member](../skills/marc-csharp/crew.json) as a complete contribution example. Keep supporting references beside the skill. All trusted skill/reference bytes are included in policy identity.
+Place each specialist under `skills/marc-crew-<id>/` with `SKILL.md`, `crew.json` and `IMPROVEMENTS.md`. Use the [C# member](../skills/marc-crew-csharp/crew.json) as a complete contribution example. Keep supporting references beside the skill. All trusted skill/reference bytes are included in policy identity.
 
 | Manifest field | Contract |
 | --- | --- |
@@ -80,7 +80,7 @@ Place each specialist under `skills/marc-<id>/` with `SKILL.md`, `crew.json` and
 | `applicability` | Arrays `anyTechnologies`, `allTechnologies`, `pathPatterns`; a nonempty matching alternative selects the member. Empty alternatives never match everything. |
 | `inputs`, `checks`, `evidenceRules` | Required frozen artifacts, specialty checks and evidence/stop rules. |
 | `permissions` | Exactly `source:read`, `evidence:read`, `result:write`. The last permits only the assigned external result file. No execution, network, credentials, installs, source writes or merge authority. |
-| `outputSchema` | `marc-gate-v1`: standard verdict/source/base/policy/session/summary/evidence/findings plus member and selection identity. See the [evidence contract](../skills/marc/references/evidence.md). |
+| `outputSchema` | `marc-gate-v1`: standard verdict/source/base/policy/session/summary/evidence/findings plus member and selection identity. See the [evidence contract](../skills/marc-crew-captain/references/evidence.md). |
 | `cases` | At least two synthetic applicability cases with `technologies`, `files`, `selected`; include positive, negative and overlap cases relevant to the specialty. |
 
 Change the member version when its contract/instructions change; preserve the ID. A bundle commit versions the core Captain, mandatory gates and repair skills. Consumer members use exact manifest versions, within an immutable bundle pin. Content hashes and the effective policy digest prevent unchanged version labels from reusing altered instructions. Every source/base/config/policy/tool/member change requires fresh capture and review; rollback does not authorize replaying old approvals.

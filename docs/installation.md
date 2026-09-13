@@ -42,3 +42,9 @@ MARC's own [contribution workflows](contribution-checks.md) run Node checks on b
 Fetch and check out the selected full MARC commit inside the submodule, stage its gitlink, preview the installer, then deliberately regenerate changed forwarding files with `--apply --replace-existing`. Commit the updated pin, config and forwarding files together. Verify before activating the new controller.
 
 For rollback, restore that same complete integration set from a known consumer commit and run `git submodule update --init -- .marc/tool`. Retain shared locks, recovery reservations, repair counts and historical reports. Recapture evidence after either direction; changed tool/configuration identity invalidates prior approvals. Do not automatically release a foreign lock or reset a budget.
+
+## Skill naming
+
+All published skill directories and frontmatter names use `marc-crew-<name>`, including `marc-crew-captain` and `marc-crew-creator`. Specialist manifest IDs and versions remain stable (for example, `csharp`); the controller resolves them under `skills/marc-crew-<id>`.
+
+When upgrading from the earlier names, regenerate consumer forwarding files with the pinned installer and remove obsolete MARC forwarding files as part of the reviewed integration change. Update saved skill invocations to the new names. The renamed bundle changes trusted identity and requires fresh evidence; this source change does not upgrade consumers or change merge authority.

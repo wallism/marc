@@ -8,7 +8,7 @@ Unknown impact broadens review. Missing evidence or expertise holds; sensitive c
 
 ## Generation and verification
 
-Created on 2026-09-13 using the built-in image-generation tool. The historical reference was preserved; this is a new asset. Visually checked spelling, contrast, arrows, conditional specialists/browser review, independent review routes, report CI, separate hold labels, bounded repair return and deployment separation against the [Captain](../skills/marc/SKILL.md), [crew contract](crew.md) and controller.
+Created on 2026-09-13 using the built-in image-generation tool. The historical reference was preserved; this is a new asset. Visually checked spelling, contrast, arrows, conditional specialists/browser review, independent review routes, report CI, separate hold labels, bounded repair return and deployment separation against the [Captain](../skills/marc-crew-captain/SKILL.md), [crew contract](crew.md) and controller.
 
 ## Reproduction brief
 

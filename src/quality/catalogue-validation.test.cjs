@@ -16,31 +16,31 @@ function fixture(t) {
 
 test('validates every published skill and specialist, including unconfigured members', () => {
   const result = validateCatalogue(repository);
-  assert.ok(result.skills.includes('marc'));
+  assert.ok(result.skills.includes('marc-crew-captain'));
   assert.ok(result.members.includes('react'));
   assert.equal(result.skills.length, fs.readdirSync(path.join(repository, 'skills')).length);
 });
 
 test('missing mandatory skills and missing specialist manifests cannot silently disappear', t => {
   const root = fixture(t);
-  fs.renameSync(path.join(root, 'skills/marc-security'), path.join(root, 'removed-security'));
-  assert.throws(() => validateCatalogue(root), /Required skill missing: marc-security/);
-  fs.renameSync(path.join(root, 'removed-security'), path.join(root, 'skills/marc-security'));
-  fs.unlinkSync(path.join(root, 'skills/marc-react/crew.json'));
+  fs.renameSync(path.join(root, 'skills/marc-crew-security'), path.join(root, 'removed-security'));
+  assert.throws(() => validateCatalogue(root), /Required skill missing: marc-crew-security/);
+  fs.renameSync(path.join(root, 'removed-security'), path.join(root, 'skills/marc-crew-security'));
+  fs.unlinkSync(path.join(root, 'skills/marc-crew-react/crew.json'));
   assert.throws(() => validateCatalogue(root), /crew.json/);
 });
 
 test('rejects broken local references and inconsistent skill metadata', t => {
-  const root = fixture(t), file = path.join(root, 'skills/marc-react/SKILL.md');
+  const root = fixture(t), file = path.join(root, 'skills/marc-crew-react/SKILL.md');
   const original = fs.readFileSync(file, 'utf8');
   fs.writeFileSync(file, original + '\n[Missing guide](references/missing.md)\n');
   assert.throws(() => validateCatalogue(root), /missing.md/);
-  fs.writeFileSync(file, original.replace('name: marc-react', 'name: another-skill'));
+  fs.writeFileSync(file, original.replace('name: marc-crew-react', 'name: another-skill'));
   assert.throws(() => validateCatalogue(root), /metadata/);
 });
 
 test('rejects invalid permissions even for a member not selected by existing consumer examples', t => {
-  const root = fixture(t), file = path.join(root, 'skills/marc-react/crew.json');
+  const root = fixture(t), file = path.join(root, 'skills/marc-crew-react/crew.json');
   const member = JSON.parse(fs.readFileSync(file, 'utf8'));
   member.permissions.push('source:write');
   fs.writeFileSync(file, JSON.stringify(member));
@@ -49,6 +49,11 @@ test('rejects invalid permissions even for a member not selected by existing con
 
 test('rejects repository-escaping references', t => {
   const root = fixture(t);
-  fs.appendFileSync(path.join(root, 'skills/marc/SKILL.md'), '\n[External](../../../outside.md)\n');
+  fs.appendFileSync(path.join(root, 'skills/marc-crew-captain/SKILL.md'), '\n[External](../../../outside.md)\n');
   assert.throws(() => validateCatalogue(root), /escapes/);
+});
+
+test('all published skill names use the marc-crew namespace', () => {
+  for (const name of validateCatalogue(repository).skills)
+    assert.match(name, /^marc-crew-[a-z0-9]+(?:-[a-z0-9]+)*$/);
 });

@@ -2,8 +2,8 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const { validateMember } = require('./crew.cjs');
-const mandatory = ['marc', 'marc-simplicity', 'marc-simple-tests', 'marc-security',
-  'marc-correctness', 'marc-code-quality', 'marc-test-integrity', 'marc-repair'];
+const mandatory = ['marc-crew-captain', 'marc-crew-simplicity', 'marc-crew-simple-tests', 'marc-crew-security',
+  'marc-crew-correctness', 'marc-crew-code-quality', 'marc-crew-test-integrity', 'marc-crew-repair'];
 // Explicit authoring utilities are discoverable skills, never review members.
 const authoring = ['marc-crew-creator'];
 
@@ -36,7 +36,7 @@ function validateCatalogue(directory) {
   for (const name of mandatory) if (!skills.includes(name)) throw Error('Required skill missing: ' + name);
   for (const name of skills) {
     const folder = path.join(skillsRoot, name);
-    if (!/^marc(?:-[a-z0-9-]+)?$/.test(name) || fs.lstatSync(folder).isSymbolicLink() || !fs.statSync(folder).isDirectory())
+    if (!/^marc-crew-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || fs.lstatSync(folder).isSymbolicLink() || !fs.statSync(folder).isDirectory())
       throw Error('Invalid skill directory: ' + name);
     const skill = regular(path.join(folder, 'SKILL.md'));
     const metadata = skill.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
@@ -47,7 +47,7 @@ function validateCatalogue(directory) {
     if (authoring.includes(name) && fs.existsSync(manifestFile)) throw Error('Authoring skill cannot declare a review manifest: ' + name);
     if ((!mandatory.includes(name) && !authoring.includes(name)) || fs.existsSync(manifestFile)) {
       const member = JSON.parse(regular(manifestFile));
-      validateMember(member, { id: name.slice('marc-'.length), version: member.version });
+      validateMember(member, { id: name.slice('marc-crew-'.length), version: member.version });
       members.push(member.id);
     }
     inspectTree(folder);

@@ -1,0 +1,15 @@
+# marc-crew-captain improvements
+
+## 2026-09-13 — Consistent crew skill naming
+
+Standardized published names, paths and references on `marc-crew-<name>`. Preserved reviewer IDs, manifest versions and operational instructions.
+
+## 2026-09-13 — Versioned specialist handoffs
+
+Added immutable specialist selection, explicit selected/omitted reasons, fresh session checks and independent specialist handoffs alongside mandatory policy gates. Source/caller uncertainty and missing expertise remain visible. Local synthetic regression coverage; live review quality is not inferred.
+
+## 2026-09-13 — standalone layout
+
+Moved this member into its own published skill folder, preserving its instructions and sibling references. Consumer configuration remains explicit; controller commands now resolve under `src/quality`. This starts standalone member history without importing consumer reports or inventing historical entries. See [layout decisions](../../docs/repository-layout.md).
+
+Update this file and the [umbrella register](../../IMPROVEMENTS.md) together for an authorized member change.

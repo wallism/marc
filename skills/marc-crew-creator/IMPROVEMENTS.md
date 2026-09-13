@@ -1,5 +1,9 @@
 # Crew creator improvements
 
+## 2026-09-13 — Consistent crew skill naming
+
+Standardized published names, paths and references on `marc-crew-<name>`. Preserved reviewer IDs, manifest versions and operational instructions.
+
 ## 2026-09-13 — Discovery exclusions and resumable activation
 
 Setup inventories technologies independently of router support, excludes document/media/generated formats from language research, and returns a grouped member-creation recommendation. Accepted authoring can proceed before full consumer setup confirmation. Pending contributions produce a private consumer-local handoff, preserving the trusted pin and missing-expertise holds until verified upstream acceptance, required checks and confirmed activation. Exclusions do not suppress security or change routing. This is instruction/documentation work; no model evaluation or automated discovery implementation is claimed.

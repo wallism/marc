@@ -28,7 +28,7 @@ function install(args = process.argv.slice(2)) {
       `const implementation = require('./bundle.cjs')('${name}');\nmodule.exports = implementation;\n` +
       (command ? `if (require.main === module) { try { ${command}; } catch (error) { console.error(error.message); process.exitCode = 1; } }\n` : ''));
   }
-  for (const name of fs.readdirSync(path.join(bundle, 'skills')).filter(n => n === 'marc' || n.startsWith('marc-'))) {
+  for (const name of fs.readdirSync(path.join(bundle, 'skills')).filter(n => n.startsWith('marc-crew-'))) {
     const original = fs.readFileSync(path.join(bundle, 'skills', name, 'SKILL.md'), 'utf8');
     const metadata = original.match(/^---\r?\n[\s\S]*?\r?\n---/)[0];
     writes.set(`.agents/skills/${name}/SKILL.md`, metadata + '\n\n# Pinned MARC skill\n\n' +

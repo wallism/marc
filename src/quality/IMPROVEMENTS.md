@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-13 — Consistent crew skill naming
+
+Updated catalogue validation, specialist resolution, trusted skill coverage and installation to `marc-crew-<name>`. Added a naming regression; stable member IDs and authority remain unchanged.
+
 ## 2026-09-13 — Windows short-path installation
 
 Both initial hosted Windows runs failed because the runner's temporary directory used an 8.3 alias: Node's non-native realpath retained the alias while Git returned the long spelling. Use native realpath for repository-root and mounted-bundle identity comparisons in the installer and generated bootstrap. A real Windows short-path regression reproduced the original failure before the fix and now exercises installation, pin/content-drift rejection and upgrade/rollback through the alias. A nested consumer directory is still rejected. This changes path normalization, not pinning or merge authority.

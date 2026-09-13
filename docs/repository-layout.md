@@ -13,8 +13,8 @@ package.json              Local and CI check commands, no runtime dependencies
 src/quality/              Existing controller, adapters, tests and fixtures
   browser-host/           Optional ASP.NET UI hook and its smoke check
 skills/
-  marc/                   Captain SKILL.md, references and IMPROVEMENTS.md
-  marc-*/                 One folder and improvement register per crew member
+  marc-crew-captain/       Captain SKILL.md, references and IMPROVEMENTS.md
+  marc-crew-*/                 One folder and improvement register per crew member
 docs/                     Configuration, setup prompt and architecture guidance
 examples/                 Synthetic consumers with no inherited exceptions
 templates/                Empty consumer defaults
@@ -33,7 +33,7 @@ These repositories informed placement, not MARC's review authority or workflow. 
 
 ## Migration boundaries
 
-Relocate existing `scripts/quality` modules together to `src/quality`; do not refactor their internal responsibilities during the move. Move the eight MARC skill folders together to `skills`, preserving their names and sibling references. Move the generic configuration guide and setup prompt to docs, Python consumer to examples, and empty ignore default to templates.
+Relocate existing `scripts/quality` modules together to `src/quality`; do not refactor their internal responsibilities during the move. Move the eight MARC skill folders together to `skills`, preserving their roles and sibling references. Move the generic configuration guide and setup prompt to docs, Python consumer to examples, and empty ignore default to templates.
 
 Update bundle-root resolution, trusted digest coverage, CLI instructions, test fixture paths and documentation links as one change. Tests must prove the relocated source still binds every required skill and consumer governance file, and reject a modified or unpinned external bundle.
 

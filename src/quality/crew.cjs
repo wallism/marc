@@ -45,7 +45,7 @@ function validateMember(m, expected) {
 function loadCatalogue(root, config) {
   validateCrewConfig(config);
   return config.members.flatMap(expected => {
-    const folder = `skills/marc-${expected.id}`;
+    const folder = `skills/marc-crew-${expected.id}`;
     if (!fs.existsSync(path.join(root, folder, 'crew.json'))) return [];
     const manifest = fs.readFileSync(consumerFile(root, folder + '/crew.json'));
     const skill = fs.readFileSync(consumerFile(root, folder + '/SKILL.md'));

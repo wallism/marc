@@ -37,7 +37,7 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   assert.equal(resolved.toolCommit, pin);
   assert.equal(resolved.bundleRoot, path.join(consumer, '.marc/tool'));
   const info = JSON.parse(run('scripts/quality/bundle.cjs'));
-  assert.equal(info.commit, pin); assert.equal(fs.existsSync(path.join(info.skills, 'marc/SKILL.md')), true);
+  assert.equal(info.commit, pin); assert.equal(fs.existsSync(path.join(info.skills, 'marc-crew-captain/SKILL.md')), true);
   const file = path.join(consumer, '.marc/config.json'), contents = fs.readFileSync(file, 'utf8');
   fs.writeFileSync(file, JSON.stringify({ ...JSON.parse(contents), toolCommit: 'b'.repeat(40) }));
   assert.throws(() => run('scripts/quality/bundle.cjs'), /match toolCommit/);
