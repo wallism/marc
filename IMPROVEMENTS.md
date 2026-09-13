@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-13 | Controller | Enforced the reference collection limit and excluded unrelated data matches. | [Regression and reason](src/quality/IMPROVEMENTS.md#2026-09-13--bound-indirect-reference-collection) |
 | 2026-09-13 | Captain and controller | Added identity-bound specialist selection, fresh-session checks and upgrade/rollback proof. | [Captain](skills/marc/IMPROVEMENTS.md#2026-09-13--versioned-specialist-handoffs), [controller](src/quality/IMPROVEMENTS.md#2026-09-13--trusted-crew-selection-and-upgrade-verification) |
 | 2026-09-13 | C#, JavaScript, Blazor and front end | Added versioned review scopes, read-only contracts and applicability tests. | [C#](skills/marc-csharp/IMPROVEMENTS.md), [JavaScript](skills/marc-javascript/IMPROVEMENTS.md), [Blazor](skills/marc-blazor/IMPROVEMENTS.md), [front end](skills/marc-frontend/IMPROVEMENTS.md) |
 | 2026-09-13 | Captain, crew and controller | Established a standalone source/catalogue layout with consumer-owned configuration and pinned installation. | [Layout and migration boundaries](docs/repository-layout.md) |

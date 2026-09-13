@@ -86,10 +86,11 @@ function fileTechnologies(file) {
 }
 function collectImpact(base, head, files, config, catalogue, readGit) {
   const affected = new Set(files), reasons = [], holds = [], technologies = new Set();
-  let uncertain = false, shared = false;
+  let uncertain = false, shared = false, budgetReached = false;
   // Search both trees by source filenames and declared identifiers. This intentionally over-approximates callers.
   // No candidate script, compiler, external diff driver or textconv is executed.
   let frontier = files.filter(f => !documentation(f));
+  if (files.length >= 300) { frontier = []; uncertain = true; reasons.push('Affected-file budget reached.'); }
   const searched = new Set();
   try {
     const patch = frontier.length ? readGit('diff', '--no-ext-diff', '--no-textconv', '--unified=0', base, head, '--', ...frontier) : '';
@@ -109,10 +110,15 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
         for (const match of matches.split('\0').filter(Boolean)) {
           if (!match.startsWith(revision + ':')) throw Error('Malformed Git reference result');
           const file = match.slice(revision.length + 1);
-          if (!file.startsWith('.quality/') && !documentation(file) && !affected.has(file)) { affected.add(file); frontier.push(file); }
+          const source = fileTechnologies(file).length > 0 || config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file)));
+          if (!file.startsWith('.quality/') && source && !affected.has(file)) {
+            if (affected.size >= 300) { budgetReached = true; break; }
+            affected.add(file); frontier.push(file);
+          }
         }
+        if (budgetReached) break;
       }
-      if (affected.size > 300) { uncertain = true; reasons.push('Affected-file budget reached.'); break; }
+      if (budgetReached) { uncertain = true; reasons.push('Affected-file budget reached.'); break; }
       if (depth === 3 && frontier.length) { uncertain = true; reasons.push('Reference depth budget reached.'); }
     }
   } catch { uncertain = true; holds.push('Source/reference inspection unavailable; recapture with readable Git objects.'); }

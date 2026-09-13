@@ -131,3 +131,16 @@ test('a selected specialist cannot waive a simple route or the independent brows
   delete e.routing;
   assert.ok(evaluate(e, policy, identity.policyHash, e.crew).reasons.some(r => r.startsWith('browser:')));
 });
+
+test('reference search bounds collected paths and does not treat unrelated data as source callers', () => {
+  const configWithoutAreas = { ...config, areas: [] };
+  const read = (...args) => args[0] === 'diff' ? '+class Clock {}' :
+    `${identity.base}:data/customer.json\0${identity.base}:docs/notes.md\0` +
+    Array.from({ length: 500 }, (_, i) => `${identity.base}:src/Caller${i}.cs\0`).join('');
+  const result = collectImpact(identity.base, identity.sourceHead, ['src/Clock.cs'], configWithoutAreas, catalogue(), read);
+  assert.equal(result.files.length, 300);
+  assert.equal(result.uncertain, true);
+  assert.ok(result.reasons.includes('Affected-file budget reached.'));
+  assert.ok(!result.files.includes('data/customer.json'));
+  assert.equal(selectCrew(identity, configWithoutAreas, catalogue(), result).selected.length, 4);
+});
