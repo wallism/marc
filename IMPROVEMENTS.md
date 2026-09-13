@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-13 | Installation | Fixed Windows 8.3 path aliases being rejected as different repositories; added an installation regression through a real short path. | [Root cause and regression](src/quality/IMPROVEMENTS.md#2026-09-13--windows-short-path-installation) |
 | 2026-09-13 | Setup and crew authoring | Propose creating missing technology expertise and contributing it back to MARC through a PR, with separate consumer activation. | [Crew creator handoff](skills/marc-crew-creator/IMPROVEMENTS.md#2026-09-13--setup-expertise-gap-handoff), [setup prompt](docs/setup-prompt.md) |
 | 2026-09-13 | Crew authoring | Added research-led member creation with flexible technical criteria and preserved operational safeguards. | [Crew creator](skills/marc-crew-creator/IMPROVEMENTS.md) |
 | 2026-09-13 | Contribution checks | Added branch-push Node checks, PR catalogue/scenario validation and manual prompt-eval reminders. | [Checks and limits](docs/contribution-checks.md), [component register](src/quality/IMPROVEMENTS.md#2026-09-13--contribution-ci-and-manual-eval-reminders) |

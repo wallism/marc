@@ -29,6 +29,8 @@ node scripts/quality/marc.cjs --repo . config
 
 The bootstrap verifies the Git submodule pin, configured `toolCommit`, actual commit and clean bundle before importing executable code. The controller separately verifies the consumer checkout before operational actions. Skills retain their current names under `.agents/skills`, but forward to the verified `skills/` catalogue in the bundle. No review logic is maintained twice. Listing or installing a skill from the catalogue alone does not install the controller.
 
+Installer and bootstrap repository checks resolve Windows 8.3 short paths to their native long spelling before comparing with Git. A short-path temporary directory is supported; a subdirectory passed as the consumer root is still rejected. Existing consumers receive the bootstrap correction when deliberately regenerating forwarding files with the upgraded pinned bundle and `--apply --replace-existing`.
+
 ## Hosted CI
 
 Initialize the exact consumer gitlink during checkout with `submodules: true`; do not follow the MARC branch tip. Existing `scripts/quality/scans.cjs` calls forward to the pinned scanner and read the consumer configuration, including its own ignore file. Run shared tests from `.marc/tool/src/quality` and consumer tests from their own location. Preserve the consumer's required jobs, artifact names, checkout history and pinned scanner/version checks.

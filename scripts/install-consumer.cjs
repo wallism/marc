@@ -6,13 +6,14 @@ const bundle = path.resolve(__dirname, '..');
 function install(args = process.argv.slice(2)) {
   if (args[0] !== '--repo' || !args[1] || args.slice(2).some(x => !['--apply', '--replace-existing'].includes(x)))
     throw Error('Usage: node scripts/install-consumer.cjs --repo <consumer> [--apply] [--replace-existing]');
-  const root = fs.realpathSync(args[1]);
+  // Native realpath expands Windows 8.3 aliases before comparing with Git's long path.
+  const root = fs.realpathSync.native(args[1]);
   const git = (cwd, ...argv) => execFileSync('git', argv, { cwd, encoding: 'utf8', windowsHide: true, stdio: 'pipe' }).trim();
-  if (fs.realpathSync(git(root, 'rev-parse', '--show-toplevel')) !== root) throw Error('Consumer repository root required');
+  if (fs.realpathSync.native(git(root, 'rev-parse', '--show-toplevel')) !== root) throw Error('Consumer repository root required');
   if (git(bundle, 'status', '--porcelain')) throw Error('Commit the MARC installation before pinning it');
   const commit = git(bundle, 'rev-parse', 'HEAD');
   const mounted = path.join(root, '.marc/tool');
-  if (!fs.existsSync(mounted) || fs.realpathSync(git(mounted, 'rev-parse', '--show-toplevel')) !== fs.realpathSync(mounted) ||
+  if (!fs.existsSync(mounted) || fs.realpathSync.native(git(mounted, 'rev-parse', '--show-toplevel')) !== fs.realpathSync.native(mounted) ||
     git(mounted, 'rev-parse', 'HEAD') !== commit || git(mounted, 'status', '--porcelain'))
     throw Error('Consumer needs a clean .marc/tool submodule at this MARC commit');
   const pin = git(root, 'ls-files', '--stage', '--', '.marc/tool');

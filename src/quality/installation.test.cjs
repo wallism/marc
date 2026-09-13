@@ -5,11 +5,15 @@ const path = require('node:path');
 const os = require('node:os');
 const { execFileSync, spawnSync } = require('node:child_process');
 
-test('installed consumer resolves the pinned bundle and rejects drift before importing it', t => {
+for (const shortPath of [false, true]) test(`installed consumer resolves the pinned bundle and rejects drift before importing it${shortPath ? ' through a Windows short path' : ''}`, { skip: shortPath && process.platform !== 'win32' }, t => {
   const parent = process.env.MARC_TEST_ARTIFACTS || os.tmpdir();
   fs.mkdirSync(parent, { recursive: true });
-  const root = fs.mkdtempSync(path.join(parent, 'marc-install-'));
-  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  const cleanupRoot = fs.mkdtempSync(path.join(parent, 'marc installation test-'));
+  t.after(() => fs.rmSync(cleanupRoot, { recursive: true, force: true }));
+  const root = shortPath ? execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command',
+    '$fso = New-Object -ComObject Scripting.FileSystemObject; $fso.GetFolder($env:MARC_SHORT_PATH).ShortPath'],
+    { env: { ...process.env, MARC_SHORT_PATH: cleanupRoot }, encoding: 'utf8', windowsHide: true }).trim() : cleanupRoot;
+  if (shortPath) assert.notEqual(root, fs.realpathSync.native(root), 'Regression requires an actual Windows short-path alias');
   const bundle = path.join(root, 'bundle'), consumer = path.join(root, 'consumer');
   const source = path.resolve(__dirname, '../..');
   for (const directory of ['src/quality', 'skills', 'scripts', 'templates'])
@@ -24,6 +28,7 @@ test('installed consumer resolves the pinned bundle and rejects drift before imp
   fs.cpSync(path.join(source, 'examples/python/.marc'), path.join(consumer, '.marc'), { recursive: true });
   const run = (...args) => execFileSync(process.execPath, args, { cwd: consumer, encoding: 'utf8', windowsHide: true, stdio: 'pipe' }).trim();
   const installer = path.join(bundle, 'scripts/install-consumer.cjs');
+  assert.throws(() => run(installer, '--repo', path.join(consumer, '.marc')), /Consumer repository root required/);
   const plan = JSON.parse(run(installer, '--repo', consumer));
   assert.equal(plan.applied, false); assert.equal(fs.existsSync(path.join(consumer, 'scripts/quality/bundle.cjs')), false);
   assert.equal(JSON.parse(run(installer, '--repo', consumer, '--apply')).applied, true);

@@ -8,7 +8,7 @@ function resolveBundle() {
   if (!/^[a-f0-9]{40}$/.test(settings.toolCommit || '')) throw Error('MARC toolCommit is missing or invalid');
   const bundle = path.join(root, '.marc/tool');
   const git = (...args) => execFileSync('git', args, { cwd: bundle, encoding: 'utf8', windowsHide: true, stdio: 'pipe' }).trim();
-  if (!fs.existsSync(bundle) || fs.realpathSync(bundle) !== fs.realpathSync(git('rev-parse', '--show-toplevel')))
+  if (!fs.existsSync(bundle) || fs.realpathSync.native(bundle) !== fs.realpathSync.native(git('rev-parse', '--show-toplevel')))
     throw Error('Initialize the pinned MARC submodule: git submodule update --init -- .marc/tool');
   if (git('rev-parse', 'HEAD') !== settings.toolCommit || git('status', '--porcelain'))
     throw Error('MARC submodule must be clean and match toolCommit');

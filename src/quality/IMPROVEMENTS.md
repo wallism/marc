@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-13 — Windows short-path installation
+
+Both initial hosted Windows runs failed because the runner's temporary directory used an 8.3 alias: Node's non-native realpath retained the alias while Git returned the long spelling. Use native realpath for repository-root and mounted-bundle identity comparisons in the installer and generated bootstrap. A real Windows short-path regression reproduced the original failure before the fix and now exercises installation, pin/content-drift rejection and upgrade/rollback through the alias. A nested consumer directory is still rejected. This changes path normalization, not pinning or merge authority.
+
 ## 2026-09-13 — Authoring utility classification
 
 The crew-creation skill is discoverable authoring guidance, not review expertise. The contribution catalogue validator now explicitly recognizes `marc-crew-creator` without a specialist manifest and rejects attempts to attach one. All other non-core skills still require valid member manifests. A red/green test verifies discovery and the missing-member hold if a consumer attempts to select the utility. This extends the contribution-check work in the current checkout; runtime review permissions are unchanged.
