@@ -1,0 +1,57 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "javascript",
+  "version": "1.0.0",
+  "specialty": "JavaScript",
+  "scope": "JavaScript and TypeScript modules, asynchronous behavior, dependency and browser/server boundaries.",
+  "covers": [
+    "javascript"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "javascript"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base and policy identity",
+    "Captured crew selection and affected references",
+    "Trusted consumer guidance",
+    "Exact-source hosted CI and sanitized evidence"
+  ],
+  "checks": [
+    "Trace imports, exports, consumers and runtime environment assumptions.",
+    "Inspect promises, event cleanup, error propagation and shared mutable state.",
+    "Check DOM/data injection and client/server trust boundaries; verify TypeScript types match runtime behavior."
+  ],
+  "evidenceRules": [
+    "Cite observed owning code and affected callers.",
+    "Report missing evidence as blocked, not a pass.",
+    "Do not infer runtime behavior from source-only review."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    }
+  ]
+}
+

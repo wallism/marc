@@ -1,0 +1,75 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "frontend",
+  "version": "1.0.0",
+  "specialty": "Front end",
+  "scope": "HTML/CSS behavior and interactions across component, JavaScript and browser boundaries.",
+  "covers": [
+    "web"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "web"
+    ],
+    "allTechnologies": [
+      "blazor",
+      "javascript"
+    ],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base and policy identity",
+    "Captured crew selection and affected references",
+    "Trusted consumer guidance",
+    "Exact-source hosted CI and sanitized evidence"
+  ],
+  "checks": [
+    "Trace state and data across component, JavaScript, DOM and CSS boundaries.",
+    "Check interaction ordering, cleanup, focus/keyboard behavior and error/empty states affected by the change.",
+    "Check combined framework behavior and request independent browser evidence; source review alone cannot establish runtime correctness."
+  ],
+  "evidenceRules": [
+    "Cite observed owning code and affected callers.",
+    "Report missing evidence as blocked, not a pass.",
+    "Do not infer runtime behavior from source-only review."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "web"
+      ],
+      "files": [],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "blazor",
+        "javascript"
+      ],
+      "files": [],
+      "selected": true
+    },
+    {
+      "technologies": [
+        "blazor"
+      ],
+      "files": [],
+      "selected": false
+    }
+  ]
+}
+

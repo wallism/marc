@@ -4,6 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const { collectProjectChanges, verifyProjectChanges, dependencyReviewPasses, dependencyFile } = require('./project-review.cjs');
+const { loadCatalogue, selectCrew, collectImpact } = require('./crew.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -78,7 +79,7 @@ function writeReportFiles(e, decision, worktree) {
   });
   return files;
 }
-function evaluate(e, p, policyHash) {
+function evaluate(e, p, policyHash, expectedCrew) {
   const reasons = [];
   const requireThat = (ok, reason) => { if (!ok) reasons.push(reason); };
   requireThat(e.schema === 1 && sha(e.sourceHead) && sha(e.base), 'Invalid evidence identity');
@@ -136,6 +137,34 @@ function evaluate(e, p, policyHash) {
   const gates = simple ? ['simple-tests'] : [...p.reviewGates];
   if (files.some(f => p.uiPathPatterns.some(r => new RegExp(r, 'i').test(f))) ||
       Object.values(e.gates || {}).some(g => g.requiresBrowser === true)) gates.push('browser');
+  if (p.crew) {
+    requireThat(Boolean(expectedCrew) && encode(e.crew) === encode(expectedCrew), 'Crew selection missing, edited or stale');
+    const crew = expectedCrew || { holds: ['Trusted crew selection missing'], selected: [], requiresFull: true };
+    crew.holds.forEach(reason => reasons.push(reason));
+    requireThat(!simple || !crew.requiresFull, 'Captured specialist impact requires full review');
+    requireThat(typeof e.coordinator === 'string' && e.coordinator.trim(), 'Actual Captain session identity required');
+    requireThat(Array.isArray(e.repairReviewers) && e.repairReviewers.every(x => typeof x === 'string' && x.trim()) &&
+      new Set(e.repairReviewers).size === e.repairReviewers.length && (e.repairCycles === 0 || e.repairReviewers.length >= e.repairCycles),
+      'Repair session history required');
+    for (const member of crew.selected) {
+      const name = 'crew:' + member.id, g = e.gates?.[name];
+      gates.push(name);
+      requireThat(g?.memberVersion === member.version && g.memberHash === member.contentHash &&
+        g.selectionHash === crew.selectionHash, name + ': stale member or selection identity');
+    }
+    if (crew.requiresBrowser) gates.push('browser');
+    const sessions = new Set([e.coordinator, e.routing?.reviewer, ...(e.repairReviewers || [])].filter(Boolean));
+    for (const name of new Set(gates)) {
+      const g = e.gates?.[name];
+      requireThat(!sessions.has(g?.reviewer), name + ': independent fresh reviewer required');
+      if (g?.reviewer) sessions.add(g.reviewer);
+    }
+    for (const [name, g] of Object.entries(e.gates || {})) {
+      requireThat(g.verdict === 'pass' && Array.isArray(g.findings) && g.findings.every(f => f.severity === 'advisory'),
+        name + ': unresolved result cannot be discarded or outvoted');
+      if (name.startsWith('crew:')) requireThat(crew.selected.some(m => name === 'crew:' + m.id), 'Unexpected specialist result; recapture selection');
+    }
+  }
   for (const name of gates) {
     const g = e.gates?.[name];
     requireThat(g?.verdict === 'pass' && g.sourceHead === e.sourceHead && g.base === e.base &&
@@ -160,6 +189,10 @@ function reportMarkdown(e, decision) {
       `Change kind: ${clean(e.routing.changeKind)}\n\n` +
       (e.routing.sizeRationale ? `Size rationale: ${clean(e.routing.sizeRationale)}\n\n` : '') : '') +
     `CI: ${clean(e.ci?.verdict || 'blocked')} ${clean(e.ci?.runUrl || '')}\n\n` +
+    (e.crew ? `MARC commit: \`${clean(e.crew.toolCommit)}\`\n\nCrew selection: \`${clean(e.crew.selectionHash)}\`\n\n` +
+      '| Specialist | Version | Selection | Reason |\n| --- | --- | --- | --- |\n' +
+      [...e.crew.selected.map(m => ({ ...m, status: 'Selected' })), ...e.crew.omitted.map(m => ({ ...m, status: 'Omitted' }))]
+        .map(m => `| ${clean(m.id)} | ${clean(m.version)} | ${m.status} | ${clean(m.reasons.join(' '))} |`).join('\n') + '\n\n' : '') +
     (e.projectChanges?.length ? '| Project file | Classification | Reason |\n| --- | --- | --- |\n' +
       e.projectChanges.map(x => `| ${clean(x.file)} | ${clean(x.classification)} | ${clean(x.reason)} |`).join('\n') + '\n\n' : '') +
     (e.routing?.route === 'simple' ? 'Security, correctness, code-quality and test-integrity specialist reviews: Not required by simple route if routing is valid; a held decision never authorizes merging. Build, tests and security scans remain mandatory.\n\n' : '') +
@@ -254,8 +287,7 @@ function validCiUrl(repository, url) {
 }
 function trustedPolicy(context = loadConfig(discoverRoot())) {
   const readGit = (root, ...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trimEnd();
-  const bundleFiles = readGit(context.bundleRoot, 'ls-files', '-z', 'src/quality', 'scripts', 'templates', 'AGENTS.md', 'skills/marc',
-    ...['security','correctness','code-quality','test-integrity','repair','simplicity','simple-tests'].map(x => 'skills/marc-' + x))
+  const bundleFiles = readGit(context.bundleRoot, 'ls-files', '-z', 'src/quality', 'scripts', 'templates', 'AGENTS.md', 'skills')
     .split('\0').filter(Boolean).filter(x => x !== 'src/quality/policy.json').sort();
   for (const suffix of ['', '-security', '-correctness', '-code-quality', '-test-integrity', '-repair', '-simplicity', '-simple-tests']) {
     if (!bundleFiles.includes(`skills/marc${suffix}/SKILL.md`)) throw Error('Required trusted skill missing');
@@ -267,7 +299,11 @@ function trustedPolicy(context = loadConfig(discoverRoot())) {
     if (!files.length) throw Error('Trusted policy inputs missing');
     for (const file of files) chunks.push(Buffer.from(kind + ':' + file + '\0'), fs.readFileSync(path.join(root, file)));
   }
-  return { policy: context.policy, policyHash: digest(Buffer.concat(chunks)) };
+  if (context.crew) for (const member of loadCatalogue(context.bundleRoot, context.crew)) {
+    for (const name of ['crew.json', 'SKILL.md', 'IMPROVEMENTS.md'])
+      if (!bundleFiles.includes(`skills/marc-${member.id}/${name}`)) throw Error('Crew inputs must be tracked');
+  }
+  return { policy: context.crew ? { ...context.policy, crew: context.crew } : context.policy, policyHash: digest(Buffer.concat(chunks)) };
 }
 function createController(context, adapters = {}) {
   const ROOT = context.repoRoot, REPO = context.policy.repository;
@@ -277,6 +313,16 @@ function createController(context, adapters = {}) {
   }
   const git = adapters.git || ((...args) => command('git', args));
   const api = adapters.api || (endpoint => JSON.parse(command('gh', ['api', endpoint])));
+  function recruit(e) {
+    if (!context.crew) return undefined;
+    if (!sha(e.base) || !sha(e.sourceHead)) throw Error('Invalid frozen crew source/base identity');
+    const catalogue = loadCatalogue(context.bundleRoot, context.crew);
+    const files = changedFiles(e.base, e.sourceHead, e.pr, git);
+    const impact = collectImpact(e.base, e.sourceHead, files, context.crew, catalogue, git);
+    return selectCrew({ sourceHead: e.sourceHead, base: e.base, policyHash: e.policyHash,
+      toolCommit: context.toolCommit || command('git', ['rev-parse', 'HEAD'], context.bundleRoot) },
+      context.crew, catalogue, impact);
+  }
   function capture(pr, p, hash) {
     reportPaths(pr, 'a'.repeat(40));
     const live = api(`repos/${REPO}/pulls/${pr}`);
@@ -288,13 +334,15 @@ function createController(context, adapters = {}) {
     try { git('merge-base', '--is-ancestor', base, head); baseIncluded = true; } catch {}
     const files = changedFiles(base, head, pr, git);
     const lineCount = changedLines(base, head, files, p.maxChangedLines, git);
-    return { schema: 1, repository: REPO, pr, sourceHead: head, base, policyHash: hash,
+    const evidence = { schema: 1, repository: REPO, pr, sourceHead: head, base, policyHash: hash,
       state: live.state, draft: live.draft, author: live.user.login, headRepository: live.head.repo?.full_name,
       branch: live.head.ref, target: live.base.ref, baseIncluded, files, changedLines: lineCount, repairCycles: 0,
       projectChanges: collectProjectChanges(base, head, files, git),
       gates: Object.fromEntries(p.reviewGates.map(name => [name, { verdict: 'blocked', sourceHead: head,
         base, policyHash: hash, reviewer: '', summary: 'Awaiting independent review', evidence: [], findings: [] }])),
       ci: collect(head, pr, p) };
+    if (context.crew) Object.assign(evidence, { crew: recruit(evidence), coordinator: '', repairReviewers: [] });
+    return evidence;
   }
   function assertLive(e) {
     const live = api(`repos/${REPO}/pulls/${e.pr}`);
@@ -340,7 +388,7 @@ function createController(context, adapters = {}) {
       });
       console.log(encode(result)); return;
     }
-    const decision = evaluate(e, p, hash);
+    const decision = evaluate(e, p, hash, recruit(e));
     if (action === 'decide') { console.log(encode(decision)); return; }
     const live = assertLive(e);
     if (action === 'report') {
@@ -398,6 +446,9 @@ function createController(context, adapters = {}) {
     if (context.bundleRoot !== ROOT) {
       if (!context.toolCommit || command('git', ['rev-parse', 'HEAD'], context.bundleRoot) !== context.toolCommit ||
           command('git', ['status', '--porcelain'], context.bundleRoot)) throw Error('External MARC installation must be clean and pinned');
+      if (path.resolve(context.bundleRoot) === path.join(ROOT, '.marc/tool') &&
+          git('ls-files', '--stage', '--', '.marc/tool') !== `160000 ${context.toolCommit} 0\t.marc/tool`)
+        throw Error('Consumer gitlink differs from trusted MARC pin');
     }
     git('fetch', 'origin', branch);
     if (git('rev-parse', 'HEAD') !== git('rev-parse', 'origin/' + branch)) throw Error('Controller target branch is not current');

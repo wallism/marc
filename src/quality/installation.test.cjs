@@ -46,4 +46,37 @@ test('installed consumer resolves the pinned bundle and rejects drift before imp
   fs.writeFileSync(runtime, installedBytes);
   git(consumer, 'update-index', '--cacheinfo', `160000,${'c'.repeat(40)},.marc/tool`);
   assert.throws(() => run('scripts/quality/bundle.cjs'), /Git pin differs/);
+  git(consumer, 'update-index', '--cacheinfo', `160000,${pin},.marc/tool`);
+
+  // Exercise the documented complete integration rollback, preserving actual external state bytes.
+  const state = path.join(root, 'state'); fs.mkdirSync(path.join(state, 'ci-recovery'), { recursive: true });
+  const preserved = new Map([
+    [path.join(state, 'run.lock'), 'foreign-owner'],
+    [path.join(state, 'ledger.json'), '{"repairCycles":2}'],
+    [path.join(state, 'ci-recovery/7.request.json'), '{"reserved":true}'],
+    [path.join(consumer, '.quality/reports/pr-7/history.json'), '{"immutable":true}']
+  ]);
+  for (const [target, bytes] of preserved) { fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, bytes); }
+  const settings = JSON.parse(contents); settings.state = { root: state }; fs.writeFileSync(file, JSON.stringify(settings));
+  git(consumer, 'add', '.');
+  const commit = cwd => git(cwd, '-c', 'core.hooksPath=', '-c', 'user.name=Synthetic test', '-c', 'user.email=test@example.invalid', 'commit', '-m', 'fixture');
+  commit(consumer); const originalConsumer = git(consumer, 'rev-parse', 'HEAD');
+  const digest = () => JSON.parse(run('-e', "const c=require('./scripts/quality/config.cjs').loadConfig(process.cwd());console.log(JSON.stringify(require('./scripts/quality/marc.cjs').trustedPolicy(c).policyHash))"));
+  const before = digest();
+  fs.appendFileSync(path.join(bundle, 'src/quality/marc.cjs'), '\n// Synthetic version upgrade.\n');
+  git(bundle, 'add', '.'); commit(bundle); const upgrade = git(bundle, 'rev-parse', 'HEAD');
+  git(path.join(consumer, '.marc/tool'), 'fetch', 'origin');
+  git(path.join(consumer, '.marc/tool'), 'checkout', upgrade); git(consumer, 'add', '.marc/tool');
+  run(installer, '--repo', consumer, '--apply', '--replace-existing'); git(consumer, 'add', '.'); commit(consumer);
+  assert.notEqual(digest(), before);
+  assert.equal(JSON.parse(run('scripts/quality/bundle.cjs')).commit, upgrade);
+  git(consumer, 'restore', '--source', originalConsumer, '--staged', '--worktree', '--', '.marc/config.json', '.marc/tool', 'scripts', '.agents');
+  git(consumer, '-c', 'protocol.file.allow=always', 'submodule', 'update', '--init', '--', '.marc/tool');
+  assert.equal(JSON.parse(run('scripts/quality/bundle.cjs')).commit, pin);
+  assert.equal(digest(), before);
+  for (const [target, bytes] of preserved) assert.equal(fs.readFileSync(target, 'utf8'), bytes);
+  // Even restored policy cannot approve an assessment with the intervening source/base identity.
+  const { evaluate } = require('./marc.cjs');
+  assert.equal(evaluate({ schema: 1, sourceHead: 'a'.repeat(40), base: 'b'.repeat(40), policyHash: 'old' },
+    { ...require('./fixtures/policy.json'), repository: settings.repository }, before).merge, false);
 });

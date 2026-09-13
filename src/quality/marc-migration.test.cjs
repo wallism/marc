@@ -51,10 +51,10 @@ test('trusted policy digest covers each renamed crew skill and the compatibility
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const scripts = path.join(root, 'src/quality');
   fs.mkdirSync(scripts, { recursive: true });
-  for (const file of ['marc.cjs', 'coq.cjs', 'project-review.cjs', 'config.cjs'])
+  for (const file of ['marc.cjs', 'coq.cjs', 'project-review.cjs', 'config.cjs', 'crew.cjs'])
     fs.copyFileSync(path.join(__dirname, file), path.join(scripts, file));
   const skills = fs.readdirSync(path.resolve(__dirname, '../../skills')).filter(name => name === 'marc' || name.startsWith('marc-'));
-  assert.equal(skills.length, 8);
+  assert.ok(skills.includes('marc') && skills.includes('marc-security') && skills.includes('marc-csharp'));
   const files = skills.map(name => `skills/${name}/SKILL.md`);
   files.push('skills/marc/references/evidence.md', 'skills/marc/references/browser-runtime.md');
   for (const file of files) {

@@ -4,11 +4,11 @@ MARC's Captain coordinates independent PR review, hosted CI evidence, bounded re
 
 Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). Setup discovers the target repository's values, presents all proposed settings and waits for confirmation and overrides before writing them.
 
-The [Captain](skills/marc/SKILL.md) leads the existing simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. The current simple/full routes are preserved; selective technology specialists are future work. Deployment remains separate.
+The [Captain](skills/marc/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [C#, JavaScript, Blazor and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.
 
 ## Install and run
 
-Pin the complete Git bundle in the consumer's `.marc/tool` submodule, and use the same full commit as `toolCommit` in its `.marc/config.json`. Initialize the submodule in local checkouts and CI. Expose the eight skills through the consumer host's skill directories using thin forwarding files; keep the actual skill instructions with the pinned bundle. See [installation](docs/installation.md).
+Pin the complete Git bundle in the consumer's `.marc/tool` submodule, and use the same full commit as `toolCommit` in its `.marc/config.json`. Initialize the submodule in local checkouts and CI. Expose the catalogue through the consumer host's skill directories using thin forwarding files; keep the actual skill instructions with the pinned bundle. Discovery does not select a specialist: the trusted configuration pins allowed members and versions. See [installation](docs/installation.md).
 
 ```powershell
 node .marc/tool/src/quality/marc.cjs --repo . config

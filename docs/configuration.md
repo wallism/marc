@@ -2,7 +2,7 @@
 
 MARC coordinates independent PR review, hosted CI evidence, bounded repairs and guarded merges. The Captain and crew read a repository's explicit configuration. Repository identity, technology guidance, artifact paths, runtime settings and accepted scan exceptions belong to that repository.
 
-This guide describes the standalone MARC bundle: `src/quality/` and the eight `skills/marc*` directories. The existing simple/full review routes are preserved. See [installation](installation.md) for pinned consumer integration.
+This guide describes the standalone MARC bundle: `src/quality/` and the `skills/marc*` catalogue. The existing simple/full review routes are preserved, with configured [specialists](crew.md) added when applicable. See [installation](installation.md) for pinned consumer integration.
 
 ## Set up a repository
 
@@ -18,7 +18,7 @@ node <MARC-bundle>/src/quality/marc.cjs --repo <consumer-checkout> config
 
 Replace angle-bracket paths before running. The result is **resolution, not trust verification**. Operational commands require a clean consumer checkout on its configured target branch, current with its verified GitHub origin. An external bundle must also be clean and pinned to the full `toolCommit`. Existing in-repository installations use the same trusted checkout. Configuration and exception files must be tracked.
 
-Skills use the same resolver and pass the resulting settings and guidance to fresh reviewers. They do not require repository names embedded in `SKILL.md` or rely on automatic JSON interpolation. Make the eight skill directories discoverable in the agent host while retaining their sibling layout and using the same pinned source as the controller. Codex supports skills containing instructions, references and scripts, including repository skills under `.agents/skills`; check discovery after installation. [Codex skills documentation](https://learn.chatgpt.com/docs/build-skills).
+Skills use the same resolver and pass the resulting settings and guidance to fresh reviewers. They do not require repository names embedded in `SKILL.md` or rely on automatic JSON interpolation. Make the skill catalogue discoverable in the agent host while retaining its sibling layout and using the same pinned source as the controller. Codex supports skills containing instructions, references and scripts, including repository skills under `.agents/skills`; check discovery after installation. [Codex skills documentation](https://learn.chatgpt.com/docs/build-skills).
 
 ## Configuration contract (schema 1)
 
@@ -31,6 +31,7 @@ The consumer owns `.marc/config.json`. File references below use forward slashes
 | `ci.workflow` | GitHub Actions workflow filename, such as `checks.yml`. |
 | `ci.requiredArtifacts` | Nonempty exact artifact-name list used for CI recovery and reviewer instructions. Reviewers inspect contents; job success alone does not prove artifact adequacy. |
 | `technologies` | Discovered languages, frameworks and data stores; guides review, does not install specialists. |
+| `crew` | Optional schema-1 member/version list and source-backed impact areas; see the [crew contract](crew.md). Omission preserves legacy generic review and must be disclosed during setup. |
 | `guidance` | Named paths to project, browser, workflow or improvements instructions. Empty only when no additional guidance is needed. |
 | `scans.secretExceptions` | Optional reviewed fingerprint file. Omitted means no exceptions; a configured missing/invalid file blocks scanning. |
 | `scans.npmExceptions` | Optional consumer-owned JSON: `schema: 1`, matching `repository`, and `exceptions` array. Each entry specifies `manifest`, `package`, `severity: "high"`, exact `advisories`, `reviewBy` UTC date and `reason`. No exceptions are inherited by default. |
