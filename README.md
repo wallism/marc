@@ -6,6 +6,10 @@ Start with the [setup prompt](docs/setup-prompt.md), then read the [configuratio
 
 The [Captain](skills/marc/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [C#, JavaScript, Blazor and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.
 
+![MARC workflow: the Captain selects independent reviews and relevant specialists, checks CI, records evidence, and routes to guarded merge, bounded repair or a clear hold. Deployment is separate.](docs/assets/marc-workflow.png)
+
+MARC is for repositories that want independent PR assurance, auditable decisions and bounded repairs while retaining their own policy and CI. Specialists run when relevant; missing evidence holds the PR. [Read the workflow and diagram notes](docs/workflow-infographic.md).
+
 ## Install and run
 
 Pin the complete Git bundle in the consumer's `.marc/tool` submodule, and use the same full commit as `toolCommit` in its `.marc/config.json`. Initialize the submodule in local checkouts and CI. Expose the catalogue through the consumer host's skill directories using thin forwarding files; keep the actual skill instructions with the pinned bundle. Discovery does not select a specialist: the trusted configuration pins allowed members and versions. See [installation](docs/installation.md).
