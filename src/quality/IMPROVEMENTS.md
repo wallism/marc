@@ -1,5 +1,11 @@
 # Shared controller improvements
 
+## 2026-09-14 — Verified upstream updates and complete fixtures
+
+Two new controller imports broke the migration fixture's manual dependency list. It now copies the real source tree and checks policy-hash invalidation for every top-level production CommonJS module while preserving synthetic governance and missing-input rejection tests. Upstream Node checks had already rejected the second broken commit, but intake only resolved the master SHA. Intake now requires the latest exact-master push run and both platform jobs, including successful syntax/build and test steps, bound to the same SHA and run attempt. Missing, pending, failed, stale, incomplete or unavailable evidence leaves the PR pin untouched and stops intake; no fallback commit, dispatch or retry is introduced. Regression cases reproduced both gaps before the change. Consumer CI, review gates, active controller pin and cumulative budgets remain separate.
+
+Local validation: 131 Node tests passed, syntax checks and catalogue validation passed, and a read-only GitHub check rejected the known failed upstream commit before mutation. Windows temporary storage supplied the short-path alias required by the installation regression. No new hosted CI, upstream publication or consumer pin activation was performed for this change.
+
 ## 2026-09-14 — Optional crew model selections
 
 Added optional validated agent settings and resolved per-role selections, preserving absent consumer defaults. Current captures require host-record execution attestations; decisions reject stale settings and observed substitutions. New report rendering lists each recorded crew session's model and reasoning provenance while retaining historical report bytes. Focused Node tests cover precedence, invalid configuration, report labels and decision enforcement; no live models or hosted CI were run. See [Captain register](../../skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--optional-crew-model-selections).

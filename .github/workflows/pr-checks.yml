@@ -38,7 +38,8 @@ jobs:
   fork-node:
     # Origin receives no branch-push event for a contributor's fork.
     if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
-    name: Fork Node 24 (${{ matrix.os }})
+    # Only executing fork jobs use the required names; skipped jobs cannot satisfy them.
+    name: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository && 'Node 24' || 'Fork Node 24' }} (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:

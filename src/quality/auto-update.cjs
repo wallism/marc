@@ -5,11 +5,46 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const upstream = 'https://github.com/wallism/marc.git';
 const sha = value => /^[a-f0-9]{40}$/.test(value || '');
+function requireUpstreamCi(commit, command) {
+  const pages = endpoint => {
+    const result = JSON.parse(command('gh', ['api', '--paginate', '--slurp', endpoint]));
+    if (!Array.isArray(result) || !result.length) throw Error('MARC upstream CI response is unavailable');
+    return result;
+  };
+  const runs = pages(`repos/wallism/marc/actions/workflows/node-checks.yml/runs?branch=master&event=push&head_sha=${commit}&per_page=100`)
+    .flatMap(page => {
+      if (!Array.isArray(page.workflow_runs)) throw Error('MARC upstream CI run evidence is malformed');
+      return page.workflow_runs;
+    }).filter(run => run?.head_sha === commit && run.head_branch === 'master' && run.event === 'push' &&
+      run.path === '.github/workflows/node-checks.yml' && run.head_repository?.full_name === 'wallism/marc');
+  if (!runs.length || runs.some(run => !Number.isSafeInteger(run.id) || run.id <= 0))
+    throw Error(`MARC upstream CI is missing or malformed for ${commit}; pin unchanged`);
+  const run = runs.sort((a, b) => b.id - a.id)[0];
+  if (run.status !== 'completed' || run.conclusion !== 'success' || !Number.isSafeInteger(run.run_attempt) || run.run_attempt < 1)
+    throw Error(`MARC upstream CI run ${run.id} is ${run.status}/${run.conclusion}; pin unchanged`);
+  const jobs = pages(`repos/wallism/marc/actions/runs/${run.id}/attempts/${run.run_attempt}/jobs?per_page=100`)
+    .flatMap(page => {
+      if (!Array.isArray(page.jobs)) throw Error('MARC upstream CI job evidence is malformed');
+      return page.jobs;
+    });
+  for (const name of ['Node 24 (ubuntu-latest)', 'Node 24 (windows-latest)']) {
+    const matches = jobs.filter(job => job?.name === name);
+    if (matches.length !== 1 || matches[0].head_sha !== commit || matches[0].run_attempt !== run.run_attempt ||
+        matches[0].status !== 'completed' || matches[0].conclusion !== 'success')
+      throw Error(`MARC upstream CI requires one successful ${name} job for ${commit}, attempt ${run.run_attempt}; pin unchanged`);
+    for (const stepName of ['Run npm run build', 'Run npm test']) {
+      const steps = Array.isArray(matches[0].steps) ? matches[0].steps.filter(step => step?.name === stepName) : [];
+      if (steps.length !== 1 || steps[0].status !== 'completed' || steps[0].conclusion !== 'success')
+        throw Error(`MARC upstream CI requires successful ${stepName} in ${name}; pin unchanged`);
+    }
+  }
+}
 function checkLatest(context, command) {
   if (context.autoUpdate === false || !context.toolCommit) return null;
   const result = command('git', ['ls-remote', '--exit-code', upstream, 'refs/heads/master']).trim();
   const match = result.match(/^([a-f0-9]{40})\s+refs\/heads\/master$/);
   if (!match) throw Error('Cannot resolve the latest MARC master commit');
+  requireUpstreamCi(match[1], command);
   return match[1];
 }
 function updatePullRequest(context, live, latest, { registered, git: suppliedGit } = {}) {

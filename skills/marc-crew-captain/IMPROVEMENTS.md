@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-14 — Upstream CI before pin updates
+
+The owner requested prevention after two fixture dependency omissions reached consumer PRs. The Captain now stops intake before a pin update unless the exact proposed upstream master SHA has a successful latest Node push run and complete Linux/Windows build/test evidence. Missing or failed evidence does not authorize a fallback, duplicate dispatch or consumer validation waiver. Updated installation guidance and source regressions; the instruction and runtime changes require normal bundle publication and consumer activation. MARC master protection separately requires both GitHub Actions Node checks with strict up-to-date checks and administrator enforcement; fork job names now match those required checks. No model evaluation is involved in this deterministic gate change.
+
 ## 2026-09-14 — Material process changes only
 
 Restricted register updates to changes that materially alter process behavior, criteria, gates or capabilities, at the owner's request to keep the register useful. Routine documentation and visual edits no longer trigger entries. Aligned repository guidance and register footers; preserved historical records and ordinary assessment reports. Local metadata/catalogue and whitespace validation only; no model evaluation, hosted CI or consumer activation. The instruction change takes effect for consumers through their normal bundle upgrade.

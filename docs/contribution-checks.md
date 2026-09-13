@@ -15,7 +15,9 @@ There are no path filters on the push or PR workflows. Push runs are not cancell
 
 The workflows use standard GitHub-hosted runners, read-only repository permissions, immutable action commits and checkouts without persisted credentials. They do not use `pull_request_target`, model secrets, deployment credentials or merge permissions. They execute candidate tests in hosted CI, not on a credentialed maintainer computer. GitHub fork approval policy can require approval before a first-time contributor's jobs start.
 
-Workflow files produce check results; branch protection/rulesets must separately require the appropriate checks. This change does not configure those settings or grant MARC authority. Push results use the branch source SHA; PR results normally use GitHub's synthetic merge SHA. A future MARC CI integration must preserve that distinction and verify both against the current source/base. These workflows do not yet emit the scan artifacts required by the existing consumer CI adapter.
+Protect MARC master with both `Node 24 (ubuntu-latest)` and `Node 24 (windows-latest)` required from the GitHub Actions app, with strict up-to-date checks and administrator enforcement. Origin pushes and fork PR jobs use the same required names. Workflow files only produce results; repository protection is configured separately and should be verified after setup. These settings do not grant MARC consumer merge authority. Push results use the branch source SHA; PR results normally use GitHub's synthetic merge SHA. The automatic pin updater accepts only the successful exact-master push run and its current attempt's complete platform matrix. These workflows do not yet emit the scan artifacts required by the existing consumer CI adapter.
+
+The policy migration fixture copies the real controller source tree while retaining synthetic consumer governance. Its digest checks cover every top-level production CommonJS module, so adding a controller dependency no longer requires maintaining a separate fixture copy list. Keep the missing-governance and missing-skill rejection assertions.
 
 ## Catalogue validation
 

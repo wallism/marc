@@ -51,8 +51,10 @@ test('trusted policy digest covers each renamed crew skill and the compatibility
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
   const scripts = path.join(root, 'src/quality');
   fs.mkdirSync(scripts, { recursive: true });
-  for (const file of ['marc.cjs', 'coq.cjs', 'project-review.cjs', 'config.cjs', 'crew.cjs', 'host-instructions.cjs', 'agent-settings.cjs'])
-    fs.copyFileSync(path.join(__dirname, file), path.join(scripts, file));
+  // Exercise the real source tree: new controller imports must not need a second dependency list here.
+  fs.cpSync(__dirname, scripts, { recursive: true });
+  const modules = fs.readdirSync(__dirname).filter(file => file.endsWith('.cjs') && !file.endsWith('.test.cjs')).sort();
+  assert.deepEqual(fs.readdirSync(scripts).filter(file => file.endsWith('.cjs') && !file.endsWith('.test.cjs')).sort(), modules);
   const skills = fs.readdirSync(path.resolve(__dirname, '../../skills')).filter(name => name.startsWith('marc-crew-'));
   assert.ok(skills.includes('marc-crew-captain') && skills.includes('marc-crew-security') && skills.includes('marc-crew-csharp') && skills.includes('marc-crew-react'));
   const files = skills.map(name => `skills/${name}/SKILL.md`);
@@ -73,7 +75,7 @@ test('trusted policy digest covers each renamed crew skill and the compatibility
   run('git', ['init']); run('git', ['add', '.']);
   const hash = () => run(process.execPath, ['-e', "process.stdout.write(require('./src/quality/marc.cjs').trustedPolicy().policyHash)"]);
   const original = hash();
-  for (const file of [...files, 'src/quality/coq.cjs', 'src/quality/host-instructions.cjs', 'src/quality/agent-settings.cjs']) {
+  for (const file of [...files, ...modules.map(file => `src/quality/${file}`)]) {
     const target = path.join(root, file), contents = fs.readFileSync(target);
     fs.appendFileSync(target, file.endsWith('.json') ? '\n ' : '\n// changed trusted input\n');
     assert.notEqual(hash(), original, `${file} must invalidate prior evidence`);
