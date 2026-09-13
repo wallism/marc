@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-13 — Per-PR selection explanation
+
+Made the distinction between configured and selected specialists explicit in the root README and crew guide, with a dedicated infographic showing a C#/JavaScript-only example plus route-required core reviews. Documented caller/dependency impact and conservative broadening so the example does not imply extension-only routing. Documentation and illustration only; runtime selection and member instructions are unchanged.
+
 ## 2026-09-13 — Consistent crew skill naming
 
 Standardized published names, paths and references on `marc-crew-<name>`. Preserved reviewer IDs, manifest versions and operational instructions.

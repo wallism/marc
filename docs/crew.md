@@ -6,6 +6,12 @@ New language members are version 1.0.0; C# remains 1.1.0 and JavaScript remains 
 
 ## Consumer selection
 
+**The configured member list is the available crew, not a list to run on every PR.** For each capture, the controller selects applicable members and records why others were omitted; the Captain checks that selection against the complete diff and affected callers. A PR affecting only C# and JavaScript uses those two specialists plus the core reviews for its simple or full route. Other configured specialists are omitted unless affected callers, trusted mappings, shared configuration or uncertainty broaden the scope.
+
+![The Captain selects C# and JavaScript from a larger configured crew for a PR with only those impacts, adding the core reviews required by its route.](assets/marc-crew-selection.png)
+
+See the [selection infographic notes](crew-selection-infographic.md) for the example's assumptions.
+
 Setup uses the [technology discovery and contribution handoff](technology-discovery.md): explicit discovery exclusions, evidence-based language identification, one recommended authoring list and a separate creation decision. Pending contributions retain missing-expertise holds and the existing pin until reviewed bundle activation is confirmed.
 
 Set `crew` in the trusted consumer `.marc/config.json`:

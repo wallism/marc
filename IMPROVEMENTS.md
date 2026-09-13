@@ -2,6 +2,7 @@
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-13 | Captain documentation | Clarified configured versus per-PR selected specialists, with a C#/JavaScript example and dedicated infographic covering core reviews and broader impact. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-13--per-pr-selection-explanation), [README](README.md#which-crew-members-run-for-a-pr) |
 | 2026-09-13 | Setup and installation | Made reruns additive, preserved customizations and unchanged files, and required explicit bundle upgrade approval with member-version disclosure. | [Installer register](src/quality/IMPROVEMENTS.md#2026-09-13--additive-setup-reruns), [setup prompt](docs/setup-prompt.md) |
 | 2026-09-13 | Scratch and creator | Added version 1.0.0; reviewed and refined binary-source provenance and citations. | [Member](skills/marc-crew-scratch/IMPROVEMENTS.md), [creator lessons](skills/marc-crew-creator/references/creation-review.md) |
 | 2026-09-13 | PHP and creator | Added version 1.0.0; reviewed and refined output-context boundaries. | [Member](skills/marc-crew-php/IMPROVEMENTS.md), [creator lessons](skills/marc-crew-creator/references/creation-review.md) |
