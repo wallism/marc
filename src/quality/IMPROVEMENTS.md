@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-13 — Contribution CI and manual eval reminders
+
+Added Node 24 syntax/test workflows for every branch push on Linux and Windows, plus PR catalogue validation and an explicit replay command for existing deterministic assurance scenarios. Fork PRs run the complete Node checks because origin receives no fork branch-push event. Catalogue regressions reject missing mandatory skills/manifests, invalid metadata/permissions and broken or escaping local references. Commit-bound prompt-change detection handles deleted inputs and divergent base history; it produces an advisory manual eval plan without model calls or an eval-pass claim. Contribution documentation explains coverage, limitations and the separate self-review activation prerequisites. Existing consumer review and merge authority are unchanged.
+
 ## 2026-09-13 — React web impact requires browser evidence
 
 Adding the React member exposed that a confirmed React area containing only a `.js`/`.ts` Hook did not require browser evidence unless separately labeled `web`. A red regression reproduced the missing requirement. Treat captured `react` impact as browser-facing, retaining full review and the independent browser gate. Selection remains based on trusted configured areas, not an assumption that every JSX file is React. Tests cover companion selection, missing expertise, unrelated JSX/JS/docs and callers found only in the old revision. No consumer configuration is changed.

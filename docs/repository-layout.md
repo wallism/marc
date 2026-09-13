@@ -8,7 +8,8 @@ LICENSE                   MIT licence
 AGENTS.md                 Contributor-agent guidance
 CONTRIBUTING.md           Contribution and validation rules
 IMPROVEMENTS.md           Short project improvement history
-package.json              Local test commands, no runtime dependencies
+package.json              Local and CI check commands, no runtime dependencies
+.github/workflows/        Branch-push Node checks and PR contribution checks
 src/quality/              Existing controller, adapters, tests and fixtures
   browser-host/           Optional ASP.NET UI hook and its smoke check
 skills/
@@ -17,7 +18,7 @@ skills/
 docs/                     Configuration, setup prompt and architecture guidance
 examples/                 Synthetic consumers with no inherited exceptions
 templates/                Empty consumer defaults
-scripts/                  Installation/maintenance tools, when needed
+scripts/                  Installation and JavaScript syntax-check entry points
 ```
 
 ## References and decisions

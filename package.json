@@ -5,5 +5,11 @@
   "description": "Merge Assurance and Review Crew",
   "license": "MIT",
   "engines": { "node": ">=24" },
-  "scripts": { "test": "node --test src/quality/*.test.cjs" }
+  "scripts": {
+    "build": "node scripts/check-syntax.cjs",
+    "test": "node --test src/quality/*.test.cjs",
+    "validate:catalogue": "node src/quality/catalogue-validation.cjs",
+    "test:scenarios": "node --test src/quality/marc.test.cjs src/quality/merge.test.cjs src/quality/crew.test.cjs src/quality/ci-recovery.test.cjs src/quality/reports.test.cjs src/quality/installation.test.cjs",
+    "eval:plan": "node src/quality/prompt-eval-plan.cjs"
+  }
 }

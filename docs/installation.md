@@ -33,7 +33,7 @@ The bootstrap verifies the Git submodule pin, configured `toolCommit`, actual co
 
 Initialize the exact consumer gitlink during checkout with `submodules: true`; do not follow the MARC branch tip. Existing `scripts/quality/scans.cjs` calls forward to the pinned scanner and read the consumer configuration, including its own ignore file. Run shared tests from `.marc/tool/src/quality` and consumer tests from their own location. Preserve the consumer's required jobs, artifact names, checkout history and pinned scanner/version checks.
 
-This repository ships no automatic hosted workflow while the owner's build minutes are constrained. CI configuration can be reviewed locally without launching a run. A cancelled or waived hosted check is not a pass. The one-time extraction waiver does not disable ordinary consumer PR assurance requirements.
+MARC's own [contribution workflows](contribution-checks.md) run Node checks on branch pushes and catalogue/scenario checks on PRs. These workflows are for this tool repository; they are not a consumer CI adapter and do not emit the consumer scan/evidence artifact contract. Consumer installations retain their own required jobs and artifacts. A cancelled or waived hosted check is not a pass. The one-time extraction waiver does not disable ordinary consumer PR assurance requirements.
 
 ## Upgrade and rollback
 
