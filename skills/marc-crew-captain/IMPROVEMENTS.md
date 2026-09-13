@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-14 — README model selection guide
+
+Added a brief README explanation of default Captain inheritance, optional consumer overrides, harness availability and final report labels, linking to the existing JSON example. Documentation only; no runtime or default configuration changes.
+
 ## 2026-09-14 — Optional crew model selections
 
 Added trusted per-member/default model and reasoning dispatch instructions with host-record evidence. Setup leaves overrides absent. Final reports disclose Captain inheritance, configured defaults, overrides and unavailable actual telemetry for core, specialist, routing and repair sessions. Unsupported selections hold without substitution. Local resolver/report/gate tests validate the contract; live harness dispatch was not evaluated. Existing merge authority is unchanged; activation requires the consumer's normal pinned bundle upgrade. See [configuration](../../docs/configuration.md#optional-crew-model-overrides).
