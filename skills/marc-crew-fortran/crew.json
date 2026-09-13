@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "fortran",
+  "version": "1.0.0",
+  "specialty": "Fortran",
+  "scope": "Fortran numerical representation, array interfaces, resource/error paths and C interoperability; excludes scientific-model validity and unconfirmed MPI/OpenMP/coarray runtime expertise.",
+  "covers": [
+    "fortran"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "fortran"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace kind/precision, array bounds and argument shape contracts.",
+    "Inspect allocation, I/O failure and saved-state ownership.",
+    "Verify supplied compiler, numerical and foreign-interface evidence."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "fortran"
+      ],
+      "files": [
+        "src/solver.f90"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "fortran",
+        "web"
+      ],
+      "files": [
+        "src/solver.f90",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}

@@ -37,6 +37,12 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   assert.equal(resolved.toolCommit, pin);
   assert.equal(resolved.bundleRoot, path.join(consumer, '.marc/tool'));
   const info = JSON.parse(run('scripts/quality/bundle.cjs'));
+  assert.deepEqual(fs.readdirSync(path.join(consumer, '.agents/skills')).sort(), fs.readdirSync(path.join(source, 'skills')).sort());
+  for (const name of fs.readdirSync(path.join(source, 'skills'))) {
+    const forwarded = fs.readFileSync(path.join(consumer, '.agents/skills', name, 'SKILL.md'), 'utf8');
+    assert.ok(forwarded.includes('name: ' + name));
+    assert.ok(forwarded.includes('.marc/tool/skills/' + name + '/SKILL.md'));
+  }
   assert.equal(info.commit, pin); assert.equal(fs.existsSync(path.join(info.skills, 'marc-crew-captain/SKILL.md')), true);
   const file = path.join(consumer, '.marc/config.json'), contents = fs.readFileSync(file, 'utf8');
   fs.writeFileSync(file, JSON.stringify({ ...JSON.parse(contents), toolCommit: 'b'.repeat(40) }));

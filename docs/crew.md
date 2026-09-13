@@ -1,6 +1,8 @@
 # Crew configuration and contributions
 
-The Captain retains the existing full and simple policy routes. Optional technology specialists add assurance to either route; they cannot replace security, correctness, test or browser requirements. The specialist catalogue covers C#, JavaScript/TypeScript, React web, Blazor and front-end interactions. A language reviewer does not imply a language-specific scanner or runtime adapter exists.
+The Captain retains the existing full and simple policy routes. Optional technology specialists add assurance to either route; they cannot replace security, correctness, test or browser requirements. The specialist catalogue covers the [15 languages in the September 2026 work list](language-coverage.md), plus TypeScript through JavaScript, React web, Blazor and front-end interactions. A language reviewer does not imply a language-specific scanner or runtime adapter exists.
+
+New language members are version 1.0.0; C# remains 1.1.0 and JavaScript remains 1.0.0. [Coverage and activation mappings](language-coverage.md) distinguish automatic detection from confirmed trusted areas.
 
 ## Consumer selection
 

@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-13 — Fifteen-language catalogue coverage
+
+Added synthetic Git capture checks for every ranked language, explicit mapping and missing-expertise holds, Scratch browser companions and exact-version activation. Runtime routing and consumer authority are unchanged. See [coverage](../../docs/language-coverage.md).
+
 ## 2026-09-13 — Consistent crew skill naming
 
 Updated catalogue validation, specialist resolution, trusted skill coverage and installation to `marc-crew-<name>`. Added a naming regression; stable member IDs and authority remain unchanged.

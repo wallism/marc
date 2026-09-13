@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "scratch",
+  "version": "1.0.0",
+  "specialty": "Scratch",
+  "scope": "Scratch 3 block/event graphs, sprite/clone state and project assets from exact-source readable evidence; excludes automatic JavaScript VM, hardware extension or modified-runtime expertise.",
+  "covers": [
+    "scratch"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "scratch"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace event ordering, broadcast completion and shared versus sprite-local state.",
+    "Inspect clone lifecycle, restart behavior and asset/block references.",
+    "Require readable project evidence tied to captured bytes and the actual host."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "scratch"
+      ],
+      "files": [
+        "projects/game.sb3"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "scratch",
+        "web"
+      ],
+      "files": [
+        "projects/game.sb3",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "go",
+  "version": "1.0.0",
+  "specialty": "Go",
+  "scope": "Go goroutine/channel ownership, context cancellation, error/resource contracts and concurrency evidence; excludes unconfirmed framework, cgo and protocol-specific expertise.",
+  "covers": [
+    "go"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "go"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace goroutine termination, channel ownership and synchronization.",
+    "Inspect context propagation, error returns and deferred cleanup.",
+    "Match supplied race and failure-path evidence to changed behavior and target."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "go"
+      ],
+      "files": [
+        "src/worker.go"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "go",
+        "web"
+      ],
+      "files": [
+        "src/worker.go",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}

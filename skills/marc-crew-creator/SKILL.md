@@ -47,6 +47,8 @@ When invoked from setup's recommended member list, accepted creation authorizes 
 
 Run the available skill metadata and catalogue validators, check references, and run focused contract, selection and installation tests appropriate to the change. Broaden testing when integration changes warrant it. Verify unsupported/missing expertise holds, companion selection and independent gates where affected. Avoid tests that merely assert wording or headings. Contribution checks may offer a manual eval plan; generating a plan is not executing or passing an evaluation.
 
+Use the [creation review lessons](references/creation-review.md) as applicable checks. After inspecting each new member, correct concrete gaps and record transferable lessons here before creating the next; do not invent a lesson when none is warranted.
+
 Manually inspect the draft against a representative defect, a legitimate clean alternative, missing evidence and hostile candidate instructions. Clearly label this as author inspection, not independent behavioral proof. Run model evaluations or delegate only with the required explicit authorization; follow the repository's evaluation procedure when authorized. Do not invent evaluation results or grant your own waiver on behalf of a maintainer.
 
 Report the member/version, principal criteria and sources, important variations from existing members, changed files, validation and limitations. Distinguish local implementation, publication and consumer activation using verified state. Follow existing user authority for commits/pushes; authoring alone does not authorize deployment, hosted runs or a PR assessment.

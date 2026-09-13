@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "visual-basic",
+  "version": "1.0.0",
+  "specialty": "Visual Basic",
+  "scope": "Visual Basic .NET conversions, object contracts, resource and async ownership; excludes VB6, VBA, VBScript and unconfirmed UI/COM framework behavior.",
+  "covers": [
+    "visual-basic"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "visual-basic"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace narrowing, late binding and effective compiler options at caller boundaries.",
+    "Inspect disposable ownership and async completion, failure and cancellation.",
+    "Verify supplied target build and cross-language contract evidence."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "visual-basic"
+      ],
+      "files": [
+        "src/Worker.vb"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "visual-basic",
+        "web"
+      ],
+      "files": [
+        "src/Worker.vb",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}

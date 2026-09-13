@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "cpp",
+  "version": "1.0.0",
+  "specialty": "C++",
+  "scope": "C++ object and view lifetimes, value semantics, exception safety and concurrent ownership; excludes automatic C, GPU or framework expertise.",
+  "covers": [
+    "cpp"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "cpp"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace ownership, borrowed views, invalidation and copy/move contracts.",
+    "Inspect failure guarantees, thread ownership and ABI consumers.",
+    "Use supplied target-specific compilation and memory evidence without imposing modernization."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "cpp"
+      ],
+      "files": [
+        "src/session.cpp"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "cpp",
+        "web"
+      ],
+      "files": [
+        "src/session.cpp",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}

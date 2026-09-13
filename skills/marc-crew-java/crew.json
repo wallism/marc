@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "java",
+  "version": "1.0.0",
+  "specialty": "Java",
+  "scope": "Java/JVM source contracts, resource cleanup, publication and executor lifecycle; excludes automatic Spring, Android, persistence-provider or native-code expertise.",
+  "covers": [
+    "java"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "java"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace caller contracts and mutable state publication across threads.",
+    "Inspect close ownership, interruption and executor shutdown.",
+    "Verify supplied supported-JDK evidence for changed failure paths."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "java"
+      ],
+      "files": [
+        "src/Worker.java"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "java",
+        "web"
+      ],
+      "files": [
+        "src/Worker.java",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}

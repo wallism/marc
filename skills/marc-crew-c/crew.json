@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "c",
+  "version": "1.0.0",
+  "specialty": "C",
+  "scope": "C translation units and C ABI contracts, bounds, allocation ownership and failure handling; excludes C++ object semantics and unconfirmed device-specific rules.",
+  "covers": [
+    "c"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "c"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace buffer length arithmetic, pointer validity and allocation ownership.",
+    "Inspect failure cleanup, C ABI compatibility and concurrent access contracts.",
+    "Match compiler and instrumentation evidence to the supported target."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "c"
+      ],
+      "files": [
+        "src/packet.c"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "c",
+        "web"
+      ],
+      "files": [
+        "src/packet.c",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}

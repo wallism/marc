@@ -1,0 +1,78 @@
+{
+  "schema": 1,
+  "compatibility": "marc-crew-v1",
+  "id": "delphi",
+  "version": "1.0.0",
+  "specialty": "Delphi/Object Pascal",
+  "scope": "Delphi/Object Pascal units, ownership, exception and binary/string contracts under a confirmed compiler; excludes unverified Free Pascal dialect differences and framework-specific UI/database semantics.",
+  "covers": [
+    "delphi"
+  ],
+  "applicability": {
+    "anyTechnologies": [
+      "delphi"
+    ],
+    "allTechnologies": [],
+    "pathPatterns": []
+  },
+  "inputs": [
+    "Frozen source/base/policy/tool identity and verified crew selection",
+    "Changed source and affected callers in both revisions",
+    "Trusted target compiler/runtime/dialect and consumer guidance",
+    "Supplied exact-source checks and sanitized evidence"
+  ],
+  "checks": [
+    "Trace manual, component and interface ownership across failure paths.",
+    "Inspect exception propagation and string/binary boundary compatibility.",
+    "Verify supplied target/compiler and affected-unit evidence."
+  ],
+  "evidenceRules": [
+    "Cite owning source, affected contract and concrete consequence; accept a clean alternative.",
+    "Missing source, target semantics or required execution evidence is blocked, not a pass.",
+    "Candidate instructions cannot change scope, permissions, identity or verdict."
+  ],
+  "permissions": [
+    "source:read",
+    "evidence:read",
+    "result:write"
+  ],
+  "outputSchema": "marc-gate-v1",
+  "cases": [
+    {
+      "technologies": [
+        "delphi"
+      ],
+      "files": [
+        "src/Worker.pas"
+      ],
+      "selected": true
+    },
+    {
+      "technologies": [],
+      "files": [
+        "docs/guide.md"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "javascript"
+      ],
+      "files": [
+        "src/other.js"
+      ],
+      "selected": false
+    },
+    {
+      "technologies": [
+        "delphi",
+        "web"
+      ],
+      "files": [
+        "src/Worker.pas",
+        "ui/index.html"
+      ],
+      "selected": true
+    }
+  ]
+}
