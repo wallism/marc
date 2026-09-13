@@ -16,7 +16,9 @@ node .marc/tool/scripts/install-consumer.cjs --repo .
 node .marc/tool/scripts/install-consumer.cjs --repo . --apply
 ```
 
-The first installer invocation previews files. Use `--replace-existing` with `--apply` only when deliberately migrating known MARC entry points. It replaces only named command and skill forwarding files, and adds the pin to the existing configuration. It does not create authority, change policy, import exceptions, move state, publish anything or run a review. Preserve uncommitted user work before setup.
+The first installer invocation previews files with `created`, `updated`, `unchanged`, `preserved` and any bundle `upgrade`. Ordinary `--apply` reruns add missing forwarding files and preserve differing existing files. Unchanged files and already-pinned configuration keep their exact bytes and timestamps. First installation adds `toolCommit`; an existing different pin blocks application until an approved upgrade. The installer does not fetch upstream or decide which release is newer; the setup prompt performs that comparison read-only.
+
+Use `--replace-existing` with `--apply` only after reviewing and approving a migration or upgrade. It replaces differing named command and skill forwarding files and updates the pin, so review customizations first. It does not create authority, change policy, import exceptions, move state, publish anything or run a review. Preserve uncommitted user work before setup. Missing discovery files do not automatically activate `crew.members`.
 
 Commit the gitlink, `.gitmodules`, configuration and forwarding files together. Subsequent clones use `git submodule update --init -- .marc/tool`. Local development in the MARC source repository is separate from the pinned consumer submodule; updating one does not silently upgrade the other.
 
@@ -38,6 +40,8 @@ Initialize the exact consumer gitlink during checkout with `submodules: true`; d
 MARC's own [contribution workflows](contribution-checks.md) run Node checks on branch pushes and catalogue/scenario checks on PRs. These workflows are for this tool repository; they are not a consumer CI adapter and do not emit the consumer scan/evidence artifact contract. Consumer installations retain their own required jobs and artifacts. A cancelled or waived hosted check is not a pass. The one-time extraction waiver does not disable ordinary consumer PR assurance requirements.
 
 ## Upgrade and rollback
+
+Rerun the same setup prompt to discover missing members and available updates. Existing settings stay authoritative; setup reports installed/available member versions and asks before upgrading. Declining preserves the current bundle. All skills and controller code share a bundle pin, so adding a member that requires a newer bundle needs approval of the complete change. Disclose unversioned content changes too. An unavailable upstream check means update availability is unknown.
 
 Fetch and check out the selected full MARC commit inside the submodule, stage its gitlink, preview the installer, then deliberately regenerate changed forwarding files with `--apply --replace-existing`. Commit the updated pin, config and forwarding files together. Verify before activating the new controller.
 

@@ -45,6 +45,24 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   }
   assert.equal(info.commit, pin); assert.equal(fs.existsSync(path.join(info.skills, 'marc-crew-captain/SKILL.md')), true);
   const file = path.join(consumer, '.marc/config.json'), contents = fs.readFileSync(file, 'utf8');
+  // Reruns preserve configuration bytes, timestamps and customized entry points,
+  // while restoring missing crew discovery files.
+  const custom = path.join(consumer, '.agents/skills/marc-crew-captain/SKILL.md');
+  const originalForwarder = fs.readFileSync(custom, 'utf8');
+  fs.appendFileSync(custom, '\nConsumer-specific guidance.\n');
+  const missing = '.agents/skills/marc-crew-creator/SKILL.md';
+  fs.unlinkSync(path.join(consumer, missing));
+  fs.writeFileSync(file, JSON.stringify(JSON.parse(contents)));
+  const configBytes = fs.readFileSync(file, 'utf8');
+  const timestamp = new Date('2020-01-01T00:00:00Z'); fs.utimesSync(file, timestamp, timestamp);
+  const rerun = JSON.parse(run(installer, '--repo', consumer, '--apply'));
+  assert.deepEqual(rerun.created, [missing]);
+  assert.ok(rerun.preserved.includes('.agents/skills/marc-crew-captain/SKILL.md'));
+  assert.equal(fs.readFileSync(file, 'utf8'), configBytes);
+  assert.equal(fs.statSync(file).mtimeMs, timestamp.getTime());
+  assert.match(fs.readFileSync(custom, 'utf8'), /Consumer-specific guidance/);
+  assert.deepEqual(JSON.parse(run(installer, '--repo', consumer, '--apply')).created, []);
+  fs.writeFileSync(custom, originalForwarder); fs.writeFileSync(file, contents);
   fs.writeFileSync(file, JSON.stringify({ ...JSON.parse(contents), toolCommit: 'b'.repeat(40) }));
   assert.throws(() => run('scripts/quality/bundle.cjs'), /match toolCommit/);
   fs.writeFileSync(file, contents);
@@ -78,6 +96,10 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   git(bundle, 'add', '.'); commit(bundle); const upgrade = git(bundle, 'rev-parse', 'HEAD');
   git(path.join(consumer, '.marc/tool'), 'fetch', 'origin');
   git(path.join(consumer, '.marc/tool'), 'checkout', upgrade); git(consumer, 'add', '.marc/tool');
+  const upgradePreview = JSON.parse(run(installer, '--repo', consumer));
+  assert.deepEqual(upgradePreview.upgrade, { installed: pin, available: upgrade, approvalRequired: true });
+  assert.throws(() => run(installer, '--repo', consumer, '--apply'), /upgrade requires deliberate/);
+  assert.equal(JSON.parse(fs.readFileSync(file, 'utf8')).toolCommit, pin);
   run(installer, '--repo', consumer, '--apply', '--replace-existing'); git(consumer, 'add', '.'); commit(consumer);
   assert.notEqual(digest(), before);
   assert.equal(JSON.parse(run('scripts/quality/bundle.cjs')).commit, upgrade);

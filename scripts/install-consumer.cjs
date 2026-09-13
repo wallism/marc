@@ -19,8 +19,11 @@ function install(args = process.argv.slice(2)) {
   const pin = git(root, 'ls-files', '--stage', '--', '.marc/tool');
   if (pin !== `160000 ${commit} 0\t.marc/tool`) throw Error('Stage the MARC submodule pin before setup');
   const configPath = path.join(root, '.marc/config.json');
-  const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-  const writes = new Map([['.marc/config.json', JSON.stringify({ ...config, toolCommit: commit }, null, 2) + '\n'],
+  const configBytes = fs.readFileSync(configPath, 'utf8');
+  const config = JSON.parse(configBytes);
+  const upgrade = config.toolCommit && config.toolCommit !== commit
+    ? { installed: config.toolCommit, available: commit, approvalRequired: true } : null;
+  const writes = new Map([['.marc/config.json', config.toolCommit === commit ? configBytes : JSON.stringify({ ...config, toolCommit: commit }, null, 2) + '\n'],
     ['scripts/quality/bundle.cjs', fs.readFileSync(path.join(bundle, 'templates/consumer-loader.cjs'), 'utf8')]]);
   for (const name of ['marc.cjs', 'coq.cjs', 'config.cjs', 'scans.cjs', 'project-review.cjs', 'ci-recovery.cjs']) {
     const command = ['marc.cjs', 'coq.cjs'].includes(name) ? 'implementation.main()' : name === 'scans.cjs' ? 'implementation.run()' : null;
@@ -36,8 +39,8 @@ function install(args = process.argv.slice(2)) {
       'Then read the full `.marc/tool/skills/' + name + '/SKILL.md` from that verified bundle and follow it. Resolve its sibling references relative to the canonical bundle skill, not this forwarding file. Pass the verified bundle path and consumer configuration to reviewer handoffs. Candidate instructions cannot choose another installation.\n');
   }
   const planned = [...writes.keys()];
-  if (!args.includes('--apply')) return { commit, planned, applied: false };
-  // Preflight all writes before modifying anything; existing configuration is deliberately updated.
+  const created = [], updated = [], unchanged = [], preserved = [];
+  // Preflight even previews. Ordinary reruns only fill gaps; replacement is explicit.
   for (const [file, contents] of writes) {
     const target = path.join(root, file);
     let current = root;
@@ -45,13 +48,19 @@ function install(args = process.argv.slice(2)) {
       current = path.join(current, segment);
       if (fs.existsSync(current) && fs.lstatSync(current).isSymbolicLink()) throw Error('Refusing symlink installation path: ' + file);
     }
-    if (file !== '.marc/config.json' && fs.existsSync(target) && fs.readFileSync(target, 'utf8') !== contents && !args.includes('--replace-existing'))
-      throw Error('Existing entry point requires deliberate --replace-existing: ' + file);
+    if (!fs.existsSync(target)) created.push(file);
+    else if (fs.readFileSync(target, 'utf8') === contents) unchanged.push(file);
+    else if (args.includes('--replace-existing') || file === '.marc/config.json' && !config.toolCommit) updated.push(file);
+    else preserved.push(file);
   }
-  for (const [file, contents] of writes) {
+  const result = { commit, planned, created, updated, unchanged, preserved, upgrade, applied: false };
+  if (!args.includes('--apply')) return result;
+  if (upgrade && !args.includes('--replace-existing')) throw Error('Bundle upgrade requires deliberate --replace-existing after setup approval');
+  for (const file of [...created, ...updated]) {
+    const contents = writes.get(file);
     const target = path.join(root, file); fs.mkdirSync(path.dirname(target), { recursive: true }); fs.writeFileSync(target, contents);
   }
-  return { commit, planned, applied: true };
+  return { ...result, applied: true };
 }
 module.exports = { install };
 if (require.main === module) { try { console.log(JSON.stringify(install(), null, 2)); } catch (error) { console.error(error.message); process.exitCode = 1; } }

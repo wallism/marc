@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-13 — Additive setup reruns
+
+Installer reruns fill missing forwarding files, preserve customized files and skip identical writes, including configuration formatting and timestamps. Preview reports preserved files and bundle pin changes; applying a different existing pin requires deliberate replacement after setup approval. The prompt compares member versions and content read-only, offers upgrades and limits rerun confirmation to changes. A shared bundle prevents independent member upgrades. Red/green synthetic installation regressions cover ordinary and Windows short paths, customized guidance, missing members, unchanged configuration and pin-upgrade rejection. Consumer activation and operational authority remain separate.
+
 ## 2026-09-13 — Fifteen-language catalogue coverage
 
 Added synthetic Git capture checks for every ranked language, explicit mapping and missing-expertise holds, Scratch browser companions and exact-version activation. Runtime routing and consumer authority are unchanged. See [coverage](../../docs/language-coverage.md).

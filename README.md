@@ -2,7 +2,7 @@
 
 MARC's Captain coordinates independent PR review, hosted CI evidence, bounded repairs and guarded merges. Each consumer supplies its repository policy, technology guidance and operational configuration.
 
-Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). Setup discovers the target repository's values, presents all proposed settings and waits for confirmation and overrides before writing them.
+Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). First setup confirms proposed settings. Rerun the same prompt to add missing crew discovery files while preserving existing setup; new activations and available upgrades are proposed for approval.
 
 The [Captain](skills/marc-crew-captain/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [language, framework and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.
 

@@ -1,6 +1,6 @@
 # MARC setup prompt
 
-Copy the prompt below into an agent session with filesystem access. Optionally append the target repository path or URL. Setup is interactive: discovery comes first, then confirmation of every proposed setting, then local changes.
+Copy the prompt below into an agent session with filesystem access. Optionally append the target repository path or URL. First setup confirms every proposed setting. Reruns preserve existing setup, add missing discovery files and ask before upgrades or configuration changes.
 
 ---
 
@@ -9,6 +9,12 @@ Set up MARC (Merge Assurance and Review Crew) for the repository I want it to re
 If I have not told you which repository to review, ask for its path or URL and wait. Do not assume the MARC source repository or the current working directory is the consumer. Establish the local consumer checkout and the MARC installation separately. If the target is inaccessible, ask for the missing access/location rather than inventing settings.
 
 Before making setup changes, inspect the target read-only:
+
+On reruns, treat existing configuration, exact member versions, areas, policy, guidance, CI and host customizations as authoritative. Do not regenerate them from defaults, reformat unchanged files or repeat answered questions. Preview the current pinned installer, then add missing command/crew forwarding files without asking again; preserve and report differing existing files. Installing discovery files does not activate specialist gates: propose missing source-backed `crew.members` and area additions for confirmation. If nothing needs adding or upgrading, report that setup is already current and make no writes.
+
+Check for updates read-only using an available reviewed upstream commit in a separate checkout; do not move the consumer submodule during discovery. Compare each existing member's installed and available manifest versions, skill content and references; summarize changes using the improvement register and actual diff. Flag changed content at the same version as unversioned drift. Core skills without manifest versions use bundle commits and content diffs. If upstream cannot be checked, report update availability as unknown. A missing forwarding file is not a version upgrade.
+
+Ask once whether I want to upgrade, showing affected members, installed/available versions, the full proposed bundle SHA and relevant behavior/configuration changes. Declined or unanswered upgrades leave existing versions untouched. All members and controller code share one bundle pin: disclose the complete bundle change and do not promise independent member upgrades. Check subset compatibility before proposing it. If a missing member requires a newer bundle, explain that dependency and wait for upgrade approval while continuing independent additions from the current bundle. Never silently change the gitlink, `toolCommit`, existing member versions or use `--replace-existing` on an ordinary rerun.
 
 Follow `docs/technology-discovery.md` for the discovery exclusion list, evidence-based language/framework identification, recommended member output and pending-PR handoff. Inventory tracked source, infrastructure, build and runtime files independently of existing technology lists and router mappings. Apply the documented exclusions before research; document consumer overrides without inventing configuration keys. Exclusions skip language identification and specialist creation only, never changed-file reporting, security checks or policy gates. Confirm extensions with contents, manifests, imports and CI/build commands; consult primary documentation for unresolved unfamiliar formats and reuse the result. Identify missing router detection/area mappings separately from missing expertise.
 
@@ -26,7 +32,9 @@ Present one complete proposed configuration for review: the full `.marc/config.j
 
 Before the full configuration confirmation, present one recommended list of members to create or extend, with source evidence, scope, companions, exclusions, validation and separate tooling prerequisites. Ask once whether I want you to create the recommended members using `skills/marc-crew-creator/SKILL.md` in the MARC source repository; accept a selected subset. If none are needed, say so. My acceptance authorizes the selected local source contributions without waiting for consumer configuration approval. It does not authorize publication or activation unless already explicitly included in my instructions. Existing-member activation and bundle upgrades are separate recommendations, not new-member creation. Missing values for consumer setup should not block bounded source authoring.
 
-Ask me to confirm the complete consumer proposal and supply overrides for incorrect or missing values. Wait for my response before writing consumer configuration or applying consumer setup changes; separately accepted source authoring and its local handoff may proceed. If I override a value, revise dependent values and show those revisions for confirmation. Do not silently treat elapsed time, inferred approval or an unrelated answer as confirmation. This confirmation requirement is part of this setup prompt.
+For an existing installation, replace the full first-install proposal and confirmation above with a focused before/after diff of additions and optional upgrades. Retain existing settings without reconfirmation. A no-change rerun requires no confirmation.
+
+Ask me to confirm the complete first-install proposal, or just proposed configuration changes and upgrades on a rerun, and supply overrides for incorrect or missing values. Wait for my response before writing consumer configuration or applying upgrades; additive forwarding-file repairs described above and separately accepted source authoring may proceed. If I override a value, revise dependent values and show those revisions for confirmation. Do not silently treat elapsed time, inferred approval or an unrelated answer as confirmation. This confirmation requirement is part of this setup prompt.
 
 After the corresponding authoring or configuration confirmation, implement only the accepted work:
 
