@@ -6,6 +6,7 @@ const { execFileSync } = require('node:child_process');
 const { collectProjectChanges, verifyProjectChanges, dependencyReviewPasses, dependencyFile } = require('./project-review.cjs');
 const { loadCatalogue, selectCrew, collectImpact } = require('./crew.cjs');
 const { executionReasons, agentTable } = require('./agent-settings.cjs');
+const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -47,7 +48,7 @@ function reportPaths(pr, head, reportCreatedAt) {
   return ['json', 'md'].map(ext => `.quality/reports/pr-${pr}/${name}.${ext}`);
 }
 function prepareReport(e, now = new Date()) {
-  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v2' } : {}),
+  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v3' } : {}),
     reportCreatedAt: e.reportCreatedAt === undefined ?
     now.toISOString().slice(0, 16) + ':00.000Z' : e.reportCreatedAt };
   reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt);
@@ -189,7 +190,11 @@ function evaluate(e, p, policyHash, expectedCrew) {
   return { eligible: reasons.length === 0, merge: reasons.length === 0 && p.mode === 'automatic', reasons };
 }
 function reportMarkdown(e, decision) {
-  if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2'].includes(e.reportFormat)) throw Error('Unknown report format');
+  if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2', 'marc-v3'].includes(e.reportFormat)) throw Error('Unknown report format');
+  if (e.reportFormat === 'marc-v3') return `# MARC report: PR ${e.pr}\n\nReport created: ${e.reportCreatedAt.slice(0, 16).replace('T', ' ')} UTC\n\n` +
+    `Current decision: ${decision.merge ? 'Eligible for guarded merge' : decision.eligible ? 'Report-only: would merge' : 'Held'}\n\n` +
+    stagesMarkdown(e.stages || [{ ...reviewStage(e, decision), recordedAt: e.reportCreatedAt }]) +
+    '\nThe adjacent JSON retains stage identities and evidence. Later CI and merge outcomes do not rewrite this report.\n';
   // Missing format identifies immutable reports produced before the MARC cutover.
   const name = e.reportFormat?.startsWith('marc-') ? 'MARC' : 'Chief of Quality';
   const clean = x => String(x ?? '').replace(/[\r\n|]/g, ' ');
@@ -373,8 +378,8 @@ function createController(context, adapters = {}) {
   }
   function run(args) {
     const [action, first, second] = args;
-    if (!['queue', 'capture', 'decide', 'report', 'merge', 'recover-ci'].includes(action))
-      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json]');
+    if (!['queue', 'capture', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(action))
+      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
     if (action === 'capture' && !second) throw Error('An external evidence path is required');
     checkTrustedCheckout();
     const { policy: p, policyHash: hash } = trustedPolicy(context);
@@ -419,6 +424,12 @@ function createController(context, adapters = {}) {
     }
     const decision = evaluate(e, p, hash, recruit(e));
     if (action === 'decide') { console.log(encode(decision)); return; }
+    if (action === 'checkpoint') {
+      if (e.repository !== REPO) throw Error('Stage repository differs from consumer');
+      const event = second ? JSON.parse(fs.readFileSync(second, 'utf8')) : undefined;
+      const stages = recordStage(path.join(context.stateDirectory, 'assessment-stages'), e, decision, event);
+      console.log(encode({ stages: stages.length, last: stages.at(-1) })); return;
+    }
     const live = assertLive(e);
     if (action === 'report') {
       if (!registeredProducer(live.user.login, live.head.ref, p))
@@ -426,6 +437,8 @@ function createController(context, adapters = {}) {
       if (!second || live.head.sha !== e.sourceHead || command('git', ['rev-parse', 'HEAD'], second) !== e.sourceHead ||
         command('git', ['status', '--porcelain'], second)) throw Error('Report requires a clean PR worktree at the reviewed head');
       const prepared = prepareReport(e);
+      if (prepared.reportFormat === 'marc-v3')
+        prepared.stages = recordStage(path.join(context.stateDirectory, 'assessment-stages'), e, decision);
       // Persist the timestamp in trusted external evidence before rendering; verification
       // later derives the exact same names/content without consulting the current clock.
       fs.writeFileSync(first, encode(prepared));

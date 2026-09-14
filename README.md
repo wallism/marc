@@ -24,6 +24,8 @@ The Captain checks the complete diff and affected callers against the captured s
 
 See [crew selection rules](docs/crew.md#consumer-selection) and the [infographic notes](docs/crew-selection-infographic.md).
 
+After a repair, selection is recomputed from the full PR diff. Verified application npm dependency changes require full review while retaining their trusted technology scope. Reports show chronological assessment stages, with each review's selected crew, selection reasons and results, plus recorded repair and CI outcomes.
+
 ## Crew models and reasoning
 
 By default, crew members use the Captain's model and reasoning settings; no model configuration is needed. You can optionally set crew-wide defaults or per-member overrides in the consumer's `.marc/config.json`. The model and reasoning level must be available in your harness. See the [optional JSON configuration](docs/configuration.md#optional-crew-model-overrides).

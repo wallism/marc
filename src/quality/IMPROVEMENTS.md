@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-15 — Dependency scope and assessment stages
+
+The owner identified all-specialist selection after a narrow application lockfile repair and requested stage-by-stage crew/results. Nested npm dependency-only changes now use committed-blob classification and trusted area technologies while retaining full review; shared, unmapped, workspace and unsupported changes keep broad selection. Added an external append-only review/repair/CI journal and `marc-v3` stage rendering, preserving historical formats and current-source gates. Focused red/green regressions cover routing, retained sessions, journal corruption, locks and historical approval isolation. This internal tooling change needs no consumer product help update. Local validation only; normal bundle publication, upstream CI and consumer pin activation remain required.
+
 ## 2026-09-14 — Verified upstream updates and complete fixtures
 
 Two new controller imports broke the migration fixture's manual dependency list. It now copies the real source tree and checks policy-hash invalidation for every top-level production CommonJS module while preserving synthetic governance and missing-input rejection tests. Upstream Node checks had already rejected the second broken commit, but intake only resolved the master SHA. Intake now requires the latest exact-master push run and both platform jobs, including successful syntax/build and test steps, bound to the same SHA and run attempt. Missing, pending, failed, stale, incomplete or unavailable evidence leaves the PR pin untouched and stops intake; no fallback commit, dispatch or retry is introduced. Regression cases reproduced both gaps before the change. Consumer CI, review gates, active controller pin and cumulative budgets remain separate.

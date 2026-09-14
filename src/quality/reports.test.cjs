@@ -51,10 +51,10 @@ function fixture(t) {
     decision: { eligible: false, merge: false, reasons: ['Synthetic held report'] } };
 }
 
-for (const format of ['legacy-sha', 'legacy-dated', 'marc']) test(`${format} report verification binds the exact pair, source and bytes`, t => {
+for (const format of ['legacy-sha', 'legacy-dated', 'marc-v1', 'marc-v2', 'marc-v3']) test(`${format} report verification binds the exact pair, source and bytes`, t => {
   const { root, git, e: original, decision } = fixture(t);
   const dated = format !== 'legacy-sha';
-  const e = format === 'marc' ? prepareReport(original, new Date('2026-09-13T10:45:00Z')) :
+  const e = format.startsWith('marc-') ? { ...prepareReport(original, new Date('2026-09-13T10:45:00Z')), reportFormat: format } :
     dated ? { ...original, reportCreatedAt: '2026-09-12T10:45:00.000Z' } : original;
   const paths = writeReportFiles(e, decision, root);
   git('add', '.'); git('commit', '-m', 'report');

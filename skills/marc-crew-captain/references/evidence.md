@@ -1,6 +1,6 @@
 # Gate evidence contract, version 1
 
-New captures include `agentExecutionSchema: 1` and an initially empty `repairExecutions` array. The Captain records each session's `execution` using the [harness contract](harnesses.md#model-selection-at-dispatch); gate and routing execution records stay attached to their immutable review identities. Repair execution history stays with the cumulative ledger and is restored on recapture. The controller checks selections against trusted configuration and rejects missing application evidence or observed substitutions. These are host-record attestations, not independent model telemetry. New `marc-v2` reports append the crew model/reasoning table; existing `marc-v1` and legacy rendering remains unchanged.
+New captures include `agentExecutionSchema: 1` and an initially empty `repairExecutions` array. The Captain records each session's `execution` using the [harness contract](harnesses.md#model-selection-at-dispatch); gate and routing execution records stay attached to their immutable review identities. Repair execution history stays with the cumulative ledger and is restored on recapture. The controller checks selections against trusted configuration and rejects missing application evidence or observed substitutions. These are host-record attestations, not independent model telemetry. New `marc-v3` reports retain these tables within assessment stages; existing `marc-v2`, `marc-v1` and legacy rendering remains unchanged.
 
 `capture` creates an external JSON document. Capture-owned fields are `schema`, `repository`, `pr`, `sourceHead`, `base`, `policyHash`, `state`, `draft`, `author`, `headRepository`, `branch`, `target`, `baseIncluded`, `files`, `changedLines`, `projectChanges`, and `ci`. Only the trusted controller recaptures these. `repairCycles` comes from the cumulative external ledger.
 
@@ -54,7 +54,28 @@ The PR report describes the reviewed source commit and captured base. Its own re
 
 The controller adds `reportCreatedAt` when first preparing publication, using a canonical UTC minute such as `2026-09-12T10:45:00.000Z`. Persist that value in the external evidence before rendering. It produces the pair `.quality/reports/pr-24/20260912-1045-24.json` and `.md`; the Markdown also displays the timestamp explicitly as UTC. Source/base SHAs, policy digest and independent gate identities remain unchanged inside both artifacts. A later verification derives paths from the persisted timestamp, never the current clock. Do not manually change it after report publication.
 
-New preparations also persist `reportFormat: "marc-v1"`, which renders the MARC heading. Missing `reportFormat` preserves the former Chief of Quality heading for both SHA-named and timestamped historical reports; unknown formats fail closed. Preparing an already timestamped report preserves its existing format. Never add the marker to previously published evidence. Byte verification of historical reports does not waive the current policy digest or authorize a merge after the rename.
+New preparations persist `reportFormat: "marc-v3"`, which renders chronological assessment stages under the MARC heading. Missing `reportFormat` preserves the former Chief of Quality heading for both SHA-named and timestamped historical reports; unknown formats fail closed. Preparing an already timestamped report preserves its existing format, including `marc-v1` and `marc-v2`. Never change the marker on previously published evidence. Byte verification of historical reports does not waive the current policy digest or authorize a merge after a tool change.
+
+## Assessment stages
+
+Run `checkpoint <evidence.json>` before repairing or replacing a capture. It records the deterministic decision, immutable source/base/policy, route, selected and omitted crew with reasons, CI and gate/session results. `report` automatically records the current review and embeds retained stages in new reports. Storage is `<stateDirectory>/assessment-stages/pr-<number>.jsonl`, outside candidate control, with an exclusive per-PR lock, append-only writes and chained hashes to detect corruption. It is audit history, not signed attestation or a substitute for current gates. Preserve it across runs alongside cumulative repair/recovery records. A corrupt journal or foreign lock stops recording; investigate rather than deleting history. Identical consecutive checkpoints are idempotent.
+
+Observed repair/CI events use `checkpoint <evidence.json> <event.json>`. Use pre-repair evidence for repair events; `toHead` is the actual resulting source and `reviewer` is the actual repair session. Include the host `execution` record when available. For example, the event shape is:
+
+```json
+{
+  "kind": "repair",
+  "toHead": "<40-character resulting Git SHA>",
+  "reviewer": "<actual repair session ID>",
+  "result": "repaired",
+  "summary": "<observed change and validation result>",
+  "evidence": ["<retained repair artifact>"]
+}
+```
+
+`result` may also be `blocked`; use the observed unchanged head if no repair was made. CI events require `kind: "ci"`, `phase` (`source`, `report` or `post-merge`), exact `head`, positive numeric `runId`/`runAttempt`, GitHub `status` (`queued`, `in_progress`, `completed`), `conclusion` (null while pending), `summary` and nonempty `evidence`. The source phase must match the evidence source SHA. These are Captain-recorded observations; recording them neither contacts GitHub nor waives hosted-CI verification. Preserve evidence references and record only observed results.
+
+Each later report retains earlier crew/results alongside the new review, allowing an initial narrow selection and subsequent broad selection to be compared honestly. Earlier missing stages are not reconstructed automatically. Later report CI and merge outcomes remain external, and appear only if another assessment requires a new report. Published report bytes stay unchanged; the journal and historical `stages` never authorize a merge of the current candidate.
 
 Evidence without `reportCreatedAt` uses legacy SHA filenames and its original Markdown bytes for verification. Preserve those historical files. Only new regular-file additions in the owning PR's exact legacy or valid timestamp namespace are metadata; edits/deletions, foreign PR names, malformed dates and symlinks are still reviewed changes. A minute collision stops rather than overwriting either file. Recheck the completed-assessment ledger; only an actually new assessment may be prepared in a later minute with a fresh publication timestamp.
 

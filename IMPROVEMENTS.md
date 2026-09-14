@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-15 | Controller and Captain | Scoped verified application dependency selection and retained review, repair and CI stages in reports. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-15--dependency-scope-and-assessment-stages), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-15--dependency-scope-and-assessment-stages) |
 | 2026-09-14 | Controller and Captain | Replaced manual fixture dependencies and required exact upstream platform CI before pin updates; protected master with both Node checks. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-14--verified-upstream-updates-and-complete-fixtures), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--upstream-ci-before-pin-updates) |
 | 2026-09-14 | Register policy | Limited entries to material process changes; excluded routine documentation and visual updates. | [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--material-process-changes-only), [creator](skills/marc-crew-creator/IMPROVEMENTS.md#2026-09-14--material-process-changes-only) |
 | 2026-09-14 | README | Summarized setup responsibilities and recommended starting with the supplied process before team-specific customization. | [Captain register](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-14--readme-setup-and-customization-guide) |
