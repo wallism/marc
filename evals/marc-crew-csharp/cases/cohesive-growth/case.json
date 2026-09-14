@@ -1,0 +1,71 @@
+{
+  "id": "cohesive-growth",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "A cohesive class grows longer and takes another dependency",
+  "contentDigest": "60882341eaf77afd300564393d6d02411435093ee96bc61ae38f9f9308b23750",
+  "rules": [
+    "srp-negative-size-metrics",
+    "no-bare-principle-finding",
+    "no-findings-valid",
+    "equivalent-designs-acceptable"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 64,
+    "sourceHead": "345678ab3c4d5e6f70819293a4b5c6d7e8f90123",
+    "base": "2a9e8d7c6b5a493827160514233241506978abdf",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Orders/OrderPlacement.cs"
+    ],
+    "changedLines": 31,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "7788a99aabbccddeeff0011223344558b7c6d5e4f3021120334455667788a5f4"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "OrderPlacement owns the single responsibility of placing an order: validate, reserve stock, persist, return the result.",
+    "notes": "The new dependency is a stock reservation service used only within that responsibility. Reservation failure uses the existing OrderPlacementResult contract."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "srp-negative-size-metrics",
+      "example": "Reporting that the class is now 96 lines or that the constructor takes five parameters."
+    },
+    {
+      "rule": "no-bare-principle-finding",
+      "example": "Reporting a single-responsibility violation without naming two independently changing policies and the coupling."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring the method be split into a command handler, pipeline behavior or facade."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the number of early returns or to local variable naming."
+    }
+  ],
+  "notes": "Direct counterexample to entangled-policies: more code and more dependencies inside one coherent responsibility is not an SRP finding."
+}

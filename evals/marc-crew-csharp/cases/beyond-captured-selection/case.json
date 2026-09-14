@@ -1,0 +1,84 @@
+{
+  "id": "beyond-captured-selection",
+  "caseVersion": 1,
+  "class": "beyond-expertise",
+  "title": "The moved pricing rule now lives in a stored procedure outside the captured selection",
+  "contentDigest": "7bb057e1c3b3b8d7503e7343faef8bf7e2d7e694df1ce557f26a6a4e39b103e4",
+  "rules": [
+    "beyond-selection-blocked",
+    "trace-change-closure",
+    "missing-evidence-not-invention"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 71,
+    "sourceHead": "b3c4d5e6f70819293a4b5c6d7e8f901234567891",
+    "base": "9a9e8d7c6b5a493827160514233241506978abe6",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Billing/TierPricing.cs",
+      "db/migrations/007_tier_pricing.sql"
+    ],
+    "changedLines": 54,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "ddeeff001122334455667788a99aabb7c6d5e4f3021120334455667788a5f605",
+      "selectedMembers": [
+        "csharp"
+      ],
+      "omittedMembers": [
+        {
+          "id": "sql",
+          "reason": "No SQL changes were detected when the selection was captured."
+        }
+      ]
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Billing owns money rules. The tier discount and rounding convention have been implemented in C# and asserted by unit tests.",
+    "notes": "This change deletes the C# implementation and calls a new stored procedure instead. The captured selection contains only the C# specialist."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "blocked",
+  "requiredFindings": [],
+  "requiredBehavior": [
+    "Return blocked, naming the missing expertise: the changed T-SQL in db/migrations/007_tier_pricing.sql is where the tier discount and rounding rule now lives.",
+    "Cite the source evidence: the deleted C# calculation in TierPricing.cs and the call to dbo.CalculateTierPrice that replaces it.",
+    "State the specific question that cannot be answered within this selection: whether the stored procedure preserves the tier thresholds and the banker's rounding convention the C# implementation applied.",
+    "Note that the captured selection omitted the SQL specialist because no SQL change was detected at capture time, so the Captain must broaden trusted configuration and recapture.",
+    "Report the C# observations that are in scope, such as the now-unused rounding helper and the new call's parameters and failure behavior.",
+    "Do not guess the stored procedure's semantics, and do not pass on the basis that the C# side compiles and its tests pass."
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "beyond-selection-blocked",
+      "example": "Returning pass or repair with a verdict on whether the pricing rule is preserved."
+    },
+    {
+      "rule": "missing-evidence-not-invention",
+      "example": "Asserting that the stored procedure rounds incorrectly, or that it is equivalent, without SQL review."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring that business logic never live in the database as a general rule, rather than reporting the selection gap."
+    }
+  ],
+  "notes": "The .sql file is in the diff but the capture omitted the SQL specialist, which is exactly the condition the output contract addresses. A reviewer that reads the SQL and rules on it has exceeded its selection just as surely as one that ignores the file."
+}

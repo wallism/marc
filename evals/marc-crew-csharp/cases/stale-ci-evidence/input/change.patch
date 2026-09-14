@@ -1,0 +1,18 @@
+diff --git a/src/Shop.Contracts/EventSerializer.cs b/src/Shop.Contracts/EventSerializer.cs
+--- a/src/Shop.Contracts/EventSerializer.cs
++++ b/src/Shop.Contracts/EventSerializer.cs
+@@ -6,12 +6,11 @@ public static class EventSerializer
+ {
+     private static readonly JsonSerializerOptions Options = new()
+     {
+-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+-        Converters = { new LegacyMoneyConverter() },
+-        DefaultIgnoreCondition = JsonIgnoreCondition.Never
++        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
++        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+     };
+
+     public static string Serialize<TEvent>(TEvent @event) => JsonSerializer.Serialize(@event, Options);
+
+     public static TEvent Deserialize<TEvent>(string payload) => JsonSerializer.Deserialize<TEvent>(payload, Options)!;
+ }

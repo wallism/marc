@@ -1,0 +1,25 @@
+diff --git a/src/Shop.Dispatch.Legacy/RouteSelector.cs b/src/Shop.Dispatch.Legacy/RouteSelector.cs
+--- a/src/Shop.Dispatch.Legacy/RouteSelector.cs
++++ b/src/Shop.Dispatch.Legacy/RouteSelector.cs
+@@ -18,5 +18,22 @@ namespace Shop.Dispatch.Legacy
+             _depotByPostArea = depotByPostArea;
+         }
++
++        public Task<string> SelectDepotAsync(string postCode, string fallbackDepot)
++        {
++            if (string.IsNullOrWhiteSpace(postCode))
++            {
++                throw new ArgumentException("postCode is required.", nameof(postCode));
++            }
++
++            string area = postCode.Split(' ')[0].ToUpperInvariant();
++            string depot;
++            if (_depotByPostArea.TryGetValue(area, out depot))
++            {
++                return Task.FromResult(depot);
++            }
++
++            return Task.FromResult(fallbackDepot);
++        }
+     }
+ }

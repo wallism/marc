@@ -1,0 +1,33 @@
+diff --git a/src/Shop.Payments/PaymentWebhookRequest.cs b/src/Shop.Payments/PaymentWebhookRequest.cs
+--- a/src/Shop.Payments/PaymentWebhookRequest.cs
++++ b/src/Shop.Payments/PaymentWebhookRequest.cs
+@@ -6,9 +6,9 @@ public sealed record PaymentWebhookRequest
+     [JsonPropertyName("event_id")]
+     public string EventId { get; init; } = string.Empty;
+
+-    public long Amount { get; init; }
++    public long AmountMinor { get; init; }
+
+     public string? Reference { get; init; }
+
+     public string? Currency { get; init; }
+ }
+diff --git a/src/Shop.Payments/PaymentWebhookHandler.cs b/src/Shop.Payments/PaymentWebhookHandler.cs
+--- a/src/Shop.Payments/PaymentWebhookHandler.cs
++++ b/src/Shop.Payments/PaymentWebhookHandler.cs
+@@ -12,10 +12,10 @@ public sealed class PaymentWebhookHandler
+
+     public async Task HandleAsync(PaymentWebhookRequest request)
+     {
+-        if (string.IsNullOrWhiteSpace(request.Reference))
+-        {
+-            throw new WebhookValidationException("reference is required.");
+-        }
+-
+-        var payment = await _payments.LookupAsync(request.Reference);
+-        payment.Settle(request.Amount);
++        var payment = await _payments.LookupAsync(request.Reference!);
++        payment.Settle(request.AmountMinor);
+         await _payments.SaveAsync(payment);
+     }
+ }

@@ -1,0 +1,29 @@
+diff --git a/src/Shop.Orders/OrderConfirmationService.cs b/src/Shop.Orders/OrderConfirmationService.cs
+--- a/src/Shop.Orders/OrderConfirmationService.cs
++++ b/src/Shop.Orders/OrderConfirmationService.cs
+@@ -16,17 +16,22 @@ public sealed class OrderConfirmationService
+
+     public async Task ConfirmAsync(Order order)
+     {
+-        var body = BuildBody(order);
++        var body = BuildBody(order, out var total);
++        order.SetTotal(total);
+         await _orders.SaveAsync(order);
+         await _email.SendAsync(order.Email, "Your order", body);
+     }
+
+-    private static string BuildBody(Order order)
++    private static string BuildBody(Order order, out decimal total)
+     {
++        var tax = order.Customer.IsRegisteredCharity ? 0m : order.NetAmount * 0.12m;
++        total = Math.Round(order.NetAmount + tax, 2, MidpointRounding.ToEven);
++
+         return $"""
+             Thanks for your order {order.Reference}.
+             Net: {order.NetAmount:C}
+-            Total: {order.Total:C}
++            Tax: {tax:C}
++            Total: {total:C}
+             """;
+     }
+ }

@@ -1,0 +1,100 @@
+{
+  "id": "disposal-and-escaping-scope",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Import endpoint leaks a reader on the failure path and hands scoped services to fire-and-forget work",
+  "contentDigest": "311c048704be76779c6b657ca2c79f364aa17ca740d5cd47d103814ef5dc116b",
+  "rules": [
+    "disposal-responsibility",
+    "async-supervision-and-scope",
+    "unbounded-fan-out",
+    "registration-and-ownership-review",
+    "finding-anatomy",
+    "blocking-threshold"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 44,
+    "sourceHead": "4d5e6f70819293a4b5c6d7e8f9012345678ab3c4",
+    "base": "3f9e8d7c6b5a493827160514233241506978abd0",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Api/Import/ImportService.cs"
+    ],
+    "changedLines": 44,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "8899aabbccddeeff00112233445566a8b7c6d5e4f3021120334455667788a557"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "ASP.NET Core Web API. IProductRepository is registered scoped and is backed by AppDbContext. The request scope is disposed when the response completes.",
+    "notes": "Import files are supplied by authenticated tenant users and are not size-limited by the endpoint."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "disposal-responsibility",
+      "where": "src/Shop.Api/Import/ImportService.cs:20",
+      "mustCite": [
+        "the StreamReader created in ImportAsync",
+        "the early return on an invalid header that skips disposal",
+        "the consequence of a retained file handle on every rejected upload",
+        "the correction of a using declaration or try/finally"
+      ]
+    },
+    {
+      "rule": "async-supervision-and-scope",
+      "where": "src/Shop.Api/Import/ImportService.cs:34",
+      "mustCite": [
+        "the discarded Task.Run continuation",
+        "the scoped IProductRepository captured by that work",
+        "the consequence that the repository and its DbContext are used after the request scope is disposed, and that failures are unobserved",
+        "a proportionate correction such as completing the work inside the request or handing it to a hosted queue with its own scope"
+      ]
+    },
+    {
+      "rule": "unbounded-fan-out",
+      "where": "src/Shop.Api/Import/ImportService.cs:36",
+      "mustCite": [
+        "Task.WhenAll over every parsed row",
+        "that the row count comes from the uploaded file and is not bounded by the endpoint",
+        "the consequence of unbounded concurrent writes against the store",
+        "a proportionate correction such as batching or a bounded degree of parallelism"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "borrower-does-not-dispose-container-owned",
+      "example": "Requiring ImportService to dispose the injected IProductRepository."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a background message broker or hosted service architecture rather than a bounded correction."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the discard assignment syntax or to var."
+    }
+  ],
+  "notes": "Three defects on one changed method: a manual resource with no owner on the failure path, work escaping the request scope, and unbounded fan-out over caller-controlled input."
+}

@@ -1,0 +1,24 @@
+diff --git a/src/Shop.Orders/Order.cs b/src/Shop.Orders/Order.cs
+--- a/src/Shop.Orders/Order.cs
++++ b/src/Shop.Orders/Order.cs
+@@ -11,7 +11,7 @@ public sealed class Order
+
+     public decimal Total { get; private set; }
+
+-    public IReadOnlyList<OrderLine> Lines => _lines;
++    public List<OrderLine> Lines => _lines;
+
+     public void AddLine(OrderLine line)
+     {
+diff --git a/src/Shop.Api/Controllers/AdminOrdersController.cs b/src/Shop.Api/Controllers/AdminOrdersController.cs
+--- a/src/Shop.Api/Controllers/AdminOrdersController.cs
++++ b/src/Shop.Api/Controllers/AdminOrdersController.cs
+@@ -20,7 +20,7 @@ public sealed class AdminOrdersController : ControllerBase
+     public async Task<IActionResult> AddFreeSample(int orderId, string sku)
+     {
+         var order = await _orders.FindAsync(orderId);
+-        order.AddLine(OrderLine.FreeSample(sku));
++        order.Lines.Add(OrderLine.FreeSample(sku));
+         await _orders.SaveAsync(order);
+         return NoContent();
+     }

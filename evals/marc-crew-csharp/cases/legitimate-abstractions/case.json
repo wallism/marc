@@ -1,0 +1,79 @@
+{
+  "id": "legitimate-abstractions",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "One-implementation interface, a concrete value object and a pure helper",
+  "contentDigest": "09da21c59e0c3b88cd43db58d55c67ab5af56731002f57da7257ff74b3235ad7",
+  "rules": [
+    "equivalent-designs-acceptable",
+    "dip-negative-value-objects",
+    "isp-negative-mechanical-interfaces",
+    "no-mandated-patterns",
+    "no-findings-valid"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 60,
+    "sourceHead": "f9012345678ab3c4d5e6f70819293a4b5c6d7e8f",
+    "base": "ef9e8d7c6b5a493827160514233241506978abdb",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Catalog/ISkuFormatter.cs",
+      "src/Shop.Catalog/SkuFormatter.cs",
+      "src/Shop.Catalog/Dimensions.cs",
+      "src/Shop.Catalog/VolumeMath.cs"
+    ],
+    "changedLines": 62,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "334455667788a99aabbccddeeff00118b7c6d5e4f3021120334455667788a5f0"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Shop.Catalog uses constructor injection for collaborators that cross a process boundary and plain types for everything else.",
+    "notes": "ISkuFormatter exists because the formatter is swapped in the supplier-import integration tests. Dimensions and VolumeMath are deterministic and used directly."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "isp-negative-mechanical-interfaces",
+      "example": "Reporting ISkuFormatter as an unnecessary abstraction because it has one implementation, or splitting it further."
+    },
+    {
+      "rule": "dip-negative-value-objects",
+      "example": "Requiring an IDimensions or IVolumeMath interface so the types can be mocked."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a factory, a base class or a repository for the new types."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the readonly record struct, expression-bodied members or file-scoped namespaces."
+    },
+    {
+      "rule": "equivalent-designs-acceptable",
+      "example": "Reporting the absence of a mapping library, mediator or options pattern as a finding."
+    }
+  ],
+  "notes": "The guide's counterexample set in one change: an interface with one implementation, and concrete value objects and pure helpers that need no interface."
+}

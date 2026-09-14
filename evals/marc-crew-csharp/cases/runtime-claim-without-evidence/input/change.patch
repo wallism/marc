@@ -1,0 +1,34 @@
+diff --git a/src/Shop.Portal/Components/BasketPanel.razor.cs b/src/Shop.Portal/Components/BasketPanel.razor.cs
+--- a/src/Shop.Portal/Components/BasketPanel.razor.cs
++++ b/src/Shop.Portal/Components/BasketPanel.razor.cs
+@@ -1,20 +1,25 @@
+ using System.Threading.Tasks;
+ using Microsoft.AspNetCore.Components;
++using Microsoft.Extensions.DependencyInjection;
+ using Shop.Portal.Baskets;
+
+ namespace Shop.Portal.Components;
+
+-public partial class BasketPanel : ComponentBase
++public partial class BasketPanel : OwningComponentBase
+ {
+-    [Inject]
+-    private IBasketService Baskets { get; set; } = default!;
+-
++    private IBasketService _baskets = default!;
+     private BasketView? _basket;
+
+     [Parameter]
+     public int BasketId { get; set; }
+
++    protected override void OnInitialized()
++    {
++        _baskets = ScopedServices.GetRequiredService<IBasketService>();
++    }
++
+     protected override async Task OnParametersSetAsync()
+     {
+-        _basket = await Baskets.ReadAsync(BasketId);
++        _basket = await _baskets.ReadAsync(BasketId);
+     }
+ }

@@ -1,0 +1,40 @@
+diff --git a/src/Shop.Reporting/OverdueInvoiceQuery.cs b/src/Shop.Reporting/OverdueInvoiceQuery.cs
+--- a/src/Shop.Reporting/OverdueInvoiceQuery.cs
++++ b/src/Shop.Reporting/OverdueInvoiceQuery.cs
+@@ -19,14 +19,21 @@ public sealed class OverdueInvoiceQuery
+
+     public async Task<IReadOnlyList<OverdueRow>> RunAsync(DateOnly asOf)
+     {
+-        return await _db.Invoices
+-            .Where(i => i.TenantId == _tenant.TenantId)
+-            .Where(i => i.DueOn < asOf && i.SettledOn == null)
+-            .Select(i => new OverdueRow(i.Reference, i.Customer.Name, i.Amount))
+-            .ToListAsync();
++        var invoices = await _db.Invoices
++            .Where(i => i.DueOn < asOf && i.SettledOn == null)
++            .ToListAsync();
++
++        var rows = new List<OverdueRow>();
++        foreach (var invoice in invoices)
++        {
++            var customer = await _db.Customers.FirstAsync(c => c.Id == invoice.CustomerId);
++            rows.Add(new OverdueRow(invoice.Reference, customer.Name, invoice.Amount));
++        }
++
++        return rows;
+     }
+ }
+diff --git a/src/Shop.Api/Controllers/InternalReportsController.cs b/src/Shop.Api/Controllers/InternalReportsController.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Shop.Api/Controllers/InternalReportsController.cs
+@@ -0,0 +1,9 @@
++// New internal endpoint that wants every tenant's overdue invoices.
++[ApiController]
++[Route("internal/reports")]
++public sealed class InternalReportsController : ControllerBase
++{
++    [HttpGet("overdue")]
++    public async Task<IActionResult> Overdue([FromServices] OverdueInvoiceQuery query)
++        => Ok(await query.RunAsync(DateOnly.FromDateTime(DateTime.UtcNow)));
++}

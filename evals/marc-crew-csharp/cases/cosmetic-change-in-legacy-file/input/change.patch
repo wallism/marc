@@ -1,0 +1,24 @@
+diff --git a/src/Shop.Legacy/PriceBookManager.cs b/src/Shop.Legacy/PriceBookManager.cs
+--- a/src/Shop.Legacy/PriceBookManager.cs
++++ b/src/Shop.Legacy/PriceBookManager.cs
+@@ -25,12 +25,14 @@ namespace Shop.Legacy
+
+-        public decimal FindEntry(string s, decimal f)
+-        {
+-            decimal p;
+-            if (Cache.TryGetValue(s, out p)) {
+-                return p;
+-            }
+-            return f;
+-        }
++        public decimal FindEntry(string sku, decimal fallbackPrice)
++        {
++            if (Cache.TryGetValue(sku, out var cachedPrice))
++            {
++                return cachedPrice;
++            }
++
++            return fallbackPrice;
++        }
+     }
+ }

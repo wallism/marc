@@ -1,0 +1,76 @@
+{
+  "id": "store-idioms-and-error-contract",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "A Dapper query and the project's own result-based error contract",
+  "contentDigest": "6872994b74a0950b29372d0ece71b296c3d7b359c8fc2751659c683a45f8362f",
+  "rules": [
+    "no-ef-apis-on-other-stores",
+    "no-error-model-mandate",
+    "established-error-contract",
+    "evidence-backed-cost-only",
+    "no-findings-valid"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 65,
+    "sourceHead": "45678ab3c4d5e6f70819293a4b5c6d7e8f901234",
+    "base": "3a9e8d7c6b5a493827160514233241506978abe0",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Data.Dapper/SupplierQueries.cs"
+    ],
+    "changedLines": 33,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "88a99aabbccddeeff001122334455668b7c6d5e4f3021120334455667788a5f5"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "This project reads through Dapper against SQL Server. EF Core is used only in Shop.Data and is not referenced here. The established error contract in Shop.Data.Dapper is QueryResult<T>, not exceptions.",
+    "notes": "The query is bounded by the supplied page size and takes an existing covering index on SupplierId, ActiveFrom. No timing concern has been supplied."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "no-ef-apis-on-other-stores",
+      "example": "Requiring AsNoTracking, Include, AsSplitQuery or compiled queries in a Dapper project."
+    },
+    {
+      "rule": "no-error-model-mandate",
+      "example": "Requiring exceptions instead of QueryResult<T>, or a different result library."
+    },
+    {
+      "rule": "established-error-contract",
+      "example": "Requiring a nullable return or a TryGet pattern in place of the project's QueryResult<T>."
+    },
+    {
+      "rule": "evidence-backed-cost-only",
+      "example": "Requiring caching, a different index or batching with no supplied measurement, when the query is already bounded and indexed."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the raw string SQL literal's formatting or to parameter naming."
+    }
+  ],
+  "notes": "Counterexample to tenant-filter-and-query-per-item: correct parameterization, tenant predicate retained, bounded page size and no supplied cost evidence, in a non-EF store."
+}

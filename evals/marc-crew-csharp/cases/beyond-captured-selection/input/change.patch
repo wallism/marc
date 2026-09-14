@@ -1,0 +1,69 @@
+diff --git a/src/Shop.Billing/TierPricing.cs b/src/Shop.Billing/TierPricing.cs
+--- a/src/Shop.Billing/TierPricing.cs
++++ b/src/Shop.Billing/TierPricing.cs
+@@ -1,30 +1,29 @@
+-using System;
++using System.Data;
++using System.Threading;
+ using System.Threading.Tasks;
++using Dapper;
+
+ namespace Shop.Billing;
+
+ public sealed class TierPricing
+ {
+-    private readonly ICustomerSpend _spend;
++    private readonly IDbConnection _connection;
+
+-    public TierPricing(ICustomerSpend spend)
++    public TierPricing(IDbConnection connection)
+     {
+-        _spend = spend;
++        _connection = connection;
+     }
+
+-    public async Task<decimal> PriceForAsync(int customerId, decimal net)
++    public async Task<decimal> PriceForAsync(int customerId, decimal net, CancellationToken cancellationToken)
+     {
+-        var lifetime = await _spend.LifetimeAsync(customerId);
+-        var rate = lifetime switch
+-        {
+-            >= 100000m => 0.15m,
+-            >= 25000m => 0.10m,
+-            >= 5000m => 0.05m,
+-            _ => 0m
+-        };
+-
+-        return Rounding.ToCurrency(net * (1m - rate));
++        var command = new CommandDefinition(
++            "dbo.CalculateTierPrice",
++            new { CustomerId = customerId, NetAmount = net },
++            commandType: CommandType.StoredProcedure,
++            cancellationToken: cancellationToken);
++
++        return await _connection.ExecuteScalarAsync<decimal>(command);
+     }
+ }
+diff --git a/db/migrations/007_tier_pricing.sql b/db/migrations/007_tier_pricing.sql
+new file mode 100644
+--- /dev/null
++++ b/db/migrations/007_tier_pricing.sql
+@@ -0,0 +1,20 @@
++CREATE OR ALTER PROCEDURE dbo.CalculateTierPrice
++    @CustomerId INT,
++    @NetAmount DECIMAL(18, 4)
++AS
++BEGIN
++    DECLARE @Rate DECIMAL(5, 4);
++
++    SELECT @Rate = CASE
++        WHEN c.LifetimeSpend >= 100000 THEN 0.15
++        WHEN c.LifetimeSpend >= 25000 THEN 0.10
++        WHEN c.LifetimeSpend >= 5000 THEN 0.05
++        ELSE 0.00
++    END
++    FROM dbo.Customers AS c
++    WHERE c.Id = @CustomerId;
++
++    SELECT ROUND(@NetAmount * (1 - ISNULL(@Rate, 0)), 2);
++END

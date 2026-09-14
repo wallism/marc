@@ -1,0 +1,72 @@
+{
+  "id": "legitimate-async-choices",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "async void in a real event handler, no cancellation on a store that has none",
+  "contentDigest": "d64cfb7fb5799bcac600c8b28fa0483b15480a6d9c82bb653c6e253e69473872",
+  "rules": [
+    "async-void-outside-event-contracts",
+    "no-blanket-async-mandates",
+    "cancellation-propagation",
+    "no-findings-valid",
+    "equivalent-designs-acceptable"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 61,
+    "sourceHead": "012345678ab3c4d5e6f70819293a4b5c6d7e8f90",
+    "base": "ff9e8d7c6b5a493827160514233241506978abdc",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Admin.Desktop/ExportView.xaml.cs"
+    ],
+    "changedLines": 28,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "4455667788a99aabbccddeeff0011228b7c6d5e4f3021120334455667788a5f1"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0-windows"
+    ],
+    "langVersion": "12.0",
+    "architecture": "WPF desktop admin tool. Click handlers are wired to RoutedEventHandler, which returns void.",
+    "notes": "ILegacyExportStore.Export is a synchronous COM interop call with no cancellation support and no async overload. The UI marshals back to the dispatcher, so ConfigureAwait(false) must not be applied to code that then touches controls."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "async-void-outside-event-contracts",
+      "example": "Reporting async void on OnExportClick, which implements the RoutedEventHandler contract and already wraps its body in try/catch."
+    },
+    {
+      "rule": "no-blanket-async-mandates",
+      "example": "Requiring ConfigureAwait(false), ValueTask or Task.Run because the method is async."
+    },
+    {
+      "rule": "cancellation-propagation",
+      "example": "Requiring a CancellationToken on ILegacyExportStore.Export, which has no cancellation support or async overload."
+    },
+    {
+      "rule": "equivalent-designs-acceptable",
+      "example": "Requiring MVVM commands, a view model or a task-based event pattern because the handler is in the code-behind."
+    }
+  ],
+  "notes": "Pairs with async-void-and-sync-over-async and cancellation-not-propagated. Same shapes, legitimate here because the event contract is real and the operation does not support cancellation."
+}

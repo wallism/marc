@@ -1,0 +1,46 @@
+diff --git a/src/Shop.Shipping/PickupInStoreProvider.cs b/src/Shop.Shipping/PickupInStoreProvider.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Shop.Shipping/PickupInStoreProvider.cs
+@@ -0,0 +1,32 @@
++using System;
++using System.Threading.Tasks;
++
++namespace Shop.Shipping;
++
++public sealed class PickupInStoreProvider : IShippingQuoteProvider
++{
++    private readonly IStoreLocator _stores;
++
++    public PickupInStoreProvider(IStoreLocator stores)
++    {
++        _stores = stores;
++    }
++
++    public async Task<ShippingQuote> GetQuoteAsync(Basket basket)
++    {
++        var store = await _stores.FindNearestAsync(basket.PostCode);
++        if (store is null)
++        {
++            return null;
++        }
++
++        return new ShippingQuote(Carrier: "pickup", Total: 0m, EtaDays: 1);
++    }
++
++    public Task<TrackingInfo> TrackAsync(string reference)
++    {
++        throw new NotSupportedException("Pickup orders are not tracked.");
++    }
++}
+diff --git a/src/Shop.Shipping/ShippingRegistration.cs b/src/Shop.Shipping/ShippingRegistration.cs
+--- a/src/Shop.Shipping/ShippingRegistration.cs
++++ b/src/Shop.Shipping/ShippingRegistration.cs
+@@ -10,6 +10,7 @@ public static class ShippingRegistration
+     {
+         services.AddScoped<IShippingQuoteProvider, CourierProvider>();
+         services.AddScoped<IShippingQuoteProvider, PostalProvider>();
++        services.AddScoped<IShippingQuoteProvider, PickupInStoreProvider>();
+         return services;
+     }
+ }

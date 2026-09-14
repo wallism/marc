@@ -1,0 +1,24 @@
+{
+  "note": "Sanitized synthetic hosted-CI evidence. Deliberately bound to the BASE commit, with an expired artifact, so this case has no exact-source evidence.",
+  "runId": 4390,
+  "runAttempt": 2,
+  "status": "completed",
+  "conclusion": "success",
+  "head": "6a9e8d7c6b5a493827160514233241506978abe3",
+  "jobs": [
+    { "name": "build (ubuntu-latest)", "conclusion": "success" },
+    { "name": "test (ubuntu-latest)", "conclusion": "success" }
+  ],
+  "testResults": {
+    "artifact": "test-results",
+    "artifactStatus": "expired",
+    "summary": "Artifact retention elapsed. Per-suite results, including ContractRoundTrip, are no longer retrievable for this run."
+  },
+  "quality": {
+    "artifact": "quality-scans",
+    "analyzerWarnings": 0,
+    "analyzerErrors": 0,
+    "secretFindings": 0,
+    "summary": "No analyzer diagnostics at the base commit."
+  }
+}

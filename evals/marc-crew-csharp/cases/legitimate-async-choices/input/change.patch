@@ -1,0 +1,28 @@
+diff --git a/src/Shop.Admin.Desktop/ExportView.xaml.cs b/src/Shop.Admin.Desktop/ExportView.xaml.cs
+--- a/src/Shop.Admin.Desktop/ExportView.xaml.cs
++++ b/src/Shop.Admin.Desktop/ExportView.xaml.cs
+@@ -14,10 +14,24 @@ public partial class ExportView : Window
+         InitializeComponent();
+     }
+
+-    private void OnExportClick(object sender, RoutedEventArgs e)
++    private async void OnExportClick(object sender, RoutedEventArgs e)
+     {
+-        var path = _store.Export();
+-        StatusText.Text = $"Exported to {path}";
++        ExportButton.IsEnabled = false;
++        try
++        {
++            var path = await Task.Run(() => _store.Export());
++            StatusText.Text = $"Exported to {path}";
++        }
++        catch (Exception ex)
++        {
++            StatusText.Text = $"Export failed: {ex.Message}";
++        }
++        finally
++        {
++            ExportButton.IsEnabled = true;
++        }
+     }
+ }

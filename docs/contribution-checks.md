@@ -10,6 +10,7 @@ MARC validates its executable tools automatically and measures prompt quality se
 | PR opened, updated, reopened or marked ready | PR contracts and scenarios | `npm run validate:catalogue` validates every published skill; `npm run test:scenarios` runs the existing deterministic assurance scenarios. |
 | Fork PR | Full Node checks on both platforms | Fork branch pushes do not trigger the origin repository's push workflow. This closes that contribution coverage gap. |
 | PR instruction-input change | Prompt eval reminder | `npm run eval:plan` lists changed inputs and generates a manual comparison plan in the job summary, with a notice. It does not call a model. |
+| Every branch push and PR | Eval corpus contracts | `npm test` includes `eval-corpus.test.cjs`, which validates every corpus under `evals` and fails when a skill rule has no covering case. `npm run validate:evals` runs the same validator directly. No model is called. |
 
 There are no path filters on the push or PR workflows. Push runs are not cancelled by later pushes; each branch push gets validation. A newer PR run cancels superseded PR checks. Both workflows can also be dispatched manually; the PR reminder needs PR base/head context and is omitted on a manual workflow dispatch. Run the local eval-plan command with explicit refs when needed.
 
@@ -62,7 +63,17 @@ For an actual manual eval:
 4. Repeat ambiguous or close results. Keep the evaluation budget explicit. A single small comparison supports a bounded claim, not a universal quality improvement. Changes to core Captain/evidence contracts need cases across affected members.
 5. Attach the comparison to the PR, identifying base/head commits, prompt/reference content, case version, model/settings, results, limitations and reviewer. After further relevant edits, repeat the affected comparison. For a nonbehavioral edit, record a specific waiver reason for maintainer review instead of inventing a pass.
 
-No benchmark corpus or model runner is claimed by this increment. The plan command simplifies scope detection and the manual procedure. The next increment should add a small versioned corpus and a command that prepares paired inputs and scores saved outputs; live model execution should remain explicitly requested.
+## Eval corpora
+
+A versioned case corpus now exists for one member, the C# specialist, under `evals/marc-crew-csharp`. Run `npm run validate:evals`. It is contribution material, not published skill content: `evals` is outside the trusted policy digest and outside catalogue validation, so a case edit cannot change a consumer's policy identity or invalidate an existing approval.
+
+`rules.json` holds every rule extracted from that member's `SKILL.md`, manifest and references, each with a source anchor and a polarity: `must-find`, `must-not-find` or `conduct`. Cases declare the rules they score, the findings required with the facts each must cite, and the findings that count as false alarms. The validator rejects a malformed case, an unlisted case directory, a missing evidence reference, an expectation file placed inside the reviewer input, and any rule that no case covers, so adding a rule to a skill without adding a case fails the check. `node --test src/quality/eval-corpus.test.cjs` also retains the rejection assertions.
+
+The corpus carries five case classes: seeded defects, legitimate alternatives paired against them, insufficient evidence, hostile candidate content and impact beyond the captured selection. Cases are digest-identified and versioned; edit a case by raising its version, never silently.
+
+No model runner is claimed. Nothing here prepares reviewer inputs, calls a model, scores saved outputs or establishes a baseline. The next increment should add the preparation and scoring commands; live model execution stays explicitly requested. See [the C# eval work document](work/20260915-skill-evals-csharp-work.md) for the decisions, procedure and open items.
+
+## Enforcement boundary
 
 A later enforced guard should require trusted eval evidence or a maintainer waiver bound to the current prompt/reference and case digests, with the harness/model configuration recorded. Keep operational results outside the reusable tool repository. A contributor-controlled checkbox, label or result file alone must not authorize its own prompt change. Guard/harness changes also need trusted maintainer review.
 

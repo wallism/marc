@@ -1,0 +1,37 @@
+diff --git a/src/Shop.Billing/SubscriptionPricing.cs b/src/Shop.Billing/SubscriptionPricing.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Shop.Billing/SubscriptionPricing.cs
+@@ -0,0 +1,21 @@
++using System;
++
++namespace Shop.Billing;
++
++public sealed class SubscriptionPricing
++{
++    public decimal MonthlyTotal(Subscription subscription)
++    {
++        var net = subscription.SeatCount * subscription.SeatPrice;
++        var tax = net * 0.10m;
++        return Math.Round(net + tax, 2, MidpointRounding.ToEven);
++    }
++
++    public SubscriptionLine ToSubscriptionLine(Subscription subscription) => new()
++    {
++        PlanCode = subscription.PlanCode,
++        Seats = subscription.SeatCount,
++        Amount = MonthlyTotal(subscription)
++    };
++}
+diff --git a/src/Shop.Billing/InvoicePricing.cs b/src/Shop.Billing/InvoicePricing.cs
+--- a/src/Shop.Billing/InvoicePricing.cs
++++ b/src/Shop.Billing/InvoicePricing.cs
+@@ -7,7 +7,7 @@ public sealed class InvoicePricing
+     public decimal Total(Invoice invoice)
+     {
+         var net = invoice.NetAmount;
+-        var tax = net * 0.10m;
++        var tax = net * 0.12m;
+         return Math.Round(net + tax, 2, MidpointRounding.ToEven);
+     }
+

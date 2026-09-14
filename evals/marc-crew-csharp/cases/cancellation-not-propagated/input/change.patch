@@ -1,0 +1,48 @@
+diff --git a/src/Shop.Reporting/NightlyReportBuilder.cs b/src/Shop.Reporting/NightlyReportBuilder.cs
+--- a/src/Shop.Reporting/NightlyReportBuilder.cs
++++ b/src/Shop.Reporting/NightlyReportBuilder.cs
+@@ -1,4 +1,5 @@
+ using System.Collections.Generic;
++using System.Threading;
+ using System.Threading.Tasks;
+
+ namespace Shop.Reporting;
+@@ -13,17 +14,24 @@ public sealed class NightlyReportBuilder
+         _source = source;
+     }
+
+-    public async Task<IReadOnlyList<ReportRow>> BuildAsync()
++    public async Task<IReadOnlyList<ReportRow>> BuildAsync(CancellationToken cancellationToken)
+     {
+         var rows = new List<ReportRow>();
+         var page = 0;
+
+-        var batch = await _source.FetchPageAsync(page, pageSize: 500);
+-        rows.AddRange(batch);
++        while (true)
++        {
++            var batch = await _source.FetchPageAsync(page, pageSize: 500);
++            if (batch.Count == 0)
++            {
++                break;
++            }
++
++            rows.AddRange(batch);
++            page++;
++            await Task.Delay(2000);
++        }
+
+         return rows;
+     }
+ }
+diff --git a/src/Shop.Reporting/NightlyWorker.cs b/src/Shop.Reporting/NightlyWorker.cs
+--- a/src/Shop.Reporting/NightlyWorker.cs
++++ b/src/Shop.Reporting/NightlyWorker.cs
+@@ -18,7 +18,7 @@ public sealed class NightlyWorker : BackgroundService
+     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+     {
+-        var rows = await _builder.BuildAsync();
++        var rows = await _builder.BuildAsync(stoppingToken);
+         await _writer.WriteAsync(rows, stoppingToken);
+     }
+ }

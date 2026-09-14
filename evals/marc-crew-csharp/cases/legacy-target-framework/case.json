@@ -1,0 +1,71 @@
+{
+  "id": "legacy-target-framework",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "Correct change written for .NET Framework 4.8 and C# 7.3",
+  "contentDigest": "4f7040ce1867680f70b6058dc8d84b59251624c127dac092d4f17ea9c856d331",
+  "rules": [
+    "respect-architecture-and-versions",
+    "read-member-contract",
+    "equivalent-designs-acceptable",
+    "no-findings-valid"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 67,
+    "sourceHead": "678ab3c4d5e6f70819293a4b5c6d7e8f90123456",
+    "base": "5a9e8d7c6b5a493827160514233241506978abe2",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Dispatch.Legacy/RouteSelector.cs"
+    ],
+    "changedLines": 30,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "9aabbccddeeff00112233445566778b7c6d5e4f3021120334455667788a5f601"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net48"
+    ],
+    "langVersion": "7.3",
+    "architecture": "Shop.Dispatch.Legacy targets .NET Framework 4.8 with C# 7.3 and cannot be retargeted: it hosts an in-process COM component required by the depot hardware.",
+    "notes": "Nullable reference types, records, file-scoped namespaces, target-typed new, ArgumentNullException.ThrowIfNull, async streams and System.Text.Json are unavailable in this project."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "respect-architecture-and-versions",
+      "example": "Recommending records, nullable reference annotations, file-scoped namespaces, target-typed new, ArgumentNullException.ThrowIfNull, async streams or System.Text.Json in a C# 7.3 net48 project."
+    },
+    {
+      "rule": "equivalent-designs-acceptable",
+      "example": "Reporting the absence of dependency injection or of a modern options pattern as a finding."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring the project be retargeted to net8.0 or restructured as a condition of this change."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the explicit type declarations, the manual null checks or the block-scoped namespace."
+    }
+  ],
+  "notes": "Tests whether the reviewer reads the supplied consumer guidance before recommending language features. Every suggestion listed as forbidden would fail to compile in this project."
+}

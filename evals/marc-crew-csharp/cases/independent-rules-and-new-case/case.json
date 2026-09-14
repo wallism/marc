@@ -1,0 +1,74 @@
+{
+  "id": "independent-rules-and-new-case",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "Two similar mappings for different external contracts and one new case in a closed switch",
+  "contentDigest": "0ec598efca931084aa285efbf0d49dcc33f7b7db53aa651aeac5553d268cd45d",
+  "rules": [
+    "dry-negative-independent-rules",
+    "ocp-negative-finite-switch",
+    "proportionate-structural-change",
+    "no-bare-principle-finding",
+    "no-findings-valid"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 63,
+    "sourceHead": "2345678ab3c4d5e6f70819293a4b5c6d7e8f9012",
+    "base": "1a9e8d7c6b5a493827160514233241506978abde",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Integration/CarrierAMapper.cs",
+      "src/Shop.Integration/CarrierBMapper.cs",
+      "src/Shop.Integration/ParcelSize.cs"
+    ],
+    "changedLines": 49,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "667788a99aabbccddeeff00112233448b7c6d5e4f3021120334455667788a5f3"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Each carrier integration owns its own wire format. The two carriers version their schemas independently and have diverged twice before.",
+    "notes": "ParcelSize.Label is the only dispatch site for the enum; the set is closed and defined by the shipping contract."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "dry-negative-independent-rules",
+      "example": "Reporting CarrierAMapper and CarrierBMapper as duplication because both map an address into a label request."
+    },
+    {
+      "rule": "ocp-negative-finite-switch",
+      "example": "Requiring a strategy pattern, a dictionary of delegates or a class per size because a case was added to the switch."
+    },
+    {
+      "rule": "no-bare-principle-finding",
+      "example": "Reporting DRY or open/closed without an affected caller, divergence risk or consequence."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a shared carrier abstraction or an anti-corruption layer project."
+    }
+  ],
+  "notes": "Deliberately resembles duplicated-business-rule and coupled-dispatch-sites. Nothing is shared business knowledge here and there is one dispatch site, so both findings would be false alarms."
+}
