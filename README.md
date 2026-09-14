@@ -30,7 +30,7 @@ After a repair, selection is recomputed from the full PR diff. Verified applicat
 
 By default, crew members use the Captain's model and reasoning settings; no model configuration is needed. You can optionally set crew-wide defaults or per-member overrides in the consumer's `.marc/config.json`. The model and reasoning level must be available in your harness. See the [optional JSON configuration](docs/configuration.md#optional-crew-model-overrides).
 
-Reports end with a **Crew used** table showing each session's model and reasoning selection, including **Same model (Captain)** and **Same reasoning effort (Captain)** when inherited. Overrides and configured defaults are labelled; actual values are shown when exposed by the harness, otherwise requested values are identified as such.
+Reports end with a **Crew used** table showing each session's model and reasoning selection, including **Same model (Captain)** and **Same reasoning effort (Captain)** when inherited. Overrides and configured defaults are labelled; actual values are shown when exposed by the harness, otherwise requested values are identified as such. Where the harness exposes them, the table also shows each session's token consumption and a total, for cost visibility only.
 
 ## What setup does
 

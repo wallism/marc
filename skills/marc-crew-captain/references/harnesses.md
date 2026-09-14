@@ -26,6 +26,14 @@ For `captain`, preserve the Captain's setting using verified host inheritance or
 
 The Captain attaches `execution` to each gate and routing result, and appends `{ reviewer, execution }` to `repairExecutions` for each repair, retaining history across recaptures. Copy the resolved selection into `execution.settings`. Set `applied: true` only after a host spawn/execution record confirms application or supported inheritance, and put a reference to that record in `evidence`. Record host-exposed values under `actual: { model, reasoningEffort }` and, when known, the Captain's values under `captain` using the same keys. Omit unknown actual values; reviewer self-identification is not host evidence. A rejected or mismatching selection remains a hold. The report's final Crew used table includes these sessions and visibly distinguishes inheritance, configured defaults, overrides and unconfirmed values; include this table in the final chat even when shortening the rest of the report.
 
+## Token consumption
+
+Record each session's observed token consumption under `execution.usage` as `{ inputTokens, cachedInputTokens, outputTokens }` when the host exposes it. Use `inputTokens` for input the model processed fresh, including cache writes, `cachedInputTokens` for input served from cache, and `outputTokens` for generated tokens, including reasoning. Copy whole numbers from the host's own record for that exact session; never estimate, extrapolate from another session, ask the reviewer to self-report, or convert to money. Omit `usage`, or any count the host does not expose, rather than filling a gap.
+
+Claude Code keeps per-message `usage` for each subagent in its transcript, observed at `<user transcript directory>/<project>/<parent session>/subagents/agent-<id>.jsonl`, where the file name carries the same agent identifier recorded as `reviewer`; sum that session's records. Codex and Cursor expose per-session usage through their own records. Confirm the location and field meanings in the running harness version before recording, and omit the field when unavailable.
+
+Consumption is cost and capacity visibility, not evidence quality. It never becomes a gate, threshold, budget or review criterion, and a large or small count neither supports nor undermines a verdict. A malformed recorded count is rejected; an absent one is reported as not exposed. Reports show per-session and total counts rounded for reading, with exact values in the adjacent JSON. The Captain's own coordinating session is still running when the report is written, so it is excluded from the total; report it separately in chat if the host exposes it.
+
 ## Verification and evidence limits
 
 Local Node regressions exercise default Codex installation, additive Claude installation, shared Cursor paths, preservation/replacement, pin rejection, rollback and tracked instruction digest changes. They do not launch models or prove skill discovery in a live harness.

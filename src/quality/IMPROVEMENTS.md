@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-15 — Reported token consumption
+
+The owner asked to see token consumption in the Captain's report where the information is available. Execution records now accept an optional `usage` object of observed `inputTokens`, `cachedInputTokens` and `outputTokens`, validated for shape and rejected when malformed. The Crew used table gains a Tokens column and a recorded total whenever at least one session exposes counts, so reports prepared without them keep their exact previous bytes and historical rendering. Absent counts render as not exposed. Consumption is informational: it is not a gate, threshold or budget, no decision depends on it, and the still-running coordinating session is excluded from the total. Focused Node regressions cover valid, malformed and absent usage and unchanged legacy rendering; 138 existing tests continue to pass. Local validation only; no model evaluation, hosted CI, publication or consumer pin activation. See [Captain register](../../skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-15--reported-token-consumption).
+
 ## 2026-09-15 — Dependency scope and assessment stages
 
 The owner identified all-specialist selection after a narrow application lockfile repair and requested stage-by-stage crew/results. Nested npm dependency-only changes now use committed-blob classification and trusted area technologies while retaining full review; shared, unmapped, workspace and unsupported changes keep broad selection. Added an external append-only review/repair/CI journal and `marc-v3` stage rendering, preserving historical formats and current-source gates. Focused red/green regressions cover routing, retained sessions, journal corruption, locks and historical approval isolation. This internal tooling change needs no consumer product help update. Local validation only; normal bundle publication, upstream CI and consumer pin activation remain required.
