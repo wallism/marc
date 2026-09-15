@@ -1,5 +1,13 @@
 # marc-crew-captain improvements
 
+## 2026-09-15 — Reported token consumption
+
+The owner requested visible token consumption in the report when the harness exposes it. The Captain now copies each reviewer, router and repair session's observed counts from the host's own record into `execution.usage`, and reports per-session and total consumption in the Crew used table. Counts must be whole numbers read from the host record for that exact session; estimates, reviewer self-reports, extrapolation and cost conversion are not acceptable, and an unavailable count is omitted and shown as not exposed. Consumption never becomes a gate, threshold, budget or review criterion, and does not support or undermine any verdict. Documented per-harness sources, the Claude Code subagent transcript location and the exclusion of the still-running Captain session. Deterministic local regression coverage; no model evaluation, hosted CI, publication or consumer activation.
+
+## 2026-09-15 — Dependency scope and assessment stages
+
+The owner requested relevant crew after repairs and visible initial/subsequent review results. The Captain checkpoints review evidence before replacement, records observed repair/CI events and recomputes selection from the full PR diff. New reports retain each stage's selected/omitted crew, reasons, sessions and outcomes. Historical stages never satisfy current gates, reset budgets or rewrite prior reports. Known application dependency scope remains distinct from full-review risk. Deterministic local regression coverage; no model evaluation, hosted CI, publication or consumer activation.
+
 ## 2026-09-14 — Upstream CI before pin updates
 
 The owner requested prevention after two fixture dependency omissions reached consumer PRs. The Captain now stops intake before a pin update unless the exact proposed upstream master SHA has a successful latest Node push run and complete Linux/Windows build/test evidence. Missing or failed evidence does not authorize a fallback, duplicate dispatch or consumer validation waiver. Updated installation guidance and source regressions; the instruction and runtime changes require normal bundle publication and consumer activation. MARC master protection separately requires both GitHub Actions Node checks with strict up-to-date checks and administrator enforcement; fork job names now match those required checks. No model evaluation is involved in this deterministic gate change.

@@ -1,0 +1,79 @@
+{
+  "id": "cancellation-not-propagated",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "A new cancellation token is accepted but never passed to the work it controls",
+  "contentDigest": "51d644758dbb135718eae5adcc3e0148f013fbf9a37b2b5dcca142cce756f5c9",
+  "rules": [
+    "cancellation-propagation",
+    "async-supervision-and-scope",
+    "trace-change-closure",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 43,
+    "sourceHead": "3c4d5e6f70819293a4b5c6d7e8f9012345678ab2",
+    "base": "2f9e8d7c6b5a493827160514233241506978abcf",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Reporting/NightlyReportBuilder.cs"
+    ],
+    "changedLines": 31,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "778899aabbccddeeff001122334455a8b7c6d5e4f3021120334455667788a556"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Worker Service host. BackgroundService.ExecuteAsync passes stoppingToken into application services.",
+    "notes": "IReportSource.FetchPageAsync and Task.Delay both accept a CancellationToken. The host waits 30 seconds for graceful shutdown before terminating."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "cancellation-propagation",
+      "where": "src/Shop.Reporting/NightlyReportBuilder.cs:23",
+      "mustCite": [
+        "the new CancellationToken parameter on BuildAsync",
+        "the FetchPageAsync and Task.Delay calls inside the paging loop that ignore it",
+        "the caller NightlyWorker.ExecuteAsync passing stoppingToken",
+        "the consequence that shutdown waits for every remaining page and the host terminates the process after its graceful period",
+        "the correction of passing the token to both calls and observing it in the loop condition"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "no-blanket-async-mandates",
+      "example": "Requiring ConfigureAwait(false) on the awaits inside a worker service."
+    },
+    {
+      "rule": "evidence-backed-cost-only",
+      "example": "Reporting the page size of 500 as a performance defect with no supplied measurement."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the while(true) loop shape or to var."
+    }
+  ],
+  "notes": "The operation demonstrably supports cancellation, which is what makes this a defect rather than a preference. Pairs with cancellation-unsupported-and-async-choices."
+}

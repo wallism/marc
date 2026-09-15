@@ -24,11 +24,13 @@ The Captain checks the complete diff and affected callers against the captured s
 
 See [crew selection rules](docs/crew.md#consumer-selection) and the [infographic notes](docs/crew-selection-infographic.md).
 
+After a repair, selection is recomputed from the full PR diff. Verified application npm dependency changes require full review while retaining their trusted technology scope. Reports show chronological assessment stages, with each review's selected crew, selection reasons and results, plus recorded repair and CI outcomes.
+
 ## Crew models and reasoning
 
 By default, crew members use the Captain's model and reasoning settings; no model configuration is needed. You can optionally set crew-wide defaults or per-member overrides in the consumer's `.marc/config.json`. The model and reasoning level must be available in your harness. See the [optional JSON configuration](docs/configuration.md#optional-crew-model-overrides).
 
-Reports end with a **Crew used** table showing each session's model and reasoning selection, including **Same model (Captain)** and **Same reasoning effort (Captain)** when inherited. Overrides and configured defaults are labelled; actual values are shown when exposed by the harness, otherwise requested values are identified as such.
+Reports end with a **Crew used** table showing each session's model and reasoning selection, including **Same model (Captain)** and **Same reasoning effort (Captain)** when inherited. Overrides and configured defaults are labelled; actual values are shown when exposed by the harness, otherwise requested values are identified as such. Where the harness exposes them, the table also shows each session's token consumption and a total, for cost visibility only.
 
 ## What setup does
 
@@ -86,6 +88,10 @@ Configuration resolution is read-only and does not establish authorization to ru
 The [basic GitHub Actions member](skills/marc-crew-github-actions/SKILL.md) reviews workflows using MARC's existing review and evidence rules. See [selection and scope](docs/crew.md#github-actions).
 
 External skills used as “mercenary crew members” are deferred. MARC currently supports reviewed members shipped in its pinned catalogue; a skill URL does not enlist a reviewer. Revisit mercenaries after establishing how to inspect their dependencies, contain conflicting instructions and bind approval to reviewed content. No external skill safety guarantee or loading mechanism is provided today.
+
+## Your own quality tools
+
+Keep running them, unchanged. Analyzers, linters and static analysis stay yours: run them in your build. MARC requires a successful CI run on the exact reviewed commit, so anything your build enforces is already a precondition for review, and anything you leave as a warning is your call not to enforce. No adapter or MARC configuration is needed for those tools, and its reviewers treat their output as CI evidence rather than review findings. Security scanning is the exception, because MARC adjudicates dependency and secret findings itself. See [your own quality tools](docs/configuration.md#your-own-quality-tools).
 
 ## Gitleaks and consumer exceptions
 

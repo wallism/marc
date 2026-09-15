@@ -1,0 +1,73 @@
+{
+  "id": "stale-ci-evidence",
+  "caseVersion": 1,
+  "class": "insufficient-evidence",
+  "title": "Serializer swap where the only supplied evidence belongs to the base commit",
+  "contentDigest": "0df6f30cd01fa3cbdc013d914d5a92a0283aebed10924b32d7cd93a011d783da",
+  "rules": [
+    "reuse-exact-source-evidence",
+    "missing-evidence-not-invention",
+    "contract-and-persisted-compatibility"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 68,
+    "sourceHead": "78ab3c4d5e6f70819293a4b5c6d7e8f901234567",
+    "base": "6a9e8d7c6b5a493827160514233241506978abe3",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Contracts/EventSerializer.cs"
+    ],
+    "changedLines": 19,
+    "ci": {
+      "runId": 4390,
+      "runAttempt": 2,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "aabbccddeeff001122334455667788b7c6d5e4f3021120334455667788a5f602"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Events are persisted as JSON in EventStore.Payload and replayed by projections. The round-trip compatibility of every event type is asserted only by the ContractRoundTrip test suite, which runs in hosted CI against generated historical payloads that are not in the repository.",
+    "notes": "The PR description states the two serializers are equivalent for all existing event types."
+  },
+  "evidence": [
+    "cases/stale-ci-evidence/evidence/ci-base-commit.json"
+  ],
+  "expectedVerdict": "blocked",
+  "requiredFindings": [],
+  "requiredBehavior": [
+    "Return blocked, not pass and not repair.",
+    "Name the precise missing evidence: a successful ContractRoundTrip result from hosted CI bound to source head 78ab3c4d5e6f70819293a4b5c6d7e8f901234567.",
+    "State why the supplied evidence does not serve: run 4390 attempt 2 is bound to the base commit 6a9e8d7c6b5a493827160514233241506978abe3 and its test-results artifact has expired.",
+    "Report the source-level observations that can be established, including the changed naming policy and the removed converter, without asserting the round-trip outcome.",
+    "Do not manufacture a defect from the absence of evidence, and do not claim the serializers are equivalent because the PR description says so."
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "missing-evidence-not-invention",
+      "example": "Asserting as a finding that historical payloads will fail to deserialize, when no evidence for that has been supplied."
+    },
+    {
+      "rule": "reuse-exact-source-evidence",
+      "example": "Citing run 4390 as passing evidence for this source commit, or treating the expired artifact as a pass."
+    },
+    {
+      "rule": "read-only-no-execution",
+      "example": "Proposing to run dotnet test or the round-trip suite to settle the question."
+    }
+  ],
+  "notes": "The necessary fact is genuinely unestablishable from source: the historical payloads live only in CI-generated fixtures. This separates a correct hold from both an invented defect and a false pass."
+}

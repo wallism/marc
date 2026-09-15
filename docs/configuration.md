@@ -66,7 +66,22 @@ Leave `agents` absent to use the Captain's model and reasoning settings. MARC do
 
 Each field uses the member override, then `defaults`, then the Captain's setting. If a model is selected but no reasoning effort is set, use that model's harness default. Member keys are core role IDs (`simplicity`, `simple-tests`, `security`, `correctness`, `code-quality`, `test-integrity`, `browser`, `repair`) or configured specialist IDs such as `csharp`; the Captain itself is controlled by its launching task. Both the model and reasoning level must be available in the chosen harness. Unsupported overrides hold the run; MARC never silently substitutes a model.
 
-The final **Crew used** table shows model and reasoning for each recorded session: **Same model (Captain)** / **Same reasoning effort (Captain)**, configured default, member override, or model default. Actual values are included when the harness exposes them; otherwise requested values are labelled as such. Missing execution evidence is shown as unconfirmed. Changing configuration requires fresh review evidence.
+The final **Crew used** table shows model and reasoning for each recorded session: **Same model (Captain)** / **Same reasoning effort (Captain)**, configured default, member override, or model default. Actual values are included when the harness exposes them; otherwise requested values are labelled as such. Missing execution evidence is shown as unconfirmed. When the harness exposes per-session token counts, the table adds a **Tokens** column and a total for the recorded sessions; sessions without exposed counts read **Not exposed**, and reports produced without any counts are unchanged. Consumption is shown for cost visibility only and never affects a decision. Changing configuration requires fresh review evidence.
+
+## Your own quality tools
+
+MARC does not read, configure, adjudicate or replace your quality tooling. Analyzers, linters, static analysis, formatters, coverage thresholds, complexity budgets and duplication detectors stay entirely yours. Run them in your build.
+
+Your build's own result is the only connection they need. MARC requires a successful hosted CI run on the exact reviewed commit before a candidate is eligible, so whatever your build enforces is already a precondition for review:
+
+- **Enforced.** A violation fails your build. The candidate is not eligible, and MARC holds or repairs it rather than approving it.
+- **Reported as a warning.** Your build passes. MARC treats that as your deliberate decision not to enforce, and its reviewers do not convert those warnings into findings or invent style rules from them.
+
+Either way, no adapter, configuration key or artifact is needed for the tool, and adding, upgrading, retuning or removing one needs no MARC change.
+
+The boundary is deliberate. Suppressions, baselines and severity thresholds are your quality bar, and importing them would make MARC adjudicate it. MARC reviews what a build cannot decide: intended behavior, contracts, affected callers, runtime ownership, invariants and whether the evidence supports the change. That work does not shrink or grow with your analyzer set, because a successful run tells MARC the candidate is eligible, never which checks exist in it. Reviewers therefore keep reviewing their declared scope whatever tooling you run.
+
+Security scanning is the exception, for a specific reason: MARC adjudicates dependency and secret findings itself, against severity thresholds, reviewed fingerprints and resolved-version evidence, so it needs structured content rather than a pass or fail. That is why the `scans` keys in the configuration contract above, and the CI wiring below, name those adapters and artifacts explicitly. If you ever need a quality tool's result to change a MARC decision, that is an adapter to implement and review, not a setting.
 
 ## Gitleaks exceptions and CI
 

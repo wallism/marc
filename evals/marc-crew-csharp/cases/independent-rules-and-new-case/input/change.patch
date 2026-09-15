@@ -1,0 +1,50 @@
+diff --git a/src/Shop.Integration/ParcelSize.cs b/src/Shop.Integration/ParcelSize.cs
+--- a/src/Shop.Integration/ParcelSize.cs
++++ b/src/Shop.Integration/ParcelSize.cs
+@@ -6,7 +6,8 @@ public enum ParcelSize
+ {
+     Small = 0,
+     Medium = 1,
+-    Large = 2
++    Large = 2,
++    Pallet = 3
+ }
+
+ public static class ParcelSizeLabels
+@@ -16,6 +17,7 @@ public static class ParcelSizeLabels
+         ParcelSize.Small => "S",
+         ParcelSize.Medium => "M",
+         ParcelSize.Large => "L",
++        ParcelSize.Pallet => "PAL",
+         _ => throw new ArgumentOutOfRangeException(nameof(size))
+     };
+ }
+diff --git a/src/Shop.Integration/CarrierBMapper.cs b/src/Shop.Integration/CarrierBMapper.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Shop.Integration/CarrierBMapper.cs
+@@ -0,0 +1,14 @@
++namespace Shop.Integration;
++
++public sealed class CarrierBMapper
++{
++    public CarrierBLabelRequest Map(Shipment shipment) => new()
++    {
++        consignee_name = shipment.Recipient.Name,
++        consignee_street = shipment.Recipient.Line1,
++        consignee_zip = shipment.Recipient.PostCode,
++        parcel_size = ParcelSizeLabels.Label(shipment.Size),
++        service_level = shipment.IsExpress ? "EXP" : "STD"
++    };
++}
+diff --git a/src/Shop.Integration/CarrierAMapper.cs b/src/Shop.Integration/CarrierAMapper.cs
+--- a/src/Shop.Integration/CarrierAMapper.cs
++++ b/src/Shop.Integration/CarrierAMapper.cs
+@@ -8,6 +8,7 @@ public sealed class CarrierAMapper
+         RecipientName = shipment.Recipient.Name,
+         AddressLine1 = shipment.Recipient.Line1,
+         Postcode = shipment.Recipient.PostCode,
++        SizeCode = ParcelSizeLabels.Label(shipment.Size),
+         Express = shipment.IsExpress
+     };
+ }

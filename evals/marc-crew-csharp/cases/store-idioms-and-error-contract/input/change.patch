@@ -1,0 +1,33 @@
+diff --git a/src/Shop.Data.Dapper/SupplierQueries.cs b/src/Shop.Data.Dapper/SupplierQueries.cs
+--- a/src/Shop.Data.Dapper/SupplierQueries.cs
++++ b/src/Shop.Data.Dapper/SupplierQueries.cs
+@@ -16,4 +16,37 @@ public sealed class SupplierQueries
+         _connection = connection;
+     }
++
++    public async Task<QueryResult<IReadOnlyList<SupplierRateRow>>> ActiveRatesAsync(
++        int supplierId,
++        int pageSize,
++        CancellationToken cancellationToken)
++    {
++        if (pageSize is < 1 or > 500)
++        {
++            return QueryResult<IReadOnlyList<SupplierRateRow>>.Invalid("pageSize must be between 1 and 500.");
++        }
++
++        const string sql = """
++            SELECT TOP (@PageSize) RateCode, AmountMinor, ActiveFrom
++            FROM SupplierRates
++            WHERE SupplierId = @SupplierId AND ActiveFrom <= SYSUTCDATETIME()
++            ORDER BY ActiveFrom DESC
++            """;
++
++        var command = new CommandDefinition(
++            sql,
++            new { SupplierId = supplierId, PageSize = pageSize },
++            cancellationToken: cancellationToken);
++
++        var rows = await _connection.QueryAsync<SupplierRateRow>(command);
++        return QueryResult<IReadOnlyList<SupplierRateRow>>.Ok(rows.AsList());
++    }
+ }

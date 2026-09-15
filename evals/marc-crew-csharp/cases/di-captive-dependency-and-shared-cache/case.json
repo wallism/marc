@@ -1,0 +1,94 @@
+{
+  "id": "di-captive-dependency-and-shared-cache",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Singleton price cache captures a scoped DbContext and mutates a plain dictionary",
+  "contentDigest": "0543410c85b508118047dc24b35fa741ab8747fe32ad63a48d7f8afe16b67f8b",
+  "rules": [
+    "use-architectural-guide",
+    "trace-change-closure",
+    "dependency-lifetimes",
+    "shared-state-races",
+    "registration-and-ownership-review",
+    "async-is-not-thread-safety",
+    "blocking-threshold",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 41,
+    "sourceHead": "1a2b3c4d5e6f70819293a4b5c6d7e8f901234567",
+    "base": "0f9e8d7c6b5a493827160514233241506978abcd",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Api/Pricing/PricingCache.cs",
+      "src/Shop.Api/ServiceRegistration.cs"
+    ],
+    "changedLines": 58,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "5566778899aabbccddeeff00112233449a8b7c6d5e4f3021120334455667788a"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "ASP.NET Core Web API with EF Core; services registered in ServiceRegistration.cs.",
+    "notes": "AppDbContext is registered scoped by AddDbContext. The API serves concurrent requests on Kestrel."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "dependency-lifetimes",
+      "where": "src/Shop.Api/ServiceRegistration.cs:15",
+      "mustCite": [
+        "the AddSingleton<PricingCache> registration alongside the scoped AppDbContext registration",
+        "the captured AppDbContext field in PricingCache",
+        "a concurrent caller reaching the singleton per request",
+        "the consequence that one request-scoped context is reused and disposed under other requests",
+        "a proportionate correction such as resolving the context per operation through a factory or scope"
+      ]
+    },
+    {
+      "rule": "shared-state-races",
+      "where": "src/Shop.Api/Pricing/PricingCache.cs:11",
+      "mustCite": [
+        "the unsynchronized Dictionary field on a singleton",
+        "a real interleaving of two concurrent requests writing the same key",
+        "the consequence of corrupted state or an InvalidOperationException during resize",
+        "a proportionate correction such as ConcurrentDictionary or a lock"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring an IPricingCache interface because the class has none."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the _entries field name or to var in GetOrAdd."
+    },
+    {
+      "rule": "no-bare-principle-finding",
+      "example": "Reporting a dependency-inversion violation with no affected caller or consequence."
+    }
+  ],
+  "notes": "Mirrors the guide's first calibration example. The scoped-in-singleton defect and the unsynchronized dictionary are separate findings on the same change."
+}

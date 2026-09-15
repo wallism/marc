@@ -9,6 +9,7 @@
     "build": "node scripts/check-syntax.cjs",
     "test": "node --test src/quality/*.test.cjs",
     "validate:catalogue": "node src/quality/catalogue-validation.cjs",
+    "validate:evals": "node src/quality/eval-corpus.cjs",
     "test:scenarios": "node --test src/quality/marc.test.cjs src/quality/merge.test.cjs src/quality/crew.test.cjs src/quality/ci-recovery.test.cjs src/quality/reports.test.cjs src/quality/installation.test.cjs",
     "eval:plan": "node src/quality/prompt-eval-plan.cjs"
   }

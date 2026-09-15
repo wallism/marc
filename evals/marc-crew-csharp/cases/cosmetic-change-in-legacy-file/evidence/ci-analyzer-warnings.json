@@ -1,0 +1,27 @@
+{
+  "note": "Sanitized synthetic hosted-CI evidence for this case's exact source commit. Warnings are pre-existing in Shop.Legacy and are tracked, not gating.",
+  "runId": 4412,
+  "runAttempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "head": "5678ab3c4d5e6f70819293a4b5c6d7e8f9012345",
+  "jobs": [
+    { "name": "build (ubuntu-latest)", "conclusion": "success" },
+    { "name": "test (ubuntu-latest)", "conclusion": "success" }
+  ],
+  "testResults": {
+    "artifact": "test-results",
+    "total": 214,
+    "passed": 214,
+    "failed": 0,
+    "skipped": 0,
+    "summary": "dotnet test on the exact source commit; all assemblies passed."
+  },
+  "quality": {
+    "artifact": "quality-scans",
+    "analyzerWarnings": 37,
+    "analyzerErrors": 0,
+    "secretFindings": 0,
+    "summary": "37 analyzer warnings in Shop.Legacy, unchanged from the base commit: CA1051 public mutable fields (9), CA1031 broad catch (6), CA2007 no ConfigureAwait (14), IDE0059 unused assignment (8). No new diagnostics introduced by this commit."
+  }
+}

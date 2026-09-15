@@ -1,0 +1,80 @@
+{
+  "id": "duplicated-business-rule",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "A new subscription path copies the invoice tax and rounding rule and updates only one copy",
+  "contentDigest": "3b16fa7232a49646c8b25aaa477fbebd70f3b6806f4e04ff40a2b8f29440ab34",
+  "rules": [
+    "use-architectural-guide",
+    "principles-on-concrete-facts",
+    "dry-shared-business-decision",
+    "blocking-threshold",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 47,
+    "sourceHead": "70819293a4b5c6d7e8f9012345678ab3c4d5e6f7",
+    "base": "6f9e8d7c6b5a493827160514233241506978abd3",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Billing/SubscriptionPricing.cs",
+      "src/Shop.Billing/InvoicePricing.cs"
+    ],
+    "changedLines": 41,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "bbccddeeff001122334455667788a99a8b7c6d5e4f3021120334455667788a57"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Billing owns money rules. InvoicePricing has been the single owner of the standard rate and the currency rounding convention.",
+    "notes": "Finance requires one standard rate and banker's rounding to two decimal places across every billed amount."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "dry-shared-business-decision",
+      "where": "src/Shop.Billing/SubscriptionPricing.cs:10",
+      "mustCite": [
+        "the standard-rate and rounding logic copied from InvoicePricing, naming InvoicePricing as the existing owner",
+        "both affected paths, invoice and subscription, as the copies now in the tree",
+        "the concrete consequence that this change raises the rate to 0.12 in InvoicePricing only, so subscriptions are billed at 0.10 and the two paths have already diverged",
+        "a proportionate correction that gives the rate and rounding one owner both paths call"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "dry-negative-independent-rules",
+      "example": "Reporting ToInvoiceLine and ToSubscriptionLine as duplication because their shapes look similar; they map different external contracts."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a domain-service, specification or strategy layer for pricing."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the decimal literal style or method naming."
+    }
+  ],
+  "notes": "Mirrors the guide's second calibration example, with the divergence already realized inside the same change so the consequence is observed rather than predicted. The file also contains two genuinely independent mappings as a false-alarm probe."
+}

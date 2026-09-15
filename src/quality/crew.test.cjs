@@ -20,6 +20,48 @@ test('crew routes language and composite impact without selecting every availabl
   assert.equal(selection([]).selected.length, 0);
   assert.ok(selection([]).omitted.every(x => x.reasons.length));
 });
+
+test('verified application dependency repairs select owning technologies without widening unrelated crew', () => {
+  const scoped = { schema: 1, members: ['csharp', 'javascript', 'frontend', 'react', 'terraform'].map(id =>
+    ({ id, version: id === 'csharp' ? '1.1.0' : '1.0.0' })), areas: [
+    { paths: ['^sites/help/'], technologies: ['react', 'web'], reason: 'Confirmed help application.' },
+    { paths: ['^services/worker/'], technologies: ['javascript'], reason: 'Confirmed Node worker.' }
+  ] };
+  const members = loadCatalogue(path.resolve(__dirname, '../..'), scoped);
+  const lock = version => JSON.stringify({ name: 'synthetic', lockfileVersion: 3, packages: {
+    '': { name: 'synthetic', dependencies: { example: '^2.0.2' } },
+    'node_modules/example': { version, resolved: `https://registry.npmjs.org/example/-/example-${version}.tgz`, integrity: 'sha512-YWJjZA==' }
+  } });
+  const read = (before, after) => (...args) => args[0] === 'ls-tree' ? `100644 blob ${'d'.repeat(40)}\t${args.at(-1)}` :
+    args[0] === 'show' ? (args[1].startsWith(identity.base + ':') ? before : after) : '';
+  const route = (file, before = lock('2.0.2'), after = lock('2.0.3'), extra = []) => {
+    const found = collectImpact(identity.base, identity.sourceHead, [file, ...extra], scoped, members, read(before, after));
+    return selectCrew(identity, scoped, members, found);
+  };
+  const repaired = route('sites/help/package-lock.json', undefined, undefined, ['tests/Example.cs']);
+  assert.deepEqual(repaired.selected.map(m => m.id), ['csharp', 'frontend', 'javascript', 'react']);
+  assert.equal(repaired.impact.uncertain, false);
+  assert.equal(repaired.requiresFull, true);
+  assert.equal(repaired.requiresBrowser, true);
+  assert.deepEqual(repaired.holds, []);
+  const backend = route('services/worker/package-lock.json');
+  assert.deepEqual(backend.selected.map(m => m.id), ['javascript']);
+  assert.equal(backend.requiresFull, true, 'dependency risk still needs full review without UI impact');
+  assert.equal(backend.requiresBrowser, false);
+  for (const file of ['package-lock.json', 'unknown/package-lock.json'])
+    assert.equal(route(file).selected.length, members.length, file);
+  for (const bad of ['not json', lock('2.0.3').replace('https://registry.npmjs.org', 'https://unknown.invalid'),
+    lock('2.0.3').replace('"lockfileVersion":3', '"lockfileVersion":2')])
+    assert.equal(route('sites/help/package-lock.json', lock('2.0.2'), bad).impact.uncertain, true);
+  assert.equal(route('sites/help/package.json', '{"scripts":{"build":"old"}}', '{"scripts":{"build":"new"}}').impact.uncertain, true);
+  assert.equal(route('sites/help/package-lock.json', lock('2.0.2').replace('"name":"synthetic"', '"workspaces":["apps/*"],"name":"synthetic"'),
+    lock('2.0.3').replace('"name":"synthetic"', '"workspaces":["apps/*"],"name":"synthetic"')).impact.uncertain, true);
+  const nonregular = (...args) => args[0] === 'ls-tree' ? `120000 blob ${'d'.repeat(40)}\t${args.at(-1)}` : read(lock('2.0.2'), lock('2.0.3'))(...args);
+  assert.equal(collectImpact(identity.base, identity.sourceHead, ['sites/help/package-lock.json'], scoped, members, nonregular).uncertain, true);
+  assert.deepEqual(route('services/worker/package.json', '{"dependencies":{"example":"^2.0.2"}}',
+    '{"dependencies":{"example":"^2.0.3"}}').selected.map(m => m.id), ['javascript']);
+  assert.equal(route('sites/help/package-lock.json', undefined, undefined, ['.github/workflows/ci.yml']).impact.uncertain, true);
+});
 test('unknown and unavailable expertise hold; uncertainty broadens review', () => {
   assert.match(selection(['python']).holds.join(' '), /python/);
   const missing = selectCrew(identity, { ...config, members: [{ id: 'python', version: '1.0.0' }] }, [], impact(['python']));

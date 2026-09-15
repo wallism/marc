@@ -1,0 +1,79 @@
+{
+  "id": "entangled-policies",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "A tax exemption rule is added inside the confirmation email builder",
+  "contentDigest": "7c7a4aed443016f42d203ee82cfd6de957a092b37b232294dbadfcbbafb1385c",
+  "rules": [
+    "srp-entangled-policies",
+    "smallest-design-and-boundaries",
+    "principles-on-concrete-facts",
+    "finding-anatomy",
+    "blocking-threshold"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 49,
+    "sourceHead": "9293a4b5c6d7e8f9012345678ab3c4d5e6f70819",
+    "base": "8f9e8d7c6b5a493827160514233241506978abd5",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Orders/OrderConfirmationService.cs"
+    ],
+    "changedLines": 29,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "ddeeff001122334455667788a99aabbc8b7c6d5e4f3021120334455667788a59"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Shop.Orders holds order policy. Email bodies are built in the same assembly; marketing changes the templates without developer review of money rules.",
+    "notes": "The persisted order total is written from the value BuildBody returns."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "srp-entangled-policies",
+      "where": "src/Shop.Orders/OrderConfirmationService.cs:27",
+      "mustCite": [
+        "the charity tax-exemption rule placed inside BuildBody, which also renders the email",
+        "that BuildBody's return value is persisted as the order total, so presentation and money policy are now one responsibility",
+        "the consequence that a template edit can change a billed amount, and that the exemption cannot be applied where no email is sent",
+        "a proportionate correction that computes the exempt total in order policy and lets the body render the result"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "srp-negative-size-metrics",
+      "example": "Reporting that OrderConfirmationService has grown to 90 lines or takes four constructor parameters."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a Clean Architecture project split, a domain-events pipeline or a templating engine."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the raw string literal or to the private helper's name."
+    }
+  ],
+  "notes": "The entanglement is concrete because the rendering method's return value is persisted as money, which is what raises this above a taste-level layering objection."
+}

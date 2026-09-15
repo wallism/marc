@@ -4,6 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { consumerFile } = require('./config.cjs');
 const { isHostInstruction } = require('./host-instructions.cjs');
+const { collectProjectChanges } = require('./project-review.cjs');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const text = x => typeof x === 'string' && x.trim().length > 0;
 const texts = x => Array.isArray(x) && x.every(text);
@@ -71,7 +72,7 @@ function selectCrew(identity, config, catalogue, impact) {
       holds.push('Required expertise unavailable for ' + technology);
   }
   const record = { schema: 1, compatibility: 'marc-crew-v1', ...identity, impact, selected, omitted, holds: unique(holds),
-    requiresFull: impact.uncertain || impact.requiresBrowser, requiresBrowser: impact.requiresBrowser };
+    requiresFull: impact.uncertain || impact.requiresBrowser || impact.requiresFull === true, requiresBrowser: impact.requiresBrowser };
   return { ...record, selectionHash: hash(JSON.stringify(record)) };
 }
 const documentation = file => /\.(md|txt|rst|adoc)$/i.test(file);
@@ -88,9 +89,26 @@ function fileTechnologies(file) {
 function collectImpact(base, head, files, config, catalogue, readGit) {
   const affected = new Set(files), reasons = [], holds = [], technologies = new Set();
   let uncertain = false, shared = false, budgetReached = false;
+  // A known application's verified dependency-only diff needs full security review,
+  // not every technology in the repository. Never infer frontend from npm alone.
+  const scopedDependencies = new Set();
+  for (const file of files.filter(f => /\/package(?:-lock)?\.json$/i.test(f) &&
+    !isHostInstruction(f) && !/^(\.github|\.agents|\.marc|scripts)\//i.test(f))) {
+    if (!config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file)))) continue;
+    try {
+      const change = collectProjectChanges(base, head, [file], readGit)[0];
+      if (change?.classification !== 'dependency-only') continue;
+      // Workspace manifests can own dependencies beyond this application boundary.
+      if ([base, head].some(revision => {
+        const manifest = JSON.parse(readGit('show', `${revision}:${file}`));
+        return manifest.workspaces !== undefined || manifest.packages?.['']?.workspaces !== undefined;
+      })) continue;
+      scopedDependencies.add(file);
+    } catch { /* Unavailable or unsupported evidence retains broad selection below. */ }
+  }
   // Search both trees by source filenames and declared identifiers. This intentionally over-approximates callers.
   // No candidate script, compiler, external diff driver or textconv is executed.
-  let frontier = files.filter(f => !documentation(f));
+  let frontier = files.filter(f => !documentation(f) && !scopedDependencies.has(f));
   if (files.length >= 300) { frontier = []; uncertain = true; reasons.push('Affected-file budget reached.'); }
   const searched = new Set();
   try {
@@ -126,7 +144,10 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
   for (const file of [...affected].sort()) {
     const areas = config.areas.filter(area => area.paths.some(p => new RegExp(p, 'i').test(file)));
     for (const area of areas) { area.technologies.forEach(t => technologies.add(t)); reasons.push(`${file}: ${area.reason}`); }
-    if (governance(file)) { shared = true; reasons.push(`${file}: shared configuration/instruction/dependency impact.`); }
+    if (scopedDependencies.has(file)) {
+      technologies.add('javascript');
+      reasons.push(`${file}: verified application dependency-only change; trusted area selects specialists, full review remains required.`);
+    } else if (governance(file)) { shared = true; reasons.push(`${file}: shared configuration/instruction/dependency impact.`); }
     const detected = fileTechnologies(file);
     detected.forEach(t => technologies.add(t));
     if (!detected.length && !areas.length && !documentation(file) && !governance(file)) {
@@ -138,6 +159,6 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
     [...affected].some(f => /(^|\/)(wwwroot|ClientApp)\/|\.(jsx|tsx)$/i.test(f));
   reasons.push(`Inspected ${files.length} changed and ${affected.size - files.length} referenced files in both revisions.`);
   return { files: [...affected].sort(), technologies: [...technologies].sort(), reasons: unique(reasons), holds: unique(holds),
-    uncertain: uncertain || shared, requiresBrowser };
+    uncertain: uncertain || shared, requiresBrowser, ...(scopedDependencies.size ? { requiresFull: true } : {}) };
 }
 module.exports = { validateCrewConfig, validateMember, loadCatalogue, selectCrew, collectImpact };

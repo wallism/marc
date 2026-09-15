@@ -1,0 +1,109 @@
+{
+  "id": "failure-and-retry-consistency",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Capture path swallows failures, misreports cancellation, retries a non-idempotent call and leaves partial state",
+  "contentDigest": "ceb20bd3bb1f5d3e503c68a52e4b3d550c92ae8bcb8818d81bda9c1f1238abbc",
+  "rules": [
+    "failure-behavior-in-host",
+    "failure-false-success",
+    "cancellation-not-misreported",
+    "non-idempotent-retry-duplication",
+    "partial-state-and-compensation",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 54,
+    "sourceHead": "e8f9012345678ab3c4d5e6f70819293a4b5c6d7e",
+    "base": "df9e8d7c6b5a493827160514233241506978abda",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Payments/CaptureService.cs"
+    ],
+    "changedLines": 39,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "22334455667788a99aabbccddeeff0018b7c6d5e4f3021120334455667788a5e"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "The gateway's CaptureAsync is not idempotent unless an idempotency key is supplied; the project's IPaymentGateway exposes an overload that accepts one. Order state and the ledger entry are written through separate stores with no ambient transaction.",
+    "notes": "The established error contract is to return CaptureResult.Failed with a reason; callers surface that to the customer. Cancellation flows from request abort."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "failure-false-success",
+      "where": "src/Shop.Payments/CaptureService.cs:47",
+      "mustCite": [
+        "the catch-all that logs and returns CaptureResult.Success",
+        "the caller that marks the order paid on that result",
+        "the consequence that a failed capture is recorded as a successful payment and the stack context is lost",
+        "the correction of returning CaptureResult.Failed with the reason, per the project's established contract"
+      ]
+    },
+    {
+      "rule": "cancellation-not-misreported",
+      "where": "src/Shop.Payments/CaptureService.cs:47",
+      "mustCite": [
+        "that OperationCanceledException is caught by the same catch-all",
+        "that a request abort therefore surfaces as a gateway decline",
+        "the consequence of misattributed declines in payment reporting and customer messaging",
+        "the correction of letting cancellation propagate or reporting it distinctly"
+      ]
+    },
+    {
+      "rule": "non-idempotent-retry-duplication",
+      "where": "src/Shop.Payments/CaptureService.cs:28",
+      "mustCite": [
+        "the three-attempt retry loop around gateway CaptureAsync",
+        "that the call is made without the idempotency key overload the project's gateway provides",
+        "the consequence of double or triple charging when the first attempt timed out after the gateway had captured",
+        "the correction of passing a stable idempotency key or checking capture state before retrying"
+      ]
+    },
+    {
+      "rule": "partial-state-and-compensation",
+      "where": "src/Shop.Payments/CaptureService.cs:42",
+      "mustCite": [
+        "the order being saved as paid before the ledger entry is written, across two stores with no ambient transaction",
+        "the consequence that a ledger failure leaves an order marked paid with no ledger record and no compensation",
+        "a proportionate correction such as writing the ledger entry first, or recording a pending state the existing reconciliation can complete"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "no-error-model-mandate",
+      "example": "Requiring exceptions instead of the project's CaptureResult type, or the reverse."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a distributed transaction, saga framework or outbox library without reference to the project's existing reconciliation."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the retry loop being a for loop or to the log message wording."
+    }
+  ],
+  "notes": "Four distinct failure-and-consistency rules on one changed method. The idempotency-key overload exists in the project, which is what makes the retry finding concrete rather than theoretical."
+}

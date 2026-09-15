@@ -1,0 +1,91 @@
+{
+  "id": "tenant-filter-and-query-per-item",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Overdue invoice query loses its tenant filter and gains a query per row",
+  "contentDigest": "caad579fb2667c3e23410c16d38d3bc699ebaf412a3ac40952c0e70e7bf629c4",
+  "rules": [
+    "authorization-invariants",
+    "persistence-invariants",
+    "tenant-and-consistency-guarantees",
+    "query-per-item-and-materialization",
+    "deferred-and-repeated-queries",
+    "blocking-threshold",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 53,
+    "sourceHead": "d7e8f9012345678ab3c4d5e6f70819293a4b5c6d",
+    "base": "cf9e8d7c6b5a493827160514233241506978abd9",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Reporting/OverdueInvoiceQuery.cs"
+    ],
+    "changedLines": 34,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "1122334455667788a99aabbccddeeff08b7c6d5e4f3021120334455667788a5d"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "EF Core against SQL Server. Every tenant-scoped query must filter on ITenantContext.TenantId; there is no global query filter configured on AppDbContext.",
+    "notes": "OverdueInvoiceQuery is reached from the tenant-facing /reports/overdue endpoint and from the new internal admin endpoint. Supplied CI timing shows the endpoint's p95 rising from 180 ms to 9.4 s on the seeded 12,000-invoice dataset."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "tenant-and-consistency-guarantees",
+      "where": "src/Shop.Reporting/OverdueInvoiceQuery.cs:24",
+      "mustCite": [
+        "the removed TenantId predicate and that no global query filter exists on AppDbContext",
+        "the tenant-facing /reports/overdue caller that still reaches this method",
+        "the consequence that one tenant's report now returns every tenant's overdue invoices",
+        "a correction that keeps the tenant predicate for tenant callers and gives the admin path its own deliberate query"
+      ]
+    },
+    {
+      "rule": "query-per-item-and-materialization",
+      "where": "src/Shop.Reporting/OverdueInvoiceQuery.cs:30",
+      "mustCite": [
+        "the per-row customer lookup inside the foreach and the unbounded ToListAsync that feeds it",
+        "the supplied timing evidence showing p95 rising from 180 ms to 9.4 s on 12,000 invoices",
+        "the consequence of one query per invoice against SQL Server on a request path",
+        "a correction such as projecting the customer name in the original query or batching the lookups"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "evidence-backed-cost-only",
+      "example": "Requiring compiled queries, AsSplitQuery or a caching layer with no supplied measurement showing they matter."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring CQRS read models or a reporting database for this endpoint."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to query syntax versus method syntax."
+    }
+  ],
+  "notes": "The cross-tenant exposure is the safety finding and stays explicit even though CI passes. The cost finding is admissible because the case supplies a measurement."
+}

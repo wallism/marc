@@ -1,0 +1,92 @@
+{
+  "id": "coupled-dispatch-sites",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "A new payment method is added to two of three coupled switches",
+  "contentDigest": "5e0f596ed9bdc87b98c8a82502f9bc813585c5e56096b05c29bb4d7afbebfdd7",
+  "rules": [
+    "trace-change-closure",
+    "ocp-coupled-dispatch-seam",
+    "advisory-for-optional",
+    "proportionate-structural-change",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 48,
+    "sourceHead": "819293a4b5c6d7e8f9012345678ab3c4d5e6f708",
+    "base": "7f9e8d7c6b5a493827160514233241506978abd4",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Payments/PaymentMethod.cs",
+      "src/Shop.Payments/FeeCalculator.cs",
+      "src/Shop.Payments/PaymentIcons.cs"
+    ],
+    "changedLines": 26,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "ccddeeff001122334455667788a99aab8b7c6d5e4f3021120334455667788a58"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "PaymentMethod is an enum dispatched by FeeCalculator, PaymentIcons and SettlementWindow. The two previous methods were added the same way.",
+    "notes": "SettlementWindow.For is called by the nightly settlement job for every captured payment."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "trace-change-closure",
+      "where": "src/Shop.Payments/SettlementWindow.cs:12",
+      "mustCite": [
+        "the new PaymentMethod.Klarna member",
+        "SettlementWindow.For as the third dispatch site the change did not update",
+        "its default arm throwing ArgumentOutOfRangeException",
+        "the consequence that the nightly settlement job fails for any Klarna payment",
+        "the correction of handling the new member at that site"
+      ]
+    },
+    {
+      "rule": "ocp-coupled-dispatch-seam",
+      "where": "src/Shop.Payments/FeeCalculator.cs:11",
+      "mustCite": [
+        "the three coupled dispatch sites that each new payment method has required editing",
+        "that this change edited two and missed one, which is the concrete cost",
+        "a proportionate seam, such as one table or per-method descriptor owning fee, icon and settlement window",
+        "advisory severity, because the blocking defect is the missed site rather than the enum dispatch itself"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "ocp-negative-finite-switch",
+      "example": "Requiring a strategy pattern for the unrelated two-case switch in RefundReasons because switches are closed to extension."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring the enum to be replaced by a class hierarchy or the payments module to adopt CQRS."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to switch expression versus switch statement syntax."
+    }
+  ],
+  "notes": "Exercises the positive open/closed rule and advisory severity together: the missed dispatch site blocks, the seam recommendation stays advisory."
+}

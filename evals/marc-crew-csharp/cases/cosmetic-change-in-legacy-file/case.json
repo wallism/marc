@@ -1,0 +1,71 @@
+{
+  "id": "cosmetic-change-in-legacy-file",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "Formatting-only edit inside a file full of pre-existing debt and analyzer warnings",
+  "contentDigest": "be444d54b64ca54e90c7cb7e4ba4eb00e351576d0365c0f3ecf41191bfe08c4d",
+  "rules": [
+    "style-exclusions",
+    "pr-scope-only",
+    "analyzer-failures-are-ci-evidence",
+    "no-findings-valid"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 66,
+    "sourceHead": "5678ab3c4d5e6f70819293a4b5c6d7e8f9012345",
+    "base": "4a9e8d7c6b5a493827160514233241506978abe1",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Legacy/PriceBookManager.cs"
+    ],
+    "changedLines": 14,
+    "ci": {
+      "runId": 4412,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "a99aabbccddeeff0011223344556677b7c6d5e4f3021120334455667788a5f60"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Shop.Legacy predates the current conventions and is being replaced module by module. Analyzer diagnostics in this project are reported as warnings and tracked in CI, not treated as review items.",
+    "notes": "This PR reformats one method and renames two locals. No behavior changes."
+  },
+  "evidence": [
+    "cases/cosmetic-change-in-legacy-file/evidence/ci-analyzer-warnings.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to var, brace placement, the renamed locals, the underscore-prefixed fields or expression-bodied members."
+    },
+    {
+      "rule": "pr-scope-only",
+      "example": "Reporting the 400-line class, the public mutable statics, the swallowed exception in LoadAll or the missing async in this file, none of which this change touches."
+    },
+    {
+      "rule": "analyzer-failures-are-ci-evidence",
+      "example": "Turning the 37 pre-existing analyzer warnings in the supplied CI evidence into review findings or new style rules."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring the legacy manager be rewritten, split or moved behind an interface as a condition of this change."
+    }
+  ],
+  "notes": "Three exclusions in one case: style, unrelated historical debt and pre-existing analyzer diagnostics. All three expect zero findings, which is why they can share a case."
+}

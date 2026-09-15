@@ -6,6 +6,7 @@ const { execFileSync } = require('node:child_process');
 const { collectProjectChanges, verifyProjectChanges, dependencyReviewPasses, dependencyFile } = require('./project-review.cjs');
 const { loadCatalogue, selectCrew, collectImpact } = require('./crew.cjs');
 const { executionReasons, agentTable } = require('./agent-settings.cjs');
+const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -35,7 +36,9 @@ function selectQueue(prs, p, { base, policyHash, completed = [] }) {
       sourceHead: pr.head.sha, base, policyHash, key, status, reasons };
   });
 }
-function reportPaths(pr, head, reportCreatedAt) {
+// Formats published before the audit-naming cutover keep their original unsuffixed JSON name.
+const PRE_AUDIT_FORMATS = [undefined, 'marc-v1', 'marc-v2'];
+function reportPaths(pr, head, reportCreatedAt, reportFormat) {
   if (!Number.isSafeInteger(pr) || pr < 1 || !sha(head)) throw Error('Invalid PR or source SHA');
   let name = head; // Legacy evidence keeps its original SHA paths and bytes.
   if (reportCreatedAt !== undefined) {
@@ -44,23 +47,28 @@ function reportPaths(pr, head, reportCreatedAt) {
       throw Error('Invalid report timestamp: use a real UTC minute');
     name = `${reportCreatedAt.slice(0, 10).replaceAll('-', '')}-${reportCreatedAt.slice(11, 16).replace(':', '')}-${pr}`;
   }
-  return ['json', 'md'].map(ext => `.quality/reports/pr-${pr}/${name}.${ext}`);
+  // The JSON is the machine-readable audit record; the Markdown stays the human report.
+  const audit = !PRE_AUDIT_FORMATS.includes(reportFormat);
+  return [`${name}${audit ? '-audit' : ''}.json`, `${name}.md`].map(file => `.quality/reports/pr-${pr}/${file}`);
 }
+// Only dated reports span the cutover; a legacy SHA pair was never published with the suffix.
+const datedReportNames = (pr, head, reportCreatedAt) =>
+  [...reportPaths(pr, head, reportCreatedAt), ...reportPaths(pr, head, reportCreatedAt, 'marc-v3')];
 function prepareReport(e, now = new Date()) {
-  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v2' } : {}),
+  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v3' } : {}),
     reportCreatedAt: e.reportCreatedAt === undefined ?
     now.toISOString().slice(0, 16) + ':00.000Z' : e.reportCreatedAt };
-  reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt);
+  reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt, prepared.reportFormat);
   return prepared;
 }
 function isOwnReportPath(pr, file) {
   if (!Number.isSafeInteger(pr) || pr < 1) return false;
   const legacy = file.match(new RegExp(`^\\.quality/reports/pr-${pr}/([a-f0-9]{40})\\.(json|md)$`));
   if (legacy) return reportPaths(pr, legacy[1]).includes(file);
-  const dated = file.match(new RegExp(`^\\.quality/reports/pr-${pr}/(\\d{4})(\\d{2})(\\d{2})-(\\d{2})(\\d{2})-${pr}\\.(json|md)$`));
+  const dated = file.match(new RegExp(`^\\.quality/reports/pr-${pr}/(\\d{4})(\\d{2})(\\d{2})-(\\d{2})(\\d{2})-${pr}(?:-audit)?\\.(json|md)$`));
   if (!dated) return false;
   const [, year, month, day, hour, minute] = dated;
-  try { return reportPaths(pr, 'a'.repeat(40), `${year}-${month}-${day}T${hour}:${minute}:00.000Z`).includes(file); }
+  try { return datedReportNames(pr, 'a'.repeat(40), `${year}-${month}-${day}T${hour}:${minute}:00.000Z`).includes(file); }
   catch { return false; }
 }
 function writeReportFiles(e, decision, worktree) {
@@ -68,7 +76,7 @@ function writeReportFiles(e, decision, worktree) {
     if (fs.lstatSync(path.join(worktree, component), { throwIfNoEntry: false })?.isSymbolicLink())
       throw Error('Report directory is a symlink');
   }
-  const files = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt);
+  const files = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
   // Minute collisions fail closed before either member of an existing pair is touched.
   if (files.some(file => fs.lstatSync(path.join(worktree, file), { throwIfNoEntry: false })))
     throw Error('Report name already exists; preserve existing evidence and inspect the minute collision');
@@ -189,7 +197,11 @@ function evaluate(e, p, policyHash, expectedCrew) {
   return { eligible: reasons.length === 0, merge: reasons.length === 0 && p.mode === 'automatic', reasons };
 }
 function reportMarkdown(e, decision) {
-  if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2'].includes(e.reportFormat)) throw Error('Unknown report format');
+  if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2', 'marc-v3'].includes(e.reportFormat)) throw Error('Unknown report format');
+  if (e.reportFormat === 'marc-v3') return `# MARC report: PR ${e.pr}\n\nReport created: ${e.reportCreatedAt.slice(0, 16).replace('T', ' ')} UTC\n\n` +
+    `Current decision: ${decision.merge ? 'Eligible for guarded merge' : decision.eligible ? 'Report-only: would merge' : 'Held'}\n\n` +
+    stagesMarkdown(e.stages || [{ ...reviewStage(e, decision), recordedAt: e.reportCreatedAt }]) +
+    '\nThe adjacent JSON retains stage identities and evidence. Later CI and merge outcomes do not rewrite this report.\n';
   // Missing format identifies immutable reports produced before the MARC cutover.
   const name = e.reportFormat?.startsWith('marc-') ? 'MARC' : 'Chief of Quality';
   const clean = x => String(x ?? '').replace(/[\r\n|]/g, ' ');
@@ -267,7 +279,7 @@ function collectCi(head, pr, p, read, readJobs) {
     jobs: jobs.map(({ name, conclusion }) => ({ name, conclusion })) };
 }
 function verifyReportCommit(e, live, decision, readGit) {
-  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt);
+  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
   readGit('merge-base', '--is-ancestor', e.sourceHead, live.head.sha);
   const changed = readGit('diff', '--name-only', '--no-renames', '-z', e.sourceHead, live.head.sha, '--').split('\0').filter(Boolean);
   if (changed.length !== 2 || changed.some(f => !paths.includes(f))) throw Error('Changes after review exceed the exact report files');
@@ -373,8 +385,8 @@ function createController(context, adapters = {}) {
   }
   function run(args) {
     const [action, first, second] = args;
-    if (!['queue', 'capture', 'decide', 'report', 'merge', 'recover-ci'].includes(action))
-      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json]');
+    if (!['queue', 'capture', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(action))
+      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
     if (action === 'capture' && !second) throw Error('An external evidence path is required');
     checkTrustedCheckout();
     const { policy: p, policyHash: hash } = trustedPolicy(context);
@@ -419,6 +431,12 @@ function createController(context, adapters = {}) {
     }
     const decision = evaluate(e, p, hash, recruit(e));
     if (action === 'decide') { console.log(encode(decision)); return; }
+    if (action === 'checkpoint') {
+      if (e.repository !== REPO) throw Error('Stage repository differs from consumer');
+      const event = second ? JSON.parse(fs.readFileSync(second, 'utf8')) : undefined;
+      const stages = recordStage(path.join(context.stateDirectory, 'assessment-stages'), e, decision, event);
+      console.log(encode({ stages: stages.length, last: stages.at(-1) })); return;
+    }
     const live = assertLive(e);
     if (action === 'report') {
       if (!registeredProducer(live.user.login, live.head.ref, p))
@@ -426,6 +444,8 @@ function createController(context, adapters = {}) {
       if (!second || live.head.sha !== e.sourceHead || command('git', ['rev-parse', 'HEAD'], second) !== e.sourceHead ||
         command('git', ['status', '--porcelain'], second)) throw Error('Report requires a clean PR worktree at the reviewed head');
       const prepared = prepareReport(e);
+      if (prepared.reportFormat === 'marc-v3')
+        prepared.stages = recordStage(path.join(context.stateDirectory, 'assessment-stages'), e, decision);
       // Persist the timestamp in trusted external evidence before rendering; verification
       // later derives the exact same names/content without consulting the current clock.
       fs.writeFileSync(first, encode(prepared));

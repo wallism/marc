@@ -1,0 +1,71 @@
+{
+  "id": "legitimate-ownership",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "Injected dependency left to the container and a scope created in a hosted service",
+  "contentDigest": "3b9765cf640e3d02067db007ac00677313315c0f10072d8825a97910832ab071",
+  "rules": [
+    "borrower-does-not-dispose-container-owned",
+    "registration-and-ownership-review",
+    "no-findings-valid",
+    "no-mandated-patterns"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 62,
+    "sourceHead": "12345678ab3c4d5e6f70819293a4b5c6d7e8f901",
+    "base": "0a9e8d7c6b5a493827160514233241506978abdd",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Worker/ReconciliationWorker.cs"
+    ],
+    "changedLines": 35,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "55667788a99aabbccddeeff001122338b7c6d5e4f3021120334455667788a5f2"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Worker Service. IReconciliationJob is registered scoped; ILogger and IServiceScopeFactory are container-owned singletons. BackgroundService is the composition root for each iteration.",
+    "notes": "The worker is a singleton, which is why it resolves the scoped job per iteration rather than injecting it."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "borrower-does-not-dispose-container-owned",
+      "example": "Requiring the worker to dispose the injected IServiceScopeFactory or ILogger."
+    },
+    {
+      "rule": "registration-and-ownership-review",
+      "example": "Reporting the scope factory as a service-locator anti-pattern; a hosted service is a legitimate composition root."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a job scheduler library, mediator or channel-based pipeline instead."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to await using versus using, or to the loop shape."
+    }
+  ],
+  "notes": "Pairs with di-captive-dependency-and-shared-cache and disposal-and-escaping-scope: the correct resolution of the same lifetime problem must not be reported as a defect."
+}

@@ -1,0 +1,79 @@
+{
+  "id": "exposed-mutable-internals",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Order line collection is exposed as a mutable list and a caller bypasses validation",
+  "contentDigest": "6df45b1ff0511adb90ce19d48eae9567ee8a1f80a792dcf6d008ac3ac10d840b",
+  "rules": [
+    "encapsulated-state-transitions",
+    "trace-change-closure",
+    "blocking-threshold",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 52,
+    "sourceHead": "c6d7e8f9012345678ab3c4d5e6f70819293a4b5c",
+    "base": "bf9e8d7c6b5a493827160514233241506978abd8",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Orders/Order.cs",
+      "src/Shop.Api/Controllers/AdminOrdersController.cs"
+    ],
+    "changedLines": 22,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "001122334455667788a99aabbccddeef8b7c6d5e4f3021120334455667788a5c"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Order owns its line collection. AddLine validates quantity against stock rules and recalculates the cached total.",
+    "notes": "The cached Total is the value persisted and invoiced."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "encapsulated-state-transitions",
+      "where": "src/Shop.Orders/Order.cs:15",
+      "mustCite": [
+        "the change of the Lines property from IReadOnlyList to List",
+        "AdminOrdersController.AddFreeSample calling order.Lines.Add directly",
+        "the consequence that AddLine's quantity validation is skipped and the cached Total is left stale, so the persisted and invoiced amount excludes the added line",
+        "the correction of keeping the collection read-only and routing the admin path through AddLine"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a DDD aggregate root, domain events or a repository redesign."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the property being auto-implemented or to member ordering."
+    },
+    {
+      "rule": "pr-scope-only",
+      "example": "Reporting the unrelated public setter on Order.Notes, which this change does not touch."
+    }
+  ],
+  "notes": "The consequence is concrete because the cached total is what gets persisted and invoiced, not merely an encapsulation preference."
+}

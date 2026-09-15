@@ -1,0 +1,102 @@
+{
+  "id": "policy-bound-to-io",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Deterministic discount policy reaches for HTTP and the filesystem directly",
+  "contentDigest": "ec696f15a834a3a8b63b3528e2ca68765cfe58c8940b526732d85da7ebdecee0",
+  "rules": [
+    "dip-hidden-dependencies",
+    "policy-testable-without-io",
+    "tests-protect-affected-contract",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 50,
+    "sourceHead": "a4b5c6d7e8f9012345678ab3c4d5e6f708192930",
+    "base": "9f9e8d7c6b5a493827160514233241506978abd6",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Pricing/DiscountPolicy.cs"
+    ],
+    "changedLines": 27,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "eeff001122334455667788a99aabbccd8b7c6d5e4f3021120334455667788a5a"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Shop.Pricing holds deterministic money policy. IBlackoutCalendar and ITierConfiguration already exist as injected seams and are registered for exactly this purpose.",
+    "notes": "DiscountPolicy is called synchronously from the checkout request path. Its unit tests run in CI with no network access."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "dip-hidden-dependencies",
+      "where": "src/Shop.Pricing/DiscountPolicy.cs:17",
+      "mustCite": [
+        "the HttpClient constructed inside Apply and the File.ReadAllText call beside it",
+        "the existing IBlackoutCalendar and ITierConfiguration seams the project already registers",
+        "the consequence that checkout pricing now depends on an outbound call and a local file that the policy neither owns nor declares",
+        "the correction of taking the existing seams as constructor dependencies"
+      ]
+    },
+    {
+      "rule": "policy-testable-without-io",
+      "where": "src/Shop.Pricing/DiscountPolicy.cs:17",
+      "mustCite": [
+        "that the tier and expiry rules are deterministic and were previously testable without setup",
+        "that the existing unit tests now require network and filesystem state CI does not provide",
+        "the consequence that a money rule can no longer be exercised in isolation",
+        "the correction of restoring the injected seams rather than adding test infrastructure"
+      ]
+    },
+    {
+      "rule": "tests-protect-affected-contract",
+      "where": "src/Shop.Pricing/DiscountPolicy.cs:18",
+      "mustCite": [
+        "the new failure behavior, where a blackout-calendar request failure throws out of Apply into the checkout request",
+        "that no test covers that failure path for the affected contract",
+        "the consequence that a calendar outage fails checkout with an unhandled exception",
+        "a correction naming the contract to protect or the failure behavior to define"
+      ]
+    }
+  ],
+  "acceptableAdditionalFindings": [
+    "Constructing a new HttpClient per call rather than using IHttpClientFactory, with the socket-exhaustion consequence stated.",
+    "The synchronous .Result inside Apply, if reported with its own call site and consequence."
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "no-test-review-duplication",
+      "example": "Re-reviewing the test suite's assertion style or coverage percentage, or citing the 214 passing tests as evidence that the policy is sound."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a repository, hexagonal project split or DDD domain service for pricing."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the static method or to the hard-coded path string's formatting."
+    }
+  ],
+  "notes": "The project already has the seams, which is what makes the hidden dependency a defect rather than a design preference. The test finding is scoped to the affected contract's failure path so it does not become a second test review."
+}

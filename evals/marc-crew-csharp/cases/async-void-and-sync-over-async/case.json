@@ -1,0 +1,90 @@
+{
+  "id": "async-void-and-sync-over-async",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Notification path becomes async void and blocks on an HTTP call",
+  "contentDigest": "85f750dd62987443d74e11a331d8179744e1aa32d90cdf7668b5ce8701950395",
+  "rules": [
+    "async-ownership",
+    "async-void-outside-event-contracts",
+    "sync-over-async-in-request-paths",
+    "failure-behavior-in-host",
+    "failure-false-success",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 42,
+    "sourceHead": "2b3c4d5e6f70819293a4b5c6d7e8f9012345678a",
+    "base": "1f9e8d7c6b5a493827160514233241506978abce",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Api/Notifications/OrderNotifier.cs"
+    ],
+    "changedLines": 24,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "66778899aabbccddeeff00112233445a8b7c6d5e4f3021120334455667788a55"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "ASP.NET Core Web API. Controllers await application services; there is no event-based UI framework in this project.",
+    "notes": "Unhandled exceptions on a request thread are logged by the host; exceptions from void-returning continuations terminate the process."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "async-void-outside-event-contracts",
+      "where": "src/Shop.Api/Notifications/OrderNotifier.cs:18",
+      "mustCite": [
+        "the change of NotifyAsync to async void NotifyPlaced",
+        "the controller call site that can no longer await or observe the work",
+        "the consequence that a failure escapes as an unobserved exception on the synchronization context rather than failing the request",
+        "the correction of returning Task and awaiting it at the caller"
+      ]
+    },
+    {
+      "rule": "sync-over-async-in-request-paths",
+      "where": "src/Shop.Api/Notifications/OrderNotifier.cs:23",
+      "mustCite": [
+        "the .GetAwaiter().GetResult() on the HTTP call",
+        "that the call sits on the request path reached from OrdersController",
+        "the consequence of blocking a request thread and wrapping failures in AggregateException",
+        "the correction of awaiting PostAsJsonAsync"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "no-blanket-async-mandates",
+      "example": "Requiring ConfigureAwait(false), ValueTask or Task.Run because the project is ASP.NET Core."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the NotifyPlaced method name or the string interpolation style."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring an outbox, message bus or CQRS pipeline to send the notification."
+    }
+  ],
+  "notes": "Both defects are on the same changed method. The project has no event contract, which is what makes async void a defect here rather than a preference."
+}

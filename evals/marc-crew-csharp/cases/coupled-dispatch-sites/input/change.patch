@@ -1,0 +1,35 @@
+diff --git a/src/Shop.Payments/PaymentMethod.cs b/src/Shop.Payments/PaymentMethod.cs
+--- a/src/Shop.Payments/PaymentMethod.cs
++++ b/src/Shop.Payments/PaymentMethod.cs
+@@ -3,5 +3,6 @@ namespace Shop.Payments;
+ public enum PaymentMethod
+ {
+     Card = 0,
+-    DirectDebit = 1
++    DirectDebit = 1,
++    Klarna = 2
+ }
+diff --git a/src/Shop.Payments/FeeCalculator.cs b/src/Shop.Payments/FeeCalculator.cs
+--- a/src/Shop.Payments/FeeCalculator.cs
++++ b/src/Shop.Payments/FeeCalculator.cs
+@@ -8,6 +8,7 @@ public static class FeeCalculator
+     public static decimal Fee(PaymentMethod method, decimal amount) => method switch
+     {
+         PaymentMethod.Card => amount * 0.014m,
+         PaymentMethod.DirectDebit => 0.20m,
++        PaymentMethod.Klarna => amount * 0.032m,
+         _ => throw new ArgumentOutOfRangeException(nameof(method))
+     };
+ }
+diff --git a/src/Shop.Payments/PaymentIcons.cs b/src/Shop.Payments/PaymentIcons.cs
+--- a/src/Shop.Payments/PaymentIcons.cs
++++ b/src/Shop.Payments/PaymentIcons.cs
+@@ -7,6 +7,7 @@ public static class PaymentIcons
+     public static string Name(PaymentMethod method) => method switch
+     {
+         PaymentMethod.Card => "card",
+         PaymentMethod.DirectDebit => "dd",
++        PaymentMethod.Klarna => "klarna",
+         _ => "unknown"
+     };
+ }

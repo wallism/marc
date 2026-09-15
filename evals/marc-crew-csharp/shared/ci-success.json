@@ -1,0 +1,27 @@
+{
+  "note": "Sanitized synthetic hosted-CI evidence reused by cases whose capture names runId 4411 attempt 1. Counts and summaries only; no logs, credentials or consumer identity. The preparation step substitutes ${capture.sourceHead} so the evidence is bound to the exact reviewed commit.",
+  "runId": 4411,
+  "runAttempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "head": "${capture.sourceHead}",
+  "jobs": [
+    { "name": "build (ubuntu-latest)", "conclusion": "success" },
+    { "name": "test (ubuntu-latest)", "conclusion": "success" }
+  ],
+  "testResults": {
+    "artifact": "test-results",
+    "total": 214,
+    "passed": 214,
+    "failed": 0,
+    "skipped": 0,
+    "summary": "dotnet test on the exact source commit; all assemblies passed."
+  },
+  "quality": {
+    "artifact": "quality-scans",
+    "analyzerWarnings": 0,
+    "analyzerErrors": 0,
+    "secretFindings": 0,
+    "summary": "No new analyzer diagnostics against the exact source commit."
+  }
+}

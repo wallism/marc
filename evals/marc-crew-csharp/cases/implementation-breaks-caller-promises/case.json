@@ -1,0 +1,90 @@
+{
+  "id": "implementation-breaks-caller-promises",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "A new provider returns null where the contract promises a quote and rejects an operation the contract requires",
+  "contentDigest": "ef4b070fc9c418d2594da1d3710daf32604ffe408dc250582bc074a428976598",
+  "rules": [
+    "lsp-caller-promises",
+    "isp-forced-operations",
+    "nullability-behavior",
+    "trace-change-closure",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 45,
+    "sourceHead": "5e6f70819293a4b5c6d7e8f9012345678ab3c4d5",
+    "base": "4f9e8d7c6b5a493827160514233241506978abd1",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Shipping/PickupInStoreProvider.cs",
+      "src/Shop.Shipping/ShippingRegistration.cs"
+    ],
+    "changedLines": 47,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "99aabbccddeeff001122334455667788a8b7c6d5e4f3021120334455667788a5"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "Nullable reference types are enabled solution-wide. IShippingQuoteProvider documents a non-null quote and requires tracking support from every registered provider.",
+    "notes": "CheckoutPricing sums quotes from all registered providers. TrackingController queries every provider for a shipment reference."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "lsp-caller-promises",
+      "where": "src/Shop.Shipping/PickupInStoreProvider.cs:20",
+      "mustCite": [
+        "the null return from GetQuoteAsync against the non-null ShippingQuote declared by IShippingQuoteProvider",
+        "CheckoutPricing.SumAsync dereferencing quote.Total",
+        "the consequence of a NullReferenceException for any basket with no nearby store, which the annotations do not prevent",
+        "a correction that keeps the declared contract, such as returning an unavailable quote or narrowing the declared return type deliberately"
+      ]
+    },
+    {
+      "rule": "isp-forced-operations",
+      "where": "src/Shop.Shipping/PickupInStoreProvider.cs:28",
+      "mustCite": [
+        "TrackAsync throwing NotSupportedException although the contract requires tracking from every registered provider",
+        "TrackingController querying every provider",
+        "the consequence that one unsupported provider fails the whole tracking request",
+        "a correction addressing the concrete problem, such as separating the tracking capability from the quoting contract or excluding the provider from tracking queries"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "isp-negative-mechanical-interfaces",
+      "example": "Recommending that every interface method be split into its own single-method interface as a general rule."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring a base class, decorator or CQRS handler for shipping providers."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the sealed modifier, file layout or naming."
+    }
+  ],
+  "notes": "Mirrors the guide's third calibration example. Nullable annotations are enabled, which is what makes the null return a contract break rather than a style question."
+}

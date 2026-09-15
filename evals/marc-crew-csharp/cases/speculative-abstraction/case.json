@@ -1,0 +1,92 @@
+{
+  "id": "speculative-abstraction",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "A generic mapping framework and a flag-driven shared helper are introduced for one caller",
+  "contentDigest": "3ff15bfbf7a0471c17568fbd5362760db79e2441251744d989edfee0de6dacdf",
+  "rules": [
+    "indirection-cost",
+    "no-speculative-extension",
+    "proportionate-structural-change",
+    "advisory-for-optional"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 51,
+    "sourceHead": "b5c6d7e8f9012345678ab3c4d5e6f70819293a4b",
+    "base": "af9e8d7c6b5a493827160514233241506978abd7",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Api/Mapping/IEntityMapper.cs",
+      "src/Shop.Api/Mapping/MapperRegistry.cs",
+      "src/Shop.Api/Mapping/CustomerMapper.cs"
+    ],
+    "changedLines": 96,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "ff001122334455667788a99aabbccdde8b7c6d5e4f3021120334455667788a5b"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "ASP.NET Core Web API. DTO projection has so far been done in the endpoint that needs it.",
+    "notes": "CustomersController is the only caller of the new mapping types. No other mapping requirement is recorded in the PR."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [
+    {
+      "rule": "no-speculative-extension",
+      "severity": "advisory",
+      "where": "src/Shop.Api/Mapping/MapperRegistry.cs:13",
+      "mustCite": [
+        "the three new types and the registry introduced for a single caller",
+        "CustomersController as that only caller, with no second mapping requirement in the change",
+        "the maintenance cost of the added indirection, such as a reflection-based lookup replacing a direct call",
+        "the proportionate alternative of projecting in the endpoint until a second caller exists"
+      ]
+    },
+    {
+      "rule": "indirection-cost",
+      "severity": "advisory",
+      "where": "src/Shop.Api/Mapping/CustomerMapper.cs:8",
+      "mustCite": [
+        "the includeArchivedAddresses and forAdminApi flags carrying caller-specific behavior into a shared helper",
+        "the two call sites that pass different flag combinations",
+        "the consequence that the helper now encodes both callers' rules and each new caller adds another flag",
+        "the alternative of separate projections for the two callers"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "blocking-threshold",
+      "example": "Blocking the PR for the abstraction. The code works, the mapping is correct and no contract is broken, so these belong at advisory severity."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring AutoMapper, source generators or a different framework instead."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the generic type parameter names or file placement."
+    }
+  ],
+  "notes": "Scores severity calibration as much as detection: the reviewer must find the disproportionate indirection and must not block on it."
+}

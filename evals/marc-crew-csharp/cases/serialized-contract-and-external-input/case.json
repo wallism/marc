@@ -1,0 +1,90 @@
+{
+  "id": "serialized-contract-and-external-input",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "Webhook payload property renamed and external input silenced with the null-forgiving operator",
+  "contentDigest": "cfe2ce14885d5f916218b88fd7f996c224f329539ea3554697672b3d6e50bd4d",
+  "rules": [
+    "contract-and-persisted-compatibility",
+    "annotations-do-not-validate",
+    "nullability-behavior",
+    "trace-change-closure",
+    "finding-anatomy"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "synthetic/shop",
+    "pr": 46,
+    "sourceHead": "6f70819293a4b5c6d7e8f9012345678ab3c4d5e6",
+    "base": "5f9e8d7c6b5a493827160514233241506978abd2",
+    "policyHash": "c41d8cd98f00b204e9800998ecf8427e5f2a1b3c4d5e6f708192a3b4c5d6e7f8",
+    "state": "open",
+    "draft": false,
+    "author": "synthetic-contributor",
+    "files": [
+      "src/Shop.Payments/PaymentWebhookRequest.cs",
+      "src/Shop.Payments/PaymentWebhookHandler.cs"
+    ],
+    "changedLines": 33,
+    "ci": {
+      "runId": 4411,
+      "runAttempt": 1,
+      "conclusion": "success"
+    },
+    "selection": {
+      "memberId": "csharp",
+      "memberVersion": "1.1.0",
+      "memberHash": "9a8b7c6d5e4f30211203344556677889aabbccddeeff00112233445566778899",
+      "selectionHash": "aabbccddeeff001122334455667788a99b7c6d5e4f3021120334455667788a56"
+    }
+  },
+  "consumerGuidance": {
+    "targetFrameworks": [
+      "net8.0"
+    ],
+    "langVersion": "12.0",
+    "architecture": "System.Text.Json with default property naming. The webhook is called by an external payment provider whose payload MARC cannot change. Received payloads are stored verbatim in the PaymentEvents.Payload JSON column and replayed by support tooling.",
+    "notes": "The project's established error contract for invalid external input is to throw WebhookValidationException, which the middleware maps to 400."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "contract-and-persisted-compatibility",
+      "where": "src/Shop.Payments/PaymentWebhookRequest.cs:10",
+      "mustCite": [
+        "the rename of Amount to AmountMinor with no JsonPropertyName retained for the original wire name",
+        "that the external provider's payload and the stored PaymentEvents.Payload rows still carry amount",
+        "the consequence that live and replayed payloads now deserialize to a default of 0 and are captured as zero-value payments rather than rejected",
+        "a correction such as keeping the wire name via JsonPropertyName or migrating both the sender and the stored rows deliberately"
+      ]
+    },
+    {
+      "rule": "annotations-do-not-validate",
+      "where": "src/Shop.Payments/PaymentWebhookHandler.cs:16",
+      "mustCite": [
+        "the null-forgiving operator applied to request.Reference, which arrives from an external caller",
+        "that the annotation and the operator perform no runtime check",
+        "the consequence of a NullReferenceException inside LookupAsync for a payload that omits reference, instead of the project's WebhookValidationException and a 400",
+        "a correction that validates the value explicitly using the established error contract"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "established-error-contract",
+      "example": "Requiring a Result<T> return type instead of the project's WebhookValidationException."
+    },
+    {
+      "rule": "no-mandated-patterns",
+      "example": "Requiring FluentValidation, a mediator pipeline or a separate anti-corruption layer project."
+    },
+    {
+      "rule": "style-exclusions",
+      "example": "Objecting to the record declaration style or to required members as a matter of taste."
+    }
+  ],
+  "notes": "Covers both halves of the contracts-and-nullability boundary: serialized and persisted compatibility, and annotations not validating real external input."
+}

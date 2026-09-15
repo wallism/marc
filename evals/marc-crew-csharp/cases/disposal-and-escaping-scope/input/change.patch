@@ -1,0 +1,35 @@
+diff --git a/src/Shop.Api/Import/ImportService.cs b/src/Shop.Api/Import/ImportService.cs
+--- a/src/Shop.Api/Import/ImportService.cs
++++ b/src/Shop.Api/Import/ImportService.cs
+@@ -16,13 +16,28 @@ public sealed class ImportService
+
+     public async Task<ImportResult> ImportAsync(string uploadPath)
+     {
+-        using var reader = new StreamReader(uploadPath);
++        var reader = new StreamReader(uploadPath);
+         var header = await reader.ReadLineAsync();
+
+         if (header != "sku,price")
+         {
+             return ImportResult.Rejected("Unexpected header.");
+         }
+
+         var rows = new List<ProductRow>();
+         while (await reader.ReadLineAsync() is { } line)
+         {
+             rows.Add(ProductRow.Parse(line));
+         }
+
+-        foreach (var row in rows)
+-        {
+-            await _products.UpsertAsync(row);
+-        }
++        _ = Task.Run(async () =>
++        {
++            await Task.WhenAll(rows.Select(row => _products.UpsertAsync(row)));
++        });
+
++        reader.Dispose();
+         return ImportResult.Accepted(rows.Count);
+     }
+ }

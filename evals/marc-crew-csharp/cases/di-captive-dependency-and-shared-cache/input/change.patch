@@ -1,0 +1,75 @@
+diff --git a/src/Shop.Api/Pricing/PricingCache.cs b/src/Shop.Api/Pricing/PricingCache.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Shop.Api/Pricing/PricingCache.cs
+@@ -0,0 +1,33 @@
++using System.Collections.Generic;
++using System.Threading.Tasks;
++using Microsoft.EntityFrameworkCore;
++using Shop.Api.Data;
++
++namespace Shop.Api.Pricing;
++
++public sealed class PricingCache
++{
++    private readonly AppDbContext _db;
++    private readonly Dictionary<string, decimal> _entries = new();
++
++    public PricingCache(AppDbContext db)
++    {
++        _db = db;
++    }
++
++    public async Task<decimal> GetOrLoadAsync(string sku)
++    {
++        if (_entries.TryGetValue(sku, out var cached))
++        {
++            return cached;
++        }
++
++        var price = await _db.Products
++            .Where(p => p.Sku == sku)
++            .Select(p => p.ListPrice)
++            .SingleAsync();
++
++        _entries[sku] = price;
++        return price;
++    }
++}
+diff --git a/src/Shop.Api/ServiceRegistration.cs b/src/Shop.Api/ServiceRegistration.cs
+--- a/src/Shop.Api/ServiceRegistration.cs
++++ b/src/Shop.Api/ServiceRegistration.cs
+@@ -1,6 +1,7 @@
+ using Microsoft.EntityFrameworkCore;
+ using Microsoft.Extensions.DependencyInjection;
+ using Shop.Api.Checkout;
+ using Shop.Api.Data;
++using Shop.Api.Pricing;
+
+ namespace Shop.Api;
+@@ -11,6 +12,7 @@ public static class ServiceRegistration
+         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connectionString));
+         services.AddScoped<CheckoutService>();
++        services.AddSingleton<PricingCache>();
+         return services;
+     }
+ }
+diff --git a/src/Shop.Api/Checkout/CheckoutService.cs b/src/Shop.Api/Checkout/CheckoutService.cs
+--- a/src/Shop.Api/Checkout/CheckoutService.cs
++++ b/src/Shop.Api/Checkout/CheckoutService.cs
+@@ -8,12 +8,14 @@ public sealed class CheckoutService
+ {
+-    public CheckoutService(AppDbContext db)
++    public CheckoutService(AppDbContext db, PricingCache pricing)
+     {
+         _db = db;
++        _pricing = pricing;
+     }
+
+     public async Task<decimal> QuoteAsync(string sku, int quantity)
+     {
+-        var price = await _db.Products.Where(p => p.Sku == sku).Select(p => p.ListPrice).SingleAsync();
++        var price = await _pricing.GetOrLoadAsync(sku);
+         return price * quantity;
+     }
+ }

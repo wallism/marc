@@ -1,0 +1,33 @@
+diff --git a/src/Shop.Api/Notifications/OrderNotifier.cs b/src/Shop.Api/Notifications/OrderNotifier.cs
+--- a/src/Shop.Api/Notifications/OrderNotifier.cs
++++ b/src/Shop.Api/Notifications/OrderNotifier.cs
+@@ -14,12 +14,15 @@ public sealed class OrderNotifier
+         _logger = logger;
+     }
+
+-    public async Task NotifyPlacedAsync(int orderId, string email)
++    public async void NotifyPlaced(int orderId, string email)
+     {
+         _logger.LogInformation("Notifying {OrderId}", orderId);
+
+-        var response = await _http.PostAsJsonAsync("/notifications", new { orderId, email });
++        var response = _http.PostAsJsonAsync("/notifications", new { orderId, email })
++            .GetAwaiter()
++            .GetResult();
++
+         response.EnsureSuccessStatusCode();
+         await _http.PostAsJsonAsync("/notifications/audit", new { orderId });
+     }
+ }
+diff --git a/src/Shop.Api/Controllers/OrdersController.cs b/src/Shop.Api/Controllers/OrdersController.cs
+--- a/src/Shop.Api/Controllers/OrdersController.cs
++++ b/src/Shop.Api/Controllers/OrdersController.cs
+@@ -22,8 +22,8 @@ public sealed class OrdersController : ControllerBase
+     public async Task<IActionResult> Place(PlaceOrderRequest request)
+     {
+         var order = await _orders.PlaceAsync(request);
+-        await _notifier.NotifyPlacedAsync(order.Id, request.Email);
++        _notifier.NotifyPlaced(order.Id, request.Email);
+         return Ok(order.Id);
+     }
+ }

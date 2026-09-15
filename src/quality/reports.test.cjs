@@ -51,10 +51,10 @@ function fixture(t) {
     decision: { eligible: false, merge: false, reasons: ['Synthetic held report'] } };
 }
 
-for (const format of ['legacy-sha', 'legacy-dated', 'marc']) test(`${format} report verification binds the exact pair, source and bytes`, t => {
+for (const format of ['legacy-sha', 'legacy-dated', 'marc-v1', 'marc-v2', 'marc-v3']) test(`${format} report verification binds the exact pair, source and bytes`, t => {
   const { root, git, e: original, decision } = fixture(t);
   const dated = format !== 'legacy-sha';
-  const e = format === 'marc' ? prepareReport(original, new Date('2026-09-13T10:45:00Z')) :
+  const e = format.startsWith('marc-') ? { ...prepareReport(original, new Date('2026-09-13T10:45:00Z')), reportFormat: format } :
     dated ? { ...original, reportCreatedAt: '2026-09-12T10:45:00.000Z' } : original;
   const paths = writeReportFiles(e, decision, root);
   git('add', '.'); git('commit', '-m', 'report');
@@ -75,7 +75,8 @@ for (const format of ['legacy-sha', 'legacy-dated', 'marc']) test(`${format} rep
 test('same-minute collisions leave an existing report and its partner untouched', t => {
   const { root, e: original, decision } = fixture(t);
   const e = prepareReport(original, new Date('2026-09-12T10:45:00Z'));
-  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt);
+  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
+  assert.match(paths[0], /20260912-1045-24-audit\.json$/);
   fs.mkdirSync(path.dirname(path.join(root, paths[1])), { recursive: true });
   fs.writeFileSync(path.join(root, paths[1]), 'existing markdown\n');
   assert.throws(() => writeReportFiles(e, decision, root), /already exists/);

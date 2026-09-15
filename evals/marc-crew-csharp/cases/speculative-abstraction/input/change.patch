@@ -1,0 +1,64 @@
+diff --git a/src/Shop.Api/Mapping/IEntityMapper.cs b/src/Shop.Api/Mapping/IEntityMapper.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Shop.Api/Mapping/IEntityMapper.cs
+@@ -0,0 +1,14 @@
++namespace Shop.Api.Mapping;
++
++public interface IEntityMapper<in TSource, out TTarget>
++{
++    TTarget Map(TSource source, MappingOptions options);
++}
++
++public sealed record MappingOptions
++{
++    public static readonly MappingOptions Default = new();
++
++    public bool IncludeArchivedAddresses { get; init; }
++
++    public bool ForAdminApi { get; init; }
++}
+diff --git a/src/Shop.Api/Mapping/MapperRegistry.cs b/src/Shop.Api/Mapping/MapperRegistry.cs
+new file mode 100644
+--- /dev/null
++++ b/src/Shop.Api/Mapping/MapperRegistry.cs
+@@ -0,0 +1,18 @@
++using System;
++using System.Collections.Generic;
++
++namespace Shop.Api.Mapping;
++
++public sealed class MapperRegistry
++{
++    private readonly Dictionary<(Type Source, Type Target), object> _mappers = new();
++
++    public void Register<TSource, TTarget>(IEntityMapper<TSource, TTarget> mapper)
++        => _mappers[(typeof(TSource), typeof(TTarget))] = mapper;
++
++    public TTarget Map<TSource, TTarget>(TSource source, MappingOptions? options = null)
++    {
++        var mapper = (IEntityMapper<TSource, TTarget>)_mappers[(typeof(TSource), typeof(TTarget))];
++        return mapper.Map(source, options ?? MappingOptions.Default);
++    }
++}
+diff --git a/src/Shop.Api/Controllers/CustomersController.cs b/src/Shop.Api/Controllers/CustomersController.cs
+--- a/src/Shop.Api/Controllers/CustomersController.cs
++++ b/src/Shop.Api/Controllers/CustomersController.cs
+@@ -18,13 +18,15 @@ public sealed class CustomersController : ControllerBase
+     public async Task<IActionResult> Get(int id)
+     {
+         var customer = await _customers.FindAsync(id);
+-        return Ok(new CustomerDto { Id = customer.Id, Name = customer.Name, Email = customer.Email });
++        return Ok(_mappers.Map<Customer, CustomerDto>(customer, new MappingOptions { ForAdminApi = false }));
+     }
+
+     [HttpGet("admin/{id:int}")]
+     public async Task<IActionResult> GetForAdmin(int id)
+     {
+         var customer = await _customers.FindAsync(id);
+-        return Ok(new CustomerDto { Id = customer.Id, Name = customer.Name, Email = customer.Email });
++        return Ok(_mappers.Map<Customer, CustomerDto>(
++            customer,
++            new MappingOptions { ForAdminApi = true, IncludeArchivedAddresses = true }));
+     }
+ }
