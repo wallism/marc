@@ -12,8 +12,9 @@ corpus.json    The index: corpus version, member under test, universal rules, an
 cases/<id>/    One case: case.json, rubric.md, input/change.patch, input/after/*.cs
                and, where the case needs them, input/pr-description.md and evidence/*.json
 shared/        Evidence reused by cases that do not need their own
-runs/          Saved outputs and scores from executed comparisons
 ```
+
+No results are stored here. See [where results go](#where-results-go).
 
 ## Rules
 
@@ -55,6 +56,14 @@ A rule with no case covering it is a coverage gap. `node --test src/quality/eval
 2. Reuse the shared probe classes; replace the defect families with the member's own.
 3. Keep every case's diff small enough that one failure points at one behavior, except clean cases, which may bundle several legitimate choices because they expect no findings at all.
 4. Run `npm run validate:evals` and `node --test src/quality/eval-corpus.test.cjs`. The validator checks case shape, capture identity, evidence references, class rules, patch and source presence, that no expectation file sits inside the reviewer input, and that every rule in `rules.json` is scored by at least one case. Adding a rule with no case fails the check.
+
+## Where results go
+
+Not in this directory, and not anywhere in this repository. A run's prepared inputs, reviewer outputs and scores are operational results, and [AGENTS.md](../AGENTS.md) and the [enforcement boundary](../docs/contribution-checks.md#enforcement-boundary) keep those out of the reusable bundle. It is the same rule that keeps `.quality/reports` and `.marc/state` with the consumer rather than here: only case content and its expectations belong in Git.
+
+Write a run's output to an external directory, chosen the way `MARC_TEST_ARTIFACTS` is chosen for test artifacts. `evals/**/runs/` is ignored, so an accidental local directory cannot be committed.
+
+When a run history becomes worth keeping across time, it belongs in MARC-owned cloud storage — a `marc-evals` bucket and a `marc_evals` dataset, defined by this repository — never in a consumer's eval infrastructure and never sharing a consumer's bucket. See D-15 in [the work document](../docs/work/20260915-skill-evals-csharp-work.md#decision-log).
 
 ## What this corpus does not do
 

@@ -46,8 +46,9 @@ evals/
       input/pr-description.md     Only where the case supplies candidate prose
       evidence/*.json             Only where the case needs its own evidence or a deliberate gap
     shared/ci-success.json        Exact-source CI evidence reused by cases that need nothing special
-    runs/                         Saved outputs and scores, one folder per executed comparison
 ```
+
+Run results are not stored here or anywhere in the repository; D-15 records where they go.
 
 Validate with `npm run validate:evals`, and as part of `npm test` through [`eval-corpus.test.cjs`](../../src/quality/eval-corpus.test.cjs).
 
@@ -143,6 +144,7 @@ Record every decision here, with its date and status, as it is made.
 | D-11 | 2026-09-15 | Severity is scored, not just detection. | Accepted, implemented | Over-blocking damages the process as much as missing. `speculative-abstraction` expects a pass with advisories; `coupled-dispatch-sites` expects one blocking and one advisory finding, and inverting them fails. |
 | D-12 | 2026-09-15 | The evidence, hostile-content and beyond-expertise classes score `requiredBehavior` instead of findings. | Accepted, implemented | Their correct result is a hold or a refusal, and the failure modes - false pass, invented defect, boundary breach - must be recorded separately. |
 | D-13 | 2026-09-15 | The validator lives in `src/quality`, inside the policy digest; the corpus does not. | Accepted | Consistent with `catalogue-validation.cjs`. The trade-off is explicit: editing the validator changes the policy digest, editing a case does not. |
+| D-15 | 2026-09-16 | Eval run results stay out of this repository. Write them to an external artifacts directory now; when a runner exists, to MARC-owned `marc-evals` Cloud Storage with a `marc_evals` BigQuery dataset, defined by this repository. Never a consumer's eval infrastructure, and never a shared bucket. | Accepted | Corrects a contradiction in D-2's layout, which declared a `runs/` folder inside the bundle although AGENTS.md and the enforcement boundary keep operational results out. RoleSage's `model-evals` module is the pattern to copy - cases in Git, artifacts and scores in cloud storage, local-only by default - but its bucket carries `prevent_destroy`, and its schema keys model substitution (`model_alias`, reasoning level) where MARC scores instruction change and needs the skill digest, `case_version` and `case_class` with per-class pass rates. Defining the module here keeps MARC's lifecycle independent of any consumer's Terraform while still permitting deployment into an existing project. Infrastructure waits until a runner produces results worth comparing across time. Only synthetic-case outputs may ever be uploaded, under the same sanitization rules as reports. |
 | D-14 | 2026-09-16 | A consumer's own quality tooling stays in the consumer's build. MARC reads no analyzer output, gains no adapter for it, and requires only that hosted CI succeeded on the exact reviewed commit. No eval case is retired and no rule is narrowed. | Accepted | Recorded in [configuration](../configuration.md#your-own-quality-tools). Deterministic checkers were considered as replacements for detection cases; a successful build proves eligibility, never that a given check exists in it, so the review obligation is unchanged and the corpus stays at 26 cases. Suppressions, baselines and thresholds are consumer taste, and adapters for them would be unbounded work and policy inputs. Security scanning stays structured because MARC adjudicates that content itself. Cost reduction was explicitly not a goal of this decision. |
 
 ## Wins, pitfalls and dead ends
@@ -183,7 +185,7 @@ Running log. Add an entry whenever something measurably helps or fails, with eno
 - [ ] Add a command that prepares paired reviewer inputs from a case, withholding `rubric.md` and the expectation fields of `case.json`.
 - [ ] Add a command that scores saved outputs against the rubric, per class, with false alarms and unsupported claims counted separately.
 - [ ] Cover both with focused Node tests beside the module; no model call in any test.
-- [ ] Emit results that cite base/head, corpus version, case `contentDigest`, model, settings, allowed tools and cost.
+- [ ] Emit results that cite base/head, corpus version, case `contentDigest`, model, settings, allowed tools and cost, written to the external artifacts directory named in D-15.
 
 ### Task 4 — Baseline and calibration
 
