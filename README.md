@@ -89,6 +89,10 @@ The [basic GitHub Actions member](skills/marc-crew-github-actions/SKILL.md) revi
 
 External skills used as “mercenary crew members” are deferred. MARC currently supports reviewed members shipped in its pinned catalogue; a skill URL does not enlist a reviewer. Revisit mercenaries after establishing how to inspect their dependencies, contain conflicting instructions and bind approval to reviewed content. No external skill safety guarantee or loading mechanism is provided today.
 
+## Your own quality tools
+
+Keep running them, unchanged. Analyzers, linters and static analysis stay yours: run them in your build. MARC requires a successful CI run on the exact reviewed commit, so anything your build enforces is already a precondition for review, and anything you leave as a warning is your call not to enforce. No adapter or MARC configuration is needed for those tools, and its reviewers treat their output as CI evidence rather than review findings. Security scanning is the exception, because MARC adjudicates dependency and secret findings itself. See [your own quality tools](docs/configuration.md#your-own-quality-tools).
+
 ## Gitleaks and consumer exceptions
 
 Secret scans can find credentials in old commits, even after they have been removed from current files. In GitHub, open the repository's **Security and quality → Secret scanning** alerts. Verify that exposed credentials have been replaced where needed and the old values revoked before excluding their historical occurrences from MARC's separate Gitleaks scan. See [reviewing historical secrets](docs/historical-secrets.md) for the steps and official GitHub guidance.
