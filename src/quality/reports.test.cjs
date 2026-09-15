@@ -75,7 +75,8 @@ for (const format of ['legacy-sha', 'legacy-dated', 'marc-v1', 'marc-v2', 'marc-
 test('same-minute collisions leave an existing report and its partner untouched', t => {
   const { root, e: original, decision } = fixture(t);
   const e = prepareReport(original, new Date('2026-09-12T10:45:00Z'));
-  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt);
+  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
+  assert.match(paths[0], /20260912-1045-24-audit\.json$/);
   fs.mkdirSync(path.dirname(path.join(root, paths[1])), { recursive: true });
   fs.writeFileSync(path.join(root, paths[1]), 'existing markdown\n');
   assert.throws(() => writeReportFiles(e, decision, root), /already exists/);

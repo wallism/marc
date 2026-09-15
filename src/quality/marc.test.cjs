@@ -263,6 +263,8 @@ test('report names cannot escape the PR evidence directory', () => {
 test('new report names sort by UTC minute and keep the PR number visible', () => {
   assert.deepEqual(reportPaths(24, B, '2026-09-12T10:45:00.000Z'), [
     '.quality/reports/pr-24/20260912-1045-24.json', '.quality/reports/pr-24/20260912-1045-24.md']);
+  assert.deepEqual(reportPaths(24, B, '2026-09-12T10:45:00.000Z', 'marc-v3'), [
+    '.quality/reports/pr-24/20260912-1045-24-audit.json', '.quality/reports/pr-24/20260912-1045-24.md']);
   assert.ok(reportPaths(24, B, '2026-09-12T10:45:00.000Z')[0] < reportPaths(24, A, '2026-09-12T10:46:00.000Z')[0]);
   for (const timestamp of [null, '', '../escape', '2026-02-30T10:45:00.000Z',
     '2026-09-12T10:45:01.000Z', '2026-09-12T10:45:00+10:00']) {
@@ -290,10 +292,12 @@ test('report metadata namespace accepts legacy and timestamp names only for the 
     assert.equal(isOwnReportPath(24, `.quality/reports/pr-24/${B}.${extension}`), true);
     assert.equal(isOwnReportPath(24, `.quality/reports/pr-24/20260912-1045-24.${extension}`), true);
   }
+  assert.equal(isOwnReportPath(24, '.quality/reports/pr-24/20260912-1045-24-audit.json'), true);
   for (const file of ['.quality/reports/pr-24/20260912-1045-25.md',
     '.quality/reports/pr-25/20260912-1045-24.md', '.quality/reports/pr-24/20260230-1045-24.md',
     '.quality/reports/pr-24/20260912-2460-24.md', '.quality/reports/pr-24/latest.md',
-    '.quality/reports/pr-24/20260912-1045-24.md/extra']) assert.equal(isOwnReportPath(24, file), false, file);
+    '.quality/reports/pr-24/20260912-1045-24.md/extra', '.quality/reports/pr-24/20260912-1045-24-audit.md',
+    `.quality/reports/pr-24/${B}-audit.json`]) assert.equal(isOwnReportPath(24, file), false, file);
 });
 test('indirect UI impact from a reviewer also requires browser evidence', () => {
   const e = fixture(); e.gates.correctness.requiresBrowser = true;

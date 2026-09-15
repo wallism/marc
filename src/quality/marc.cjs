@@ -36,7 +36,9 @@ function selectQueue(prs, p, { base, policyHash, completed = [] }) {
       sourceHead: pr.head.sha, base, policyHash, key, status, reasons };
   });
 }
-function reportPaths(pr, head, reportCreatedAt) {
+// Formats published before the audit-naming cutover keep their original unsuffixed JSON name.
+const PRE_AUDIT_FORMATS = [undefined, 'marc-v1', 'marc-v2'];
+function reportPaths(pr, head, reportCreatedAt, reportFormat) {
   if (!Number.isSafeInteger(pr) || pr < 1 || !sha(head)) throw Error('Invalid PR or source SHA');
   let name = head; // Legacy evidence keeps its original SHA paths and bytes.
   if (reportCreatedAt !== undefined) {
@@ -45,23 +47,28 @@ function reportPaths(pr, head, reportCreatedAt) {
       throw Error('Invalid report timestamp: use a real UTC minute');
     name = `${reportCreatedAt.slice(0, 10).replaceAll('-', '')}-${reportCreatedAt.slice(11, 16).replace(':', '')}-${pr}`;
   }
-  return ['json', 'md'].map(ext => `.quality/reports/pr-${pr}/${name}.${ext}`);
+  // The JSON is the machine-readable audit record; the Markdown stays the human report.
+  const audit = !PRE_AUDIT_FORMATS.includes(reportFormat);
+  return [`${name}${audit ? '-audit' : ''}.json`, `${name}.md`].map(file => `.quality/reports/pr-${pr}/${file}`);
 }
+// Only dated reports span the cutover; a legacy SHA pair was never published with the suffix.
+const datedReportNames = (pr, head, reportCreatedAt) =>
+  [...reportPaths(pr, head, reportCreatedAt), ...reportPaths(pr, head, reportCreatedAt, 'marc-v3')];
 function prepareReport(e, now = new Date()) {
   const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v3' } : {}),
     reportCreatedAt: e.reportCreatedAt === undefined ?
     now.toISOString().slice(0, 16) + ':00.000Z' : e.reportCreatedAt };
-  reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt);
+  reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt, prepared.reportFormat);
   return prepared;
 }
 function isOwnReportPath(pr, file) {
   if (!Number.isSafeInteger(pr) || pr < 1) return false;
   const legacy = file.match(new RegExp(`^\\.quality/reports/pr-${pr}/([a-f0-9]{40})\\.(json|md)$`));
   if (legacy) return reportPaths(pr, legacy[1]).includes(file);
-  const dated = file.match(new RegExp(`^\\.quality/reports/pr-${pr}/(\\d{4})(\\d{2})(\\d{2})-(\\d{2})(\\d{2})-${pr}\\.(json|md)$`));
+  const dated = file.match(new RegExp(`^\\.quality/reports/pr-${pr}/(\\d{4})(\\d{2})(\\d{2})-(\\d{2})(\\d{2})-${pr}(?:-audit)?\\.(json|md)$`));
   if (!dated) return false;
   const [, year, month, day, hour, minute] = dated;
-  try { return reportPaths(pr, 'a'.repeat(40), `${year}-${month}-${day}T${hour}:${minute}:00.000Z`).includes(file); }
+  try { return datedReportNames(pr, 'a'.repeat(40), `${year}-${month}-${day}T${hour}:${minute}:00.000Z`).includes(file); }
   catch { return false; }
 }
 function writeReportFiles(e, decision, worktree) {
@@ -69,7 +76,7 @@ function writeReportFiles(e, decision, worktree) {
     if (fs.lstatSync(path.join(worktree, component), { throwIfNoEntry: false })?.isSymbolicLink())
       throw Error('Report directory is a symlink');
   }
-  const files = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt);
+  const files = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
   // Minute collisions fail closed before either member of an existing pair is touched.
   if (files.some(file => fs.lstatSync(path.join(worktree, file), { throwIfNoEntry: false })))
     throw Error('Report name already exists; preserve existing evidence and inspect the minute collision');
@@ -272,7 +279,7 @@ function collectCi(head, pr, p, read, readJobs) {
     jobs: jobs.map(({ name, conclusion }) => ({ name, conclusion })) };
 }
 function verifyReportCommit(e, live, decision, readGit) {
-  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt);
+  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
   readGit('merge-base', '--is-ancestor', e.sourceHead, live.head.sha);
   const changed = readGit('diff', '--name-only', '--no-renames', '-z', e.sourceHead, live.head.sha, '--').split('\0').filter(Boolean);
   if (changed.length !== 2 || changed.some(f => !paths.includes(f))) throw Error('Changes after review exceed the exact report files');
