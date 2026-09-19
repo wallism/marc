@@ -4,6 +4,49 @@ const { evaluate, reportMarkdown, reportPaths, registeredProducer, selectQueue }
 const policy = require('./fixtures/policy.json');
 const A = 'a'.repeat(40), B = 'b'.repeat(40);
 
+test('operator approval clears only the exact sensitive-path gate; evidence cannot approve itself', t => {
+  const policy = { ...require('./fixtures/policy.json'), humanPathPatterns: ['^\\.marc/'] };
+  const fs = require('node:fs'), os = require('node:os'), path = require('node:path');
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'marc-operator-'));
+  const file = path.join(directory, 'approval.json');
+  const e = fixture();
+  e.policyHash = 'c'.repeat(64);
+  for (const gate of Object.values(e.gates)) gate.policyHash = e.policyHash;
+  e.files = ['.marc/config.json', '.marc/tool'];
+  const record = { schema: 1, kind: 'sensitive-paths', approved: true, id: 'operator-decision-1',
+    approvedBy: 'test operator', approvedUtc: '2026-01-01T00:00:00.000Z',
+    expiresUtc: '2099-01-01T00:00:00.000Z', scope: 'Approve this exact integration change only.',
+    repository: e.repository, pr: e.pr, sourceHead: e.sourceHead, base: e.base,
+    policyHash: e.policyHash, paths: [...e.files] };
+  fs.writeFileSync(file, JSON.stringify(record));
+  const without = () => evaluate(e, policy, e.policyHash);
+  assert.equal(without().eligible, false);
+  e.humanApproval = record; e.operatorApproval = record;
+  assert.equal(without().eligible, false, 'candidate/evidence fields are not authority');
+  assert.equal(evaluate(e, policy, e.policyHash, undefined, record).eligible, false, 'plain objects are not trusted input');
+  const { loadOperatorApproval } = require('./operator-approval.cjs');
+  const approval = loadOperatorApproval(file);
+  const decide = () => evaluate(e, policy, e.policyHash, undefined, approval);
+  assert.equal(decide().eligible, true);
+  assert.equal(decide().humanApproval.record.id, record.id);
+  assert.match(decide().humanApproval.sha256, /^[a-f0-9]{64}$/);
+  for (const [key, value] of Object.entries({ repository: 'another/repo', pr: 8,
+    sourceHead: A, base: B, policyHash: 'd'.repeat(64) })) {
+    const changed = { ...e, [key]: value };
+    assert.equal(evaluate(changed, policy, changed.policyHash, undefined, approval).eligible, false, key);
+  }
+  e.files.push('.marc/project.md');
+  assert.equal(decide().eligible, false, 'additional sensitive change'); e.files.pop();
+  for (const change of [x => x.ci.verdict = 'blocked', x => delete x.gates.security,
+    x => x.gates.correctness.sourceHead = A, x => x.repairCycles = policy.maxRepairCycles + 1,
+    x => x.baseIncluded = false, x => x.files.push('.quality/reports/pr-7/other.json'),
+    x => x.gates.security.requiresBrowser = true]) {
+    const changed = structuredClone(e); change(changed);
+    assert.equal(evaluate(changed, policy, e.policyHash, undefined, approval).eligible, false);
+  }
+  assert.equal(evaluate(e, { ...policy, mode: 'report-only' }, e.policyHash, undefined, approval).merge, false);
+});
+
 test('current dispatch contract requires execution evidence even when capture fields are removed', () => {
   const { resolveAgentSettings } = require('./agent-settings.cjs');
   const p = { ...policy, agentExecutionSchema: 1, agents: { members: { security: { model: 'chosen' } } } };
