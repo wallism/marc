@@ -105,7 +105,9 @@ The default scans `HEAD` history; an optional full base SHA limits the scan to `
 
 ## Commands, coverage and validation
 
-The controller supports `queue`, `capture`, `decide`, `report`, `merge` and `recover-ci` after the optional `--repo <checkout>` selector. Follow the Captain and [evidence contract](../skills/marc-crew-captain/references/evidence.md) for authority, independent review and frozen identities. Reports remain at `.quality/reports`; preserve historical bytes. Merge uses the configured target branch. Deployment is separate.
+The controller supports `queue`, `capture`, `decide`, `checkpoint`, `report`, `merge` and `recover-ci` after the optional `--repo <checkout>` selector. Follow the Captain and [evidence contract](../skills/marc-crew-captain/references/evidence.md) for authority, independent review and frozen identities. Reports remain at `.quality/reports`; preserve historical bytes. Merge uses the configured target branch. Deployment is separate.
+
+For an explicitly authorized sensitive-path decision, `decide`, `checkpoint`, `report` and `merge` accept a trailing `--operator-approval <absolute-external-file>`. Read the [operator channel, record schema and rebinding rules](operator-approval.md). Candidate files and audit copies never grant approval; this option satisfies only the applicable human path gate.
 
 GitHub Actions is the implemented provider. Existing CI can validate other technologies, including Python; the bundled dependency adapters/classifiers cover NuGet/.NET and npm. The optional browser startup hook is ASP.NET-specific. Unknown dependency/build manifests should remain sensitive until an applicable review policy exists. Missing required tooling, expertise or evidence produces a hold.
 

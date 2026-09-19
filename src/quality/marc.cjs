@@ -7,6 +7,7 @@ const { collectProjectChanges, verifyProjectChanges, dependencyReviewPasses, dep
 const { loadCatalogue, selectCrew, collectImpact } = require('./crew.cjs');
 const { executionReasons, agentTable } = require('./agent-settings.cjs');
 const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
+const { loadOperatorApproval, checkOperatorApproval, parseOperatorApproval } = require('./operator-approval.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -88,7 +89,7 @@ function writeReportFiles(e, decision, worktree) {
   });
   return files;
 }
-function evaluate(e, p, policyHash, expectedCrew) {
+function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
   const reasons = [];
   const requireThat = (ok, reason) => { if (!ok) reasons.push(reason); };
   requireThat(e.schema === 1 && sha(e.sourceHead) && sha(e.base), 'Invalid evidence identity');
@@ -112,8 +113,9 @@ function evaluate(e, p, policyHash, expectedCrew) {
     requireThat(verified,
     `${file}: unresolved project change or dependency verification; inspect the concrete concern`);
   }
-  requireThat(!files.some(f => !verifiedManifests.has(f) && p.humanPathPatterns.some(r => new RegExp(r, 'i').test(f))),
-    'Sensitive files require a human decision');
+  const sensitivePaths = files.filter(f => !verifiedManifests.has(f) && p.humanPathPatterns.some(r => new RegExp(r, 'i').test(f)));
+  const approval = checkOperatorApproval(operatorApproval, { ...e, policyHash }, sensitivePaths);
+  if (sensitivePaths.length || operatorApproval !== undefined) requireThat(approval.accepted, approval.reason);
   requireThat(!files.some(f => f.startsWith('.quality/')), 'Existing quality evidence changes require a human decision');
   requireThat(e.ci?.verdict === 'pass' && e.ci.sourceHead === e.sourceHead &&
     validCiUrl(p.repository, e.ci.runUrl), 'Successful current CI missing');
@@ -194,7 +196,8 @@ function evaluate(e, p, policyHash, expectedCrew) {
       reasons.push(...executionReasons(p.agents, 'repair', repair?.execution));
     }
   }
-  return { eligible: reasons.length === 0, merge: reasons.length === 0 && p.mode === 'automatic', reasons };
+  return { eligible: reasons.length === 0, merge: reasons.length === 0 && p.mode === 'automatic', reasons,
+    ...(approval.accepted ? { humanApproval: approval.audit } : {}) };
 }
 function reportMarkdown(e, decision) {
   if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2', 'marc-v3'].includes(e.reportFormat)) throw Error('Unknown report format');
@@ -384,6 +387,9 @@ function createController(context, adapters = {}) {
     return live;
   }
   function run(args) {
+    const parsed = parseOperatorApproval(args);
+    args = parsed.args;
+    const approvalFile = parsed.approvalFile;
     const [action, first, second] = args;
     if (!['queue', 'capture', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(action))
       throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
@@ -429,7 +435,18 @@ function createController(context, adapters = {}) {
       });
       console.log(encode(result)); return;
     }
-    const decision = evaluate(e, p, hash, recruit(e));
+    if (approvalFile) {
+      const liveApproval = assertLive(e);
+      if (action !== 'merge' && liveApproval.head.sha !== e.sourceHead)
+        throw Error('Operator approval source is no longer current; recapture and rebind');
+    }
+    const decide = () => {
+      const approval = approvalFile ? loadOperatorApproval(approvalFile) : undefined;
+      if (approval && encode(changedFiles(e.base, e.sourceHead, e.pr, git)) !== encode(e.files))
+        throw Error('Operator approval evidence paths differ from the committed diff');
+      return evaluate(e, p, hash, recruit(e), approval);
+    };
+    const decision = decide();
     if (action === 'decide') { console.log(encode(decision)); return; }
     if (action === 'checkpoint') {
       if (e.repository !== REPO) throw Error('Stage repository differs from consumer');
@@ -444,6 +461,9 @@ function createController(context, adapters = {}) {
       if (!second || live.head.sha !== e.sourceHead || command('git', ['rev-parse', 'HEAD'], second) !== e.sourceHead ||
         command('git', ['status', '--porcelain'], second)) throw Error('Report requires a clean PR worktree at the reviewed head');
       const prepared = prepareReport(e);
+      // Audit copies in evidence/reports never become authorization inputs.
+      delete prepared.humanApprovalAudit;
+      if (decision.humanApproval) prepared.humanApprovalAudit = decision.humanApproval;
       if (prepared.reportFormat === 'marc-v3')
         prepared.stages = recordStage(path.join(context.stateDirectory, 'assessment-stages'), e, decision);
       // Persist the timestamp in trusted external evidence before rendering; verification
@@ -454,6 +474,8 @@ function createController(context, adapters = {}) {
       console.log('Report files written. Inspect, commit and push only these two files to the existing PR branch.'); return;
     }
     if (!decision.merge) throw Error('Merge denied: ' + (decision.reasons.join('; ') || 'report-only policy'));
+    if (encode(e.humanApprovalAudit) !== encode(decision.humanApproval))
+      throw Error('Published operator approval audit differs; preserve the report and reassess');
     verifyReportCommit(e, live, decision, git);
     if (collect(e.sourceHead, e.pr, p).verdict !== 'pass') throw Error('Reviewed source CI is no longer valid');
     if (collect(live.head.sha, e.pr, p).verdict !== 'pass') throw Error('Final report commit must pass CI');
@@ -470,6 +492,10 @@ function createController(context, adapters = {}) {
     try {
       const refreshed = assertLive(e);
       if (refreshed.head.sha !== live.head.sha) throw Error('PR moved before merge');
+      // Reload operator input at the final action boundary (revocation, replacement or expiry).
+      const finalDecision = decide();
+      if (!finalDecision.merge || encode(finalDecision.humanApproval) !== encode(decision.humanApproval))
+        throw Error('Operator approval or decision changed before merge');
       // Non-force update refuses a concurrent divergent target. No head/base race fallback.
       const commit = pushMerge((args, input) => command('git', args, ROOT, input), e.base, live.head.sha, e.pr, context.policy.base);
       console.log(encode({ mergeCommit: commit, pr: e.pr, deployment: false,
@@ -509,7 +535,7 @@ function createController(context, adapters = {}) {
 function main(args = process.argv.slice(2)) {
   let root;
   if (args[0] === '--repo') { root = args[1]; args = args.slice(2); if (!root) throw Error('Repository root required'); }
-  if (!['config', 'queue', 'capture', 'decide', 'report', 'merge', 'recover-ci'].includes(args[0]))
+  if (!['config', 'queue', 'capture', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(args[0]))
     throw Error('Usage: node src/quality/marc.cjs [--repo <trusted-checkout>] config | queue | capture | decide | report | merge | recover-ci');
   const context = loadConfig(root || discoverRoot());
   if (args[0] === 'config') { console.log(encode({ ...context, trusted: false, note: 'Resolution only; operational commands verify clean current trusted code before use.' })); return; }
