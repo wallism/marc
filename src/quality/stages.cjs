@@ -94,6 +94,9 @@ function stagesMarkdown(stages) {
     if (stage.kind === 'review') {
       reviews++;
       output += `Route: ${clean(stage.routing.route || 'full')}. Result: ${result(stage.decision)}. ${clean(stage.routing.summary)}\n\n` +
+        (stage.decision.humanApproval ? `Human sensitive-path approval: ${clean(stage.decision.humanApproval.record.id)}; ` +
+          `operator ${clean(stage.decision.humanApproval.record.approvedBy)}; SHA-256 \`${stage.decision.humanApproval.sha256}\`. ` +
+          `Paths: ${stage.decision.humanApproval.record.paths.map(clean).join(', ')}. Other gates remain required.\n\n` : '') +
         (stage.routing.changeKind ? `Change kind: ${clean(stage.routing.changeKind)}. ${clean(stage.routing.sizeRationale)}\n\n` : '') +
         `Selected specialists: ${stage.crew.selected.map(m => `${clean(m.id)} ${clean(m.version)}`).join(', ') || 'None'}.\n\n` +
         `Omitted specialists: ${stage.crew.omitted.map(m => clean(m.id)).join(', ') || 'None'}.\n\n` +
