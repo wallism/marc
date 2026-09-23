@@ -76,7 +76,7 @@ function loadConfig(repositoryRoot) {
   return { repoRoot, bundleRoot, configPath, policyPath, policy, ci: config.ci, technologies: config.technologies,
     guidance, scans, consumerFiles: [...new Set(consumerFiles)].sort(), stateDirectory, artifactRoot, mergeLockName,
     runLock: path.join(stateDirectory, 'run.lock'), ciRecoveryDirectory: path.join(stateDirectory, 'ci-recovery'),
-    controllerDirectory, toolCommit: config.toolCommit || null, autoUpdate: config.autoUpdate !== false, crew: config.crew || null,
+    controllerDirectory, toolCommit: config.toolCommit || null, autoUpdate: config.autoUpdate === true, crew: config.crew || null,
     agents: config.agents || null,
     agentSelections: Object.fromEntries(agentMembers.map(id => [id, resolveAgentSettings(config.agents, id)])) };
 }

@@ -1,5 +1,13 @@
 # Shared controller improvements
 
+## 2026-09-24 — Reusable upgrade PR command
+
+Added explicit scheduler-neutral upgrade preparation with a stable branch and one open PR, independent of intake auto-update settings. Shared trusted rendering keeps pin/config/member/generated files coherent after exact upstream CI verification. External ownership and pending-push records support retries, and branch commits append without force, including after squash merge. Shared run locking, existing reports, approvals and cumulative state remain intact; unfamiliar branches and ambiguous identities hold. Regression-first synthetic Git/GitHub tests cover repeated upgrades, no-op runs, upstream failure/drift, ownership/PR mismatch, races, report preservation and PR-creation recovery. No hosted workflows, live publication, consumer activation or deployment were performed. See [command contract](../../docs/upgrades.md).
+
+## 2026-09-24 — Automatic updates are opt-in
+
+Changed omitted `autoUpdate` to resolve to false and made upstream preflight require explicit true. Disabled/default intake makes no upstream update contact; existing explicit true keeps the updater and all exact upstream CI checks. The Python example now shows false. Routine PRs should not acquire unrelated tool/config/generated-file changes, fresh-evidence churn and sensitive-path approval holds by default. Existing consumers with explicit true need a deliberate config change to disable it; omitted settings change behavior when this version is adopted. Focused regressions verified the old default fails and explicit opt-in retains its checks and update behavior. No consumer configuration, updater implementation, merge authority or cumulative state was removed. See [installation guidance](../../docs/installation.md#automatic-updates).
+
 ## 2026-09-21 — Reuse CI for generated reports
 
 The owner observed a duplicate pre-merge build after green source CI. New report publication rechecks the exact source run/attempt and returns a skip-CI commit message only with bound reuse evidence. Merge verifies the exact report pair and current source CI; pending/failed report CI, drift and historical reports keep their gates. Source artifacts/scans, post-merge CI, protection and budgets remain required. Local deterministic regression validation only; publication and consumer activation are separate.

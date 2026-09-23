@@ -4,13 +4,15 @@
 
 MARC's Captain coordinates independent PR review, hosted CI evidence, bounded repairs and guarded merges. Each consumer supplies its repository policy, technology guidance and operational configuration.
 
-Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). First setup confirms proposed settings. **Automatic updates are on by default:** PR intake requires successful Linux and Windows Node checks for MARC's exact latest `master` commit before updating eligible PR branches. Unavailable or unsuccessful checks leave the existing pin untouched and stop intake. Expect MARC pin and generated integration files in the PR's changed-files list. Set `autoUpdate: false` to opt out if that becomes distracting. The trusted controller adopts the new pin after the PR merges. See [update behavior, file locations and branch ownership](docs/installation.md#automatic-updates).
+Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). First setup confirms proposed settings. **Automatic updates are off by default (`autoUpdate: false`). We recommend leaving them off:** enabling them adds MARC pin, configuration and generated-file changes to ordinary PRs, cluttering their scope, triggering fresh CI/review work and requiring human approval where sensitive-path policy applies. Prefer a separate upgrade PR through your existing maintenance workflow. Explicit `autoUpdate: true` remains supported with upstream CI verification and all human/merge gates. See [update behavior and alternatives](docs/installation.md#automatic-updates).
 
 The [Captain](skills/marc-crew-captain/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [language, framework and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.
 
 ![MARC workflow: independent reviews and relevant specialists, with C# and JavaScript checked as an example selected subset; optional model settings, source and report CI, guarded merge and target-branch CI verification, bounded repair and clear holds. Deployment is separate.](docs/assets/marc-workflow.png)
 
 MARC is for repositories that want independent PR assurance, auditable decisions and bounded repairs while retaining their own policy and CI. Specialists run when relevant; missing evidence holds the PR. [Read the workflow and diagram notes](docs/workflow-infographic.md).
+
+For a dedicated upgrade PR that stays current without duplicate branches, run `node .marc/tool/src/quality/upgrade.cjs --repo <trusted-consumer>`. It reuses `codex/marc-upgrade` and its open PR and can run from your preferred scheduler. See [reusable upgrade PRs](docs/upgrades.md).
 
 ## Which crew members run for a PR?
 
@@ -45,7 +47,7 @@ The [setup agent](docs/setup-prompt.md) is instructed to:
 - Explain selected expertise, overlaps, unsupported technologies, uncertainty and omitted specialists.
 - Recommend creating or extending members where coverage is missing, with separate approval for that work.
 - Identify the intended agent harnesses and preserve existing configuration, customizations, reviewed exceptions and shared operational state.
-- Explain default-on automatic updates, their effect on PR files and how to opt out.
+- Recommend leaving automatic updates off; explain PR clutter, extra CI/review work and sensitive-path approval before an explicit opt-in.
 - Present the complete configuration for confirmation on first setup; on reruns, present only changes requiring approval. Missing forwarding files can be repaired without another confirmation.
 - Apply authorized changes, validate the setup and report unresolved prerequisites and the next invocation.
 
