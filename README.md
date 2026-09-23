@@ -12,6 +12,8 @@ The [Captain](skills/marc-crew-captain/SKILL.md) leads the simplicity, simple-te
 
 MARC is for repositories that want independent PR assurance, auditable decisions and bounded repairs while retaining their own policy and CI. Specialists run when relevant; missing evidence holds the PR. [Read the workflow and diagram notes](docs/workflow-infographic.md).
 
+For a dedicated upgrade PR that stays current without duplicate branches, run `node .marc/tool/src/quality/upgrade.cjs --repo <trusted-consumer>`. It reuses `codex/marc-upgrade` and its open PR and can run from your preferred scheduler. See [reusable upgrade PRs](docs/upgrades.md).
+
 ## Which crew members run for a PR?
 
 **Configured specialists are available to the Captain; only those relevant to the PR are selected to run.** A large project can configure many members without calling them all into every review.

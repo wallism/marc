@@ -12,6 +12,8 @@ If I have not told you which repository to review, ask for its path or URL and w
 
 Before making setup changes, inspect the target read-only:
 
+When explaining ongoing upgrades, point to `docs/upgrades.md`: the explicit upgrade command reuses one stable branch and open PR and can run from the developer's existing scheduler with `autoUpdate: false`. Explain persistent shared state, verified upstream CI and fresh human approval when identities change. Do not create a schedule, run the publishing command or change producer policy as part of setup without authorization.
+
 On reruns, treat existing configuration, exact member versions, areas, policy, guidance, CI and host customizations as authoritative. Do not regenerate them from defaults, reformat unchanged files or repeat answered questions. Preview the current pinned installer, then add missing command/crew forwarding files without asking again; preserve and report differing existing files. Installing discovery files does not activate specialist gates: propose missing source-backed `crew.members` and area additions for confirmation. If nothing needs adding or upgrading, report that setup is already current and make no writes.
 
 Check for updates read-only using an available reviewed upstream commit in a separate checkout; do not move the consumer submodule during discovery. Compare each existing member's installed and available manifest versions, skill content and references; summarize changes using the improvement register and actual diff. Flag changed content at the same version as unversioned drift. Core skills without manifest versions use bundle commits and content diffs. If upstream cannot be checked, report update availability as unknown. A missing forwarding file is not a version upgrade.

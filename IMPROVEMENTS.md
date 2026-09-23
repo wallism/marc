@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-24 | Controller and Captain | Add a scheduler-neutral upgrade command that reuses one branch and open PR, preserving exact evidence gates and cumulative state. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-24--reusable-upgrade-pr-command), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-24--reuse-dedicated-upgrade-prs) |
 | 2026-09-24 | Controller and Captain | Default automatic updates to off and recommend separate upgrades to avoid unrelated PR changes and human-approval interruptions. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-24--automatic-updates-are-opt-in), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-24--recommend-separate-tool-upgrades) |
 | 2026-09-21 | Controller and Captain | Avoid duplicate report-only pre-merge builds by rechecking and binding successful exact-source CI. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-21--reuse-ci-for-generated-reports), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-21--reuse-ci-for-generated-reports) |
 | 2026-09-20 | Controller and Captain | Consume explicit operator approval for exact sensitive changes, with audit binding and all other gates preserved. | [Contract](docs/operator-approval.md), [controller](src/quality/IMPROVEMENTS.md), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md) |
