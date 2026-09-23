@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-24 — Recommend separate tool upgrades
+
+Setup and Captain guidance now recommend `autoUpdate: false` and explain PR clutter, extra CI/review work and human approval for sensitive integration changes. Retained explicit opt-in is not a human-gate exemption. Reruns preserve explicit settings and disclose the new meaning of omission. Suggested consumer-owned scheduled or manual upgrade PRs remain recommendations; no scheduler or new merge authority is activated. See [alternatives](../../docs/installation.md#alternatives-to-updating-during-pr-intake). Earlier default-on entries below describe historical behavior.
+
 ## 2026-09-21 — Reuse CI for generated reports
 
 The owner observed a duplicate pre-merge build after green source CI. New report publication rechecks the exact source run/attempt and returns a skip-CI commit message only with bound reuse evidence. Merge verifies the exact report pair and current source CI; pending/failed report CI, drift and historical reports keep their gates. Source artifacts/scans, post-merge CI, protection and budgets remain required. Local deterministic regression validation only; publication and consumer activation are separate.

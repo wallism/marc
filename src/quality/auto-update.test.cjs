@@ -23,34 +23,41 @@ function upstreamCommand(runs = [successfulRun()], jobs = successfulJobs()) {
   };
   return { command, calls };
 }
-test('auto update defaults on, uses only master, and opt out makes no network calls', () => {
+test('omitted or disabled auto update performs no upstream check, including when offline', () => {
+  const command = () => { assert.fail('Default-off intake must not contact upstream'); };
+  assert.equal(checkLatest({ toolCommit: old }, command), null);
+  assert.equal(checkLatest({ toolCommit: old, autoUpdate: false }, command), null);
+  assert.equal(checkLatest({ autoUpdate: true }, command), null, 'Source repository does not self-update');
+});
+
+test('explicit auto update uses only master and disabling it makes no network calls', () => {
   const { calls, command } = upstreamCommand();
-  assert.equal(checkLatest({ toolCommit: old }, command), latest);
+  assert.equal(checkLatest({ toolCommit: old, autoUpdate: true }, command), latest);
   assert.deepEqual(calls[0][1], ['ls-remote', '--exit-code', 'https://github.com/wallism/marc.git', 'refs/heads/master']);
   assert.equal(calls.filter(([exe]) => exe === 'gh').length, 2);
   calls.length = 0;
   assert.equal(checkLatest({ toolCommit: old, autoUpdate: false }, command), null);
   assert.equal(calls.length, 0);
-  assert.throws(() => checkLatest({ toolCommit: old }, () => ''), /master/);
-  assert.throws(() => checkLatest({ toolCommit: old }, () => { throw Error('offline'); }), /offline/);
+  assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, () => ''), /master/);
+  assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, () => { throw Error('offline'); }), /offline/);
 });
 
 test('upstream CI must match the exact master commit, workflow and repository', () => {
   for (const change of [{ head_sha: old }, { head_branch: 'other' }, { event: 'pull_request' },
     { path: '.github/workflows/other.yml' }, { head_repository: { full_name: 'fork/marc' } }]) {
-    assert.throws(() => checkLatest({ toolCommit: old }, upstreamCommand([{ ...successfulRun(), ...change }]).command), /upstream CI/i);
+    assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, upstreamCommand([{ ...successfulRun(), ...change }]).command), /upstream CI/i);
   }
-  assert.throws(() => checkLatest({ toolCommit: old }, upstreamCommand([]).command), /upstream CI/i);
+  assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, upstreamCommand([]).command), /upstream CI/i);
 });
 
 test('failed, pending, cancelled or malformed upstream runs never authorize an update', () => {
   for (const change of [{ conclusion: 'failure' }, { status: 'in_progress', conclusion: null },
     { conclusion: 'cancelled' }, { conclusion: 'skipped' }, { run_attempt: undefined }, { id: undefined }]) {
     const { command, calls } = upstreamCommand([{ ...successfulRun(), ...change }]);
-    assert.throws(() => checkLatest({ toolCommit: old }, command), /upstream CI/i);
+    assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, command), /upstream CI/i);
     assert.equal(calls.filter(([exe]) => exe === 'git').length, 1, 'Only read-only upstream resolution is allowed');
   }
-  assert.throws(() => checkLatest({ toolCommit: old }, upstreamCommand([
+  assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, upstreamCommand([
     successfulRun(), { ...successfulRun(), id: 43, status: 'queued', conclusion: null }
   ]).command), /upstream CI/i, 'A previous green run cannot mask a newer pending run');
 });
@@ -64,15 +71,15 @@ test('both upstream platform jobs must pass once for the selected commit and att
       { steps: [...good[1].steps, good[1].steps[1]] },
       { steps: good[1].steps.map(step => ({ ...step, conclusion: 'failure' })) }
     ].map(change => [good[0], { ...good[1], ...change }])]) {
-    assert.throws(() => checkLatest({ toolCommit: old }, upstreamCommand([successfulRun()], jobs).command), /upstream CI/i);
+    assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, upstreamCommand([successfulRun()], jobs).command), /upstream CI/i);
   }
 });
 
 test('upstream API errors and malformed responses fail closed', () => {
   for (const response of ['', '{}', 'not-json', '[{}]']) {
-    assert.throws(() => checkLatest({ toolCommit: old }, (exe) => exe === 'git' ? latest + '\trefs/heads/master' : response));
+    assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, (exe) => exe === 'git' ? latest + '\trefs/heads/master' : response));
   }
-  assert.throws(() => checkLatest({ toolCommit: old }, exe => {
+  assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, exe => {
     if (exe === 'git') return latest + '\trefs/heads/master';
     throw Error('GitHub authentication unavailable');
   }), /authentication unavailable/);

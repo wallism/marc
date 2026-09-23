@@ -40,7 +40,7 @@ function requireUpstreamCi(commit, command) {
   }
 }
 function checkLatest(context, command) {
-  if (context.autoUpdate === false || !context.toolCommit) return null;
+  if (context.autoUpdate !== true || !context.toolCommit) return null;
   const result = command('git', ['ls-remote', '--exit-code', upstream, 'refs/heads/master']).trim();
   const match = result.match(/^([a-f0-9]{40})\s+refs\/heads\/master$/);
   if (!match) throw Error('Cannot resolve the latest MARC master commit');
