@@ -114,3 +114,9 @@ GitHub Actions is the implemented provider. Existing CI can validate other techn
 Run shared tests with `node --test src/quality/*.test.cjs`. Set `MARC_TEST_ARTIFACTS` to an appropriate external directory when local policy requires it. The optional .NET hook smoke check takes an explicit `-ArtifactsPath`. Consumer integration tests live outside the reusable bundle.
 
 Consumer configuration, accepted exceptions, reports and operational state stay in the consumer. Existing policy paths may remain for launcher compatibility. Upgrade or roll back the pinned bundle as a unit, preserving state and locks, and recapture invalidated evidence. See [installation](installation.md).
+
+## Report-only CI reuse
+
+The `report` command checks the existing workflow run for the latest reviewed source SHA before publication. When it still matches the captured successful run and attempt, the returned `commitMessage` includes `[skip ci]` and the evidence records `reportCiReuse`. Commit only the returned pair with that message. The merge guard checks source/base/policy, exact report paths and bytes, and current CI again. Source changes and stale, missing or unsuccessful source checks cannot qualify. An existing report-head run must finish successfully; no duplicate dispatch is needed. Historical reports keep their original contract. Post-merge target-branch CI remains required.
+
+GitHub documents that [skip instructions](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs) suppress push/pull-request workflows, but not pull_request_target or manual dispatch. Required status checks may remain pending when skipped. Do not bypass repository protection or change branch rules: if the consumer requires checks on every report SHA, retain report-head CI using the existing bounded recovery path and record that consumer limitation. Reuse is a MARC evidence decision, not a forged GitHub check or permission to override protection.

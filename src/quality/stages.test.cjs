@@ -88,6 +88,7 @@ test('controller checkpoints and reports retain stages across replacement eviden
       throw Error('Unexpected Git inspection: ' + args.join(' '));
     },
     api: endpoint => endpoint.includes('/git/ref/') ? { object: { sha: e.base } } :
+      endpoint.includes('/actions/') ? { workflow_runs: [] } :
       { state: 'open', draft: false, user: { login: 'maintainer' }, base: { ref: 'master' },
         head: { sha: sourceHead, ref: 'bugfix/example', repo: { full_name: 'example/project' } } }
   });
@@ -98,6 +99,8 @@ test('controller checkpoints and reports retain stages across replacement eviden
   controller.run(['report', evidence, worktree]);
   const published = JSON.parse(fs.readFileSync(evidence));
   assert.equal(published.reportFormat, 'marc-v3');
+  assert.equal(published.reportCiReuse, undefined);
+  assert.doesNotMatch(JSON.parse(output.mock.calls.at(-2).arguments[0]).commitMessage, /skip ci/);
   assert.equal(published.stages.length, 2);
   assert.equal(published.stages[0].gates['crew:csharp'].reviewer, 'initial-csharp');
   assert.equal(published.stages[1].gates.security.reviewer, 'new-security');

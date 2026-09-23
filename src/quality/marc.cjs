@@ -203,6 +203,7 @@ function reportMarkdown(e, decision) {
   if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2', 'marc-v3'].includes(e.reportFormat)) throw Error('Unknown report format');
   if (e.reportFormat === 'marc-v3') return `# MARC report: PR ${e.pr}\n\nReport created: ${e.reportCreatedAt.slice(0, 16).replace('T', ' ')} UTC\n\n` +
     `Current decision: ${decision.merge ? 'Eligible for guarded merge' : decision.eligible ? 'Report-only: would merge' : 'Held'}\n\n` +
+    (e.reportCiReuse ? `Report-only CI: reuse source run ${e.reportCiReuse.runId}, attempt ${e.reportCiReuse.runAttempt}; the merge guard rechecks CI and the exact generated report pair.\n\n` : '') +
     stagesMarkdown(e.stages || [{ ...reviewStage(e, decision), recordedAt: e.reportCreatedAt }]) +
     '\nThe adjacent JSON retains stage identities and evidence. Later CI and merge outcomes do not rewrite this report.\n';
   // Missing format identifies immutable reports produced before the MARC cutover.
@@ -291,6 +292,27 @@ function verifyReportCommit(e, live, decision, readGit) {
     if (!readGit('ls-tree', live.head.sha, '--', f).startsWith('100644 blob ')) throw Error('Report is not a regular file');
     if (readGit('show', `${live.head.sha}:${f}`) !== expected[i].trimEnd()) throw Error('Published report differs from trusted evidence');
   });
+}
+function reportCiReuse(e, current) {
+  // Bind reuse to the reviewed successful attempt, not a recent branch badge.
+  if (current?.verdict !== 'pass' || current.status !== 'complete' || current.conclusion !== 'success' ||
+      current.sourceHead !== e.sourceHead || e.ci?.verdict !== 'pass' ||
+      current.runId !== e.ci.runId || current.runAttempt !== e.ci.runAttempt ||
+      !Number.isSafeInteger(current.runId) || current.runId < 1 ||
+      !Number.isSafeInteger(current.runAttempt) || current.runAttempt < 1) return undefined;
+  return { sourceHead: e.sourceHead, runId: current.runId, runAttempt: current.runAttempt };
+}
+function verifyMergeCi(e, live, decision, readGit, collect) {
+  verifyReportCommit(e, live, decision, readGit);
+  const source = collect(e.sourceHead);
+  if (source.verdict !== 'pass') throw Error('Reviewed source CI is no longer valid');
+  const final = collect(live.head.sha);
+  if (final.verdict === 'pass') return { reusedSource: false, ci: final };
+  const reuse = reportCiReuse(e, source);
+  // Never hide an existing pending/failed/incomplete run, or an API error.
+  if (final.status === 'missing' && reuse && e.reportCiReuse && encode(reuse) === encode(e.reportCiReuse))
+    return { reusedSource: true, ci: source };
+  throw Error('Final report commit CI must pass or have verified source-CI reuse');
 }
 function pushMerge(run, base, head, pr, targetBranch) {
   if (!sha(base) || !sha(head) || !Number.isSafeInteger(pr) || pr < 1 || !/^[\w./-]+$/.test(targetBranch || '') || targetBranch.startsWith('-') || targetBranch.includes('..')) throw Error('Invalid merge identity');
@@ -461,6 +483,13 @@ function createController(context, adapters = {}) {
       if (!second || live.head.sha !== e.sourceHead || command('git', ['rev-parse', 'HEAD'], second) !== e.sourceHead ||
         command('git', ['status', '--porcelain'], second)) throw Error('Report requires a clean PR worktree at the reviewed head');
       const prepared = prepareReport(e);
+      // Check hosted CI before creating a commit that could trigger duplicate work.
+      // Historical prepared reports retain their bytes and original CI contract.
+      if (!e.reportCreatedAt) {
+        delete prepared.reportCiReuse;
+        const reuse = reportCiReuse(e, collect(e.sourceHead, e.pr, p));
+        if (reuse) prepared.reportCiReuse = reuse;
+      }
       // Audit copies in evidence/reports never become authorization inputs.
       delete prepared.humanApprovalAudit;
       if (decision.humanApproval) prepared.humanApprovalAudit = decision.humanApproval;
@@ -470,15 +499,15 @@ function createController(context, adapters = {}) {
       // later derives the exact same names/content without consulting the current clock.
       fs.writeFileSync(first, encode(prepared));
       const files = writeReportFiles(prepared, decision, second);
-      console.log(encode({ reportCreatedAt: prepared.reportCreatedAt, files }));
+      console.log(encode({ reportCreatedAt: prepared.reportCreatedAt, files,
+        reportCiReuse: prepared.reportCiReuse,
+        commitMessage: `docs: record MARC assessment for PR ${e.pr}${prepared.reportCiReuse ? ' [skip ci]' : ''}` }));
       console.log('Report files written. Inspect, commit and push only these two files to the existing PR branch.'); return;
     }
     if (!decision.merge) throw Error('Merge denied: ' + (decision.reasons.join('; ') || 'report-only policy'));
     if (encode(e.humanApprovalAudit) !== encode(decision.humanApproval))
       throw Error('Published operator approval audit differs; preserve the report and reassess');
-    verifyReportCommit(e, live, decision, git);
-    if (collect(e.sourceHead, e.pr, p).verdict !== 'pass') throw Error('Reviewed source CI is no longer valid');
-    if (collect(live.head.sha, e.pr, p).verdict !== 'pass') throw Error('Final report commit must pass CI');
+    const mergeCi = verifyMergeCi(e, live, decision, git, head => collect(head, e.pr, p));
     // Check source metadata and changed paths independently instead of trusting editable JSON.
     const source = capture(e.pr, p, hash);
     if (source.sourceHead !== live.head.sha) throw Error('PR moved');
@@ -498,7 +527,7 @@ function createController(context, adapters = {}) {
         throw Error('Operator approval or decision changed before merge');
       // Non-force update refuses a concurrent divergent target. No head/base race fallback.
       const commit = pushMerge((args, input) => command('git', args, ROOT, input), e.base, live.head.sha, e.pr, context.policy.base);
-      console.log(encode({ mergeCommit: commit, pr: e.pr, deployment: false,
+      console.log(encode({ mergeCommit: commit, pr: e.pr, deployment: false, ci: mergeCi,
         note: 'Verify GitHub merged state and target-branch CI; do not repeat a push after an uncertain response.' }));
     } finally { releaseLock(); }
   }
@@ -542,6 +571,6 @@ function main(args = process.argv.slice(2)) {
   createController(context).run(args);
 }
 module.exports = { evaluate, reportMarkdown, reportPaths, prepareReport, isOwnReportPath, writeReportFiles,
-  changedFiles, changedLines, collectCi, verifyReportCommit, pushMerge, registeredProducer, selectQueue,
+  changedFiles, changedLines, collectCi, verifyReportCommit, reportCiReuse, verifyMergeCi, pushMerge, registeredProducer, selectQueue,
   main, trustedPolicy, acquireMergeLock, createController };
 if (require.main === module) { try { main(); } catch (error) { console.error(error.message); process.exitCode = 1; } }

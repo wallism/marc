@@ -8,7 +8,7 @@ Selected specialists supplement either the simple or full route. Green checks on
 
 Crew model and reasoning settings inherit the Captain unless configured defaults or member overrides apply. Reports identify inherited or configured selections and distinguish requested settings from actual values when telemetry is unavailable. See [crew model settings](configuration.md#optional-crew-model-overrides).
 
-Passing source review leads to a report commit whose CI must pass before guarded merge. MARC then verifies target-branch CI and stops the queue if it fails. Deployment remains a separate manual action. Report-only mode completes report CI without merging.
+Passing source review leads to a verified report commit. New report-only commits can reuse their bound successful source CI after an exact report-pair check; they do not require another full build. Existing report-head runs and historical reports without reuse records still require successful report CI. MARC then verifies target-branch CI and stops the queue if it fails. Deployment remains a separate manual action. The historical image shows the earlier unconditional report-CI step; this paragraph and the current Captain describe the reuse exception.
 
 Unknown impact broadens review. Missing evidence or expertise holds; sensitive changes require the configured human decision. Repairs stay within the consumer policy budget and require recapture and fresh reviewers. Community contributions add deliberately installed, versioned specialists through the [crew contract](crew.md).
 

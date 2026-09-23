@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-21 — Reuse CI for generated reports
+
+The owner observed a duplicate pre-merge build after green source CI. New report publication rechecks the exact source run/attempt and returns a skip-CI commit message only with bound reuse evidence. Merge verifies the exact report pair and current source CI; pending/failed report CI, drift and historical reports keep their gates. Source artifacts/scans, post-merge CI, protection and budgets remain required. Local deterministic regression validation only; publication and consumer activation are separate.
+
 ## 2026-09-20 — Consume explicit human decisions without widening scope
 
 The Captain can pass an operator-controlled external record to decision, checkpoint, report and merge commands for an approved sensitive change. It must verify the actual human instruction and exact identities/path scope, preserve historical approvals and obtain a new explicit decision after drift. Candidate claims and report audit copies remain untrusted as authority. Human approval satisfies only the sensitive path gate; independent reviews, scans, CI, browser checks, integrity and budgets remain required. See the [operator contract](../../docs/operator-approval.md). Deterministic controller regressions exercise the contract; no model-evaluation result is claimed.

@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-21 — Reuse CI for generated reports
+
+The owner observed a duplicate pre-merge build after green source CI. New report publication rechecks the exact source run/attempt and returns a skip-CI commit message only with bound reuse evidence. Merge verifies the exact report pair and current source CI; pending/failed report CI, drift and historical reports keep their gates. Source artifacts/scans, post-merge CI, protection and budgets remain required. Local deterministic regression validation only; publication and consumer activation are separate.
+
 ## 2026-09-20 — Exact operator approval for sensitive paths
 
 Replaced the unconditional human-path rejection with an explicit operator CLI channel bound to repository, PR, source, base, policy and the complete sensitive path set. External records have a strict schema, expiry and byte digest; candidate/evidence copies cannot authorize themselves. Decisions verify the committed path inventory and live identity, reports retain the audit, and merge reloads approval at its final boundary. All other gates and cumulative budgets remain intact. Regression coverage includes forged input, stale identities, additional sensitive changes, report audit mismatch and revocation before merge. See the [contract](../../docs/operator-approval.md) and [delivery record](../../docs/work/20260920-operator-approval-work.md). Publication and consumer activation require separate exact-commit checks.

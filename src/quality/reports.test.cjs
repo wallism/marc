@@ -6,6 +6,42 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const { prepareReport, reportPaths, writeReportFiles, verifyReportCommit, changedFiles, changedLines } = require('./marc.cjs');
 
+test('report-only publication reuses successful current source CI without another build', t => {
+  const { reportCiReuse, verifyMergeCi } = require('./marc.cjs');
+  const { root, git, e, decision } = fixture(t);
+  const passed = { sourceHead: e.sourceHead, verdict: 'pass', status: 'complete', conclusion: 'success', runId: 42, runAttempt: 1 };
+  e.ci = passed;
+  e.reportCiReuse = reportCiReuse(e, passed);
+  assert.deepEqual(e.reportCiReuse, { sourceHead: e.sourceHead, runId: 42, runAttempt: 1 });
+  writeReportFiles(e, decision, root);
+  git('add', '.'); git('commit', '-m', 'MARC report [skip ci]');
+  const live = { head: { sha: git('rev-parse', 'HEAD') } };
+  const collect = head => head === e.sourceHead ? passed : { sourceHead: head, verdict: 'blocked', status: 'missing' };
+  assert.equal(verifyMergeCi(e, live, decision, git, collect).reusedSource, true);
+  for (const status of ['pending', 'failed', 'incomplete']) {
+    assert.throws(() => verifyMergeCi(e, live, decision, git, head => head === e.sourceHead ? passed : { verdict: 'blocked', status }), /report commit CI/);
+    assert.equal(reportCiReuse(e, { ...passed, verdict: 'blocked', status }), undefined);
+  }
+  for (const changed of [{ sourceHead: 'b'.repeat(40) }, { runId: 43 }, { runAttempt: 2 }]) {
+    assert.equal(reportCiReuse(e, { ...passed, ...changed }), undefined);
+    assert.throws(() => verifyMergeCi(e, live, decision, git, head => head === e.sourceHead ? { ...passed, ...changed } : collect(head)), /CI/);
+  }
+  assert.throws(() => verifyMergeCi(e, live, decision, git, () => { throw Error('API unavailable'); }), /API unavailable/);
+  fs.appendFileSync(path.join(root, 'app.txt'), 'unreviewed source\n');
+  git('add', '.'); git('commit', '-m', 'source change');
+  assert.throws(() => verifyMergeCi(e, { head: { sha: git('rev-parse', 'HEAD') } }, decision, git, collect), /exact report files/);
+});
+
+test('historical reports without a reuse record still require report-head CI', t => {
+  const { verifyMergeCi } = require('./marc.cjs');
+  const { root, git, e, decision } = fixture(t);
+  writeReportFiles(e, decision, root); git('add', '.'); git('commit', '-m', 'legacy report');
+  const live = { head: { sha: git('rev-parse', 'HEAD') } };
+  const passed = { sourceHead: e.sourceHead, verdict: 'pass', status: 'complete', conclusion: 'success', runId: 42, runAttempt: 1 };
+  assert.throws(() => verifyMergeCi(e, live, decision, git, head => head === e.sourceHead ? passed : { status: 'missing' }), /report commit CI/);
+  assert.equal(verifyMergeCi(e, live, decision, git, () => passed).reusedSource, false);
+});
+
 test('new MARC reports preserve legacy rendering for previously prepared evidence', () => {
   const { reportMarkdown } = require('./marc.cjs');
   const original = { pr: 24, sourceHead: 'a'.repeat(40), base: 'b'.repeat(40), policyHash: 'policy' };

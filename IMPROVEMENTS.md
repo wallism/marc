@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-21 | Controller and Captain | Avoid duplicate report-only pre-merge builds by rechecking and binding successful exact-source CI. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-21--reuse-ci-for-generated-reports), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-21--reuse-ci-for-generated-reports) |
 | 2026-09-20 | Controller and Captain | Consume explicit operator approval for exact sensitive changes, with audit binding and all other gates preserved. | [Contract](docs/operator-approval.md), [controller](src/quality/IMPROVEMENTS.md), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md) |
 | 2026-09-16 | Product boundary | Stated that consumer quality tooling stays in the consumer's build, with MARC requiring only successful exact-source CI and integrating no analyzer output. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-16--consumer-quality-tooling-boundary), [configuration](docs/configuration.md#your-own-quality-tools) |
 | 2026-09-15 | Eval corpora | Added a versioned C# eval corpus and a contribution check that fails when any rule extracted from a skill has no covering case. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-15--eval-corpus-contracts), [work plan](docs/work/20260915-skill-evals-csharp-work.md) |

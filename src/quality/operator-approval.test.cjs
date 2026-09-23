@@ -93,7 +93,7 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
     state: 'open', draft: false, target: 'master', headRepository: record.repository,
     author: 'maintainer', branch: 'bugfix/fixture', baseIncluded: true, files: ['AGENTS.md'],
     changedLines: 2, repairCycles: 0, projectChanges: [],
-    ci: { verdict: 'pass', sourceHead, runUrl: 'https://github.com/example/project/actions/runs/12' },
+    ci: { verdict: 'pass', sourceHead, runId: 12, runAttempt: 1, runUrl: 'https://github.com/example/project/actions/runs/12' },
     gates: Object.fromEntries(policy.reviewGates.map(name => [name, { verdict: 'pass', sourceHead, base, policyHash,
       reviewer: name, summary: 'Checked', evidence: ['AGENTS.md:1'], findings: [],
       execution: { settings: resolveAgentSettings(undefined, name), applied: true, evidence: 'fixture receipt' } }])) };
@@ -116,7 +116,7 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
       return git(...args);
     },
     api: endpoint => endpoint.includes('/git/ref/') ? { object: { sha: liveBase } } :
-      endpoint.includes('/actions/') ? { workflow_runs: [{ id: 12, run_attempt: 1,
+      endpoint.includes('/actions/') ? { workflow_runs: head !== sourceHead && endpoint.includes(`head_sha=${head}`) ? [] : [{ id: 12, run_attempt: 1,
         head_sha: new URL('https://example.invalid/' + endpoint).searchParams.get('head_sha'), event: 'push',
         status: 'completed', conclusion: 'success', html_url: 'https://github.com/example/project/actions/runs/12' }] } :
       { state: 'open', draft: false, user: { login: e.author }, base: { ref: 'master' },
@@ -138,6 +138,9 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   drift = false;
   controller.run(['report', evidence, candidate, '--operator-approval', file]);
   const reported = JSON.parse(fs.readFileSync(evidence));
+  assert.deepEqual(reported.reportCiReuse, { sourceHead, runId: 12, runAttempt: 1 });
+  const publication = JSON.parse(output.mock.calls.at(-2).arguments[0]);
+  assert.match(publication.commitMessage, /\[skip ci\]$/);
   assert.equal(reported.humanApprovalAudit.record.id, record.id);
   assert.equal(reported.stages.at(-1).decision.humanApproval.sha256, reported.humanApprovalAudit.sha256);
   const paths = reportPaths(e.pr, sourceHead, reported.reportCreatedAt, reported.reportFormat);
@@ -149,6 +152,8 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   assert.throws(() => controller.run(['merge', evidence, '--operator-approval', file]), /audit differs/);
   fs.writeFileSync(evidence, JSON.stringify(reported));
   revokeAtLock = true;
+  // With no report-head CI, the guard must reach the final approval check using
+  // successful source CI plus the exact generated reports, without dispatch.
   assert.throws(() => controller.run(['merge', evidence, '--operator-approval', file]), /approval.*malformed/i);
   assert.equal(fs.existsSync(path.join(root, 'marc-merge.lock')), false);
   assert.equal(git('rev-parse', 'HEAD'), head, 'no merge or push ran');
