@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-25 — Self-review bootstrap
+
+Added MARC's own `.marc/` configuration using existing resolver and trusted-checkout guards, with report-only mode, updates off, inherited agents, 50 files, 3,000 lines, two repair cycles and portable external state. Repository-specific producer/CI/crew mappings stay in that governance directory. Hosted Node checks now emit JUnit artifacts and the shared Gitleaks wrapper emits sanitized scan evidence with an empty exception file. Focused integration checks cover defaults, producers, governance protection, specialist availability, artifact wiring and rejection of candidate controllers. Initial governance still requires maintainer landing before a trusted self-review can start; no runtime guard, merge authority or other consumer configuration was changed.
+
 ## 2026-09-24 — Reusable upgrade PR command
 
 Added explicit scheduler-neutral upgrade preparation with a stable branch and one open PR, independent of intake auto-update settings. Shared trusted rendering keeps pin/config/member/generated files coherent after exact upstream CI verification. External ownership and pending-push records support retries, and branch commits append without force, including after squash merge. Shared run locking, existing reports, approvals and cumulative state remain intact; unfamiliar branches and ambiguous identities hold. Regression-first synthetic Git/GitHub tests cover repeated upgrades, no-op runs, upstream failure/drift, ownership/PR mismatch, races, report preservation and PR-creation recovery. No hosted workflows, live publication, consumer activation or deployment were performed. See [command contract](../../docs/upgrades.md).

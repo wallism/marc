@@ -4,6 +4,8 @@
 
 MARC's Captain coordinates independent PR review, hosted CI evidence, bounded repairs and guarded merges. Each consumer supplies its repository policy, technology guidance and operational configuration.
 
+MARC also carries its own [self-review configuration](.marc/config.json), using the standard report-only defaults and its in-repository controller. See [dogfooding and bootstrap](.marc/project.md) for the policy, hosted evidence and trusted-master requirement. This configuration grants no automatic merge authority.
+
 Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). First setup confirms proposed settings. **Automatic updates are off by default (`autoUpdate: false`). We recommend leaving them off:** enabling them adds MARC pin, configuration and generated-file changes to ordinary PRs, cluttering their scope, triggering fresh CI/review work and requiring human approval where sensitive-path policy applies. Prefer a separate upgrade PR through your existing maintenance workflow. Explicit `autoUpdate: true` remains supported with upstream CI verification and all human/merge gates. See [update behavior and alternatives](docs/installation.md#automatic-updates).
 
 The [Captain](skills/marc-crew-captain/SKILL.md) leads the simplicity, simple-tests, security, correctness, code-quality, test-integrity and repair skills. Configured [language, framework and front-end specialists](docs/crew.md) supplement the current simple/full routes based on captured source, callers and trusted dependency relationships. Deployment remains separate.

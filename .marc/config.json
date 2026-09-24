@@ -1,0 +1,44 @@
+{
+  "schema": 1,
+  "autoUpdate": false,
+  "policy": ".marc/policy.json",
+  "ci": {
+    "workflow": "node-checks.yml",
+    "requiredArtifacts": [
+      "node-test-results-ubuntu-latest",
+      "node-test-results-windows-latest",
+      "quality-scans"
+    ]
+  },
+  "technologies": ["JavaScript", "Node.js", "GitHub Actions", "C#"],
+  "guidance": {
+    "project": ".marc/project.md",
+    "improvements": "src/quality/IMPROVEMENTS.md"
+  },
+  "scans": { "secretExceptions": ".marc/gitleaksignore" },
+  "crew": {
+    "schema": 1,
+    "members": [
+      { "id": "javascript", "version": "1.0.0" },
+      { "id": "github-actions", "version": "1.0.0" },
+      { "id": "csharp", "version": "1.1.0" }
+    ],
+    "areas": [
+      {
+        "paths": ["^src/quality/.*\\.cjs$", "^scripts/.*\\.cjs$"],
+        "technologies": ["javascript"],
+        "reason": "CommonJS controller, installer and validation modules execute on Node.js 24."
+      },
+      {
+        "paths": ["^\\.github/workflows/", "^scripts/check-syntax\\.cjs$", "^src/quality/(scans|catalogue-validation)\\.cjs$"],
+        "technologies": ["github-actions"],
+        "reason": "Workflows invoke these validation and scan entry points; changes can alter hosted evidence."
+      },
+      {
+        "paths": ["^src/quality/browser-host/"],
+        "technologies": ["csharp"],
+        "reason": "The optional ASP.NET startup hook is C# targeting .NET 10; its focused external build is required only when affected."
+      }
+    ]
+  }
+}
