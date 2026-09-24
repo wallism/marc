@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-25 — Automatic self-review authority
+
+The owner explicitly requested automatic mode for MARC's own repository after its first successful report-only assessment. Set only its policy mode to automatic and align self-review guidance and the existing configuration test. Required reviews, exact-source CI, sensitive-path approval, integrity checks, budgets and deployment separation remain enforced. New consumer setup defaults and automatic tool updates remain unchanged. Activation on trusted master changes policy identity and requires fresh capture/review before pending PRs can merge.
+
 ## 2026-09-25 — Self-review policy fixture mappings
 
 The first PR #6 self-review held two policy JSON files as unclassified. Map only the Python example policy and controller policy fixture to their actual Node consumers in self-review governance. A focused regression reproduces the original holds, verifies JavaScript selection after the mappings, and keeps an unknown JSON fixture held. Shared-impact broadening, required reviews, report-only mode and sensitive-path approval remain unchanged. Activation requires this governance on trusted master and a fresh capture; prior reports remain immutable.

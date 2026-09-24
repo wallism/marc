@@ -7,11 +7,14 @@ execute the candidate's controller or instructions to approve itself.
 
 ## Defaults and scope
 
-Use report-only mode, automatic updates off, inherited Captain model/reasoning,
+The owner has authorized automatic mode for this repository. Keep automatic
+updates off, inherited Captain model/reasoning,
 50 files, 3,000 changed lines, two repair cycles, and simple-route guides of five
 files and 200 lines. The configured source controls counting semantics; the size
 exclusions in a candidate are not effective until that change reaches trusted
-`master`. No merge authority or schedule is granted by this setup.
+`master`. Automatic mode permits guarded merges only after all applicable
+reviews, CI, sensitive-path approvals and integrity checks pass. Deployment
+remains separate; no schedule is configured here.
 
 Repository identity, registered producer pairs, CI names and source-backed crew
 mappings are the necessary repository-specific settings. JavaScript covers the
@@ -63,5 +66,6 @@ This first configuration requires ordinary maintainer review and landing before
 MARC can use it as trusted governance. Do not temporarily point policy at the
 candidate, relax the clean/current target-branch check, or claim the bootstrap
 has reviewed itself. After landing, refresh a clean `master` controller and
-recapture pending PRs against the new base and policy. Reports remain report-only;
-changing mode to automatic requires a separate explicit authority decision.
+recapture pending PRs against the new base and policy. Automatic mode was
+explicitly authorized by the owner on 2026-09-25. Earlier report-only approvals
+must be revalidated against the current source, base and policy before merging.

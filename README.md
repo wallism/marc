@@ -4,7 +4,7 @@
 
 MARC's Captain coordinates independent PR review, hosted CI evidence, bounded repairs and guarded merges. Each consumer supplies its repository policy, technology guidance and operational configuration.
 
-MARC also carries its own [self-review configuration](.marc/config.json), using the standard report-only defaults and its in-repository controller. See [dogfooding and bootstrap](.marc/project.md) for the policy, hosted evidence and trusted-master requirement. This configuration grants no automatic merge authority.
+MARC also carries its own [self-review configuration](.marc/config.json), using owner-authorized automatic mode and its in-repository controller. Eligible PRs can merge after the required reviews, CI, sensitive-path approvals and integrity checks pass. See [dogfooding and bootstrap](.marc/project.md) for the policy, hosted evidence and trusted-master requirement. New consumer setups still default to report-only mode.
 
 Start with the [setup prompt](docs/setup-prompt.md), then read the [configuration and command guide](docs/configuration.md). First setup confirms proposed settings. **Automatic updates are off by default (`autoUpdate: false`). We recommend leaving them off:** enabling them adds MARC pin, configuration and generated-file changes to ordinary PRs, cluttering their scope, triggering fresh CI/review work and requiring human approval where sensitive-path policy applies. Prefer a separate upgrade PR through your existing maintenance workflow. Explicit `autoUpdate: true` remains supported with upstream CI verification and all human/merge gates. See [update behavior and alternatives](docs/installation.md#automatic-updates).
 
