@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-25 — Self-review bootstrap
+
+MARC's repository now declares its own default report-only configuration and review evidence contract. The Captain uses the existing in-repository mode from clean current master, with standard core gates and applicable JavaScript, GitHub Actions and optional-hook C# specialists. Setup does not make a candidate's policy trusted or grant automatic merge authority. The bootstrap must be landed through maintainer review before pending PRs can be freshly captured; shared state remains external and repository-namespaced.
+
 ## 2026-09-24 — Reuse dedicated upgrade PRs
 
 Documented the explicit upgrade command and consumer-owned scheduling, with one stable branch and open PR refreshed on later runs. The shared run lock prevents updates during an active assessment; source changes between runs need fresh capture and applicable human approval. Earlier advice to freeze an unacted upgrade PR is superseded. Ownership records, reports, budgets, producer policy and all merge/deployment boundaries remain unchanged. See [upgrade workflow](../../docs/upgrades.md).
