@@ -1,5 +1,11 @@
 # Shared controller improvements
 
+## 2026-09-24 — Exclude documentation and tests from line budgets
+
+Raised the supplied fixture and example policy defaults to 3,000 counted lines and 50 counted files at the owner's request. Boundary regressions cover 3,000/3,001 lines, 50/51 files and consumer overrides both below and above the defaults. Documentation/tests are excluded from both hard limits and the simple-route advisory guides, which remain five counted files and 200 counted lines. Existing consumer policies remain explicit and unchanged.
+
+The shared capture/merge line counter and eligibility file count now exclude documented documentation and test naming conventions. They retain the complete changed-file inventory, sensitive-path checks, reviewer selection and CI requirements. Recognized moves across the source/excluded boundary still count edits; malformed numstat fails closed and non-excluded binary changes exceed the budget. Synthetic Git regressions reproduce excessive documentation/test size counts before the fix and cover mixed source, excluded-only changes, moves, source-name lookalikes and preserved review gates. The consumer's limits remain configurable; adoption requires a new pinned bundle and fresh evidence. No consumer policy, durable state, hosted CI, publication or merge authority was changed. See [counting and configuration](../../skills/marc-crew-captain/references/evidence.md).
+
 ## 2026-09-24 — Reusable upgrade PR command
 
 Added explicit scheduler-neutral upgrade preparation with a stable branch and one open PR, independent of intake auto-update settings. Shared trusted rendering keeps pin/config/member/generated files coherent after exact upstream CI verification. External ownership and pending-push records support retries, and branch commits append without force, including after squash merge. Shared run locking, existing reports, approvals and cumulative state remain intact; unfamiliar branches and ambiguous identities hold. Regression-first synthetic Git/GitHub tests cover repeated upgrades, no-op runs, upstream failure/drift, ownership/PR mismatch, races, report preservation and PR-creation recovery. No hosted workflows, live publication, consumer activation or deployment were performed. See [command contract](../../docs/upgrades.md).

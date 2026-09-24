@@ -130,10 +130,10 @@ test('simple size guides allow justified larger tests and local changes without 
     e.routing.sizeRationale = ' ';
     assert.equal(evaluate(e, policy, 'policy').merge, false);
     e.routing.sizeRationale = 'Reviewed larger but local scope.';
-    e.changedLines = 2001;
+    e.changedLines = policy.maxChangedLines + 1;
     assert.equal(evaluate(e, policy, 'policy').merge, false);
     e.changedLines = 300;
-    e.files = Array.from({ length: 41 }, (_, i) => `src/App.Tests/Example${i}.cs`);
+    e.files = Array.from({ length: policy.maxFiles + 1 }, (_, i) => `src/App.Core/Example${i}.cs`);
     assert.equal(evaluate(e, policy, 'policy').merge, false);
   }
 });
@@ -156,7 +156,7 @@ test('ordinary documentation is simple beyond the size guide but instruction and
 
 test('each size guide independently requires justification and never waives risk or existing findings', () => {
   for (const change of [e => e.changedLines = 201,
-    e => e.files = Array.from({ length: 6 }, (_, i) => `src/App.Tests/Example${i}.cs`)]) {
+    e => e.files = Array.from({ length: 6 }, (_, i) => `src/App.Core/Example${i}.cs`)]) {
     const e = simpleFixture(); change(e);
     assert.equal(evaluate(e, policy, 'policy').merge, false);
     e.routing.sizeRationale = 'Inspected the complete low-risk change and its callers.';
@@ -346,12 +346,56 @@ test('indirect UI impact from a reviewer also requires browser evidence', () => 
   const e = fixture(); e.gates.correctness.requiresBrowser = true;
   assert.equal(evaluate(e, policy, 'policy').eligible, false);
 });
-test('automatic scope allows 2000 changed lines and rejects 2001', () => {
-  const e = fixture(); e.changedLines = 2000;
-  assert.equal(policy.maxChangedLines, 2000);
+test('default automatic scope allows 3000 changed lines and rejects 3001', () => {
+  const e = fixture(); e.changedLines = 3000;
+  assert.equal(policy.maxChangedLines, 3000);
+  assert.equal(require('../../examples/python/.marc/policy.json').maxChangedLines, 3000);
   assert.equal(evaluate(e, policy, 'policy').merge, true);
-  e.changedLines = 2001;
+  e.changedLines = 3001;
   assert.equal(evaluate(e, policy, 'policy').merge, false);
   assert.equal(policy.simpleRoute.recommendedMaxChangedLines, 200);
   assert.equal(policy.simpleRoute.recommendedMaxFiles, 5);
+});
+
+test('consumer line limits override the default in either direction', () => {
+  for (const maxChangedLines of [2000, 4000]) {
+    const configured = { ...policy, maxChangedLines }, e = fixture();
+    e.changedLines = maxChangedLines;
+    assert.equal(evaluate(e, configured, 'policy').merge, true);
+    e.changedLines++;
+    assert.equal(evaluate(e, configured, 'policy').merge, false);
+  }
+});
+
+test('file limits count source paths while keeping excluded paths subject to review', () => {
+  assert.equal(policy.maxFiles, 50);
+  assert.equal(require('../../examples/python/.marc/policy.json').maxFiles, 50);
+  const excluded = Array.from({ length: 60 }, (_, i) => [`docs/guide${i}.md`, `src/App.Tests/Case${i}.cs`]).flat();
+  for (const maxFiles of [40, 50, 60]) {
+    const configured = { ...policy, maxFiles }, e = fixture();
+    e.files = [...Array.from({ length: maxFiles }, (_, i) => `src/App.Core/Example${i}.cs`), ...excluded];
+    const inventory = [...e.files];
+    assert.equal(evaluate(e, configured, 'policy').merge, true);
+    assert.deepEqual(e.files, inventory);
+    e.files.push('src/App.Core/Extra.cs');
+    assert.equal(evaluate(e, configured, 'policy').merge, false);
+  }
+  const e = fixture(); e.files = [...excluded]; e.changedLines = 0;
+  assert.equal(evaluate(e, policy, 'policy').merge, true);
+  e.files.push('AGENTS.md');
+  assert.equal(evaluate(e, policy, 'policy').merge, false);
+  e.files = excluded; delete e.gates['test-integrity'];
+  assert.equal(evaluate(e, policy, 'policy').merge, false);
+  e.files = [];
+  assert.ok(evaluate(e, policy, 'policy').reasons.includes('Diff outside size limits'));
+});
+
+test('simple file guidance excludes docs and tests without waiving CI or sensitive paths', () => {
+  const e = simpleFixture();
+  e.files.push(...Array.from({ length: 60 }, (_, i) => [`docs/guide${i}.md`, `src/App.Tests/Case${i}.cs`]).flat());
+  assert.equal(evaluate(e, policy, 'policy').merge, true);
+  e.files.push('docs/security/RefundPolicy.md');
+  assert.equal(evaluate(e, policy, 'policy').merge, false);
+  e.files.pop(); e.ci.verdict = 'blocked';
+  assert.equal(evaluate(e, policy, 'policy').merge, false);
 });
