@@ -2,7 +2,7 @@
   "version": 1,
   "repository": "wallism/marc",
   "base": "master",
-  "mode": "report-only",
+  "mode": "automatic",
   "producers": [
     { "author": "wallism", "branchPrefixes": ["codex/", "bugfix/", "feature/"] },
     { "author": "dependabot[bot]", "branchPrefixes": ["dependabot/"] }
