@@ -5,7 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const { loadConfig } = require('../src/quality/config.cjs');
-const { loadCatalogue, selectCrew } = require('../src/quality/crew.cjs');
+const { loadCatalogue, selectCrew, collectImpact } = require('../src/quality/crew.cjs');
 const { createController, registeredProducer } = require('../src/quality/marc.cjs');
 const { reviewedSecretIgnores } = require('../src/quality/scans.cjs');
 const root = path.resolve(__dirname, '..');
@@ -61,6 +61,22 @@ test('configured specialists exist and missing expertise still holds', () => {
     assert.equal(selection.holds.length === 0, technology !== 'unknown-runtime');
     if (technology !== 'unknown-runtime') assert.deepEqual(selection.selected.map(member => member.id), [technology]);
   }
+});
+
+test('policy fixture changes resolve to their Node consumers without masking unknown files', () => {
+  const { crew } = loadConfig(root), catalogue = loadCatalogue(root, crew);
+  const files = ['examples/python/.marc/policy.json', 'src/quality/fixtures/policy.json'];
+  // No references in this synthetic diff: classification must come from trusted mappings.
+  const readGit = () => '';
+  const impact = collectImpact('base', 'head', files, crew, catalogue, readGit);
+  assert.deepEqual(impact.holds, []);
+  assert.deepEqual(impact.technologies, ['javascript']);
+  const selection = selectCrew({ sourceHead: 'a'.repeat(40), base: 'b'.repeat(40),
+    policyHash: 'synthetic', toolCommit: 'c'.repeat(40) }, crew, catalogue, impact);
+  assert.deepEqual(selection.selected.map(member => member.id), ['javascript']);
+  assert.deepEqual(selection.holds, []);
+  const unknown = collectImpact('base', 'head', ['src/quality/fixtures/unknown.json'], crew, catalogue, readGit);
+  assert.ok(unknown.holds.some(reason => reason.includes('Unclassified impact')));
 });
 
 test('configured CI jobs and artifacts have real workflow producers', () => {
