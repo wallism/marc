@@ -25,6 +25,11 @@
     ],
     "areas": [
       {
+        "paths": ["^examples/python/\\.marc/policy\\.json$", "^src/quality/fixtures/policy\\.json$"],
+        "technologies": ["javascript"],
+        "reason": "These JSON policies are consumed by the Node controller and its configuration, installation and gate regression tests; the Python example path is not Python runtime code."
+      },
+      {
         "paths": ["^src/quality/.*\\.cjs$", "^scripts/.*\\.cjs$"],
         "technologies": ["javascript"],
         "reason": "CommonJS controller, installer and validation modules execute on Node.js 24."

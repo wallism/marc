@@ -20,6 +20,11 @@ invoked helpers; C# covers the optional browser startup hook. Fixture and eval
 corpus languages are review data, not additional runtime stack declarations.
 Missing relevant expertise or optional-hook validation remains a visible hold.
 
+The policies in `examples/python/.marc/policy.json` and
+`src/quality/fixtures/policy.json` map to JavaScript because the Node controller
+and its configuration, installation and gate tests consume them. These exact
+mappings do not classify other JSON files or waive independent review.
+
 The four standard full-route reviews remain required. Protect configuration,
 controller/installer code and crew instructions as sensitive governance. A
 positive review is not sensitive-path approval. No accepted scan exceptions

@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-25 — Self-review policy fixture mappings
+
+The first PR #6 self-review held two policy JSON files as unclassified. Map only the Python example policy and controller policy fixture to their actual Node consumers in self-review governance. A focused regression reproduces the original holds, verifies JavaScript selection after the mappings, and keeps an unknown JSON fixture held. Shared-impact broadening, required reviews, report-only mode and sensitive-path approval remain unchanged. Activation requires this governance on trusted master and a fresh capture; prior reports remain immutable.
+
 ## 2026-09-25 — Self-review bootstrap
 
 Added MARC's own `.marc/` configuration using existing resolver and trusted-checkout guards, with report-only mode, updates off, inherited agents, 50 files, 3,000 lines, two repair cycles and portable external state. Repository-specific producer/CI/crew mappings stay in that governance directory. Hosted Node checks now emit JUnit artifacts and the shared Gitleaks wrapper emits sanitized scan evidence with an empty exception file. Focused integration checks cover defaults, producers, governance protection, specialist availability, artifact wiring and rejection of candidate controllers. Initial governance still requires maintainer landing before a trusted self-review can start; no runtime guard, merge authority or other consumer configuration was changed.
