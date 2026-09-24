@@ -92,7 +92,7 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   const e = { schema: 1, agentExecutionSchema: 1, repairExecutions: [], ...record,
     state: 'open', draft: false, target: 'master', headRepository: record.repository,
     author: 'maintainer', branch: 'bugfix/fixture', baseIncluded: true, files: ['AGENTS.md'],
-    changedLines: 2, repairCycles: 0, projectChanges: [],
+    changedLines: 0, repairCycles: 0, projectChanges: [],
     ci: { verdict: 'pass', sourceHead, runId: 12, runAttempt: 1, runUrl: 'https://github.com/example/project/actions/runs/12' },
     gates: Object.fromEntries(policy.reviewGates.map(name => [name, { verdict: 'pass', sourceHead, base, policyHash,
       reviewer: name, summary: 'Checked', evidence: ['AGENTS.md:1'], findings: [],
