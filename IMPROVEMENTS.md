@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-25 | Self-review | Enable owner-authorized automatic mode for MARC while retaining every assurance gate. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-25--automatic-self-review-authority) |
 | 2026-09-25 | Self-review | Map the two policy fixtures to their Node consumers while retaining unknown-file holds. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-25--self-review-policy-fixture-mappings) |
 | 2026-09-25 | Controller and Captain | Add MARC's own self-review governance with standard report-only defaults, portable state and hosted test/scan artifacts. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-25--self-review-bootstrap), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-25--self-review-bootstrap) |
 | 2026-09-24 | Controller and Captain | Add a scheduler-neutral upgrade command that reuses one branch and open PR, preserving exact evidence gates and cumulative state. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-24--reusable-upgrade-pr-command), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-24--reuse-dedicated-upgrade-prs) |

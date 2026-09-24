@@ -10,7 +10,7 @@ const { createController, registeredProducer } = require('../src/quality/marc.cj
 const { reviewedSecretIgnores } = require('../src/quality/scans.cjs');
 const root = path.resolve(__dirname, '..');
 
-test('self-review resolves from another directory with portable standard defaults', () => {
+test('self-review resolves automatic mode with otherwise portable standard defaults', () => {
   const result = JSON.parse(execFileSync(process.execPath,
     [path.join(root, 'src/quality/marc.cjs'), '--repo', root, 'config'],
     { cwd: os.tmpdir(), encoding: 'utf8', windowsHide: true }));
@@ -18,7 +18,7 @@ test('self-review resolves from another directory with portable standard default
   assert.equal(result.repoRoot, result.bundleRoot);
   assert.equal(result.policy.repository, 'wallism/marc');
   assert.equal(result.policy.base, 'master');
-  assert.equal(result.policy.mode, 'report-only');
+  assert.equal(result.policy.mode, 'automatic');
   assert.equal(result.autoUpdate, false);
   assert.equal(result.toolCommit, null);
   assert.equal(result.agents, null);
