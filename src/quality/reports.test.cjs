@@ -59,16 +59,47 @@ test('new MARC reports preserve legacy rendering for previously prepared evidenc
 
 test('size counts edits within moved files, while file inventory retains both paths', t => {
   const { root, git } = fixture(t);
-  fs.writeFileSync(path.join(root, 'guide.md'), Array.from({ length: 100 }, (_, i) => `Distinct documentation line ${i}.`).join('\n') + '\n');
-  git('add', '.'); git('commit', '-m', 'guide'); const base = git('rev-parse', 'HEAD');
+  fs.writeFileSync(path.join(root, 'app.js'), Array.from({ length: 100 }, (_, i) => `const value${i} = ${i};`).join('\n') + '\n');
+  git('add', '.'); git('commit', '-m', 'app'); const base = git('rev-parse', 'HEAD');
   fs.mkdirSync(path.join(root, 'completed'));
-  git('mv', 'guide.md', 'completed/guide.md'); git('commit', '-m', 'move guide');
+  git('mv', 'app.js', 'completed/app.js'); git('commit', '-m', 'move app');
   let head = git('rev-parse', 'HEAD');
-  assert.deepEqual(changedFiles(base, head, 24, git), ['completed/guide.md', 'guide.md']);
+  assert.deepEqual(changedFiles(base, head, 24, git), ['app.js', 'completed/app.js']);
   assert.equal(changedLines(base, head, changedFiles(base, head, 24, git), 2000, git), 0);
-  fs.appendFileSync(path.join(root, 'completed/guide.md'), 'One new observation.\n');
+  fs.appendFileSync(path.join(root, 'completed/app.js'), 'const added = true;\n');
   git('add', '.'); git('commit', '-m', 'edit moved guide'); head = git('rev-parse', 'HEAD');
   assert.equal(changedLines(base, head, changedFiles(base, head, 24, git), 2000, git), 1);
+});
+
+test('docs and tests do not consume the line budget but remain in the review inventory', t => {
+  const { root, git, e } = fixture(t);
+  const excluded = ['README.md', 'nested/guide.MDX', 'docs/guide.txt', 'doc/diagram.svg',
+    'documentation/guide.html', 'nested/guide.rst', 'nested/guide.adoc',
+    'tests/helpers/data.json', '__tests__/component.jsx', 'src/Example.Tests/ScopeTests.cs',
+    'src/quality/count.test.cjs', 'src/app.spec.ts', 'src/ScopeTests.cs',
+    'src/test_scope.py', 'src/scope_test.go', 'spec/scope_spec.rb'];
+  for (const file of excluded) {
+    fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
+    fs.writeFileSync(path.join(root, file), 'synthetic test or documentation\n'.repeat(2001));
+  }
+  fs.appendFileSync(path.join(root, 'app.txt'), 'new application behavior\n');
+  git('add', '.'); git('commit', '-m', 'application change with docs and tests');
+  const head = git('rev-parse', 'HEAD'), files = changedFiles(e.base, head, 24, git);
+  assert.deepEqual(files, ['app.txt', ...excluded].sort());
+  assert.equal(changedLines(e.base, head, files, 2000, git), 1);
+  assert.equal(changedLines(e.base, head, excluded, 2000, git), 0);
+});
+
+test('size exclusions preserve boundary moves, source lookalikes and unknown binary holds', () => {
+  const count = output => changedLines('base', 'head', ['file'], 2000, () => output);
+  assert.equal(count('3\t2\tREADME.md\0' + '5\t4\tsrc/app.test.js\0'), 0);
+  assert.equal(count('3\t2\t\0README.md\0docs/guide.md\0'), 0);
+  assert.equal(count('3\t2\t\0src/app.js\0tests/app.test.js\0'), 5);
+  assert.equal(count('3\t2\t\0tests/app.test.js\0src/app.js\0'), 5);
+  for (const file of ['src/Contest.cs', 'src/TestService.cs', 'src/latest.js', 'src/specification.ts',
+    '.quality/reports/pr-25/other.json']) assert.equal(count(`3\t2\t${file}\0`), 5, file);
+  assert.ok(count('-\t-\tsrc/unknown.bin\0') > 2000);
+  assert.throws(() => count('1\t0\t\0docs/old.md\0'), /Incomplete rename/);
 });
 
 function fixture(t) {

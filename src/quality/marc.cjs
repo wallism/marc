@@ -99,9 +99,10 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
   requireThat(e.policyHash === policyHash, 'Policy changed since capture');
   requireThat(e.baseIncluded === true, `PR must include captured ${p.base} before validation`);
   requireThat(Number.isInteger(e.repairCycles) && e.repairCycles >= 0 && e.repairCycles <= p.maxRepairCycles, 'Repair budget exceeded');
-  requireThat(Array.isArray(e.files) && e.files.length > 0 && e.files.length <= p.maxFiles &&
-    Number.isInteger(e.changedLines) && e.changedLines >= 0 && e.changedLines <= p.maxChangedLines, 'Diff outside size limits');
   const files = Array.isArray(e.files) ? e.files : [];
+  const countedFiles = files.filter(file => !sizeExcluded(file)).length;
+  requireThat(Array.isArray(e.files) && files.length > 0 && countedFiles <= p.maxFiles &&
+    Number.isInteger(e.changedLines) && e.changedLines >= 0 && e.changedLines <= p.maxChangedLines, 'Diff outside size limits');
   const verifiedManifests = new Set();
   for (const file of files.filter(dependencyFile)) {
     const entries = e.projectChanges?.filter(change => change.file === file);
@@ -127,7 +128,7 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
     requireThat(Number.isInteger(guide?.recommendedMaxFiles) && guide.recommendedMaxFiles > 0 &&
       Number.isInteger(guide?.recommendedMaxChangedLines) && guide.recommendedMaxChangedLines > 0,
       'Simple route size guidance missing');
-    const exceedsGuide = files.length > guide?.recommendedMaxFiles || e.changedLines > guide?.recommendedMaxChangedLines;
+    const exceedsGuide = countedFiles > guide?.recommendedMaxFiles || e.changedLines > guide?.recommendedMaxChangedLines;
     requireThat(!exceedsGuide || typeof r.sizeRationale === 'string' && r.sizeRationale.trim(),
       'Simple route above size guide requires a scope rationale');
     requireThat(['additive-tests', 'documentation', 'local-change'].includes(r.changeKind),
@@ -240,6 +241,13 @@ function changedFiles(base, head, pr, readGit) {
     return !readGit('ls-tree', head, '--', f).startsWith('100644 blob ');
   });
 }
+function sizeExcluded(file) {
+  // This is a size metric only. Every path still participates in review and policy gates.
+  return /\.(md|mdx|markdown|rst|adoc)$/i.test(file) ||
+    /(^|\/)(docs?|documentation|tests?|specs?|__tests__|[^/]+\.(tests?|unittests|integrationtests))\//i.test(file) ||
+    /(^|\/)(test_[^/]+\.py|[^/]+_(test\.(py|go)|spec\.rb))$/i.test(file) ||
+    /\.(test|spec)\.[^/]+$/i.test(file) || /Tests?\.cs$/.test(file);
+}
 function changedLines(base, head, files, maximum, readGit) {
   if (!files.length) return 0;
   // Only the size metric recognizes moves. Security/report inventories keep both paths.
@@ -253,11 +261,15 @@ function changedLines(base, head, files, maximum, readGit) {
   for (let i = 0; i < records.length; i++) {
     const row = records[i].match(/^(\d+|-)\t(\d+|-)\t([\s\S]*)$/);
     if (!row) throw Error('Malformed diff size output');
+    let paths = [row[3]];
     if (row[3] === '') {
       // Rename numstat has separate NUL-delimited old and new paths.
       if (!records[i + 1] || !records[i + 2]) throw Error('Incomplete rename size output');
+      paths = [records[i + 1], records[i + 2]];
       i += 2;
     }
+    // A move across the source/docs/tests boundary must still count its edits.
+    if (paths.every(sizeExcluded)) continue;
     total += row[1] === '-' || row[2] === '-' ? maximum + 1 : Number(row[1]) + Number(row[2]);
   }
   return total;

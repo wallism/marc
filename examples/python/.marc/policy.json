@@ -12,8 +12,8 @@
       ]
     }
   ],
-  "maxFiles": 40,
-  "maxChangedLines": 2000,
+  "maxFiles": 50,
+  "maxChangedLines": 3000,
   "maxRepairCycles": 2,
   "reviewGates": [
     "security",
