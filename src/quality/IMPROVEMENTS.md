@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-25 — Concise audit publication
+
+Added versioned, lossless JSON audit publication: identical evidence is referenced once, nearly identical ordered inventories use a splice, and short containers render inline. The bundled reader recovers complete evidence, including stage hashes, independent findings and all impact files. External evidence, journal integrity, current gates and exact-byte publication verification retain their roles; already prepared reports preserve historical bytes. Focused synthetic tests cover reconstruction, malformed references, special keys, legacy publication and current verification. Consumer reports and pins are unchanged. See [format and reader](../../docs/audit-reports.md).
+
 ## 2026-09-24 — Exclude documentation and tests from line budgets
 
 Raised the supplied fixture and example policy defaults to 3,000 counted lines and 50 counted files at the owner's request. Boundary regressions cover 3,000/3,001 lines, 50/51 files and consumer overrides both below and above the defaults. Documentation/tests are excluded from both hard limits and the simple-route advisory guides, which remain five counted files and 200 counted lines. Existing consumer policies remain explicit and unchanged.
