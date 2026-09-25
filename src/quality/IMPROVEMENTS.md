@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-26 — Native language impact filtering
+
+Inspected all 15 language members. Added native comment/string masking to prevent VB, SQL, R, Fortran, Delphi and PHP comment hits becoming impact evidence; preserve Python floor division, SQL quoted identifiers and Rust lifetimes while masking ordinary literals. Treat Scratch archives/binary blobs as opaque and stop propagation through common Go/Python/Java test names. Real-Git regressions retain code leads across all 14 text languages while rejecting native noise, substring matches and archive text. This is lexical assistance, not universal caller resolution; the Captain's shared guide supplies semantic scope rules. Consumer mappings, member manifests and discovery holds are unchanged.
+
 ## 2026-09-26 — Relevant impact discovery
 
 Replaced recursive filename/substring expansion with bounded lexical dependency evidence from both full source revisions. Changed paths remain explicit; unchanged paths carry source, symbol/module/resource, line and revision witnesses. Only enclosing declarations propagate; test/startup filenames, prose, comments, ordinary strings and known namespace/member collisions do not widen the graph. Missing source and search exhaustion hold approval without selecting all specialists. Real changed governance and unclassified behavior retain broad selection, and independent semantic caller review remains mandatory. Regression coverage includes unchanged function names, old callers, indirect UI impact, collisions and report compatibility. See [scope and limitations](../../docs/impact-discovery.md). Compact audit encoding, consumer pins and authority are unchanged.

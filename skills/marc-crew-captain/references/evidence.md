@@ -2,6 +2,8 @@
 
 ## Impact scope
 
+All reviewers must apply the shared [language-specific impact guidance](language-impact.md) for affected languages, including caller relationships lexical discovery cannot resolve and rules against expanding whole projects from incidental matches.
+
 New captures distinguish `crew.impact.changedFiles` from the combined `files` inventory. Each unchanged file has a `references` entry with its originating path, symbol or module/resource, matching line, immutable revision and relationship kind. These are lexical leads, not semantic proof. Area mappings add expertise but are not substituted for file-level reference evidence. `incomplete` and its holds report search limits or unavailable source; they require resolution and recapture before approval, without recruiting every specialist merely because a search stopped. Changed shared governance and unclassified behavioral scope retain broad selection.
 
 Reviewers must read the complete diff and owning code, identify body-only changes with unchanged names/signatures, and trace relevant callers upward and dependencies downward through interfaces, runtime wiring and data/provisioning contracts. Continue while behavior can propagate; stop a chain only with a concrete unchanged boundary or demonstrated irrelevance. Tests, documentation and startup registrations may supply evidence but their filenames do not make everything mentioning them affected. Record relevant additional paths and the source relationship, not exploration logs. Missing expertise or unresolved coverage blocks; never assume the captured list is exhaustive or edit capture-owned fields to add approval.

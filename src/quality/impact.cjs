@@ -1,21 +1,48 @@
 // Bounded lexical dependency evidence, not a compiler call graph or review verdict.
 const path = require('node:path');
 const prose = file => /\.(mdx?|txt|rst|adoc)$/i.test(file);
-const testFile = file => /(^|\/)(tests?|__tests__|spec)(\/|\.)|\.(test|spec)\.[^/]+$|(^|\/)test_[^/]+$/i.test(file) ||
-  /\.Tests?\/|Tests?\.(cs|vb)$/.test(file);
+const testFile = file => /(^|\/)(tests?|__tests__|specs?)(\/|\.)|\.(test|spec)\.[^/]+$|(^|\/)test_[^/]+$|_test\.(py|go)$/i.test(file) ||
+  /\.Tests?\/|Tests?\.(cs|vb|java)$/.test(file);
 const blank = text => text.replace(/[^\n]/g, ' ');
 const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const stem = file => path.posix.basename(file).split('.')[0];
 
 function source(text, file) {
+  // Scratch archives and binary blobs need source-bound readable evidence from
+  // the reviewer. Printable bytes inside an archive are not code declarations.
+  if (/\.sb[23]$/i.test(file) || text.includes('\0')) text = '';
   // Preserve offsets/line numbers. Literal module paths are handled separately.
-  const literals = /\/\*[\s\S]*?\*\/|\/\/[^\n]*|<!--[^]*?-->|@\*(?:[^]*?)\*@|@"(?:""|[^"])*"|"""[^]*?"""|'''[^]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`/g;
-  const comments = token => /^(\/\/|\/\*|<!--|@\*)/.test(token);
-  let code = text.replace(literals, blank), imports = text.replace(literals, token => comments(token) ? blank(token) : token);
-  if (/\.(py|rb|sh|ps1|ya?ml|tf)$/i.test(file)) {
-    code = code.replace(/#[^\n]*/g, blank);
-    imports = imports.replace(/#[^\n]*/g, blank);
+  // Choose native syntax before masking: // is Python floor division, apostrophe
+  // starts a VB comment, and double quotes can delimit SQL identifiers.
+  let comment = /\/\*[\s\S]*?\*\/|\/\/[^\n]*|<!--[^]*?-->|@\*(?:[^]*?)\*@/.source;
+  let literal = /@"(?:""|[^"])*"|"""[^]*?"""|'''[^]*?'''|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`/.source;
+  if (/\.(py|rb|sh|ps1|ya?ml|r)$/i.test(file)) comment = /#[^\n]*/.source;
+  if (/\.php$/i.test(file)) comment += '|' + /#(?!\[)[^\n]*/.source;
+  if (/\.tf$/i.test(file)) comment += '|' + /#[^\n]*/.source;
+  if (/\.vb$/i.test(file)) {
+    comment = /'[^\n]*|(?:^[ \t]*|:[ \t]*)REM\b[^\n]*/.source;
+    literal = /"(?:""|[^"\n])*"/.source;
   }
+  if (/\.sql$/i.test(file)) {
+    comment = /--[^\n]*|\/\*[\s\S]*?\*\//.source;
+    literal = /'(?:''|[^'])*'/.source;
+  }
+  if (/\.(f|for|ftn|f90|f95|f03|f08)$/i.test(file)) {
+    comment = /![^\n]*/.source;
+    if (/\.(f|for|ftn)$/i.test(file)) comment += '|^[cC*][^\\n]*';
+    literal = /'(?:''|[^'\n])*'|"(?:""|[^"\n])*"/.source;
+  }
+  if (/\.(pas|dpr|dpk)$/i.test(file)) {
+    comment = /\/\/[^\n]*|\{[^]*?\}|\(\*[^]*?\*\)/.source;
+    literal = /'(?:''|[^'\n])*'/.source;
+  }
+  if (/\.rs$/i.test(file)) {
+    // Lifetimes such as 'a are identifiers, not the start of a string.
+    literal = /r(?<hashes>#+)?"[^]*?"\k<hashes>(?!#)|"(?:\\.|[^"\\])*"|'(?:\\(?:u\{[\da-f]+\}|x[\da-f]{2}|.)|[^'\\\n])'/.source;
+  }
+  const literals = new RegExp(`(?<comment>${comment})|${literal}`, 'gmi');
+  const code = text.replace(literals, blank);
+  const imports = text.replace(literals, (...args) => args.at(-1).comment !== undefined ? blank(args[0]) : args[0]);
   const declarations = [];
   const pattern = /\b(class|interface|record|struct|enum|function|def|func)\s+([A-Za-z_$][\w$]*)|\bexport\s+(?:const|let|var)\s+([A-Za-z_$][\w$]*)/g;
   for (const match of code.matchAll(pattern)) {
