@@ -5,6 +5,7 @@ const crypto = require('node:crypto');
 const { consumerFile } = require('./config.cjs');
 const { isHostInstruction } = require('./host-instructions.cjs');
 const { collectProjectChanges } = require('./project-review.cjs');
+const { discoverReferences } = require('./impact.cjs');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const text = x => typeof x === 'string' && x.trim().length > 0;
 const texts = x => Array.isArray(x) && x.every(text);
@@ -88,7 +89,7 @@ function fileTechnologies(file) {
 }
 function collectImpact(base, head, files, config, catalogue, readGit) {
   const affected = new Set(files), reasons = [], holds = [], technologies = new Set();
-  let uncertain = false, shared = false, budgetReached = false;
+  let uncertain = false, shared = false;
   // A known application's verified dependency-only diff needs full security review,
   // not every technology in the repository. Never infer frontend from npm alone.
   const scopedDependencies = new Set();
@@ -106,48 +107,22 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
       scopedDependencies.add(file);
     } catch { /* Unavailable or unsupported evidence retains broad selection below. */ }
   }
-  // Search both trees by source filenames and declared identifiers. This intentionally over-approximates callers.
-  // No candidate script, compiler, external diff driver or textconv is executed.
-  let frontier = files.filter(f => !documentation(f) && !scopedDependencies.has(f));
-  if (files.length >= 300) { frontier = []; uncertain = true; reasons.push('Affected-file budget reached.'); }
-  const searched = new Set();
-  try {
-    const patch = frontier.length ? readGit('diff', '--no-ext-diff', '--no-textconv', '--unified=0', base, head, '--', ...frontier) : '';
-    const declared = [...patch.matchAll(/(?:class|interface|record|struct|enum|function)\s+([A-Za-z_][A-Za-z0-9_]{2,})/g)].map(m => m[1]);
-    const imports = [...patch.matchAll(/(?:from\s+|require\(\s*|import\s*)['"]([^'"]+)['"]/g)]
-      .map(m => path.posix.basename(m[1]).split('.')[0]);
-    for (let depth = 0; frontier.length && depth < 4; depth++) {
-      const identifiers = unique([...frontier.map(f => path.posix.basename(f).split('.')[0]), ...(depth === 0 ? [...declared, ...imports] : [])])
-        .filter(x => /^[A-Za-z_][A-Za-z0-9_]{2,}$/.test(x) && !searched.has(x));
-      if (identifiers.length > 128) { uncertain = true; reasons.push('Reference token budget reached.'); break; }
-      identifiers.forEach(x => searched.add(x)); frontier = [];
-      if (!identifiers.length) break;
-      for (const revision of [base, head]) {
-        let matches;
-        try { matches = readGit('grep', '--no-textconv', '-I', '-l', '-z', '-F', ...identifiers.flatMap(x => ['-e', x]), revision, '--'); }
-        catch (error) { if (error.status === 1) matches = ''; else throw error; }
-        for (const match of matches.split('\0').filter(Boolean)) {
-          if (!match.startsWith(revision + ':')) throw Error('Malformed Git reference result');
-          const file = match.slice(revision.length + 1);
-          const source = fileTechnologies(file).length > 0 || config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file)));
-          if (!file.startsWith('.quality/') && source && !affected.has(file)) {
-            if (affected.size >= 300) { budgetReached = true; break; }
-            affected.add(file); frontier.push(file);
-          }
-        }
-        if (budgetReached) break;
-      }
-      if (budgetReached) { uncertain = true; reasons.push('Affected-file budget reached.'); break; }
-      if (depth === 3 && frontier.length) { uncertain = true; reasons.push('Reference depth budget reached.'); }
-    }
-  } catch { uncertain = true; holds.push('Source/reference inspection unavailable; recapture with readable Git objects.'); }
+  const discovery = discoverReferences(base, head, files.filter(file => !scopedDependencies.has(file)), readGit,
+    file => fileTechnologies(file).length > 0 || config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file))));
+  discovery.files.forEach(file => affected.add(file));
+  holds.push(...discovery.holds);
+  for (const reference of discovery.references)
+    reasons.push(`${reference.file}:${reference.line}: ${reference.kind} reference to ${reference.symbol} from ${reference.from} (${reference.revision}).`);
   for (const file of [...affected].sort()) {
     const areas = config.areas.filter(area => area.paths.some(p => new RegExp(p, 'i').test(file)));
-    for (const area of areas) { area.technologies.forEach(t => technologies.add(t)); reasons.push(`${file}: ${area.reason}`); }
+    for (const area of areas) {
+      area.technologies.forEach(t => technologies.add(t));
+      if (files.includes(file)) reasons.push(`${file}: ${area.reason}`);
+    }
     if (scopedDependencies.has(file)) {
       technologies.add('javascript');
       reasons.push(`${file}: verified application dependency-only change; trusted area selects specialists, full review remains required.`);
-    } else if (governance(file)) { shared = true; reasons.push(`${file}: shared configuration/instruction/dependency impact.`); }
+    } else if (files.includes(file) && governance(file)) { shared = true; reasons.push(`${file}: changed shared configuration/instruction/dependency impact.`); }
     const detected = fileTechnologies(file);
     detected.forEach(t => technologies.add(t));
     if (!detected.length && !areas.length && !documentation(file) && !governance(file)) {
@@ -157,8 +132,10 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
   if (shared || uncertain) catalogue.flatMap(m => m.covers).forEach(t => technologies.add(t));
   const requiresBrowser = technologies.has('blazor') || technologies.has('web') || technologies.has('react') ||
     [...affected].some(f => /(^|\/)(wwwroot|ClientApp)\/|\.(jsx|tsx)$/i.test(f));
-  reasons.push(`Inspected ${files.length} changed and ${affected.size - files.length} referenced files in both revisions.`);
-  return { files: [...affected].sort(), technologies: [...technologies].sort(), reasons: unique(reasons), holds: unique(holds),
-    uncertain: uncertain || shared, requiresBrowser, ...(scopedDependencies.size ? { requiresFull: true } : {}) };
+  reasons.push(`Captured ${files.length} changed and ${affected.size - files.length} referenced files; independent behavioral caller review remains required.`);
+  return { files: [...affected].sort(), changedFiles: [...files].sort(), references: discovery.references,
+    technologies: [...technologies].sort(), reasons: unique(reasons), holds: unique(holds),
+    uncertain: uncertain || shared, incomplete: discovery.incomplete, requiresBrowser,
+    ...(scopedDependencies.size || discovery.incomplete ? { requiresFull: true } : {}) };
 }
 module.exports = { validateCrewConfig, validateMember, loadCatalogue, selectCrew, collectImpact };

@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-26 — Relevant impact discovery
+
+Replaced recursive filename/substring expansion with bounded lexical dependency evidence from both full source revisions. Changed paths remain explicit; unchanged paths carry source, symbol/module/resource, line and revision witnesses. Only enclosing declarations propagate; test/startup filenames, prose, comments, ordinary strings and known namespace/member collisions do not widen the graph. Missing source and search exhaustion hold approval without selecting all specialists. Real changed governance and unclassified behavior retain broad selection, and independent semantic caller review remains mandatory. Regression coverage includes unchanged function names, old callers, indirect UI impact, collisions and report compatibility. See [scope and limitations](../../docs/impact-discovery.md). Compact audit encoding, consumer pins and authority are unchanged.
+
 ## 2026-09-25 — Concise audit publication
 
 Added versioned, lossless JSON audit publication: identical evidence is referenced once, nearly identical ordered inventories use a splice, and short containers render inline. The bundled reader recovers complete evidence, including stage hashes, independent findings and all impact files. External evidence, journal integrity, current gates and exact-byte publication verification retain their roles; already prepared reports preserve historical bytes. Focused synthetic tests cover reconstruction, malformed references, special keys, legacy publication and current verification. Consumer reports and pins are unchanged. See [format and reader](../../docs/audit-reports.md).

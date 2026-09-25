@@ -13,6 +13,15 @@ const original = () => ({ repository: 'example/project', pr: 7, sourceHead: 'a'.
   crew: { selected: [{ id: 'csharp', version: '1.1.0', reasons: ['C# change'] }], omitted: [] },
   ci: { verdict: 'pass', runId: 1, runAttempt: 1 } });
 const decision = { eligible: true, merge: true, reasons: [] };
+
+test('new impact summaries distinguish changed paths from reference evidence without changing historical reports', () => {
+  const e = original(), historical = reportMarkdown(prepareReport(e), decision);
+  assert.doesNotMatch(historical, /Impact:/);
+  e.crew.impact = { files: ['src/Service.cs', 'src/Caller.cs'], changedFiles: ['src/Service.cs'], incomplete: true };
+  const report = reportMarkdown(prepareReport(e), decision);
+  assert.match(report, /Impact: 1 changed files; 1 referenced unchanged files/);
+  assert.match(report, /Discovery is incomplete; approval is held/);
+});
 function directory(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'marc-stages-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));

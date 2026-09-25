@@ -22,7 +22,7 @@ For a dedicated upgrade PR that stays current without duplicate branches, run `n
 
 For example, a PR affecting only C# and JavaScript selects those two specialists, alongside the core reviews required by its route: focused tests for a valid simple route, or security, correctness, code quality and test integrity for a full route. Unrelated specialists sit that PR out.
 
-The Captain checks the complete diff and affected callers against the captured selection and trusted dependency mappings. Selection considers affected behavior, not just changed file extensions: a C# change affecting Blazor can also require Blazor and front-end expertise. Shared configuration changes or uncertain impact broaden selection; missing required expertise holds the review.
+The Captain checks the complete diff and affected callers against the captured selection and trusted dependency mappings. Selection considers affected behavior, not just changed file extensions: a C# change affecting Blazor can also require Blazor and front-end expertise. Changed shared configuration or unclassified impact can broaden selection; missing expertise and incomplete discovery hold the review. [Impact discovery](docs/impact-discovery.md) separates changed files from traceable lexical references, with model review responsible for behavioral caller chains.
 
 ![Example: many specialists are configured, but a PR affecting only C# and JavaScript selects those two plus the core reviews for its simple or full route. Wider impact or uncertainty broadens selection.](docs/assets/marc-crew-selection.png)
 
