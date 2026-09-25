@@ -1,5 +1,13 @@
 # marc-crew-captain improvements
 
+## 2026-09-26 — Scope rules for every covered language
+
+All 15 language members already require this Captain's evidence contract. Link a shared language-specific caller guide: confirm body-only changes, native binding/dispatch relationships and stop boundaries, reject incidental package/name matches, and report relevant paths with concise evidence. Distinguish lexical assistance from semantic review, including opaque Scratch and under-extracted routine syntax. Missing coverage/expertise still blocks. This clarifies shared evidence rules under bundle identity without changing individual member manifests. Local synthetic tests and catalogue/link checks do not assert model evaluation.
+
+## 2026-09-26 — Behavioral caller review and relevant discovery
+
+Clarified that deterministic impact evidence is a starting point, not a review boundary. Body-only changes require identifying the changed function/type and tracing callers, interfaces, registrations and dynamic/data contracts even when names remain unchanged. Require source-backed additional scope and hold on missing expertise or unresolved discovery; do not erase a limit hold or substitute blanket specialist selection for complete evidence. See [impact discovery](../../docs/impact-discovery.md).
+
 ## 2026-09-25 — Self-review bootstrap
 
 MARC's repository now declares its own default report-only configuration and review evidence contract. The Captain uses the existing in-repository mode from clean current master, with standard core gates and applicable JavaScript, GitHub Actions and optional-hook C# specialists. Setup does not make a candidate's policy trusted or grant automatic merge authority. The bootstrap must be landed through maintainer review before pending PRs can be freshly captured; shared state remains external and repository-namespaced.

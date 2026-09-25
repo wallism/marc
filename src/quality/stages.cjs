@@ -98,6 +98,10 @@ function stagesMarkdown(stages) {
           `operator ${clean(stage.decision.humanApproval.record.approvedBy)}; SHA-256 \`${stage.decision.humanApproval.sha256}\`. ` +
           `Paths: ${stage.decision.humanApproval.record.paths.map(clean).join(', ')}. Other gates remain required.\n\n` : '') +
         (stage.routing.changeKind ? `Change kind: ${clean(stage.routing.changeKind)}. ${clean(stage.routing.sizeRationale)}\n\n` : '') +
+        (stage.crew.impact?.changedFiles ? `Impact: ${stage.crew.impact.changedFiles.length} changed files; ` +
+          `${stage.crew.impact.files.filter(file => !stage.crew.impact.changedFiles.includes(file)).length} referenced unchanged files. ` +
+          `The audit separates changed paths from source/line/revision references. Independent caller review remains required.` +
+          (stage.crew.impact.incomplete ? ' Discovery is incomplete; approval is held.' : '') + '\n\n' : '') +
         `Selected specialists: ${stage.crew.selected.map(m => `${clean(m.id)} ${clean(m.version)}`).join(', ') || 'None'}.\n\n` +
         `Omitted specialists: ${stage.crew.omitted.map(m => clean(m.id)).join(', ') || 'None'}.\n\n` +
         (stage.crew.selectionHash ? `MARC commit: \`${clean(stage.crew.toolCommit)}\`; selection: \`${clean(stage.crew.selectionHash)}\`.\n\n` : '') +

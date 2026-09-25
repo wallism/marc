@@ -185,15 +185,20 @@ test('a selected specialist cannot waive a simple route or the independent brows
 
 test('reference search bounds collected paths and does not treat unrelated data as source callers', () => {
   const configWithoutAreas = { ...config, areas: [] };
-  const read = (...args) => args[0] === 'diff' ? '+class Clock {}' :
-    `${identity.base}:data/customer.json\0${identity.base}:docs/notes.md\0` +
-    Array.from({ length: 500 }, (_, i) => `${identity.base}:src/Caller${i}.cs\0`).join('');
+  const read = (...args) => args[0] === 'ls-tree' ? `100644 blob ${'d'.repeat(40)}\t${args.at(-1)}` :
+    args[0] === 'show' ? args[1].endsWith('/Clock.cs') ? 'class Clock {}' : 'class Caller { Clock value; }' :
+      `${identity.base}:data/customer.json\0${identity.base}:docs/notes.md\0` +
+      Array.from({ length: 500 }, (_, i) => `${identity.base}:src/Caller${i}.cs\0`).join('');
   const result = collectImpact(identity.base, identity.sourceHead, ['src/Clock.cs'], configWithoutAreas, catalogue(), read);
   assert.equal(result.files.length, 300);
-  assert.equal(result.uncertain, true);
-  assert.ok(result.reasons.includes('Affected-file budget reached.'));
+  assert.equal(result.uncertain, false);
+  assert.equal(result.incomplete, true);
+  assert.match(result.holds.join(' '), /Affected-file budget reached/);
   assert.ok(!result.files.includes('data/customer.json'));
-  assert.equal(selectCrew(identity, configWithoutAreas, catalogue(), result).selected.length, 4);
+  const selected = selectCrew(identity, configWithoutAreas, catalogue(), result);
+  assert.deepEqual(selected.selected.map(m => m.id), ['csharp']);
+  assert.ok(selected.holds.length > 0);
+  assert.equal(selected.requiresFull, true);
 });
 
 test('configured React hooks require browser evidence even without JSX', () => {
@@ -233,7 +238,8 @@ test('React consumers referenced only in the old tree still recruit React expert
   const members = loadCatalogue(path.resolve(__dirname, '../..'), reactConfig);
   const inspected = new Set();
   const read = (...args) => {
-    if (args[0] === 'diff') return '-export function sharedPolicy() {}';
+    if (args[0] === 'ls-tree') return `100644 blob ${'d'.repeat(40)}\t${args.at(-1)}`;
+    if (args[0] === 'show') return args[1].endsWith('shared/policy.ts') ? 'export function sharedPolicy() {}' : 'sharedPolicy();';
     const revision = args.at(-2); inspected.add(revision);
     return revision === identity.base ? `${revision}:client/View.tsx\0` : '';
   };

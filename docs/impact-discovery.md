@@ -1,0 +1,29 @@
+# Relevant impact discovery
+
+MARC uses two complementary checks. The controller deterministically collects lexical reference evidence to select specialists. Independent model reviewers reason about changed behavior, callers, contracts and runtime relationships. Neither a long path list nor a successful text search proves complete coverage.
+
+For a change inside `FunctionA` that keeps its name, discovery reads declarations from the full files in both captured revisions. Recognized functions and owning types remain search roots even when their declarations are outside the diff hunk. Reviewers must identify the actual changed function and trace its callers until the consequences and boundaries are understood; the captured inventory is not their scope limit.
+
+## What enters the inventory
+
+- Every changed file remains visible to review and policy gates, including tests and documentation.
+- Additional source files need an exact code identifier reference, a locally declared implemented interface, an explicit relative module import, or a local component resource reference. Strings, comments and prose do not establish ordinary symbol dependencies. A changed implementation can therefore reach interface callers without assuming that every implementation of a framework interface is affected.
+- Caller chains propagate through enclosing declarations, rather than every filename or declaration in a matching file. Tests and startup registration files can be relevant evidence but do not start further searches. Known C# namespace collisions and member names that merely share a type's spelling do not join unrelated chains.
+- Base and source trees are traced separately. Removed callers remain visible, without joining edges from different revisions into a chain that never existed.
+- Trusted area mappings add technology expertise for captured paths. They do not add every file from that directory or prove a particular unchanged file is related. Changed shared governance and unclassified behavior still broaden selection.
+
+The audit keeps `changedFiles` separately and records each referenced unchanged path with `from`, `symbol`, `kind`, `line` and `revision`. At most one inclusion witness per file/revision is stored, so this is a compact explanation of inclusion rather than a complete edge graph. The Markdown summarizes changed and referenced counts. Directory-wide explanations are recorded for changed paths; unchanged paths carry their concrete reference evidence instead.
+
+## Bounds and limitations
+
+All 15 language members read the Captain's evidence contract and its [language-specific scope guidance](../skills/marc-crew-captain/references/language-impact.md). Reviewer expertise is not a claim of compiler-level reference coverage. The guidance names native caller/binding relationships reviewers must verify, including languages whose function syntax is not extracted by the controller.
+
+Common comment/string masking accounts for Python/R hash comments, VB apostrophe/REM comments, SQL dash comments, Fortran free/fixed-form comments, Delphi comment forms, PHP hash comments and Rust lifetimes/raw strings, alongside C-style comments. Python floor division and SQL double-quoted identifiers remain code. Scratch archives/binary blobs do not supply textual declarations. Common Go/Python/Java test filenames remain evidence but stop automatic propagation. These rules reduce incidental leads; they do not replace review of interpolation, embedded code, dialect-specific literals or dynamic relationships.
+
+Discovery reads Git objects only; it does not execute candidate code, build a project, contact services or ask a model. It recognizes common type/function declarations and exported JavaScript variables, exact code identifiers, relative JavaScript/TypeScript module paths and literal local `src`/`href` resources. It does not resolve arbitrary overloads, C# aliases/global usings, inheritance dispatch, reflection, runtime strings, framework conventions, template interpolation or all language syntax. Recognized body-only changes retain declaration seeds, but this is not a guarantee that every language construct is extracted. Trusted mappings and behavioral caller review remain necessary.
+
+The controller bounds discovery to four rounds, 128 tokens per round, 600 source candidates per round/revision, 20 candidates per local interface lookup and 300 affected files. Exhaustion or unavailable/nonregular inspected source sets `incomplete` and an explicit hold. It requires full review and prevents approval; it does not recruit every specialist to hide incomplete coverage. Resolve the specific source/discovery issue and recapture; a mapping alone cannot clear a traversal-limit hold. Reviewers cannot clear the hold by editing evidence.
+
+Reviewers must check real behavior beyond the lexical inventory: authorization scope, cancellation/errors, indirect consumers, persisted contracts, resource provisioning, dynamic dispatch and relevant tests. Trace upward through callers and downward through dependencies while the change can propagate. Record additional relevant paths and their relationships; missing expertise or unresolved coverage holds the assessment. Reading a registration does not imply every use of `Program` is affected, and a documentation mention does not establish a runtime dependency.
+
+The compact audit envelope remains unchanged. Historical reports and stage journals are not rewritten. Adopting this discovery change requires a new tool pin and fresh source/base/policy-bound evidence; no consumer configuration or merge authority is changed automatically.

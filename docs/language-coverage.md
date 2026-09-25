@@ -38,6 +38,8 @@ All 13 new members are 1.0.0. The existing csharp 1.1.0 and javascript 1.0.0 mem
 
 ## Validation and limits
 
+For current impact scope, all members inherit the Captain's [language-specific caller and relevance rules](../skills/marc-crew-captain/references/language-impact.md). Lexical assistance varies by syntax; supported reviewer expertise does not promise complete automatic caller discovery. Synthetic Git regressions cover native comment/string noise and retained identifier leads across the 14 text languages, opaque Scratch archives, and Go/Python/Java test propagation. These checks do not compile those languages or evaluate model behavior.
+
 Each new member passed skill metadata validation and the full catalogue validator after author inspection. Focused integration checks cover actual Git capture for all 15 languages, missing-expertise holds, required trusted mappings, browser companions, exact versions and pinned installation. See the adjacent language-coverage and existing crew/installation tests under src/quality. Author scenarios are not independent model evaluations or language-runtime execution.
 
 Final local validation on Node 24.10.0: all 116 Node tests passed; catalogue validation covered 27 skills and 18 specialist manifests; syntax validation covered 25 JavaScript files; 211 local Markdown file links resolved. All 13 new skills and the updated creator passed metadata validation. No language-runtime/model evaluations were run, and no evaluation waiver or consumer activation is asserted. Hosted CI is separate from these local results.
