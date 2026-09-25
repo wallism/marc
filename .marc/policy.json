@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "repository": "wallism/marc",
+  "base": "master",
+  "mode": "automatic",
+  "producers": [
+    { "author": "wallism", "branchPrefixes": ["codex/", "bugfix/", "feature/"] },
+    { "author": "dependabot[bot]", "branchPrefixes": ["dependabot/"] }
+  ],
+  "maxFiles": 50,
+  "maxChangedLines": 3000,
+  "maxRepairCycles": 2,
+  "simpleRoute": { "recommendedMaxFiles": 5, "recommendedMaxChangedLines": 200 },
+  "reviewGates": ["security", "correctness", "code-quality", "test-integrity"],
+  "requiredJobs": ["Node 24 (ubuntu-latest)", "Node 24 (windows-latest)", "Quality scans"],
+  "projectFileReview": "verified-changes-v1",
+  "humanPathPatterns": [
+    "^\\.marc/",
+    "^\\.github/",
+    "(^|/)\\.(agents|claude|cursor|codex)/",
+    "(^|/)\\.cursorrules$",
+    "(^|/)(AGENTS|CLAUDE)\\.md$",
+    "^skills/",
+    "^scripts/",
+    "^src/quality/[^/]+\\.cjs$",
+    "(^|/)(package(-lock)?\\.json|[^/]*\\.csproj|[^/]*\\.lock|global\\.json|Directory\\.Build\\..*)$",
+    "(^|/)(\\.npmrc|\\.gitleaks.*)$"
+  ],
+  "uiPathPatterns": ["\\.razor(\\.cs|\\.css)?$", "\\.(tsx|jsx|html|css)$"]
+}

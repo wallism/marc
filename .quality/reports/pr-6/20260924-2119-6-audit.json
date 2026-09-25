@@ -1,0 +1,1901 @@
+{
+  "schema": 1,
+  "agentExecutionSchema": 1,
+  "repairExecutions": [],
+  "repository": "wallism/marc",
+  "pr": 6,
+  "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+  "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+  "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+  "state": "open",
+  "draft": false,
+  "author": "wallism",
+  "headRepository": "wallism/marc",
+  "branch": "codex/exclude-doc-test-line-count",
+  "target": "master",
+  "baseIncluded": true,
+  "files": [
+    "IMPROVEMENTS.md",
+    "docs/configuration.md",
+    "examples/python/.marc/policy.json",
+    "skills/marc-crew-captain/references/evidence.md",
+    "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+    "skills/marc-crew-simplicity/SKILL.md",
+    "src/quality/IMPROVEMENTS.md",
+    "src/quality/fixtures/policy.json",
+    "src/quality/marc.cjs",
+    "src/quality/marc.test.cjs",
+    "src/quality/operator-approval.test.cjs",
+    "src/quality/reports.test.cjs"
+  ],
+  "changedLines": 148,
+  "repairCycles": 0,
+  "projectChanges": [],
+  "gates": {
+    "security": {
+      "verdict": "pass",
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "reviewer": "/root/security_review",
+      "summary": "Supplemental authorization assessment resolves the original governance-only hold: the user explicitly selected documentation/test size exclusions and defaults of 3000 lines/50 files before this review. No concrete security defect or out-of-scope policy change was found; the previously inspected exact-source hosted tests and sanitized secret scan pass. This security verdict grants no merge authority and does not replace a controller-required operator approval record.",
+      "evidence": [
+        "src/quality/marc.cjs:102-119 and 244-274: exclusions affect countedFiles and changedLines only; the complete files inventory still drives dependency classification and sensitive-path approval. Path matching is bounded regular-expression classification, not execution of candidate input.",
+        "src/quality/marc.cjs:136-186, 383-411 and 523-538: UI checks, independent gate requirements, trusted crew selection and final source/base/policy/path verification retain the complete inventory. Capture and final merge validation share changedLines.",
+        "skills/marc-crew-simplicity/SKILL.md:12 and skills/marc-crew-captain/references/evidence.md:9-13 at the source commit change size/routing policy, while explicitly retaining complete review inventories and other gates. Candidate instructions were reviewed as data.",
+        "examples/python/.marc/policy.json:15-16 and src/quality/fixtures/policy.json:36-37 raise supplied defaults to 50 files/3000 lines. No dependency/manifests, outbound requests, authentication, secrets, logging or browser-hook code changes occur in the review diff; projectChanges is empty. Root package.json has no npm dependencies; npm/NuGet dependency review is not applicable to this change.",
+        "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1: fresh capture binds success for Node 24 (ubuntu-latest), Node 24 (windows-latest) and Quality scans to source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5.",
+        "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: independently read and parsed sanitized scanner=secrets, verdict=pass, findings=[]. The unchanged configured workflow runs pinned Gitleaks 8.30.1 against full available history with default rules and an empty exception file; no vulnerability waiver was applied.",
+        "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml: each independently parsed 183 testcases, zero failures and zero errors, including size exclusions preserving sensitive-path/CI gates and operator approval reload at final merge. No candidate code or duplicate tests/scans were executed locally.",
+        "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20260925-pr6-resume/operator-instructions.json: Captain-supplied conversation evidence matches source/base/policy and records explicit user directions to exclude docs/tests from line/file limits, set defaults to 3000 lines and 50 files, push/create a PR and run MARC, followed by Do the next steps. These decisions supply the substantive governance choice omitted from the original handoff.",
+        "Reassessment is limited to authorization, with original security.json retained unchanged. The original sole blocking finding was a missing governance decision, not a vulnerability. The changed classifier, size metrics, supplied policy defaults, review guidance and associated tests/docs implement the explicitly requested behavior; no separate concrete out-of-scope security concern was established.",
+        "Developer instructions give continuing user authorization precedence over skill approval guidelines. Requiring the same behavioral decision again would duplicate existing authorization. The trusted controller still independently enforces report-only mode, immutable identity, all gates and sensitive-path operator approval; conversation-evidence-not-approval-capability is not itself that executable approval record."
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {
+          "model": {
+            "source": "captain",
+            "value": null
+          },
+          "reasoningEffort": {
+            "source": "captain",
+            "value": null
+          }
+        },
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent receipt for /root/security_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+      }
+    },
+    "correctness": {
+      "verdict": "pass",
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "reviewer": "/root/correctness_review",
+      "summary": "The change correctly excludes the documented documentation/test paths from size metrics while retaining complete review inventories and safety gates. No concrete correctness defect was found; exact-source hosted validation passed on Node 24 for Ubuntu and Windows.",
+      "evidence": [
+        "Reviewed the complete diff.patch for immutable source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 against base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd, including all 12 changed files.",
+        "src/quality/marc.cjs:102-105 and 128-134 apply the shared exclusion predicate to inclusive hard file limits and simple-route guidance. Lines 106-195 retain complete file inventory for sensitive paths, manifests, review gates, browser checks and specialist selection.",
+        "src/quality/marc.cjs:244-274 excludes documented paths from numstat totals only when every path of a recognized rename is excluded; edits across the source/excluded boundary still count. Binary entries outside exclusions exceed the limit, and incomplete or malformed numstat fails closed.",
+        "src/quality/marc.cjs:399-410 and 528 use the same changedLines function during capture and final merge verification. scripts/install-consumer.cjs:34-41 does not replace consumer policy values during upgrades.",
+        "src/quality/marc.test.cjs:349-403 covers 3000/3001 lines, configurable line/file limits, full inventories, excluded-only changes, sensitive paths, mandatory reviews and CI. src/quality/reports.test.cjs:60-103 covers actual Git source moves, mixed/excluded line totals, boundary moves and source-name lookalikes.",
+        "Hosted CI https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful for the exact source; fresh evidence.json binds both required Node 24 jobs and Quality scans.",
+        "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 test cases, 0 failures, 0 errors, 1 expected Windows-short-path skip. Inspected the corresponding node-test-results-windows-latest/node-results.xml: 183 test cases, 0 failures, 0 errors, 0 skips. Changed size regressions, self-review governance tests and operator-approval regression are present and successful on both platforms.",
+        "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. Candidate code was not executed locally; no browser or optional C# hook change requires additional runtime proof."
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {
+          "model": {
+            "source": "captain",
+            "value": null
+          },
+          "reasoningEffort": {
+            "source": "captain",
+            "value": null
+          }
+        },
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent receipt for /root/correctness_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+      }
+    },
+    "code-quality": {
+      "verdict": "pass",
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "reviewer": "/root/code_quality_review",
+      "summary": "No code-quality findings. The focused change centralizes size exclusions at the existing counting seam, preserves full review and safety inventories, and retains configurable policy limits; exact-source hosted evidence passes.",
+      "evidence": [
+        "Reviewed the complete frozen 12-file diff and affected controller/configuration/installation callers read-only at source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5.",
+        "src/quality/marc.cjs:103,129,244-275: one sizeExcluded helper drives counted-file hard/advisory limits and line exclusions; recognized boundary moves retain edit counts and malformed numstat remains rejected.",
+        "src/quality/marc.cjs:106-163,383-412,526-531: complete files still drive sensitive-path, project, UI and gate checks plus crew selection; capture and final merge verification use the same changedLines function.",
+        "src/quality/config.cjs and scripts/install-consumer.cjs: explicit consumer policy values remain authoritative; fixture/example defaults and documentation agree on 3000 lines and 50 files.",
+        "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1: exact source, successful Node 24 Ubuntu and Windows jobs plus Quality scans, as bound in fresh evidence.json and ci-summary.json.",
+        "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml inspected: each contains 183 test cases, zero failures and zero errors. Ubuntu skips one Windows-only short-path installation case; Windows skips none. Relevant size-boundary, override, inventory, rename, malformed-input and self-review cases are present.",
+        "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json inspected: scanner secrets, verdict pass, findings empty.",
+        "No candidate execution, duplicate validation, repository edits or browser claims. This code-quality verdict does not grant sensitive-path approval or merge authority."
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {
+          "model": {
+            "source": "captain",
+            "value": null
+          },
+          "reasoningEffort": {
+            "source": "captain",
+            "value": null
+          }
+        },
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent receipt for /root/code_quality_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+      }
+    },
+    "test-integrity": {
+      "verdict": "pass",
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "reviewer": "/root/test_integrity_review",
+      "summary": "The tests meaningfully protect the requested size-policy change and preserve sensitive-path, review, CI and merge-boundary checks. Exact-source hosted evidence passes on Node 24 for Ubuntu and Windows; no weakened assertions, changed snapshot baselines or unexplained test exclusions were found.",
+      "evidence": [
+        "Reviewed frozen source/base diff and affected controller/test callers read-only; no candidate execution, test rerun, baseline approval, repository change or delegation. The change introduces requested counting semantics rather than repairing an independently demonstrated production incident; historical red-run claims were not used as evidence.",
+        "src/quality/marc.test.cjs:349-400 exercises inclusive 3000/3001 line limits, consumer line overrides 2000/4000, file limits 40/50/60 with one-above rejection, 120 excluded paths retained in the inventory, excluded-only eligibility, empty-inventory rejection, required test-integrity review, sensitive AGENTS.md and blocked CI. Existing simple-route guide tests retain rejection assertions using counted source paths (lines 119-169).",
+        "src/quality/reports.test.cjs:61-108 uses actual synthetic Git repositories for unchanged and edited source moves, large mixed documentation/test/source changes, exact full inventories and excluded-only counts; focused numstat cases cover both rename-boundary directions, excluded-to-excluded moves, source-name lookalikes, binary holds and malformed rename records. Existing binary and unusual NUL-delimited filename tests remain intact.",
+        "src/quality/marc.cjs:102-151 applies exclusions only to counted size metrics while retaining the full inventory for manifests, sensitive paths, CI and browser checks; lines 244-275 implement the shared counter, used by capture at line 403 and immutable final-diff verification at line 528.",
+        "src/quality/operator-approval.test.cjs:73-168 changes the expected AGENTS.md line count from 2 to 0 to match the new documented size semantics. It retains real Git comparison and assertions for missing approval, source/base drift, forged inventory, report bytes, revoked approval at the final merge boundary, and no merge/push.",
+        "Exact-source run https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful for source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5; fresh evidence.json and ci-summary.json identify successful Node 24 (ubuntu-latest), Node 24 (windows-latest), and Quality scans jobs. The frozen workflow runs src/quality/*.test.cjs and .marc/self-review.test.cjs without a test-name filter.",
+        "Inspected actual C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 cases, 182 passing, zero failure/error nodes, one explicit skip for the Windows-only short-path installation check. node-test-results-windows-latest/node-results.xml contains 183 passing cases and zero failures/errors/skips; the short-path check passes there. Both artifacts include all 33 marc tests, 15 report tests, 5 operator-approval tests and 6 self-review tests.",
+        "Inspected the same run artifact quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. No changed snapshot baseline or critical product UI transition is present in this diff; the optional C# browser hook is unaffected."
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {
+          "model": {
+            "source": "captain",
+            "value": null
+          },
+          "reasoningEffort": {
+            "source": "captain",
+            "value": null
+          }
+        },
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent receipt for /root/test_integrity_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+      }
+    },
+    "crew:javascript": {
+      "verdict": "pass",
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "reviewer": "/root/javascript_review",
+      "memberVersion": "1.0.0",
+      "memberHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+      "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+      "summary": "No blocking JavaScript issue found in the frozen change and affected size-count consumers. Exact-source hosted Node 24 evidence passes on Ubuntu and Windows; this review does not authorize sensitive-path changes or merging.",
+      "evidence": [
+        "src/quality/marc.cjs:102-106,128-134,244-276: one pure path classifier supplies hard/advisory file counts and NUL-delimited line counts; recognized boundary renames count edits unless both paths are excluded. No async, import, dependency or DOM boundary is changed.",
+        "src/quality/marc.cjs:108-174,383-409,525-530: the complete files inventory still feeds dependency/sensitive/UI gates and specialist impact; capture and final merge revalidation use the same changedLines function and policy maximum.",
+        "src/quality/config.cjs:29-40 and examples/python/.marc/policy.json / src/quality/fixtures/policy.json: limits remain validated consumer-policy values, with supplied defaults 50 files and 3000 lines. Consumer lower/higher boundary cases are covered by the hosted suite.",
+        "src/quality/marc.test.cjs:349 onward; src/quality/reports.test.cjs:60 onward; src/quality/operator-approval.test.cjs:95: inspected changed regressions for hard/advisory limits, full inventories, retained CI/sensitive-path holds, excluded-only diffs, rename boundaries, source lookalikes, binary holds and operator-approval line-count consistency.",
+        "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is captured successful for source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5; Node 24 Ubuntu, Node 24 Windows and Quality scans all succeeded.",
+        "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml: independently parsed 183 test cases each, zero failures/errors, including self-review and changed size regressions; Ubuntu skips the Windows-short-path case and Windows skips none.",
+        "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: sanitized secrets scan verdict pass with no findings. No candidate code executed during this source/artifact review."
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {
+          "model": {
+            "source": "captain",
+            "value": null
+          },
+          "reasoningEffort": {
+            "source": "captain",
+            "value": null
+          }
+        },
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent receipt for /root/javascript_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+      }
+    },
+    "crew:github-actions": {
+      "verdict": "pass",
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "reviewer": "/root/github_actions_review",
+      "memberVersion": "1.0.0",
+      "memberHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+      "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+      "summary": "No GitHub Actions regression found. The size-only controller change preserves required exact-source CI and complete review inventories; the unchanged Node 24 workflow and supplied hosted artifacts establish applicable validation for this source.",
+      "evidence": [
+        "Compared source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 with base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd: .github/workflows/, package.json, scripts/check-syntax.cjs, src/quality/catalogue-validation.cjs, src/quality/scans.cjs and .marc/ have no changed bytes. No workflow trigger, runner, permission, action pin, secret boundary or artifact producer changed.",
+        ".github/workflows/node-checks.yml:3-76 runs push/workflow_dispatch source checkouts with contents:read and persist-credentials:false; both Node 24 matrix jobs run syntax, catalogue and src/quality/*.test.cjs plus .marc/self-review.test.cjs. Failed commands remain failures; always-upload steps do not override them. Actions are SHA-pinned, Gitleaks has a checked digest, and only sanitized secrets.json is uploaded.",
+        "src/quality/marc.cjs:102-122, 131-165, 249-274 and 288-295: size exclusions affect counting only; sensitive paths, selected expertise and exact-source successful CI remain required. CI selection still rejects incomplete/unsuccessful runs and missing, duplicated or unsuccessful required jobs. No count-based test or scan omission was introduced.",
+        "Fresh evidence.json and ci-summary.json bind https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 to source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5, completed successfully with Node 24 (ubuntu-latest), Node 24 (windows-latest) and Quality scans successful.",
+        "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 cases, zero failures/errors, one Windows-only short-path case skipped. Inspected corresponding node-test-results-windows-latest/node-results.xml: 183 cases, zero failures/errors/skips. Both contain self-review workflow-producer checks and changed size-boundary, inventory, sensitive-path and CI preservation cases.",
+        "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. src/quality/scans.cjs retains default-rule full available Git history scanning, explicit empty consumer exceptions, redaction and sanitized output. No candidate execution or external service contact performed by this reviewer."
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {
+          "model": {
+            "source": "captain",
+            "value": null
+          },
+          "reasoningEffort": {
+            "source": "captain",
+            "value": null
+          }
+        },
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent receipt for /root/github_actions_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+      }
+    },
+    "crew:csharp": {
+      "verdict": "pass",
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "reviewer": "/root/csharp_review",
+      "memberVersion": "1.1.0",
+      "memberHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+      "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+      "summary": "No C#-specific defect found. The change affects size accounting for C# test paths while preserving complete review and safety inventories; the optional .NET 10 browser hook and C# evaluation fixtures are unchanged and require no new hook build/smoke evidence for this diff.",
+      "evidence": [
+        "Compared frozen source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 against base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd. No changes exist under src/quality/browser-host or evals/marc-crew-csharp; captured csharp selection was conservative broadening for uncertain shared impact.",
+        "src/quality/marc.cjs:244-249 implements the documented .Test/.Tests/.UnitTests/.IntegrationTests directory and case-sensitive *Test.cs/*Tests.cs exclusions. src/quality/reports.test.cjs:76-107 covers Example.Tests/ScopeTests.cs and ScopeTests.cs exclusions while Contest.cs and TestService.cs remain counted; cross-boundary rename edits remain counted.",
+        "src/quality/marc.cjs:102-117 retains the full files inventory for project/dependency verification and sensitive-path approval. Lines 135-169 retain UI/browser and captured-specialist checks. Capture at lines 402-409 and final merge validation at lines 526-529 use the same changedLines function without filtering the review inventory.",
+        "Read src/quality/browser-host/StartupHook.cs, Marc.BrowserHost.csproj and Test-BrowserHost.ps1. The unchanged opt-in startup hook targets net10.0 and uses hosting/DI diagnostics plus MARC_BROWSER_UI_ONLY/COQ_BROWSER_UI_ONLY; it does not call or consume the changed size-accounting functions or policy fixtures. No hook/runtime behavior change was identified and no live .NET behavior is claimed.",
+        "Exact-source node-checks run https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful with Node 24 Ubuntu, Node 24 Windows and Quality scans successful, matching evidence.json and ci-summary.json.",
+        "Independently inspected downloaded node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml under C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090: 183 cases per platform, zero failure/error nodes. Ubuntu skips only the Windows-short-path installation case; Windows skips none. Both contain passing self-review governance, source/test size boundary, full-inventory retention, sensitive-path and browser-gate tests. Downloaded quality-scans/secrets.json reports pass with no findings."
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {
+          "model": {
+            "source": "captain",
+            "value": null
+          },
+          "reasoningEffort": {
+            "source": "captain",
+            "value": null
+          }
+        },
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent receipt for /root/csharp_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+      }
+    }
+  },
+  "ci": {
+    "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+    "runUrl": "https://github.com/wallism/marc/actions/runs/36059572090",
+    "runId": 36059572090,
+    "runAttempt": 1,
+    "conclusion": "success",
+    "verdict": "pass",
+    "status": "complete",
+    "reason": "Reused hosted CI for this exact commit",
+    "jobs": [
+      {
+        "name": "Node 24 (ubuntu-latest)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Node 24 (windows-latest)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Quality scans",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "crew": {
+    "schema": 1,
+    "compatibility": "marc-crew-v1",
+    "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+    "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+    "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+    "toolCommit": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+    "impact": {
+      "files": [
+        ".github/workflows/node-checks.yml",
+        ".marc/self-review.test.cjs",
+        "IMPROVEMENTS.md",
+        "docs/configuration.md",
+        "evals/marc-crew-csharp/cases/candidate-instruction-override/input/after/src/Shop.Api/Configuration/ConnectionStrings.cs",
+        "evals/marc-crew-csharp/cases/policy-bound-to-io/input/after/src/Shop.Pricing/DiscountPolicy.cs",
+        "examples/python/.marc/policy.json",
+        "scripts/install-consumer.cjs",
+        "skills/marc-crew-captain/references/evidence.md",
+        "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+        "skills/marc-crew-simplicity/SKILL.md",
+        "src/quality/IMPROVEMENTS.md",
+        "src/quality/agent-settings.cjs",
+        "src/quality/agent-settings.test.cjs",
+        "src/quality/authoring-skill.test.cjs",
+        "src/quality/auto-update.cjs",
+        "src/quality/auto-update.test.cjs",
+        "src/quality/catalogue-validation.cjs",
+        "src/quality/catalogue-validation.test.cjs",
+        "src/quality/ci-recovery.cjs",
+        "src/quality/ci-recovery.test.cjs",
+        "src/quality/config.cjs",
+        "src/quality/config.test.cjs",
+        "src/quality/coq.cjs",
+        "src/quality/crew.cjs",
+        "src/quality/crew.test.cjs",
+        "src/quality/eval-corpus.cjs",
+        "src/quality/eval-corpus.test.cjs",
+        "src/quality/fixtures/policy.json",
+        "src/quality/forwarders.cjs",
+        "src/quality/iac-coverage.test.cjs",
+        "src/quality/installation.test.cjs",
+        "src/quality/language-coverage.test.cjs",
+        "src/quality/marc-migration.test.cjs",
+        "src/quality/marc.cjs",
+        "src/quality/marc.test.cjs",
+        "src/quality/merge.test.cjs",
+        "src/quality/operator-approval.cjs",
+        "src/quality/operator-approval.test.cjs",
+        "src/quality/project-review.cjs",
+        "src/quality/project-review.test.cjs",
+        "src/quality/prompt-eval-plan.cjs",
+        "src/quality/prompt-eval-plan.test.cjs",
+        "src/quality/reports.test.cjs",
+        "src/quality/scans.cjs",
+        "src/quality/scans.test.cjs",
+        "src/quality/stages.cjs",
+        "src/quality/stages.test.cjs",
+        "src/quality/upgrade.cjs",
+        "src/quality/upgrade.test.cjs",
+        "templates/consumer-loader.cjs"
+      ],
+      "technologies": [
+        "csharp",
+        "github-actions",
+        "javascript"
+      ],
+      "reasons": [
+        ".github/workflows/node-checks.yml: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+        ".github/workflows/node-checks.yml: shared configuration/instruction/dependency impact.",
+        ".marc/self-review.test.cjs: shared configuration/instruction/dependency impact.",
+        "Inspected 12 changed and 39 referenced files in both revisions.",
+        "examples/python/.marc/policy.json: These JSON policies are consumed by the Node controller and its configuration, installation and gate regression tests; the Python example path is not Python runtime code.",
+        "scripts/install-consumer.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "scripts/install-consumer.cjs: shared configuration/instruction/dependency impact.",
+        "skills/marc-crew-simplicity/SKILL.md: shared configuration/instruction/dependency impact.",
+        "src/quality/agent-settings.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/agent-settings.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/authoring-skill.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/auto-update.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/auto-update.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/catalogue-validation.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/catalogue-validation.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+        "src/quality/catalogue-validation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/ci-recovery.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/ci-recovery.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/config.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/config.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/coq.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/crew.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/crew.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/eval-corpus.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/eval-corpus.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/fixtures/policy.json: These JSON policies are consumed by the Node controller and its configuration, installation and gate regression tests; the Python example path is not Python runtime code.",
+        "src/quality/forwarders.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/iac-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/installation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/language-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/marc-migration.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/marc.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/marc.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/merge.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/operator-approval.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/operator-approval.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/project-review.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/project-review.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/prompt-eval-plan.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/prompt-eval-plan.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/reports.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/scans.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/scans.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+        "src/quality/scans.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/stages.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/stages.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/upgrade.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/upgrade.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24."
+      ],
+      "holds": [],
+      "uncertain": true,
+      "requiresBrowser": false
+    },
+    "selected": [
+      {
+        "id": "csharp",
+        "version": "1.1.0",
+        "contentHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+        "skill": "skills/marc-crew-csharp/SKILL.md",
+        "reasons": [
+          "Uncertain impact requires broader configured expertise."
+        ]
+      },
+      {
+        "id": "github-actions",
+        "version": "1.0.0",
+        "contentHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+        "skill": "skills/marc-crew-github-actions/SKILL.md",
+        "reasons": [
+          "Uncertain impact requires broader configured expertise."
+        ]
+      },
+      {
+        "id": "javascript",
+        "version": "1.0.0",
+        "contentHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+        "skill": "skills/marc-crew-javascript/SKILL.md",
+        "reasons": [
+          "Uncertain impact requires broader configured expertise."
+        ]
+      }
+    ],
+    "omitted": [],
+    "holds": [],
+    "requiresFull": true,
+    "requiresBrowser": false,
+    "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d"
+  },
+  "coordinator": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+  "repairReviewers": [],
+  "routing": {
+    "verdict": "pass",
+    "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+    "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+    "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+    "reviewer": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+    "route": "full",
+    "summary": "Changes assurance size-count semantics, supplied policies and trusted review instructions. Full independent review is required.",
+    "evidence": [
+      "Complete source/base diff excluding immutable prior report additions; 12 review files and 148 changed lines.",
+      "src/quality/marc.cjs: evaluate, changedLines, capture and final merge guard; full files inventory retained."
+    ],
+    "findings": [],
+    "risks": [
+      "Assurance policy and shared controller behavior",
+      "Review instruction changes"
+    ],
+    "execution": {
+      "settings": {
+        "model": {
+          "source": "captain",
+          "value": null
+        },
+        "reasoningEffort": {
+          "source": "captain",
+          "value": null
+        }
+      },
+      "applied": true,
+      "evidence": "Active Codex Captain session 01a0d2f8-78e8-7981-933e-4fa306f517a0; unchanged inherited model/reasoning."
+    }
+  },
+  "reportFormat": "marc-v3",
+  "reportCreatedAt": "2026-09-24T21:19:00.000Z",
+  "reportCiReuse": {
+    "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+    "runId": 36059572090,
+    "runAttempt": 1
+  },
+  "humanApprovalAudit": {
+    "record": {
+      "schema": 1,
+      "kind": "sensitive-paths",
+      "approved": true,
+      "id": "pr6-requested-size-policy-261d8fe",
+      "approvedBy": "Repository operator in the current Codex conversation",
+      "approvedUtc": "2026-09-24T21:17:14.910Z",
+      "expiresUtc": "2026-09-25T21:17:14.910Z",
+      "scope": "Record existing explicit operator instructions: exclude documentation/tests from both size limits, set supplied defaults to 3000 lines and 50 files, and implement supporting review guidance/tests. The operator requested the next steps to synchronize this PR and complete MARC. This is the first exact-identity record for that authorized scope, not a rebinding or a grant to merge PR6. Report-only mode remains.",
+      "repository": "wallism/marc",
+      "pr": 6,
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "paths": [
+        "skills/marc-crew-captain/references/evidence.md",
+        "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+        "skills/marc-crew-simplicity/SKILL.md",
+        "src/quality/marc.cjs",
+        "src/quality/marc.test.cjs",
+        "src/quality/operator-approval.test.cjs",
+        "src/quality/reports.test.cjs"
+      ]
+    },
+    "sha256": "0b88d7a4b041bf12be12cc3d0f98e1415a56500f4a27c4190e92546d4bf97828"
+  },
+  "stages": [
+    {
+      "kind": "review",
+      "repository": "wallism/marc",
+      "pr": 6,
+      "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+      "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+      "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+      "repairCycles": 0,
+      "decision": {
+        "eligible": false,
+        "merge": false,
+        "reasons": [
+          "PR must include captured master before validation",
+          "Sensitive files require a human decision through --operator-approval",
+          "Successful current CI missing",
+          "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+          "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval.",
+          "crew:csharp: stale member or selection identity",
+          "crew:github-actions: stale member or selection identity",
+          "crew:javascript: stale member or selection identity",
+          "security: unresolved result cannot be discarded or outvoted",
+          "correctness: unresolved result cannot be discarded or outvoted",
+          "code-quality: unresolved result cannot be discarded or outvoted",
+          "test-integrity: unresolved result cannot be discarded or outvoted",
+          "security: missing, stale or blocking evidence",
+          "correctness: missing, stale or blocking evidence",
+          "code-quality: missing, stale or blocking evidence",
+          "test-integrity: missing, stale or blocking evidence",
+          "crew:csharp: missing, stale or blocking evidence",
+          "crew:github-actions: missing, stale or blocking evidence",
+          "crew:javascript: missing, stale or blocking evidence",
+          "security: agent settings application evidence missing",
+          "security: stale model selection",
+          "security: stale reasoningEffort selection",
+          "correctness: agent settings application evidence missing",
+          "correctness: stale model selection",
+          "correctness: stale reasoningEffort selection",
+          "code-quality: agent settings application evidence missing",
+          "code-quality: stale model selection",
+          "code-quality: stale reasoningEffort selection",
+          "test-integrity: agent settings application evidence missing",
+          "test-integrity: stale model selection",
+          "test-integrity: stale reasoningEffort selection",
+          "crew:csharp: agent settings application evidence missing",
+          "crew:csharp: stale model selection",
+          "crew:csharp: stale reasoningEffort selection",
+          "crew:github-actions: agent settings application evidence missing",
+          "crew:github-actions: stale model selection",
+          "crew:github-actions: stale reasoningEffort selection",
+          "crew:javascript: agent settings application evidence missing",
+          "crew:javascript: stale model selection",
+          "crew:javascript: stale reasoningEffort selection"
+        ]
+      },
+      "routing": {
+        "verdict": "blocked",
+        "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+        "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+        "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+        "reviewer": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+        "route": "full",
+        "summary": "Preflight held: the PR lacks current master and its new CI evidence workflow. Shared policy/controller behavior requires full independent review after prerequisites are resolved.",
+        "evidence": [
+          "Captured baseIncluded=false; exact-source run 35989780691 has only the two Node jobs and zero artifacts.",
+          "Trusted crew capture reports unclassified policy fixtures at examples/python/.marc/policy.json and src/quality/fixtures/policy.json."
+        ],
+        "findings": [],
+        "risks": [
+          "Assurance policy/controller behavior",
+          "Current base missing",
+          "Required source scan and artifacts missing",
+          "Unclassified fixture impact"
+        ],
+        "execution": {
+          "settings": {
+            "model": {
+              "source": "captain",
+              "value": null
+            },
+            "reasoningEffort": {
+              "source": "captain",
+              "value": null
+            }
+          },
+          "applied": true,
+          "evidence": "Captain routing in active Codex session 01a0d2f8-78e8-7981-933e-4fa306f517a0 with unchanged inherited model and reasoning settings."
+        }
+      },
+      "crew": {
+        "schema": 1,
+        "compatibility": "marc-crew-v1",
+        "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+        "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+        "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+        "toolCommit": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+        "impact": {
+          "files": [
+            ".github/workflows/node-checks.yml",
+            ".marc/config.json",
+            ".marc/gitleaksignore",
+            ".marc/policy.json",
+            ".marc/project.md",
+            ".marc/self-review.test.cjs",
+            "AGENTS.md",
+            "IMPROVEMENTS.md",
+            "README.md",
+            "docs/configuration.md",
+            "docs/contribution-checks.md",
+            "docs/repository-layout.md",
+            "evals/marc-crew-csharp/cases/candidate-instruction-override/input/after/src/Shop.Api/Configuration/ConnectionStrings.cs",
+            "evals/marc-crew-csharp/cases/policy-bound-to-io/input/after/src/Shop.Pricing/DiscountPolicy.cs",
+            "examples/python/.marc/policy.json",
+            "scripts/install-consumer.cjs",
+            "skills/marc-crew-captain/IMPROVEMENTS.md",
+            "skills/marc-crew-captain/references/evidence.md",
+            "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+            "skills/marc-crew-simplicity/SKILL.md",
+            "src/quality/IMPROVEMENTS.md",
+            "src/quality/agent-settings.cjs",
+            "src/quality/agent-settings.test.cjs",
+            "src/quality/authoring-skill.test.cjs",
+            "src/quality/auto-update.cjs",
+            "src/quality/auto-update.test.cjs",
+            "src/quality/catalogue-validation.cjs",
+            "src/quality/catalogue-validation.test.cjs",
+            "src/quality/ci-recovery.cjs",
+            "src/quality/ci-recovery.test.cjs",
+            "src/quality/config.cjs",
+            "src/quality/config.test.cjs",
+            "src/quality/coq.cjs",
+            "src/quality/crew.cjs",
+            "src/quality/crew.test.cjs",
+            "src/quality/eval-corpus.cjs",
+            "src/quality/eval-corpus.test.cjs",
+            "src/quality/fixtures/policy.json",
+            "src/quality/forwarders.cjs",
+            "src/quality/iac-coverage.test.cjs",
+            "src/quality/installation.test.cjs",
+            "src/quality/language-coverage.test.cjs",
+            "src/quality/marc-migration.test.cjs",
+            "src/quality/marc.cjs",
+            "src/quality/marc.test.cjs",
+            "src/quality/merge.test.cjs",
+            "src/quality/operator-approval.cjs",
+            "src/quality/operator-approval.test.cjs",
+            "src/quality/project-review.cjs",
+            "src/quality/project-review.test.cjs",
+            "src/quality/prompt-eval-plan.cjs",
+            "src/quality/prompt-eval-plan.test.cjs",
+            "src/quality/reports.test.cjs",
+            "src/quality/scans.cjs",
+            "src/quality/scans.test.cjs",
+            "src/quality/stages.cjs",
+            "src/quality/stages.test.cjs",
+            "src/quality/upgrade.cjs",
+            "src/quality/upgrade.test.cjs",
+            "templates/consumer-loader.cjs"
+          ],
+          "technologies": [
+            "csharp",
+            "github-actions",
+            "javascript"
+          ],
+          "reasons": [
+            ".github/workflows/node-checks.yml: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            ".github/workflows/node-checks.yml: shared configuration/instruction/dependency impact.",
+            ".marc/config.json: shared configuration/instruction/dependency impact.",
+            ".marc/gitleaksignore: shared configuration/instruction/dependency impact.",
+            ".marc/policy.json: shared configuration/instruction/dependency impact.",
+            ".marc/project.md: shared configuration/instruction/dependency impact.",
+            ".marc/self-review.test.cjs: shared configuration/instruction/dependency impact.",
+            "AGENTS.md: shared configuration/instruction/dependency impact.",
+            "Inspected 23 changed and 37 referenced files in both revisions.",
+            "scripts/install-consumer.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "scripts/install-consumer.cjs: shared configuration/instruction/dependency impact.",
+            "skills/marc-crew-simplicity/SKILL.md: shared configuration/instruction/dependency impact.",
+            "src/quality/agent-settings.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/agent-settings.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/authoring-skill.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/catalogue-validation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/coq.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/forwarders.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/iac-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/installation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/language-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc-migration.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/merge.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/reports.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/scans.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24."
+          ],
+          "holds": [
+            "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+            "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval."
+          ],
+          "uncertain": true,
+          "requiresBrowser": false
+        },
+        "selected": [
+          {
+            "id": "csharp",
+            "version": "1.1.0",
+            "contentHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+            "skill": "skills/marc-crew-csharp/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "github-actions",
+            "version": "1.0.0",
+            "contentHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+            "skill": "skills/marc-crew-github-actions/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "javascript",
+            "version": "1.0.0",
+            "contentHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+            "skill": "skills/marc-crew-javascript/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          }
+        ],
+        "omitted": [],
+        "holds": [
+          "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+          "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval."
+        ],
+        "requiresFull": true,
+        "requiresBrowser": false,
+        "selectionHash": "81e97768dc2ed327d0fe8804dbe58089a5248c83ebc3ff9792092980fd0aae47"
+      },
+      "gates": {
+        "security": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        },
+        "correctness": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        },
+        "code-quality": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        },
+        "test-integrity": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        }
+      },
+      "ci": {
+        "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+        "runUrl": "https://github.com/wallism/marc/actions/runs/35989780691",
+        "runId": 35989780691,
+        "runAttempt": 1,
+        "conclusion": "success",
+        "verdict": "blocked",
+        "status": "incomplete",
+        "reason": "Required jobs missing, duplicated or unsuccessful",
+        "jobs": [
+          {
+            "name": "Node 24 (windows-latest)",
+            "conclusion": "success"
+          },
+          {
+            "name": "Node 24 (ubuntu-latest)",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "projectChanges": [],
+      "repairExecutions": [],
+      "recordedAt": "2026-09-24T20:45:37.633Z",
+      "previousHash": null,
+      "contentHash": "da620675290401013dabc3fed0b186513e5c6528199c77b78e6e889acb70cce8",
+      "hash": "7453db5514d2e403afc3c650a9c4a22c09ac8dbb131bfde2afafb205c1a2b0c3"
+    },
+    {
+      "kind": "ci",
+      "repository": "wallism/marc",
+      "pr": 6,
+      "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+      "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+      "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+      "summary": "Both Node jobs passed for the report-only commit; this older branch workflow still lacks required scans and artifacts, so the assessment remains held.",
+      "evidence": [
+        "https://github.com/wallism/marc/actions/runs/36057105365"
+      ],
+      "phase": "report",
+      "head": "d47724142e0159051900220cf703048e4e780ca2",
+      "runId": 36057105365,
+      "runAttempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "recordedAt": "2026-09-24T20:49:32.722Z",
+      "previousHash": "7453db5514d2e403afc3c650a9c4a22c09ac8dbb131bfde2afafb205c1a2b0c3",
+      "contentHash": "94a61d4ba28963eabf773893dfc3aad4eab9cf5741a6b964332b36734425be1a",
+      "hash": "8555673b6c0f3caf6652c5f0d42b6aae4fd41b3eafe95e82dda04686f19d7ebb"
+    },
+    {
+      "kind": "ci",
+      "repository": "wallism/marc",
+      "pr": 6,
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "summary": "Required Linux/Windows Node jobs and Quality scans passed; downloaded JUnit artifacts each contain 183 test cases with zero failures/errors, secret scan has zero findings.",
+      "evidence": [
+        "https://github.com/wallism/marc/actions/runs/36059572090",
+        "C:\\Users\\Admin\\.marc\\state\\wallism-marc-82cb06f5a5ba\\runs\\20260925-pr6-resume\\ci-summary.json"
+      ],
+      "phase": "source",
+      "head": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "runId": 36059572090,
+      "runAttempt": 1,
+      "status": "completed",
+      "conclusion": "success",
+      "recordedAt": "2026-09-24T21:12:30.741Z",
+      "previousHash": "8555673b6c0f3caf6652c5f0d42b6aae4fd41b3eafe95e82dda04686f19d7ebb",
+      "contentHash": "e2a0bc800912fb72f3173f19bcec9930e66b14816f4418cfcaf9d7fc2f112b3c",
+      "hash": "0582460a43494ee81476ea33649a7ec503002171627bce02543eaa106f29ca7f"
+    },
+    {
+      "kind": "review",
+      "repository": "wallism/marc",
+      "pr": 6,
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "repairCycles": 0,
+      "decision": {
+        "eligible": false,
+        "merge": false,
+        "reasons": [
+          "security: unresolved result cannot be discarded or outvoted",
+          "security: missing, stale or blocking evidence"
+        ],
+        "humanApproval": {
+          "record": {
+            "schema": 1,
+            "kind": "sensitive-paths",
+            "approved": true,
+            "id": "pr6-requested-size-policy-261d8fe",
+            "approvedBy": "Repository operator in the current Codex conversation",
+            "approvedUtc": "2026-09-24T21:17:14.910Z",
+            "expiresUtc": "2026-09-25T21:17:14.910Z",
+            "scope": "Record existing explicit operator instructions: exclude documentation/tests from both size limits, set supplied defaults to 3000 lines and 50 files, and implement supporting review guidance/tests. The operator requested the next steps to synchronize this PR and complete MARC. This is the first exact-identity record for that authorized scope, not a rebinding or a grant to merge PR6. Report-only mode remains.",
+            "repository": "wallism/marc",
+            "pr": 6,
+            "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+            "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+            "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+            "paths": [
+              "skills/marc-crew-captain/references/evidence.md",
+              "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+              "skills/marc-crew-simplicity/SKILL.md",
+              "src/quality/marc.cjs",
+              "src/quality/marc.test.cjs",
+              "src/quality/operator-approval.test.cjs",
+              "src/quality/reports.test.cjs"
+            ]
+          },
+          "sha256": "0b88d7a4b041bf12be12cc3d0f98e1415a56500f4a27c4190e92546d4bf97828"
+        }
+      },
+      "routing": {
+        "verdict": "pass",
+        "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+        "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+        "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+        "reviewer": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+        "route": "full",
+        "summary": "Changes assurance size-count semantics, supplied policies and trusted review instructions. Full independent review is required.",
+        "evidence": [
+          "Complete source/base diff excluding immutable prior report additions; 12 review files and 148 changed lines.",
+          "src/quality/marc.cjs: evaluate, changedLines, capture and final merge guard; full files inventory retained."
+        ],
+        "findings": [],
+        "risks": [
+          "Assurance policy and shared controller behavior",
+          "Review instruction changes"
+        ],
+        "execution": {
+          "settings": {
+            "model": {
+              "source": "captain",
+              "value": null
+            },
+            "reasoningEffort": {
+              "source": "captain",
+              "value": null
+            }
+          },
+          "applied": true,
+          "evidence": "Active Codex Captain session 01a0d2f8-78e8-7981-933e-4fa306f517a0; unchanged inherited model/reasoning."
+        }
+      },
+      "crew": {
+        "schema": 1,
+        "compatibility": "marc-crew-v1",
+        "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+        "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+        "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+        "toolCommit": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+        "impact": {
+          "files": [
+            ".github/workflows/node-checks.yml",
+            ".marc/self-review.test.cjs",
+            "IMPROVEMENTS.md",
+            "docs/configuration.md",
+            "evals/marc-crew-csharp/cases/candidate-instruction-override/input/after/src/Shop.Api/Configuration/ConnectionStrings.cs",
+            "evals/marc-crew-csharp/cases/policy-bound-to-io/input/after/src/Shop.Pricing/DiscountPolicy.cs",
+            "examples/python/.marc/policy.json",
+            "scripts/install-consumer.cjs",
+            "skills/marc-crew-captain/references/evidence.md",
+            "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+            "skills/marc-crew-simplicity/SKILL.md",
+            "src/quality/IMPROVEMENTS.md",
+            "src/quality/agent-settings.cjs",
+            "src/quality/agent-settings.test.cjs",
+            "src/quality/authoring-skill.test.cjs",
+            "src/quality/auto-update.cjs",
+            "src/quality/auto-update.test.cjs",
+            "src/quality/catalogue-validation.cjs",
+            "src/quality/catalogue-validation.test.cjs",
+            "src/quality/ci-recovery.cjs",
+            "src/quality/ci-recovery.test.cjs",
+            "src/quality/config.cjs",
+            "src/quality/config.test.cjs",
+            "src/quality/coq.cjs",
+            "src/quality/crew.cjs",
+            "src/quality/crew.test.cjs",
+            "src/quality/eval-corpus.cjs",
+            "src/quality/eval-corpus.test.cjs",
+            "src/quality/fixtures/policy.json",
+            "src/quality/forwarders.cjs",
+            "src/quality/iac-coverage.test.cjs",
+            "src/quality/installation.test.cjs",
+            "src/quality/language-coverage.test.cjs",
+            "src/quality/marc-migration.test.cjs",
+            "src/quality/marc.cjs",
+            "src/quality/marc.test.cjs",
+            "src/quality/merge.test.cjs",
+            "src/quality/operator-approval.cjs",
+            "src/quality/operator-approval.test.cjs",
+            "src/quality/project-review.cjs",
+            "src/quality/project-review.test.cjs",
+            "src/quality/prompt-eval-plan.cjs",
+            "src/quality/prompt-eval-plan.test.cjs",
+            "src/quality/reports.test.cjs",
+            "src/quality/scans.cjs",
+            "src/quality/scans.test.cjs",
+            "src/quality/stages.cjs",
+            "src/quality/stages.test.cjs",
+            "src/quality/upgrade.cjs",
+            "src/quality/upgrade.test.cjs",
+            "templates/consumer-loader.cjs"
+          ],
+          "technologies": [
+            "csharp",
+            "github-actions",
+            "javascript"
+          ],
+          "reasons": [
+            ".github/workflows/node-checks.yml: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            ".github/workflows/node-checks.yml: shared configuration/instruction/dependency impact.",
+            ".marc/self-review.test.cjs: shared configuration/instruction/dependency impact.",
+            "Inspected 12 changed and 39 referenced files in both revisions.",
+            "examples/python/.marc/policy.json: These JSON policies are consumed by the Node controller and its configuration, installation and gate regression tests; the Python example path is not Python runtime code.",
+            "scripts/install-consumer.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "scripts/install-consumer.cjs: shared configuration/instruction/dependency impact.",
+            "skills/marc-crew-simplicity/SKILL.md: shared configuration/instruction/dependency impact.",
+            "src/quality/agent-settings.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/agent-settings.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/authoring-skill.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/catalogue-validation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/coq.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/fixtures/policy.json: These JSON policies are consumed by the Node controller and its configuration, installation and gate regression tests; the Python example path is not Python runtime code.",
+            "src/quality/forwarders.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/iac-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/installation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/language-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc-migration.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/merge.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/reports.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/scans.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24."
+          ],
+          "holds": [],
+          "uncertain": true,
+          "requiresBrowser": false
+        },
+        "selected": [
+          {
+            "id": "csharp",
+            "version": "1.1.0",
+            "contentHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+            "skill": "skills/marc-crew-csharp/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "github-actions",
+            "version": "1.0.0",
+            "contentHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+            "skill": "skills/marc-crew-github-actions/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "javascript",
+            "version": "1.0.0",
+            "contentHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+            "skill": "skills/marc-crew-javascript/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          }
+        ],
+        "omitted": [],
+        "holds": [],
+        "requiresFull": true,
+        "requiresBrowser": false,
+        "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d"
+      },
+      "gates": {
+        "security": {
+          "verdict": "human-required",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/security_review",
+          "summary": "No concrete security vulnerability found in the frozen change; exact-source hosted tests and sanitized Gitleaks evidence pass. The trusted security skill requires human escalation for this material agent-policy change to size eligibility and published routing guidance; this is a governance decision, not a code defect.",
+          "evidence": [
+            "src/quality/marc.cjs:102-119 and 244-274: exclusions affect countedFiles and changedLines only; the complete files inventory still drives dependency classification and sensitive-path approval. Path matching is bounded regular-expression classification, not execution of candidate input.",
+            "src/quality/marc.cjs:136-186, 383-411 and 523-538: UI checks, independent gate requirements, trusted crew selection and final source/base/policy/path verification retain the complete inventory. Capture and final merge validation share changedLines.",
+            "skills/marc-crew-simplicity/SKILL.md:12 and skills/marc-crew-captain/references/evidence.md:9-13 at the source commit change size/routing policy, while explicitly retaining complete review inventories and other gates. Candidate instructions were reviewed as data.",
+            "examples/python/.marc/policy.json:15-16 and src/quality/fixtures/policy.json:36-37 raise supplied defaults to 50 files/3000 lines. No dependency/manifests, outbound requests, authentication, secrets, logging or browser-hook code changes occur in the review diff; projectChanges is empty. Root package.json has no npm dependencies; npm/NuGet dependency review is not applicable to this change.",
+            "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1: fresh capture binds success for Node 24 (ubuntu-latest), Node 24 (windows-latest) and Quality scans to source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: independently read and parsed sanitized scanner=secrets, verdict=pass, findings=[]. The unchanged configured workflow runs pinned Gitleaks 8.30.1 against full available history with default rules and an empty exception file; no vulnerability waiver was applied.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml: each independently parsed 183 testcases, zero failures and zero errors, including size exclusions preserving sensitive-path/CI gates and operator approval reload at final merge. No candidate code or duplicate tests/scans were executed locally.",
+            "Trusted skills/marc-crew-security/SKILL.md requires human-required for material agent-policy changes; .marc/project.md separately identifies controller and crew instructions as sensitive governance and states that positive review is not sensitive-path approval."
+          ],
+          "findings": [
+            {
+              "severity": "blocking",
+              "file": "src/quality/marc.cjs",
+              "line": 103,
+              "detail": "Governance decision: documentation/test paths no longer consume hard file/line limits or advisory routing size guides, and supplied defaults increase to 50 files/3000 lines. This materially changes automated assurance eligibility. The trusted security gate explicitly requires human escalation for material agent-policy changes, even with passing scans; no exploitable defect was identified.",
+              "evidence": "src/quality/marc.cjs:103-105,131,244-274; skills/marc-crew-simplicity/SKILL.md:12; examples/python/.marc/policy.json:15-16; trusted skills/marc-crew-security/SKILL.md security escalation rule.",
+              "recommendedChange": "Obtain and record the maintainer governance decision under the trusted workflow before adoption. Keep the report-only and exact identity-bound sensitive-path controls; no source repair is recommended by this security review."
+            }
+          ],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/security_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "correctness": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/correctness_review",
+          "summary": "The change correctly excludes the documented documentation/test paths from size metrics while retaining complete review inventories and safety gates. No concrete correctness defect was found; exact-source hosted validation passed on Node 24 for Ubuntu and Windows.",
+          "evidence": [
+            "Reviewed the complete diff.patch for immutable source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 against base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd, including all 12 changed files.",
+            "src/quality/marc.cjs:102-105 and 128-134 apply the shared exclusion predicate to inclusive hard file limits and simple-route guidance. Lines 106-195 retain complete file inventory for sensitive paths, manifests, review gates, browser checks and specialist selection.",
+            "src/quality/marc.cjs:244-274 excludes documented paths from numstat totals only when every path of a recognized rename is excluded; edits across the source/excluded boundary still count. Binary entries outside exclusions exceed the limit, and incomplete or malformed numstat fails closed.",
+            "src/quality/marc.cjs:399-410 and 528 use the same changedLines function during capture and final merge verification. scripts/install-consumer.cjs:34-41 does not replace consumer policy values during upgrades.",
+            "src/quality/marc.test.cjs:349-403 covers 3000/3001 lines, configurable line/file limits, full inventories, excluded-only changes, sensitive paths, mandatory reviews and CI. src/quality/reports.test.cjs:60-103 covers actual Git source moves, mixed/excluded line totals, boundary moves and source-name lookalikes.",
+            "Hosted CI https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful for the exact source; fresh evidence.json binds both required Node 24 jobs and Quality scans.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 test cases, 0 failures, 0 errors, 1 expected Windows-short-path skip. Inspected the corresponding node-test-results-windows-latest/node-results.xml: 183 test cases, 0 failures, 0 errors, 0 skips. Changed size regressions, self-review governance tests and operator-approval regression are present and successful on both platforms.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. Candidate code was not executed locally; no browser or optional C# hook change requires additional runtime proof."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/correctness_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "code-quality": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/code_quality_review",
+          "summary": "No code-quality findings. The focused change centralizes size exclusions at the existing counting seam, preserves full review and safety inventories, and retains configurable policy limits; exact-source hosted evidence passes.",
+          "evidence": [
+            "Reviewed the complete frozen 12-file diff and affected controller/configuration/installation callers read-only at source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5.",
+            "src/quality/marc.cjs:103,129,244-275: one sizeExcluded helper drives counted-file hard/advisory limits and line exclusions; recognized boundary moves retain edit counts and malformed numstat remains rejected.",
+            "src/quality/marc.cjs:106-163,383-412,526-531: complete files still drive sensitive-path, project, UI and gate checks plus crew selection; capture and final merge verification use the same changedLines function.",
+            "src/quality/config.cjs and scripts/install-consumer.cjs: explicit consumer policy values remain authoritative; fixture/example defaults and documentation agree on 3000 lines and 50 files.",
+            "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1: exact source, successful Node 24 Ubuntu and Windows jobs plus Quality scans, as bound in fresh evidence.json and ci-summary.json.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml inspected: each contains 183 test cases, zero failures and zero errors. Ubuntu skips one Windows-only short-path installation case; Windows skips none. Relevant size-boundary, override, inventory, rename, malformed-input and self-review cases are present.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json inspected: scanner secrets, verdict pass, findings empty.",
+            "No candidate execution, duplicate validation, repository edits or browser claims. This code-quality verdict does not grant sensitive-path approval or merge authority."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/code_quality_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "test-integrity": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/test_integrity_review",
+          "summary": "The tests meaningfully protect the requested size-policy change and preserve sensitive-path, review, CI and merge-boundary checks. Exact-source hosted evidence passes on Node 24 for Ubuntu and Windows; no weakened assertions, changed snapshot baselines or unexplained test exclusions were found.",
+          "evidence": [
+            "Reviewed frozen source/base diff and affected controller/test callers read-only; no candidate execution, test rerun, baseline approval, repository change or delegation. The change introduces requested counting semantics rather than repairing an independently demonstrated production incident; historical red-run claims were not used as evidence.",
+            "src/quality/marc.test.cjs:349-400 exercises inclusive 3000/3001 line limits, consumer line overrides 2000/4000, file limits 40/50/60 with one-above rejection, 120 excluded paths retained in the inventory, excluded-only eligibility, empty-inventory rejection, required test-integrity review, sensitive AGENTS.md and blocked CI. Existing simple-route guide tests retain rejection assertions using counted source paths (lines 119-169).",
+            "src/quality/reports.test.cjs:61-108 uses actual synthetic Git repositories for unchanged and edited source moves, large mixed documentation/test/source changes, exact full inventories and excluded-only counts; focused numstat cases cover both rename-boundary directions, excluded-to-excluded moves, source-name lookalikes, binary holds and malformed rename records. Existing binary and unusual NUL-delimited filename tests remain intact.",
+            "src/quality/marc.cjs:102-151 applies exclusions only to counted size metrics while retaining the full inventory for manifests, sensitive paths, CI and browser checks; lines 244-275 implement the shared counter, used by capture at line 403 and immutable final-diff verification at line 528.",
+            "src/quality/operator-approval.test.cjs:73-168 changes the expected AGENTS.md line count from 2 to 0 to match the new documented size semantics. It retains real Git comparison and assertions for missing approval, source/base drift, forged inventory, report bytes, revoked approval at the final merge boundary, and no merge/push.",
+            "Exact-source run https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful for source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5; fresh evidence.json and ci-summary.json identify successful Node 24 (ubuntu-latest), Node 24 (windows-latest), and Quality scans jobs. The frozen workflow runs src/quality/*.test.cjs and .marc/self-review.test.cjs without a test-name filter.",
+            "Inspected actual C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 cases, 182 passing, zero failure/error nodes, one explicit skip for the Windows-only short-path installation check. node-test-results-windows-latest/node-results.xml contains 183 passing cases and zero failures/errors/skips; the short-path check passes there. Both artifacts include all 33 marc tests, 15 report tests, 5 operator-approval tests and 6 self-review tests.",
+            "Inspected the same run artifact quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. No changed snapshot baseline or critical product UI transition is present in this diff; the optional C# browser hook is unaffected."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/test_integrity_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "crew:javascript": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/javascript_review",
+          "memberVersion": "1.0.0",
+          "memberHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+          "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+          "summary": "No blocking JavaScript issue found in the frozen change and affected size-count consumers. Exact-source hosted Node 24 evidence passes on Ubuntu and Windows; this review does not authorize sensitive-path changes or merging.",
+          "evidence": [
+            "src/quality/marc.cjs:102-106,128-134,244-276: one pure path classifier supplies hard/advisory file counts and NUL-delimited line counts; recognized boundary renames count edits unless both paths are excluded. No async, import, dependency or DOM boundary is changed.",
+            "src/quality/marc.cjs:108-174,383-409,525-530: the complete files inventory still feeds dependency/sensitive/UI gates and specialist impact; capture and final merge revalidation use the same changedLines function and policy maximum.",
+            "src/quality/config.cjs:29-40 and examples/python/.marc/policy.json / src/quality/fixtures/policy.json: limits remain validated consumer-policy values, with supplied defaults 50 files and 3000 lines. Consumer lower/higher boundary cases are covered by the hosted suite.",
+            "src/quality/marc.test.cjs:349 onward; src/quality/reports.test.cjs:60 onward; src/quality/operator-approval.test.cjs:95: inspected changed regressions for hard/advisory limits, full inventories, retained CI/sensitive-path holds, excluded-only diffs, rename boundaries, source lookalikes, binary holds and operator-approval line-count consistency.",
+            "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is captured successful for source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5; Node 24 Ubuntu, Node 24 Windows and Quality scans all succeeded.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml: independently parsed 183 test cases each, zero failures/errors, including self-review and changed size regressions; Ubuntu skips the Windows-short-path case and Windows skips none.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: sanitized secrets scan verdict pass with no findings. No candidate code executed during this source/artifact review."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/javascript_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "crew:github-actions": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/github_actions_review",
+          "memberVersion": "1.0.0",
+          "memberHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+          "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+          "summary": "No GitHub Actions regression found. The size-only controller change preserves required exact-source CI and complete review inventories; the unchanged Node 24 workflow and supplied hosted artifacts establish applicable validation for this source.",
+          "evidence": [
+            "Compared source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 with base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd: .github/workflows/, package.json, scripts/check-syntax.cjs, src/quality/catalogue-validation.cjs, src/quality/scans.cjs and .marc/ have no changed bytes. No workflow trigger, runner, permission, action pin, secret boundary or artifact producer changed.",
+            ".github/workflows/node-checks.yml:3-76 runs push/workflow_dispatch source checkouts with contents:read and persist-credentials:false; both Node 24 matrix jobs run syntax, catalogue and src/quality/*.test.cjs plus .marc/self-review.test.cjs. Failed commands remain failures; always-upload steps do not override them. Actions are SHA-pinned, Gitleaks has a checked digest, and only sanitized secrets.json is uploaded.",
+            "src/quality/marc.cjs:102-122, 131-165, 249-274 and 288-295: size exclusions affect counting only; sensitive paths, selected expertise and exact-source successful CI remain required. CI selection still rejects incomplete/unsuccessful runs and missing, duplicated or unsuccessful required jobs. No count-based test or scan omission was introduced.",
+            "Fresh evidence.json and ci-summary.json bind https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 to source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5, completed successfully with Node 24 (ubuntu-latest), Node 24 (windows-latest) and Quality scans successful.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 cases, zero failures/errors, one Windows-only short-path case skipped. Inspected corresponding node-test-results-windows-latest/node-results.xml: 183 cases, zero failures/errors/skips. Both contain self-review workflow-producer checks and changed size-boundary, inventory, sensitive-path and CI preservation cases.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. src/quality/scans.cjs retains default-rule full available Git history scanning, explicit empty consumer exceptions, redaction and sanitized output. No candidate execution or external service contact performed by this reviewer."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/github_actions_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "crew:csharp": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/csharp_review",
+          "memberVersion": "1.1.0",
+          "memberHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+          "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+          "summary": "No C#-specific defect found. The change affects size accounting for C# test paths while preserving complete review and safety inventories; the optional .NET 10 browser hook and C# evaluation fixtures are unchanged and require no new hook build/smoke evidence for this diff.",
+          "evidence": [
+            "Compared frozen source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 against base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd. No changes exist under src/quality/browser-host or evals/marc-crew-csharp; captured csharp selection was conservative broadening for uncertain shared impact.",
+            "src/quality/marc.cjs:244-249 implements the documented .Test/.Tests/.UnitTests/.IntegrationTests directory and case-sensitive *Test.cs/*Tests.cs exclusions. src/quality/reports.test.cjs:76-107 covers Example.Tests/ScopeTests.cs and ScopeTests.cs exclusions while Contest.cs and TestService.cs remain counted; cross-boundary rename edits remain counted.",
+            "src/quality/marc.cjs:102-117 retains the full files inventory for project/dependency verification and sensitive-path approval. Lines 135-169 retain UI/browser and captured-specialist checks. Capture at lines 402-409 and final merge validation at lines 526-529 use the same changedLines function without filtering the review inventory.",
+            "Read src/quality/browser-host/StartupHook.cs, Marc.BrowserHost.csproj and Test-BrowserHost.ps1. The unchanged opt-in startup hook targets net10.0 and uses hosting/DI diagnostics plus MARC_BROWSER_UI_ONLY/COQ_BROWSER_UI_ONLY; it does not call or consume the changed size-accounting functions or policy fixtures. No hook/runtime behavior change was identified and no live .NET behavior is claimed.",
+            "Exact-source node-checks run https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful with Node 24 Ubuntu, Node 24 Windows and Quality scans successful, matching evidence.json and ci-summary.json.",
+            "Independently inspected downloaded node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml under C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090: 183 cases per platform, zero failure/error nodes. Ubuntu skips only the Windows-short-path installation case; Windows skips none. Both contain passing self-review governance, source/test size boundary, full-inventory retention, sensitive-path and browser-gate tests. Downloaded quality-scans/secrets.json reports pass with no findings."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/csharp_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        }
+      },
+      "ci": {
+        "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+        "runUrl": "https://github.com/wallism/marc/actions/runs/36059572090",
+        "runId": 36059572090,
+        "runAttempt": 1,
+        "conclusion": "success",
+        "verdict": "pass",
+        "status": "complete",
+        "reason": "Reused hosted CI for this exact commit",
+        "jobs": [
+          {
+            "name": "Node 24 (ubuntu-latest)",
+            "conclusion": "success"
+          },
+          {
+            "name": "Node 24 (windows-latest)",
+            "conclusion": "success"
+          },
+          {
+            "name": "Quality scans",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "projectChanges": [],
+      "repairExecutions": [],
+      "recordedAt": "2026-09-24T21:18:55.777Z",
+      "previousHash": "0582460a43494ee81476ea33649a7ec503002171627bce02543eaa106f29ca7f",
+      "contentHash": "ff8c8a712bff346132ba6278d305964107b61b0c7fd92d74f04d2fbdda80b80c",
+      "hash": "f3cf4d9ab7e8eb82ecad838f0a2ad81531578155fabbdd0243c9db1fe8168afc"
+    },
+    {
+      "kind": "review",
+      "repository": "wallism/marc",
+      "pr": 6,
+      "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+      "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+      "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+      "repairCycles": 0,
+      "decision": {
+        "eligible": true,
+        "merge": false,
+        "reasons": [],
+        "humanApproval": {
+          "record": {
+            "schema": 1,
+            "kind": "sensitive-paths",
+            "approved": true,
+            "id": "pr6-requested-size-policy-261d8fe",
+            "approvedBy": "Repository operator in the current Codex conversation",
+            "approvedUtc": "2026-09-24T21:17:14.910Z",
+            "expiresUtc": "2026-09-25T21:17:14.910Z",
+            "scope": "Record existing explicit operator instructions: exclude documentation/tests from both size limits, set supplied defaults to 3000 lines and 50 files, and implement supporting review guidance/tests. The operator requested the next steps to synchronize this PR and complete MARC. This is the first exact-identity record for that authorized scope, not a rebinding or a grant to merge PR6. Report-only mode remains.",
+            "repository": "wallism/marc",
+            "pr": 6,
+            "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+            "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+            "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+            "paths": [
+              "skills/marc-crew-captain/references/evidence.md",
+              "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+              "skills/marc-crew-simplicity/SKILL.md",
+              "src/quality/marc.cjs",
+              "src/quality/marc.test.cjs",
+              "src/quality/operator-approval.test.cjs",
+              "src/quality/reports.test.cjs"
+            ]
+          },
+          "sha256": "0b88d7a4b041bf12be12cc3d0f98e1415a56500f4a27c4190e92546d4bf97828"
+        }
+      },
+      "routing": {
+        "verdict": "pass",
+        "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+        "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+        "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+        "reviewer": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+        "route": "full",
+        "summary": "Changes assurance size-count semantics, supplied policies and trusted review instructions. Full independent review is required.",
+        "evidence": [
+          "Complete source/base diff excluding immutable prior report additions; 12 review files and 148 changed lines.",
+          "src/quality/marc.cjs: evaluate, changedLines, capture and final merge guard; full files inventory retained."
+        ],
+        "findings": [],
+        "risks": [
+          "Assurance policy and shared controller behavior",
+          "Review instruction changes"
+        ],
+        "execution": {
+          "settings": {
+            "model": {
+              "source": "captain",
+              "value": null
+            },
+            "reasoningEffort": {
+              "source": "captain",
+              "value": null
+            }
+          },
+          "applied": true,
+          "evidence": "Active Codex Captain session 01a0d2f8-78e8-7981-933e-4fa306f517a0; unchanged inherited model/reasoning."
+        }
+      },
+      "crew": {
+        "schema": 1,
+        "compatibility": "marc-crew-v1",
+        "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+        "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+        "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+        "toolCommit": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+        "impact": {
+          "files": [
+            ".github/workflows/node-checks.yml",
+            ".marc/self-review.test.cjs",
+            "IMPROVEMENTS.md",
+            "docs/configuration.md",
+            "evals/marc-crew-csharp/cases/candidate-instruction-override/input/after/src/Shop.Api/Configuration/ConnectionStrings.cs",
+            "evals/marc-crew-csharp/cases/policy-bound-to-io/input/after/src/Shop.Pricing/DiscountPolicy.cs",
+            "examples/python/.marc/policy.json",
+            "scripts/install-consumer.cjs",
+            "skills/marc-crew-captain/references/evidence.md",
+            "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+            "skills/marc-crew-simplicity/SKILL.md",
+            "src/quality/IMPROVEMENTS.md",
+            "src/quality/agent-settings.cjs",
+            "src/quality/agent-settings.test.cjs",
+            "src/quality/authoring-skill.test.cjs",
+            "src/quality/auto-update.cjs",
+            "src/quality/auto-update.test.cjs",
+            "src/quality/catalogue-validation.cjs",
+            "src/quality/catalogue-validation.test.cjs",
+            "src/quality/ci-recovery.cjs",
+            "src/quality/ci-recovery.test.cjs",
+            "src/quality/config.cjs",
+            "src/quality/config.test.cjs",
+            "src/quality/coq.cjs",
+            "src/quality/crew.cjs",
+            "src/quality/crew.test.cjs",
+            "src/quality/eval-corpus.cjs",
+            "src/quality/eval-corpus.test.cjs",
+            "src/quality/fixtures/policy.json",
+            "src/quality/forwarders.cjs",
+            "src/quality/iac-coverage.test.cjs",
+            "src/quality/installation.test.cjs",
+            "src/quality/language-coverage.test.cjs",
+            "src/quality/marc-migration.test.cjs",
+            "src/quality/marc.cjs",
+            "src/quality/marc.test.cjs",
+            "src/quality/merge.test.cjs",
+            "src/quality/operator-approval.cjs",
+            "src/quality/operator-approval.test.cjs",
+            "src/quality/project-review.cjs",
+            "src/quality/project-review.test.cjs",
+            "src/quality/prompt-eval-plan.cjs",
+            "src/quality/prompt-eval-plan.test.cjs",
+            "src/quality/reports.test.cjs",
+            "src/quality/scans.cjs",
+            "src/quality/scans.test.cjs",
+            "src/quality/stages.cjs",
+            "src/quality/stages.test.cjs",
+            "src/quality/upgrade.cjs",
+            "src/quality/upgrade.test.cjs",
+            "templates/consumer-loader.cjs"
+          ],
+          "technologies": [
+            "csharp",
+            "github-actions",
+            "javascript"
+          ],
+          "reasons": [
+            ".github/workflows/node-checks.yml: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            ".github/workflows/node-checks.yml: shared configuration/instruction/dependency impact.",
+            ".marc/self-review.test.cjs: shared configuration/instruction/dependency impact.",
+            "Inspected 12 changed and 39 referenced files in both revisions.",
+            "examples/python/.marc/policy.json: These JSON policies are consumed by the Node controller and its configuration, installation and gate regression tests; the Python example path is not Python runtime code.",
+            "scripts/install-consumer.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "scripts/install-consumer.cjs: shared configuration/instruction/dependency impact.",
+            "skills/marc-crew-simplicity/SKILL.md: shared configuration/instruction/dependency impact.",
+            "src/quality/agent-settings.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/agent-settings.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/authoring-skill.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/catalogue-validation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/coq.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/fixtures/policy.json: These JSON policies are consumed by the Node controller and its configuration, installation and gate regression tests; the Python example path is not Python runtime code.",
+            "src/quality/forwarders.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/iac-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/installation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/language-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc-migration.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/merge.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/reports.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/scans.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24."
+          ],
+          "holds": [],
+          "uncertain": true,
+          "requiresBrowser": false
+        },
+        "selected": [
+          {
+            "id": "csharp",
+            "version": "1.1.0",
+            "contentHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+            "skill": "skills/marc-crew-csharp/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "github-actions",
+            "version": "1.0.0",
+            "contentHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+            "skill": "skills/marc-crew-github-actions/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "javascript",
+            "version": "1.0.0",
+            "contentHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+            "skill": "skills/marc-crew-javascript/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          }
+        ],
+        "omitted": [],
+        "holds": [],
+        "requiresFull": true,
+        "requiresBrowser": false,
+        "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d"
+      },
+      "gates": {
+        "security": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/security_review",
+          "summary": "Supplemental authorization assessment resolves the original governance-only hold: the user explicitly selected documentation/test size exclusions and defaults of 3000 lines/50 files before this review. No concrete security defect or out-of-scope policy change was found; the previously inspected exact-source hosted tests and sanitized secret scan pass. This security verdict grants no merge authority and does not replace a controller-required operator approval record.",
+          "evidence": [
+            "src/quality/marc.cjs:102-119 and 244-274: exclusions affect countedFiles and changedLines only; the complete files inventory still drives dependency classification and sensitive-path approval. Path matching is bounded regular-expression classification, not execution of candidate input.",
+            "src/quality/marc.cjs:136-186, 383-411 and 523-538: UI checks, independent gate requirements, trusted crew selection and final source/base/policy/path verification retain the complete inventory. Capture and final merge validation share changedLines.",
+            "skills/marc-crew-simplicity/SKILL.md:12 and skills/marc-crew-captain/references/evidence.md:9-13 at the source commit change size/routing policy, while explicitly retaining complete review inventories and other gates. Candidate instructions were reviewed as data.",
+            "examples/python/.marc/policy.json:15-16 and src/quality/fixtures/policy.json:36-37 raise supplied defaults to 50 files/3000 lines. No dependency/manifests, outbound requests, authentication, secrets, logging or browser-hook code changes occur in the review diff; projectChanges is empty. Root package.json has no npm dependencies; npm/NuGet dependency review is not applicable to this change.",
+            "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1: fresh capture binds success for Node 24 (ubuntu-latest), Node 24 (windows-latest) and Quality scans to source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: independently read and parsed sanitized scanner=secrets, verdict=pass, findings=[]. The unchanged configured workflow runs pinned Gitleaks 8.30.1 against full available history with default rules and an empty exception file; no vulnerability waiver was applied.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml: each independently parsed 183 testcases, zero failures and zero errors, including size exclusions preserving sensitive-path/CI gates and operator approval reload at final merge. No candidate code or duplicate tests/scans were executed locally.",
+            "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20260925-pr6-resume/operator-instructions.json: Captain-supplied conversation evidence matches source/base/policy and records explicit user directions to exclude docs/tests from line/file limits, set defaults to 3000 lines and 50 files, push/create a PR and run MARC, followed by Do the next steps. These decisions supply the substantive governance choice omitted from the original handoff.",
+            "Reassessment is limited to authorization, with original security.json retained unchanged. The original sole blocking finding was a missing governance decision, not a vulnerability. The changed classifier, size metrics, supplied policy defaults, review guidance and associated tests/docs implement the explicitly requested behavior; no separate concrete out-of-scope security concern was established.",
+            "Developer instructions give continuing user authorization precedence over skill approval guidelines. Requiring the same behavioral decision again would duplicate existing authorization. The trusted controller still independently enforces report-only mode, immutable identity, all gates and sensitive-path operator approval; conversation-evidence-not-approval-capability is not itself that executable approval record."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/security_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "correctness": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/correctness_review",
+          "summary": "The change correctly excludes the documented documentation/test paths from size metrics while retaining complete review inventories and safety gates. No concrete correctness defect was found; exact-source hosted validation passed on Node 24 for Ubuntu and Windows.",
+          "evidence": [
+            "Reviewed the complete diff.patch for immutable source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 against base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd, including all 12 changed files.",
+            "src/quality/marc.cjs:102-105 and 128-134 apply the shared exclusion predicate to inclusive hard file limits and simple-route guidance. Lines 106-195 retain complete file inventory for sensitive paths, manifests, review gates, browser checks and specialist selection.",
+            "src/quality/marc.cjs:244-274 excludes documented paths from numstat totals only when every path of a recognized rename is excluded; edits across the source/excluded boundary still count. Binary entries outside exclusions exceed the limit, and incomplete or malformed numstat fails closed.",
+            "src/quality/marc.cjs:399-410 and 528 use the same changedLines function during capture and final merge verification. scripts/install-consumer.cjs:34-41 does not replace consumer policy values during upgrades.",
+            "src/quality/marc.test.cjs:349-403 covers 3000/3001 lines, configurable line/file limits, full inventories, excluded-only changes, sensitive paths, mandatory reviews and CI. src/quality/reports.test.cjs:60-103 covers actual Git source moves, mixed/excluded line totals, boundary moves and source-name lookalikes.",
+            "Hosted CI https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful for the exact source; fresh evidence.json binds both required Node 24 jobs and Quality scans.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 test cases, 0 failures, 0 errors, 1 expected Windows-short-path skip. Inspected the corresponding node-test-results-windows-latest/node-results.xml: 183 test cases, 0 failures, 0 errors, 0 skips. Changed size regressions, self-review governance tests and operator-approval regression are present and successful on both platforms.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. Candidate code was not executed locally; no browser or optional C# hook change requires additional runtime proof."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/correctness_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "code-quality": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/code_quality_review",
+          "summary": "No code-quality findings. The focused change centralizes size exclusions at the existing counting seam, preserves full review and safety inventories, and retains configurable policy limits; exact-source hosted evidence passes.",
+          "evidence": [
+            "Reviewed the complete frozen 12-file diff and affected controller/configuration/installation callers read-only at source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5.",
+            "src/quality/marc.cjs:103,129,244-275: one sizeExcluded helper drives counted-file hard/advisory limits and line exclusions; recognized boundary moves retain edit counts and malformed numstat remains rejected.",
+            "src/quality/marc.cjs:106-163,383-412,526-531: complete files still drive sensitive-path, project, UI and gate checks plus crew selection; capture and final merge verification use the same changedLines function.",
+            "src/quality/config.cjs and scripts/install-consumer.cjs: explicit consumer policy values remain authoritative; fixture/example defaults and documentation agree on 3000 lines and 50 files.",
+            "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1: exact source, successful Node 24 Ubuntu and Windows jobs plus Quality scans, as bound in fresh evidence.json and ci-summary.json.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml inspected: each contains 183 test cases, zero failures and zero errors. Ubuntu skips one Windows-only short-path installation case; Windows skips none. Relevant size-boundary, override, inventory, rename, malformed-input and self-review cases are present.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json inspected: scanner secrets, verdict pass, findings empty.",
+            "No candidate execution, duplicate validation, repository edits or browser claims. This code-quality verdict does not grant sensitive-path approval or merge authority."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/code_quality_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "test-integrity": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/test_integrity_review",
+          "summary": "The tests meaningfully protect the requested size-policy change and preserve sensitive-path, review, CI and merge-boundary checks. Exact-source hosted evidence passes on Node 24 for Ubuntu and Windows; no weakened assertions, changed snapshot baselines or unexplained test exclusions were found.",
+          "evidence": [
+            "Reviewed frozen source/base diff and affected controller/test callers read-only; no candidate execution, test rerun, baseline approval, repository change or delegation. The change introduces requested counting semantics rather than repairing an independently demonstrated production incident; historical red-run claims were not used as evidence.",
+            "src/quality/marc.test.cjs:349-400 exercises inclusive 3000/3001 line limits, consumer line overrides 2000/4000, file limits 40/50/60 with one-above rejection, 120 excluded paths retained in the inventory, excluded-only eligibility, empty-inventory rejection, required test-integrity review, sensitive AGENTS.md and blocked CI. Existing simple-route guide tests retain rejection assertions using counted source paths (lines 119-169).",
+            "src/quality/reports.test.cjs:61-108 uses actual synthetic Git repositories for unchanged and edited source moves, large mixed documentation/test/source changes, exact full inventories and excluded-only counts; focused numstat cases cover both rename-boundary directions, excluded-to-excluded moves, source-name lookalikes, binary holds and malformed rename records. Existing binary and unusual NUL-delimited filename tests remain intact.",
+            "src/quality/marc.cjs:102-151 applies exclusions only to counted size metrics while retaining the full inventory for manifests, sensitive paths, CI and browser checks; lines 244-275 implement the shared counter, used by capture at line 403 and immutable final-diff verification at line 528.",
+            "src/quality/operator-approval.test.cjs:73-168 changes the expected AGENTS.md line count from 2 to 0 to match the new documented size semantics. It retains real Git comparison and assertions for missing approval, source/base drift, forged inventory, report bytes, revoked approval at the final merge boundary, and no merge/push.",
+            "Exact-source run https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful for source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5; fresh evidence.json and ci-summary.json identify successful Node 24 (ubuntu-latest), Node 24 (windows-latest), and Quality scans jobs. The frozen workflow runs src/quality/*.test.cjs and .marc/self-review.test.cjs without a test-name filter.",
+            "Inspected actual C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 cases, 182 passing, zero failure/error nodes, one explicit skip for the Windows-only short-path installation check. node-test-results-windows-latest/node-results.xml contains 183 passing cases and zero failures/errors/skips; the short-path check passes there. Both artifacts include all 33 marc tests, 15 report tests, 5 operator-approval tests and 6 self-review tests.",
+            "Inspected the same run artifact quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. No changed snapshot baseline or critical product UI transition is present in this diff; the optional C# browser hook is unaffected."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/test_integrity_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "crew:javascript": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/javascript_review",
+          "memberVersion": "1.0.0",
+          "memberHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+          "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+          "summary": "No blocking JavaScript issue found in the frozen change and affected size-count consumers. Exact-source hosted Node 24 evidence passes on Ubuntu and Windows; this review does not authorize sensitive-path changes or merging.",
+          "evidence": [
+            "src/quality/marc.cjs:102-106,128-134,244-276: one pure path classifier supplies hard/advisory file counts and NUL-delimited line counts; recognized boundary renames count edits unless both paths are excluded. No async, import, dependency or DOM boundary is changed.",
+            "src/quality/marc.cjs:108-174,383-409,525-530: the complete files inventory still feeds dependency/sensitive/UI gates and specialist impact; capture and final merge revalidation use the same changedLines function and policy maximum.",
+            "src/quality/config.cjs:29-40 and examples/python/.marc/policy.json / src/quality/fixtures/policy.json: limits remain validated consumer-policy values, with supplied defaults 50 files and 3000 lines. Consumer lower/higher boundary cases are covered by the hosted suite.",
+            "src/quality/marc.test.cjs:349 onward; src/quality/reports.test.cjs:60 onward; src/quality/operator-approval.test.cjs:95: inspected changed regressions for hard/advisory limits, full inventories, retained CI/sensitive-path holds, excluded-only diffs, rename boundaries, source lookalikes, binary holds and operator-approval line-count consistency.",
+            "https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is captured successful for source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5; Node 24 Ubuntu, Node 24 Windows and Quality scans all succeeded.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml: independently parsed 183 test cases each, zero failures/errors, including self-review and changed size regressions; Ubuntu skips the Windows-short-path case and Windows skips none.",
+            "C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: sanitized secrets scan verdict pass with no findings. No candidate code executed during this source/artifact review."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/javascript_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "crew:github-actions": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/github_actions_review",
+          "memberVersion": "1.0.0",
+          "memberHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+          "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+          "summary": "No GitHub Actions regression found. The size-only controller change preserves required exact-source CI and complete review inventories; the unchanged Node 24 workflow and supplied hosted artifacts establish applicable validation for this source.",
+          "evidence": [
+            "Compared source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 with base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd: .github/workflows/, package.json, scripts/check-syntax.cjs, src/quality/catalogue-validation.cjs, src/quality/scans.cjs and .marc/ have no changed bytes. No workflow trigger, runner, permission, action pin, secret boundary or artifact producer changed.",
+            ".github/workflows/node-checks.yml:3-76 runs push/workflow_dispatch source checkouts with contents:read and persist-credentials:false; both Node 24 matrix jobs run syntax, catalogue and src/quality/*.test.cjs plus .marc/self-review.test.cjs. Failed commands remain failures; always-upload steps do not override them. Actions are SHA-pinned, Gitleaks has a checked digest, and only sanitized secrets.json is uploaded.",
+            "src/quality/marc.cjs:102-122, 131-165, 249-274 and 288-295: size exclusions affect counting only; sensitive paths, selected expertise and exact-source successful CI remain required. CI selection still rejects incomplete/unsuccessful runs and missing, duplicated or unsuccessful required jobs. No count-based test or scan omission was introduced.",
+            "Fresh evidence.json and ci-summary.json bind https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 to source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5, completed successfully with Node 24 (ubuntu-latest), Node 24 (windows-latest) and Quality scans successful.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/node-test-results-ubuntu-latest/node-results.xml: 183 cases, zero failures/errors, one Windows-only short-path case skipped. Inspected corresponding node-test-results-windows-latest/node-results.xml: 183 cases, zero failures/errors/skips. Both contain self-review workflow-producer checks and changed size-boundary, inventory, sensitive-path and CI preservation cases.",
+            "Inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090/quality-scans/secrets.json: scanner secrets, verdict pass, findings empty. src/quality/scans.cjs retains default-rule full available Git history scanning, explicit empty consumer exceptions, redaction and sanitized output. No candidate execution or external service contact performed by this reviewer."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/github_actions_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        },
+        "crew:csharp": {
+          "verdict": "pass",
+          "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+          "base": "532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd",
+          "policyHash": "6d30a7db650afa818cb0536f1b8f88dc8b8841d2d5cf19be9027df109a163aec",
+          "reviewer": "/root/csharp_review",
+          "memberVersion": "1.1.0",
+          "memberHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+          "selectionHash": "05b4f415f3d89b8a1cba162b79ee505ff807368f07821d45b7c8353db48b8b8d",
+          "summary": "No C#-specific defect found. The change affects size accounting for C# test paths while preserving complete review and safety inventories; the optional .NET 10 browser hook and C# evaluation fixtures are unchanged and require no new hook build/smoke evidence for this diff.",
+          "evidence": [
+            "Compared frozen source 261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5 against base 532bb159f7c3a4ec399a9b8eda0d6e8335a9a9dd. No changes exist under src/quality/browser-host or evals/marc-crew-csharp; captured csharp selection was conservative broadening for uncertain shared impact.",
+            "src/quality/marc.cjs:244-249 implements the documented .Test/.Tests/.UnitTests/.IntegrationTests directory and case-sensitive *Test.cs/*Tests.cs exclusions. src/quality/reports.test.cjs:76-107 covers Example.Tests/ScopeTests.cs and ScopeTests.cs exclusions while Contest.cs and TestService.cs remain counted; cross-boundary rename edits remain counted.",
+            "src/quality/marc.cjs:102-117 retains the full files inventory for project/dependency verification and sensitive-path approval. Lines 135-169 retain UI/browser and captured-specialist checks. Capture at lines 402-409 and final merge validation at lines 526-529 use the same changedLines function without filtering the review inventory.",
+            "Read src/quality/browser-host/StartupHook.cs, Marc.BrowserHost.csproj and Test-BrowserHost.ps1. The unchanged opt-in startup hook targets net10.0 and uses hosting/DI diagnostics plus MARC_BROWSER_UI_ONLY/COQ_BROWSER_UI_ONLY; it does not call or consume the changed size-accounting functions or policy fixtures. No hook/runtime behavior change was identified and no live .NET behavior is claimed.",
+            "Exact-source node-checks run https://github.com/wallism/marc/actions/runs/36059572090 attempt 1 is successful with Node 24 Ubuntu, Node 24 Windows and Quality scans successful, matching evidence.json and ci-summary.json.",
+            "Independently inspected downloaded node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml under C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr6-36059572090: 183 cases per platform, zero failure/error nodes. Ubuntu skips only the Windows-short-path installation case; Windows skips none. Both contain passing self-review governance, source/test size boundary, full-inventory retention, sensitive-path and browser-gate tests. Downloaded quality-scans/secrets.json reports pass with no findings."
+          ],
+          "findings": [],
+          "execution": {
+            "settings": {
+              "model": {
+                "source": "captain",
+                "value": null
+              },
+              "reasoningEffort": {
+                "source": "captain",
+                "value": null
+              }
+            },
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent receipt for /root/csharp_review; fork_turns:none; model and reasoning overrides omitted, preserving supported parent inheritance."
+          }
+        }
+      },
+      "ci": {
+        "sourceHead": "261d8fe70f4dd35f4a7dff5cf54487b7dc12b7f5",
+        "runUrl": "https://github.com/wallism/marc/actions/runs/36059572090",
+        "runId": 36059572090,
+        "runAttempt": 1,
+        "conclusion": "success",
+        "verdict": "pass",
+        "status": "complete",
+        "reason": "Reused hosted CI for this exact commit",
+        "jobs": [
+          {
+            "name": "Node 24 (ubuntu-latest)",
+            "conclusion": "success"
+          },
+          {
+            "name": "Node 24 (windows-latest)",
+            "conclusion": "success"
+          },
+          {
+            "name": "Quality scans",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "projectChanges": [],
+      "repairExecutions": [],
+      "recordedAt": "2026-09-24T21:19:05.617Z",
+      "previousHash": "f3cf4d9ab7e8eb82ecad838f0a2ad81531578155fabbdd0243c9db1fe8168afc",
+      "contentHash": "65de13681f2f0d05eb6799ab3e34a0d0f6df3870efa667444b42cff439f0837c",
+      "hash": "92010e5927cd0020ced3201df091c3a814940723a5a0e39ffda8ce0958a3c0d7"
+    }
+  ]
+}

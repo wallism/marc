@@ -1,6 +1,6 @@
 # Working on MARC
 
-MARC is reusable PR assurance tooling. Keep consumer repository identities, credentials, accepted exceptions and operational state out of this repository.
+MARC is reusable PR assurance tooling. Its own self-review identity and governance belong in `.marc/`; keep other consumers' identities, all credentials, accepted exceptions and operational state out of this repository. Self-review uses the committed policy from clean current `master`, never candidate-owned governance.
 
 Create a new branch before making changes in this repository. Use the `codex/` prefix unless the user specifies another branch name.
 

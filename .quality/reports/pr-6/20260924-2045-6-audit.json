@@ -1,0 +1,650 @@
+{
+  "schema": 1,
+  "agentExecutionSchema": 1,
+  "repairExecutions": [],
+  "repository": "wallism/marc",
+  "pr": 6,
+  "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+  "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+  "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+  "state": "open",
+  "draft": false,
+  "author": "wallism",
+  "headRepository": "wallism/marc",
+  "branch": "codex/exclude-doc-test-line-count",
+  "target": "master",
+  "baseIncluded": false,
+  "files": [
+    ".github/workflows/node-checks.yml",
+    ".marc/config.json",
+    ".marc/gitleaksignore",
+    ".marc/policy.json",
+    ".marc/project.md",
+    ".marc/self-review.test.cjs",
+    "AGENTS.md",
+    "IMPROVEMENTS.md",
+    "README.md",
+    "docs/configuration.md",
+    "docs/contribution-checks.md",
+    "docs/repository-layout.md",
+    "examples/python/.marc/policy.json",
+    "skills/marc-crew-captain/IMPROVEMENTS.md",
+    "skills/marc-crew-captain/references/evidence.md",
+    "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+    "skills/marc-crew-simplicity/SKILL.md",
+    "src/quality/IMPROVEMENTS.md",
+    "src/quality/fixtures/policy.json",
+    "src/quality/marc.cjs",
+    "src/quality/marc.test.cjs",
+    "src/quality/operator-approval.test.cjs",
+    "src/quality/reports.test.cjs"
+  ],
+  "changedLines": 441,
+  "repairCycles": 0,
+  "projectChanges": [],
+  "gates": {
+    "security": {
+      "verdict": "blocked",
+      "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+      "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+      "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+      "reviewer": "",
+      "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+      "evidence": [],
+      "findings": []
+    },
+    "correctness": {
+      "verdict": "blocked",
+      "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+      "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+      "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+      "reviewer": "",
+      "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+      "evidence": [],
+      "findings": []
+    },
+    "code-quality": {
+      "verdict": "blocked",
+      "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+      "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+      "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+      "reviewer": "",
+      "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+      "evidence": [],
+      "findings": []
+    },
+    "test-integrity": {
+      "verdict": "blocked",
+      "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+      "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+      "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+      "reviewer": "",
+      "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+      "evidence": [],
+      "findings": []
+    }
+  },
+  "ci": {
+    "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+    "runUrl": "https://github.com/wallism/marc/actions/runs/35989780691",
+    "runId": 35989780691,
+    "runAttempt": 1,
+    "conclusion": "success",
+    "verdict": "blocked",
+    "status": "incomplete",
+    "reason": "Required jobs missing, duplicated or unsuccessful",
+    "jobs": [
+      {
+        "name": "Node 24 (windows-latest)",
+        "conclusion": "success"
+      },
+      {
+        "name": "Node 24 (ubuntu-latest)",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "crew": {
+    "schema": 1,
+    "compatibility": "marc-crew-v1",
+    "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+    "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+    "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+    "toolCommit": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+    "impact": {
+      "files": [
+        ".github/workflows/node-checks.yml",
+        ".marc/config.json",
+        ".marc/gitleaksignore",
+        ".marc/policy.json",
+        ".marc/project.md",
+        ".marc/self-review.test.cjs",
+        "AGENTS.md",
+        "IMPROVEMENTS.md",
+        "README.md",
+        "docs/configuration.md",
+        "docs/contribution-checks.md",
+        "docs/repository-layout.md",
+        "evals/marc-crew-csharp/cases/candidate-instruction-override/input/after/src/Shop.Api/Configuration/ConnectionStrings.cs",
+        "evals/marc-crew-csharp/cases/policy-bound-to-io/input/after/src/Shop.Pricing/DiscountPolicy.cs",
+        "examples/python/.marc/policy.json",
+        "scripts/install-consumer.cjs",
+        "skills/marc-crew-captain/IMPROVEMENTS.md",
+        "skills/marc-crew-captain/references/evidence.md",
+        "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+        "skills/marc-crew-simplicity/SKILL.md",
+        "src/quality/IMPROVEMENTS.md",
+        "src/quality/agent-settings.cjs",
+        "src/quality/agent-settings.test.cjs",
+        "src/quality/authoring-skill.test.cjs",
+        "src/quality/auto-update.cjs",
+        "src/quality/auto-update.test.cjs",
+        "src/quality/catalogue-validation.cjs",
+        "src/quality/catalogue-validation.test.cjs",
+        "src/quality/ci-recovery.cjs",
+        "src/quality/ci-recovery.test.cjs",
+        "src/quality/config.cjs",
+        "src/quality/config.test.cjs",
+        "src/quality/coq.cjs",
+        "src/quality/crew.cjs",
+        "src/quality/crew.test.cjs",
+        "src/quality/eval-corpus.cjs",
+        "src/quality/eval-corpus.test.cjs",
+        "src/quality/fixtures/policy.json",
+        "src/quality/forwarders.cjs",
+        "src/quality/iac-coverage.test.cjs",
+        "src/quality/installation.test.cjs",
+        "src/quality/language-coverage.test.cjs",
+        "src/quality/marc-migration.test.cjs",
+        "src/quality/marc.cjs",
+        "src/quality/marc.test.cjs",
+        "src/quality/merge.test.cjs",
+        "src/quality/operator-approval.cjs",
+        "src/quality/operator-approval.test.cjs",
+        "src/quality/project-review.cjs",
+        "src/quality/project-review.test.cjs",
+        "src/quality/prompt-eval-plan.cjs",
+        "src/quality/prompt-eval-plan.test.cjs",
+        "src/quality/reports.test.cjs",
+        "src/quality/scans.cjs",
+        "src/quality/scans.test.cjs",
+        "src/quality/stages.cjs",
+        "src/quality/stages.test.cjs",
+        "src/quality/upgrade.cjs",
+        "src/quality/upgrade.test.cjs",
+        "templates/consumer-loader.cjs"
+      ],
+      "technologies": [
+        "csharp",
+        "github-actions",
+        "javascript"
+      ],
+      "reasons": [
+        ".github/workflows/node-checks.yml: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+        ".github/workflows/node-checks.yml: shared configuration/instruction/dependency impact.",
+        ".marc/config.json: shared configuration/instruction/dependency impact.",
+        ".marc/gitleaksignore: shared configuration/instruction/dependency impact.",
+        ".marc/policy.json: shared configuration/instruction/dependency impact.",
+        ".marc/project.md: shared configuration/instruction/dependency impact.",
+        ".marc/self-review.test.cjs: shared configuration/instruction/dependency impact.",
+        "AGENTS.md: shared configuration/instruction/dependency impact.",
+        "Inspected 23 changed and 37 referenced files in both revisions.",
+        "scripts/install-consumer.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "scripts/install-consumer.cjs: shared configuration/instruction/dependency impact.",
+        "skills/marc-crew-simplicity/SKILL.md: shared configuration/instruction/dependency impact.",
+        "src/quality/agent-settings.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/agent-settings.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/authoring-skill.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/auto-update.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/auto-update.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/catalogue-validation.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/catalogue-validation.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+        "src/quality/catalogue-validation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/ci-recovery.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/ci-recovery.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/config.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/config.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/coq.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/crew.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/crew.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/eval-corpus.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/eval-corpus.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/forwarders.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/iac-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/installation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/language-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/marc-migration.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/marc.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/marc.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/merge.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/operator-approval.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/operator-approval.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/project-review.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/project-review.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/prompt-eval-plan.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/prompt-eval-plan.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/reports.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/scans.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/scans.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+        "src/quality/scans.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/stages.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/stages.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/upgrade.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+        "src/quality/upgrade.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24."
+      ],
+      "holds": [
+        "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+        "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval."
+      ],
+      "uncertain": true,
+      "requiresBrowser": false
+    },
+    "selected": [
+      {
+        "id": "csharp",
+        "version": "1.1.0",
+        "contentHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+        "skill": "skills/marc-crew-csharp/SKILL.md",
+        "reasons": [
+          "Uncertain impact requires broader configured expertise."
+        ]
+      },
+      {
+        "id": "github-actions",
+        "version": "1.0.0",
+        "contentHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+        "skill": "skills/marc-crew-github-actions/SKILL.md",
+        "reasons": [
+          "Uncertain impact requires broader configured expertise."
+        ]
+      },
+      {
+        "id": "javascript",
+        "version": "1.0.0",
+        "contentHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+        "skill": "skills/marc-crew-javascript/SKILL.md",
+        "reasons": [
+          "Uncertain impact requires broader configured expertise."
+        ]
+      }
+    ],
+    "omitted": [],
+    "holds": [
+      "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+      "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval."
+    ],
+    "requiresFull": true,
+    "requiresBrowser": false,
+    "selectionHash": "81e97768dc2ed327d0fe8804dbe58089a5248c83ebc3ff9792092980fd0aae47"
+  },
+  "coordinator": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+  "repairReviewers": [],
+  "routing": {
+    "verdict": "blocked",
+    "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+    "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+    "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+    "reviewer": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+    "route": "full",
+    "summary": "Preflight held: the PR lacks current master and its new CI evidence workflow. Shared policy/controller behavior requires full independent review after prerequisites are resolved.",
+    "evidence": [
+      "Captured baseIncluded=false; exact-source run 35989780691 has only the two Node jobs and zero artifacts.",
+      "Trusted crew capture reports unclassified policy fixtures at examples/python/.marc/policy.json and src/quality/fixtures/policy.json."
+    ],
+    "findings": [],
+    "risks": [
+      "Assurance policy/controller behavior",
+      "Current base missing",
+      "Required source scan and artifacts missing",
+      "Unclassified fixture impact"
+    ],
+    "execution": {
+      "settings": {
+        "model": {
+          "source": "captain",
+          "value": null
+        },
+        "reasoningEffort": {
+          "source": "captain",
+          "value": null
+        }
+      },
+      "applied": true,
+      "evidence": "Captain routing in active Codex session 01a0d2f8-78e8-7981-933e-4fa306f517a0 with unchanged inherited model and reasoning settings."
+    }
+  },
+  "reportFormat": "marc-v3",
+  "reportCreatedAt": "2026-09-24T20:45:00.000Z",
+  "stages": [
+    {
+      "kind": "review",
+      "repository": "wallism/marc",
+      "pr": 6,
+      "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+      "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+      "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+      "repairCycles": 0,
+      "decision": {
+        "eligible": false,
+        "merge": false,
+        "reasons": [
+          "PR must include captured master before validation",
+          "Sensitive files require a human decision through --operator-approval",
+          "Successful current CI missing",
+          "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+          "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval.",
+          "crew:csharp: stale member or selection identity",
+          "crew:github-actions: stale member or selection identity",
+          "crew:javascript: stale member or selection identity",
+          "security: unresolved result cannot be discarded or outvoted",
+          "correctness: unresolved result cannot be discarded or outvoted",
+          "code-quality: unresolved result cannot be discarded or outvoted",
+          "test-integrity: unresolved result cannot be discarded or outvoted",
+          "security: missing, stale or blocking evidence",
+          "correctness: missing, stale or blocking evidence",
+          "code-quality: missing, stale or blocking evidence",
+          "test-integrity: missing, stale or blocking evidence",
+          "crew:csharp: missing, stale or blocking evidence",
+          "crew:github-actions: missing, stale or blocking evidence",
+          "crew:javascript: missing, stale or blocking evidence",
+          "security: agent settings application evidence missing",
+          "security: stale model selection",
+          "security: stale reasoningEffort selection",
+          "correctness: agent settings application evidence missing",
+          "correctness: stale model selection",
+          "correctness: stale reasoningEffort selection",
+          "code-quality: agent settings application evidence missing",
+          "code-quality: stale model selection",
+          "code-quality: stale reasoningEffort selection",
+          "test-integrity: agent settings application evidence missing",
+          "test-integrity: stale model selection",
+          "test-integrity: stale reasoningEffort selection",
+          "crew:csharp: agent settings application evidence missing",
+          "crew:csharp: stale model selection",
+          "crew:csharp: stale reasoningEffort selection",
+          "crew:github-actions: agent settings application evidence missing",
+          "crew:github-actions: stale model selection",
+          "crew:github-actions: stale reasoningEffort selection",
+          "crew:javascript: agent settings application evidence missing",
+          "crew:javascript: stale model selection",
+          "crew:javascript: stale reasoningEffort selection"
+        ]
+      },
+      "routing": {
+        "verdict": "blocked",
+        "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+        "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+        "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+        "reviewer": "01a0d2f8-78e8-7981-933e-4fa306f517a0",
+        "route": "full",
+        "summary": "Preflight held: the PR lacks current master and its new CI evidence workflow. Shared policy/controller behavior requires full independent review after prerequisites are resolved.",
+        "evidence": [
+          "Captured baseIncluded=false; exact-source run 35989780691 has only the two Node jobs and zero artifacts.",
+          "Trusted crew capture reports unclassified policy fixtures at examples/python/.marc/policy.json and src/quality/fixtures/policy.json."
+        ],
+        "findings": [],
+        "risks": [
+          "Assurance policy/controller behavior",
+          "Current base missing",
+          "Required source scan and artifacts missing",
+          "Unclassified fixture impact"
+        ],
+        "execution": {
+          "settings": {
+            "model": {
+              "source": "captain",
+              "value": null
+            },
+            "reasoningEffort": {
+              "source": "captain",
+              "value": null
+            }
+          },
+          "applied": true,
+          "evidence": "Captain routing in active Codex session 01a0d2f8-78e8-7981-933e-4fa306f517a0 with unchanged inherited model and reasoning settings."
+        }
+      },
+      "crew": {
+        "schema": 1,
+        "compatibility": "marc-crew-v1",
+        "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+        "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+        "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+        "toolCommit": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+        "impact": {
+          "files": [
+            ".github/workflows/node-checks.yml",
+            ".marc/config.json",
+            ".marc/gitleaksignore",
+            ".marc/policy.json",
+            ".marc/project.md",
+            ".marc/self-review.test.cjs",
+            "AGENTS.md",
+            "IMPROVEMENTS.md",
+            "README.md",
+            "docs/configuration.md",
+            "docs/contribution-checks.md",
+            "docs/repository-layout.md",
+            "evals/marc-crew-csharp/cases/candidate-instruction-override/input/after/src/Shop.Api/Configuration/ConnectionStrings.cs",
+            "evals/marc-crew-csharp/cases/policy-bound-to-io/input/after/src/Shop.Pricing/DiscountPolicy.cs",
+            "examples/python/.marc/policy.json",
+            "scripts/install-consumer.cjs",
+            "skills/marc-crew-captain/IMPROVEMENTS.md",
+            "skills/marc-crew-captain/references/evidence.md",
+            "skills/marc-crew-simplicity/IMPROVEMENTS.md",
+            "skills/marc-crew-simplicity/SKILL.md",
+            "src/quality/IMPROVEMENTS.md",
+            "src/quality/agent-settings.cjs",
+            "src/quality/agent-settings.test.cjs",
+            "src/quality/authoring-skill.test.cjs",
+            "src/quality/auto-update.cjs",
+            "src/quality/auto-update.test.cjs",
+            "src/quality/catalogue-validation.cjs",
+            "src/quality/catalogue-validation.test.cjs",
+            "src/quality/ci-recovery.cjs",
+            "src/quality/ci-recovery.test.cjs",
+            "src/quality/config.cjs",
+            "src/quality/config.test.cjs",
+            "src/quality/coq.cjs",
+            "src/quality/crew.cjs",
+            "src/quality/crew.test.cjs",
+            "src/quality/eval-corpus.cjs",
+            "src/quality/eval-corpus.test.cjs",
+            "src/quality/fixtures/policy.json",
+            "src/quality/forwarders.cjs",
+            "src/quality/iac-coverage.test.cjs",
+            "src/quality/installation.test.cjs",
+            "src/quality/language-coverage.test.cjs",
+            "src/quality/marc-migration.test.cjs",
+            "src/quality/marc.cjs",
+            "src/quality/marc.test.cjs",
+            "src/quality/merge.test.cjs",
+            "src/quality/operator-approval.cjs",
+            "src/quality/operator-approval.test.cjs",
+            "src/quality/project-review.cjs",
+            "src/quality/project-review.test.cjs",
+            "src/quality/prompt-eval-plan.cjs",
+            "src/quality/prompt-eval-plan.test.cjs",
+            "src/quality/reports.test.cjs",
+            "src/quality/scans.cjs",
+            "src/quality/scans.test.cjs",
+            "src/quality/stages.cjs",
+            "src/quality/stages.test.cjs",
+            "src/quality/upgrade.cjs",
+            "src/quality/upgrade.test.cjs",
+            "templates/consumer-loader.cjs"
+          ],
+          "technologies": [
+            "csharp",
+            "github-actions",
+            "javascript"
+          ],
+          "reasons": [
+            ".github/workflows/node-checks.yml: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            ".github/workflows/node-checks.yml: shared configuration/instruction/dependency impact.",
+            ".marc/config.json: shared configuration/instruction/dependency impact.",
+            ".marc/gitleaksignore: shared configuration/instruction/dependency impact.",
+            ".marc/policy.json: shared configuration/instruction/dependency impact.",
+            ".marc/project.md: shared configuration/instruction/dependency impact.",
+            ".marc/self-review.test.cjs: shared configuration/instruction/dependency impact.",
+            "AGENTS.md: shared configuration/instruction/dependency impact.",
+            "Inspected 23 changed and 37 referenced files in both revisions.",
+            "scripts/install-consumer.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "scripts/install-consumer.cjs: shared configuration/instruction/dependency impact.",
+            "skills/marc-crew-simplicity/SKILL.md: shared configuration/instruction/dependency impact.",
+            "src/quality/agent-settings.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/agent-settings.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/authoring-skill.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/auto-update.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/catalogue-validation.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/catalogue-validation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/ci-recovery.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/config.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/coq.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/crew.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/eval-corpus.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/forwarders.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/iac-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/installation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/language-coverage.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc-migration.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/marc.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/merge.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/operator-approval.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/project-review.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/prompt-eval-plan.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/reports.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/scans.cjs: Workflows invoke these validation and scan entry points; changes can alter hosted evidence.",
+            "src/quality/scans.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/stages.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+            "src/quality/upgrade.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24."
+          ],
+          "holds": [
+            "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+            "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval."
+          ],
+          "uncertain": true,
+          "requiresBrowser": false
+        },
+        "selected": [
+          {
+            "id": "csharp",
+            "version": "1.1.0",
+            "contentHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+            "skill": "skills/marc-crew-csharp/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "github-actions",
+            "version": "1.0.0",
+            "contentHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+            "skill": "skills/marc-crew-github-actions/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          },
+          {
+            "id": "javascript",
+            "version": "1.0.0",
+            "contentHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+            "skill": "skills/marc-crew-javascript/SKILL.md",
+            "reasons": [
+              "Uncertain impact requires broader configured expertise."
+            ]
+          }
+        ],
+        "omitted": [],
+        "holds": [
+          "Unclassified impact: examples/python/.marc/policy.json; configure its technology/consumers before approval.",
+          "Unclassified impact: src/quality/fixtures/policy.json; configure its technology/consumers before approval."
+        ],
+        "requiresFull": true,
+        "requiresBrowser": false,
+        "selectionHash": "81e97768dc2ed327d0fe8804dbe58089a5248c83ebc3ff9792092980fd0aae47"
+      },
+      "gates": {
+        "security": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        },
+        "correctness": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        },
+        "code-quality": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        },
+        "test-integrity": {
+          "verdict": "blocked",
+          "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+          "base": "10f4be545b98421e6a1d7d2f4f56ef3a6272d77a",
+          "policyHash": "6ddfb8c041fbb008a809745392c1a11f082ca499bed3b85590cb6e4c305e6442",
+          "reviewer": "",
+          "summary": "Not run: base, hosted evidence and crew configuration prerequisites remain unresolved. No independent approval claimed.",
+          "evidence": [],
+          "findings": []
+        }
+      },
+      "ci": {
+        "sourceHead": "6b987bea6131329d8203356a08e88cfd78c59992",
+        "runUrl": "https://github.com/wallism/marc/actions/runs/35989780691",
+        "runId": 35989780691,
+        "runAttempt": 1,
+        "conclusion": "success",
+        "verdict": "blocked",
+        "status": "incomplete",
+        "reason": "Required jobs missing, duplicated or unsuccessful",
+        "jobs": [
+          {
+            "name": "Node 24 (windows-latest)",
+            "conclusion": "success"
+          },
+          {
+            "name": "Node 24 (ubuntu-latest)",
+            "conclusion": "success"
+          }
+        ]
+      },
+      "projectChanges": [],
+      "repairExecutions": [],
+      "recordedAt": "2026-09-24T20:45:37.633Z",
+      "previousHash": null,
+      "contentHash": "da620675290401013dabc3fed0b186513e5c6528199c77b78e6e889acb70cce8",
+      "hash": "7453db5514d2e403afc3c650a9c4a22c09ac8dbb131bfde2afafb205c1a2b0c3"
+    }
+  ]
+}

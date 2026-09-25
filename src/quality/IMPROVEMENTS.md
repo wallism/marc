@@ -4,6 +4,18 @@
 
 Added versioned, lossless JSON audit publication: identical evidence is referenced once, nearly identical ordered inventories use a splice, and short containers render inline. The bundled reader recovers complete evidence, including stage hashes, independent findings and all impact files. External evidence, journal integrity, current gates and exact-byte publication verification retain their roles; already prepared reports preserve historical bytes. Focused synthetic tests cover reconstruction, malformed references, special keys, legacy publication and current verification. Consumer reports and pins are unchanged. See [format and reader](../../docs/audit-reports.md).
 
+## 2026-09-25 — Automatic self-review authority
+
+The owner explicitly requested automatic mode for MARC's own repository after its first successful report-only assessment. Set only its policy mode to automatic and align self-review guidance and the existing configuration test. Required reviews, exact-source CI, sensitive-path approval, integrity checks, budgets and deployment separation remain enforced. New consumer setup defaults and automatic tool updates remain unchanged. Activation on trusted master changes policy identity and requires fresh capture/review before pending PRs can merge.
+
+## 2026-09-25 — Self-review policy fixture mappings
+
+The first PR #6 self-review held two policy JSON files as unclassified. Map only the Python example policy and controller policy fixture to their actual Node consumers in self-review governance. A focused regression reproduces the original holds, verifies JavaScript selection after the mappings, and keeps an unknown JSON fixture held. Shared-impact broadening, required reviews, report-only mode and sensitive-path approval remain unchanged. Activation requires this governance on trusted master and a fresh capture; prior reports remain immutable.
+
+## 2026-09-25 — Self-review bootstrap
+
+Added MARC's own `.marc/` configuration using existing resolver and trusted-checkout guards, with report-only mode, updates off, inherited agents, 50 files, 3,000 lines, two repair cycles and portable external state. Repository-specific producer/CI/crew mappings stay in that governance directory. Hosted Node checks now emit JUnit artifacts and the shared Gitleaks wrapper emits sanitized scan evidence with an empty exception file. Focused integration checks cover defaults, producers, governance protection, specialist availability, artifact wiring and rejection of candidate controllers. Initial governance still requires maintainer landing before a trusted self-review can start; no runtime guard, merge authority or other consumer configuration was changed.
+
 ## 2026-09-24 — Exclude documentation and tests from line budgets
 
 Raised the supplied fixture and example policy defaults to 3,000 counted lines and 50 counted files at the owner's request. Boundary regressions cover 3,000/3,001 lines, 50/51 files and consumer overrides both below and above the defaults. Documentation/tests are excluded from both hard limits and the simple-route advisory guides, which remain five counted files and 200 counted lines. Existing consumer policies remain explicit and unchanged.
