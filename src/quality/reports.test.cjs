@@ -118,15 +118,17 @@ function fixture(t) {
     decision: { eligible: false, merge: false, reasons: ['Synthetic held report'] } };
 }
 
-for (const format of ['legacy-sha', 'legacy-dated', 'marc-v1', 'marc-v2', 'marc-v3']) test(`${format} report verification binds the exact pair, source and bytes`, t => {
+for (const format of ['legacy-sha', 'legacy-dated', 'marc-v1', 'marc-v2', 'marc-v3', 'compact-audit']) test(`${format} report verification binds the exact pair, source and bytes`, t => {
   const { root, git, e: original, decision } = fixture(t);
   const dated = format !== 'legacy-sha';
-  const e = format.startsWith('marc-') ? { ...prepareReport(original, new Date('2026-09-13T10:45:00Z')), reportFormat: format } :
+  const e = format === 'compact-audit' ? prepareReport(original, new Date('2026-09-13T10:45:00Z')) :
+    format.startsWith('marc-') ? { ...original, reportCreatedAt: '2026-09-13T10:45:00.000Z', reportFormat: format } :
     dated ? { ...original, reportCreatedAt: '2026-09-12T10:45:00.000Z' } : original;
   const paths = writeReportFiles(e, decision, root);
   git('add', '.'); git('commit', '-m', 'report');
   const live = { head: { sha: git('rev-parse', 'HEAD') } };
   assert.doesNotThrow(() => verifyReportCommit(e, live, decision, git));
+  assert.deepEqual(require('./audit.cjs').expandAudit(JSON.parse(fs.readFileSync(path.join(root, paths[0]), 'utf8'))), e);
   assert.deepEqual(changedFiles(e.sourceHead, live.head.sha, e.pr, git), []);
   if (dated) assert.throws(() => verifyReportCommit({ ...e, reportCreatedAt: '2026-09-12T10:46:00.000Z' }, live, decision, git), /exact report files/);
   assert.throws(() => verifyReportCommit({ ...e, policyHash: 'tampered' }, live, decision, git), /differs/);

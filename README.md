@@ -30,6 +30,8 @@ See [crew selection rules](docs/crew.md#consumer-selection) and the [infographic
 
 After a repair, selection is recomputed from the full PR diff. Verified application npm dependency changes require full review while retaining their trusted technology scope. Reports show chronological assessment stages, with each review's selected crew, selection reasons and results, plus recorded repair and CI outcomes.
 
+The Markdown report is the readable summary. Its JSON audit shares repeated evidence and records inventory differences without dropping files or findings. See [audit reports and the lossless reader](docs/audit-reports.md).
+
 ## Crew models and reasoning
 
 By default, crew members use the Captain's model and reasoning settings; no model configuration is needed. You can optionally set crew-wide defaults or per-member overrides in the consumer's `.marc/config.json`. The model and reasoning level must be available in your harness. See the [optional JSON configuration](docs/configuration.md#optional-crew-model-overrides).

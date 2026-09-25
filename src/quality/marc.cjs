@@ -7,6 +7,7 @@ const { collectProjectChanges, verifyProjectChanges, dependencyReviewPasses, dep
 const { loadCatalogue, selectCrew, collectImpact } = require('./crew.cjs');
 const { executionReasons, agentTable } = require('./agent-settings.cjs');
 const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
+const { auditJson } = require('./audit.cjs');
 const { loadOperatorApproval, checkOperatorApproval, parseOperatorApproval } = require('./operator-approval.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
@@ -56,7 +57,7 @@ function reportPaths(pr, head, reportCreatedAt, reportFormat) {
 const datedReportNames = (pr, head, reportCreatedAt) =>
   [...reportPaths(pr, head, reportCreatedAt), ...reportPaths(pr, head, reportCreatedAt, 'marc-v3')];
 function prepareReport(e, now = new Date()) {
-  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v3' } : {}),
+  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v3', auditFormat: 'marc-audit-v1' } : {}),
     reportCreatedAt: e.reportCreatedAt === undefined ?
     now.toISOString().slice(0, 16) + ':00.000Z' : e.reportCreatedAt };
   reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt, prepared.reportFormat);
@@ -81,7 +82,7 @@ function writeReportFiles(e, decision, worktree) {
   // Minute collisions fail closed before either member of an existing pair is touched.
   if (files.some(file => fs.lstatSync(path.join(worktree, file), { throwIfNoEntry: false })))
     throw Error('Report name already exists; preserve existing evidence and inspect the minute collision');
-  const contents = [encode(e), reportMarkdown(e, decision)];
+  const contents = [auditJson(e), reportMarkdown(e, decision)];
   files.forEach((file, i) => {
     const target = path.join(worktree, file);
     fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -299,7 +300,7 @@ function verifyReportCommit(e, live, decision, readGit) {
   readGit('merge-base', '--is-ancestor', e.sourceHead, live.head.sha);
   const changed = readGit('diff', '--name-only', '--no-renames', '-z', e.sourceHead, live.head.sha, '--').split('\0').filter(Boolean);
   if (changed.length !== 2 || changed.some(f => !paths.includes(f))) throw Error('Changes after review exceed the exact report files');
-  const expected = [encode(e), reportMarkdown(e, decision)];
+  const expected = [auditJson(e), reportMarkdown(e, decision)];
   paths.forEach((f, i) => {
     if (!readGit('ls-tree', live.head.sha, '--', f).startsWith('100644 blob ')) throw Error('Report is not a regular file');
     if (readGit('show', `${live.head.sha}:${f}`) !== expected[i].trimEnd()) throw Error('Published report differs from trusted evidence');
