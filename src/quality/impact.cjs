@@ -78,6 +78,9 @@ function discoverReferences(base, head, changed, readGit, isSource) {
     if (!cache.has(key)) {
       const entry = readGit('ls-tree', revision, '--', file);
       if (!entry) { cache.set(key, null); return null; } // Added/deleted in this revision.
+      // Gitlinks name commits in another repository, not readable source blobs.
+      // Keep the changed path in the inventory and its ordinary policy gates.
+      if (/^160000 commit [a-f0-9]{40}\t/.test(entry)) { cache.set(key, null); return null; }
       if (!entry.startsWith('100644 blob ') && !entry.startsWith('100755 blob ')) throw Error('Nonregular impact source');
       cache.set(key, source(readGit('show', key), file));
     }
