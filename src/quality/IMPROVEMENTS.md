@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-27 — Optional companions and static intent assessment
+
+Separate optional companion skills from required crew installation. Capture PR intent, require independent static alignment evidence on both routes and hold intent repairs for human approval. Bind queue, assessment and live checks to intent while preserving valid reviews and CI on intent-only edits. Verify immutable report ancestry across reassessments and show succinct human action near the report top. Synthetic tests cover parsing, route enforcement, queue wakeups, selective refresh and report/CI reuse. No runtime execution, consumer activation or merge-authority change.
+
 ## 2026-09-26 — Submodule upgrade discovery and CI compatibility
 
 RoleSage's upgrade PR exposed two upgrade blockers: lexical discovery attempted to parse a Git commit entry as a source blob, and upstream CI verification required a test-step name replaced by the evidence-producing workflow. Treat gitlinks as opaque dependency pins while preserving changed-path inventories, governance/classification, independent review and human gates; other nonregular or unreadable source remains held. Accept exactly one successful current or legacy test step on each exact-commit platform job. Real-Git add/update/delete pin regressions and failure/duplicate-step tests cover these boundaries. Local replay of the blocked upgrade verifies discovery without altering its trusted assessment. Publication, consumer pin activation and fresh review remain separate.

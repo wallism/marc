@@ -9,6 +9,8 @@ Read the Captain's resolved consumer configuration and relevant trusted project/
 
 Accept only a MARC-issued repair request containing captured source/base, allowed files, concrete blocking findings, remaining repair budget and explicit authorization for source changes. Report-only mode does not authorize repairs. Policy/high-risk exceptions and unresolved business decisions go to the user.
 
+Intent-assessment proposals additionally require explicit human approval of the suggested change and reason, recorded in the trusted Captain handoff. Automatic-mode authorization alone is insufficient. Do not apply an intent-related proposal under another gate's label, or edit PR intent, linked tickets or work files to make code appear aligned. Without that approval, return the proposal and reason as human action required. Independent non-intent repairs retain their existing rules.
+
 Run in a fresh agent session for this repair cycle, without the Captain's conversation history. Use its compact handoff and trusted artifact paths; inspect the actual owning source as needed. Return a terse summary plus a dedicated external repair-evidence artifact. Do not edit other gate artifacts or the Captain's shared evidence document.
 
 Use the verified producer branch in its isolated worktree. Trace each finding at its owning seam. Write a meaningful red regression first for demonstrated bugs, make the smallest durable fix, then validate green in a sandbox without production/merge credentials. If that environment is unavailable, return blocked. Preserve unrelated changes, existing tests, approved snapshots and tenant/security/data boundaries. Do not weaken gates, suppress scan findings, change policy, run model evals or add discretionary improvements.

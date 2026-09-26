@@ -39,8 +39,10 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   assert.equal(resolved.toolCommit, pin);
   assert.equal(resolved.bundleRoot, path.join(consumer, '.marc/tool'));
   const info = JSON.parse(run('scripts/quality/bundle.cjs'));
-  assert.deepEqual(fs.readdirSync(path.join(consumer, '.agents/skills')).sort(), fs.readdirSync(path.join(source, 'skills')).sort());
-  for (const name of fs.readdirSync(path.join(source, 'skills'))) {
+  const crewSkills = fs.readdirSync(path.join(source, 'skills')).filter(name => name.startsWith('marc-crew-'));
+  assert.deepEqual(fs.readdirSync(path.join(consumer, '.agents/skills')).sort(), crewSkills.sort());
+  assert.ok(!plan.planned.some(file => file.includes('marc-companion-')), 'default setup never installs companions');
+  for (const name of crewSkills) {
     const forwarded = fs.readFileSync(path.join(consumer, '.agents/skills', name, 'SKILL.md'), 'utf8');
     assert.ok(forwarded.includes('name: ' + name));
     assert.ok(forwarded.includes('.marc/tool/skills/' + name + '/SKILL.md'));
@@ -107,7 +109,8 @@ for (const shortPath of [false, true]) test(`installed consumer resolves the pin
   assert.equal(fs.existsSync(path.join(consumer, '.cursor')), false);
   assert.equal(fs.readFileSync(custom, 'utf8'), codexBytes);
   assert.equal(fs.readFileSync(file, 'utf8'), settingsBytes);
-  for (const name of fs.readdirSync(path.join(source, 'skills')))
+  assert.ok(!added.created.some(file => file.includes('marc-companion-')), 'companions stay optional for every host');
+  for (const name of crewSkills)
     assert.equal(fs.readFileSync(path.join(consumer, '.claude/skills', name, 'SKILL.md'), 'utf8'),
       fs.readFileSync(path.join(consumer, '.agents/skills', name, 'SKILL.md'), 'utf8'));
   const claude = path.join(consumer, '.claude/skills/marc-crew-captain/SKILL.md');

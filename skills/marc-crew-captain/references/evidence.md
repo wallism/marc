@@ -1,5 +1,9 @@
 # Gate evidence contract, version 1
 
+## Explicit PR intent
+
+New captures include controller-owned `intent` with schema, status, normalized paragraph, entries and hash. Follow the [static intent contract](intent.md) for the conditional `gates.intent` result on both routes, human-approved repair boundary and intent-only refresh command. Capture fields are not reviewer-editable. Confidence is qualitative and never overrides a finding. Reports put a succinct current intent assessment and required human action near the top; stages retain the complete captured intent and gate result in the audit. Prior report-only ancestry retained by refresh is evidence, not permission to modify historical reports or reuse changed source.
+
 ## Impact scope
 
 All reviewers must apply the shared [language-specific impact guidance](language-impact.md) for affected languages, including caller relationships lexical discovery cannot resolve and rules against expanding whole projects from incidental matches.

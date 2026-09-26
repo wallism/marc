@@ -30,6 +30,8 @@ test('separate consumers resolve their own repository, base, CI and state', t =>
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, agents: { members: { security: { model: 'host-model' } } } }));
   assert.equal(loadConfig(a.repoRoot).agentSelections.security.model.value, 'host-model');
   assert.equal(loadConfig(a.repoRoot).agentSelections.correctness.model.source, 'captain');
+  fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, agents: { members: { intent: { model: 'intent-model' } } } }));
+  assert.equal(loadConfig(a.repoRoot).agentSelections.intent.model.value, 'intent-model');
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, agents: { members: { securty: { model: 'host-model' } } } }));
   assert.throws(() => loadConfig(a.repoRoot), /Unknown agent member/);
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, autoUpdate: false }));

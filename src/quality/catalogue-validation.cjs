@@ -36,16 +36,18 @@ function validateCatalogue(directory) {
   for (const name of mandatory) if (!skills.includes(name)) throw Error('Required skill missing: ' + name);
   for (const name of skills) {
     const folder = path.join(skillsRoot, name);
-    if (!/^marc-crew-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || fs.lstatSync(folder).isSymbolicLink() || !fs.statSync(folder).isDirectory())
+    const companion = name.startsWith('marc-companion-');
+    if (!/^marc-(?:crew|companion)-[a-z0-9]+(?:-[a-z0-9]+)*$/.test(name) || fs.lstatSync(folder).isSymbolicLink() || !fs.statSync(folder).isDirectory())
       throw Error('Invalid skill directory: ' + name);
     const skill = regular(path.join(folder, 'SKILL.md'));
     const metadata = skill.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
     if (!metadata || !new RegExp('^name: ' + name + '\\r?$', 'm').test(metadata) || !/^description: \S.+$/m.test(metadata))
       throw Error('Invalid skill metadata: ' + name);
-    if (!regular(path.join(folder, 'IMPROVEMENTS.md')).trim()) throw Error('Empty improvement register: ' + name);
+    if (!companion && !regular(path.join(folder, 'IMPROVEMENTS.md')).trim()) throw Error('Empty improvement register: ' + name);
     const manifestFile = path.join(folder, 'crew.json');
     if (authoring.includes(name) && fs.existsSync(manifestFile)) throw Error('Authoring skill cannot declare a review manifest: ' + name);
-    if ((!mandatory.includes(name) && !authoring.includes(name)) || fs.existsSync(manifestFile)) {
+    if (companion && fs.existsSync(manifestFile)) throw Error('Companion skill cannot declare a review manifest: ' + name);
+    if ((!mandatory.includes(name) && !authoring.includes(name) && !companion) || fs.existsSync(manifestFile)) {
       const member = JSON.parse(regular(manifestFile));
       validateMember(member, { id: name.slice('marc-crew-'.length), version: member.version });
       members.push(member.id);
