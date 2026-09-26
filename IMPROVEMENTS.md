@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-09-26 | Controller | Distinguish Razor code-behind properties from same-named component references without increasing discovery budgets. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-26--razor-companion-member-collisions) |
 | 2026-09-26 | Controller and Captain | Filter native-language noise and clarify relevant caller scope for all 15 language reviewers. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-26--native-language-impact-filtering), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-26--scope-rules-for-every-covered-language) |
 | 2026-09-26 | Controller and Captain | Trace relevant code references, separate changed/unchanged scope, and hold incomplete discovery while retaining behavioral caller review. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-26--relevant-impact-discovery), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-09-26--behavioral-caller-review-and-relevant-discovery) |
 | 2026-09-25 | Controller | Publish concise, lossless audits with shared evidence and ordered inventory differences; retain historical bytes and exact verification. | [Controller](src/quality/IMPROVEMENTS.md#2026-09-25--concise-audit-publication) |

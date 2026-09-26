@@ -151,6 +151,14 @@ function discoverReferences(base, head, changed, readGit, isSource) {
           if (file.startsWith('.quality/') || prose(file) || !isSource(file)) continue;
           if (candidates.length >= 600) { stop('Reference candidate budget reached; resolve missing scope before approval.'); break; }
           const parsed = read(revision, file); if (!parsed) throw Error('Missing reference source');
+          // Razor expressions share members with their code-behind component.
+          // A property spelling must not become an edge to an unrelated type.
+          if (/\.razor$/i.test(file)) {
+            const companion = read(revision, file + '.cs');
+            for (const owner of companion?.declarations.filter(d => d.type && d.name === stem(file)) || [])
+              source(companion.code.slice(owner.start, owner.end), file + '.cs').members
+                .forEach(name => parsed.members.add(name));
+          }
           candidates.push({ file, parsed });
           if (parsed.namespace) for (const d of parsed.declarations) {
             if (!namespaces.has(d.name)) namespaces.set(d.name, new Set());

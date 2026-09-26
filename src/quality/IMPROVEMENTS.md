@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-26 — Razor companion member collisions
+
+Include the matching code-behind component's members when filtering Razor identifier references, separately for each captured revision. A property-name collision was expanding RoleSage PR 43 into unrelated components and exhausting the four-round discovery budget. Retain explicit component/type references, unrelated-class boundaries, all discovery budgets and incomplete-scope holds. Synthetic regression coverage and a read-only local replay of the frozen PR verify the correction; activation still requires a published MARC version, trusted consumer pin update and fresh assessment. No consumer governance or prior reports are changed.
+
 ## 2026-09-26 — Native language impact filtering
 
 Inspected all 15 language members. Added native comment/string masking to prevent VB, SQL, R, Fortran, Delphi and PHP comment hits becoming impact evidence; preserve Python floor division, SQL quoted identifiers and Rust lifetimes while masking ordinary literals. Treat Scratch archives/binary blobs as opaque and stop propagation through common Go/Python/Java test names. Real-Git regressions retain code leads across all 14 text languages while rejecting native noise, substring matches and archive text. This is lexical assistance, not universal caller resolution; the Captain's shared guide supplies semantic scope rules. Consumer mappings, member manifests and discovery holds are unchanged.
