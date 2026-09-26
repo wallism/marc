@@ -123,3 +123,39 @@ test('discovery exhaustion holds instead of recruiting unrelated technology expe
   assert.match(result.holds.join(' '), /depth budget/);
   assert.deepEqual(selectCrew({}, config, catalogue, result).selected.map(m => m.id), ['csharp']);
 });
+
+test('Razor code-behind members do not become same-named component dependencies', t => {
+  const { write, commit, capture } = fixture(t);
+  write('src/EmployerGroups.razor.cs', 'class EmployerGroups { int value = 1; }');
+  write('src/History.razor.cs', 'partial class History { public List<string> EmployerGroups { get; set; } }');
+  write('src/History.razor', '@if (EmployerGroups.Count == 0) { <p>Empty</p> }');
+  write('src/Profile.razor', '<History />');
+  write('src/ActualCaller.razor.cs', 'partial class ActualCaller { public string EmployerGroups { get; set; } }');
+  write('src/ActualCaller.razor', '<EmployerGroups />');
+  write('src/TypedCaller.razor.cs', 'partial class TypedCaller { public string EmployerGroups { get; set; } }');
+  write('src/TypedCaller.razor', '@typeof(EmployerGroups)');
+  write('src/UnrelatedMember.razor.cs', 'partial class UnrelatedMember {} class Other { public string EmployerGroups { get; set; } }');
+  write('src/UnrelatedMember.razor', '@EmployerGroups.Value');
+  const base = commit();
+  write('src/EmployerGroups.razor.cs', 'class EmployerGroups { int value = 2; }');
+  const result = capture(base, commit(), ['src/EmployerGroups.razor.cs']);
+  assert.ok(!result.files.includes('src/History.razor'));
+  assert.ok(!result.files.includes('src/Profile.razor'));
+  assert.ok(result.files.includes('src/ActualCaller.razor'));
+  assert.ok(result.files.includes('src/TypedCaller.razor'));
+  assert.ok(result.files.includes('src/UnrelatedMember.razor'));
+  assert.deepEqual(result.holds, []);
+});
+
+test('Razor companion members are resolved separately in each captured revision', t => {
+  const { write, commit, capture } = fixture(t);
+  write('src/Options.cs', 'class Options { public static int Count = 1; }');
+  write('src/View.razor', '@Options.Count');
+  write('src/View.razor.cs', 'partial class View {}');
+  const base = commit();
+  write('src/Options.cs', 'class Options { public static int Count = 2; }');
+  write('src/View.razor.cs', 'partial class View { public List<string> Options { get; set; } }');
+  const head = commit(), result = capture(base, head, ['src/Options.cs']);
+  assert.deepEqual(result.references.filter(r => r.file === 'src/View.razor').map(r => r.revision), [base]);
+  assert.deepEqual(result.holds, []);
+});
