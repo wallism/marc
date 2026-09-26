@@ -16,6 +16,7 @@ src/quality/              Existing controller, adapters, tests and fixtures
 skills/
   marc-crew-captain/       Captain SKILL.md, references and IMPROVEMENTS.md
   marc-crew-*/                 One folder and improvement register per crew member
+  marc-companion-*/        Optional user helpers, outside the required crew system
 docs/                     Configuration, setup prompt and architecture guidance
   work/                   Dated YYYYMMDD-topic-work.md research and delivery plans
 examples/                 Synthetic consumers with no inherited exceptions

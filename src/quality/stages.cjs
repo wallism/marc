@@ -20,7 +20,8 @@ function reviewStage(e, decision) {
     policyHash: e.policyHash, repairCycles: e.repairCycles || 0, decision: structuredClone(decision),
     routing: structuredClone(e.routing || { route: 'full' }), crew: structuredClone(e.crew || { selected: [], omitted: [] }),
     gates: structuredClone(e.gates || {}), ci: structuredClone(e.ci || {}), projectChanges: structuredClone(e.projectChanges || []),
-    repairExecutions: structuredClone(e.repairExecutions || []) };
+    repairExecutions: structuredClone(e.repairExecutions || []),
+    ...(e.intent ? { intent: structuredClone(e.intent) } : {}) };
 }
 
 function eventStage(e, event) {

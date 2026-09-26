@@ -94,6 +94,6 @@ For frequent checks, run the [reusable upgrade PR command](upgrades.md) from you
 
 ## Skill naming
 
-All published skill directories and frontmatter names use `marc-crew-<name>`, including `marc-crew-captain` and `marc-crew-creator`. Specialist manifest IDs and versions remain stable (for example, `csharp`); the controller resolves them under `skills/marc-crew-<id>`.
+System skill directories and frontmatter names use `marc-crew-<name>`, including `marc-crew-captain` and `marc-crew-creator`. Specialist manifest IDs and versions remain stable (for example, `csharp`); the controller resolves them under `skills/marc-crew-<id>`. Optional helpers use `marc-companion-<name>`, have no review manifest and are excluded from default installation and automatic crew forwarding. Install them only when selected; see [PR intent](pr-intent.md).
 
 When upgrading from the earlier names, regenerate consumer forwarding files with the pinned installer and remove obsolete MARC forwarding files as part of the reviewed integration change. Update saved skill invocations to the new names. The renamed bundle changes trusted identity and requires fresh evidence; this source change does not upgrade consumers or change merge authority.

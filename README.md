@@ -16,6 +16,12 @@ MARC is for repositories that want independent PR assurance, auditable decisions
 
 For a dedicated upgrade PR that stays current without duplicate branches, run `node .marc/tool/src/quality/upgrade.cjs --repo <trusted-consumer>`. It reuses `codex/marc-upgrade` and its open PR and can run from your preferred scheduler. See [reusable upgrade PRs](docs/upgrades.md).
 
+## Optional companions and PR intent
+
+The [PR intent companion](skills/marc-companion-pr-intent/SKILL.md) helps users explain why a PR is needed. It proposes an `INTENT:` paragraph and updates only that part of the description after human confirmation. Companions are separately selected helpers, not required crew members or Captain workflow steps.
+
+When a PR includes `INTENT:`, MARC independently assesses whether the code addresses it on both routes. This is static inspection, with succinct alignment/confidence reporting and prominent human-approved repair proposals. Intent-only edits repeat only that assessment, preserving other valid reviews and CI. See [installation, format and reassessment](docs/pr-intent.md).
+
 ## Which crew members run for a PR?
 
 **Configured specialists are available to the Captain; only those relevant to the PR are selected to run.** A large project can configure many members without calling them all into every review.

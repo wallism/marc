@@ -68,7 +68,7 @@ function loadConfig(repositoryRoot) {
   if (config.autoUpdate !== undefined && typeof config.autoUpdate !== 'boolean') throw Error('autoUpdate must be a boolean');
   if (config.crew !== undefined) require('./crew.cjs').validateCrewConfig(config.crew);
   const agentMembers = [...new Set(['simplicity', 'simple-tests', 'security', 'correctness', 'code-quality',
-    'test-integrity', 'browser', 'repair', ...policy.reviewGates, ...(config.crew?.members || []).map(m => m.id)])];
+    'test-integrity', 'browser', 'repair', 'intent', ...policy.reviewGates, ...(config.crew?.members || []).map(m => m.id)])];
   const { validateAgentSettings, resolveAgentSettings } = require('./agent-settings.cjs');
   validateAgentSettings(config.agents, agentMembers);
   const controllerDirectory = platformPath(config.controllerDirectory) || null;

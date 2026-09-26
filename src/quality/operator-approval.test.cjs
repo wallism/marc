@@ -92,13 +92,13 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   const e = { schema: 1, agentExecutionSchema: 1, repairExecutions: [], ...record,
     state: 'open', draft: false, target: 'master', headRepository: record.repository,
     author: 'maintainer', branch: 'bugfix/fixture', baseIncluded: true, files: ['AGENTS.md'],
-    changedLines: 0, repairCycles: 0, projectChanges: [],
+    changedLines: 0, repairCycles: 0, projectChanges: [], intent: require('./intent.cjs').captureIntent(null),
     ci: { verdict: 'pass', sourceHead, runId: 12, runAttempt: 1, runUrl: 'https://github.com/example/project/actions/runs/12' },
     gates: Object.fromEntries(policy.reviewGates.map(name => [name, { verdict: 'pass', sourceHead, base, policyHash,
       reviewer: name, summary: 'Checked', evidence: ['AGENTS.md:1'], findings: [],
       execution: { settings: resolveAgentSettings(undefined, name), applied: true, evidence: 'fixture receipt' } }])) };
   const evidence = path.join(root, 'evidence.json'); fs.writeFileSync(evidence, JSON.stringify(e));
-  let head = sourceHead, liveBase = base, drift = false, revokeAtLock = false;
+  let head = sourceHead, liveBase = base, drift = false, revokeAtLock = false, liveBody = null;
   const controller = createController(context, {
     git: (...args) => {
       if (args[0] === 'branch') return 'master';
@@ -119,7 +119,7 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
       endpoint.includes('/actions/') ? { workflow_runs: head !== sourceHead && endpoint.includes(`head_sha=${head}`) ? [] : [{ id: 12, run_attempt: 1,
         head_sha: new URL('https://example.invalid/' + endpoint).searchParams.get('head_sha'), event: 'push',
         status: 'completed', conclusion: 'success', html_url: 'https://github.com/example/project/actions/runs/12' }] } :
-      { state: 'open', draft: false, user: { login: e.author }, base: { ref: 'master' },
+      { state: 'open', draft: false, body: liveBody, user: { login: e.author }, base: { ref: 'master' },
         head: { sha: head, ref: e.branch, repo: { full_name: e.repository } } },
     readJobs: () => policy.requiredJobs.map(name => ({ name, conclusion: 'success' }))
   });
@@ -146,6 +146,24 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   const paths = reportPaths(e.pr, sourceHead, reported.reportCreatedAt, reported.reportFormat);
   assert.match(fs.readFileSync(path.join(candidate, paths[1]), 'utf8'), /Human sensitive-path approval/);
   head = commit();
+  liveBody = 'INTENT: Clarify the project contributor guidance.';
+  assert.throws(() => controller.run(['merge', evidence, '--operator-approval', file]), /intent changed/);
+  const refreshedFile = path.join(root, 'refreshed-intent.json');
+  controller.run(['refresh-intent', evidence, refreshedFile]);
+  const refreshed = JSON.parse(fs.readFileSync(refreshedFile));
+  assert.equal(refreshed.priorReports.at(-1).head, head);
+  assert.deepEqual(refreshed.ci, reported.ci);
+  refreshed.gates.intent = { ...refreshed.gates.correctness, reviewer: 'fresh-intent-reviewer',
+    intentHash: refreshed.intent.hash, method: 'static-code', assessment: 'aligned', confidence: 'high',
+    confidenceReason: 'The changed guidance implements the stated clarification.', unresolvedOutcomes: [],
+    execution: { settings: resolveAgentSettings(undefined, 'intent'), applied: true, evidence: 'fixture receipt' } };
+  fs.writeFileSync(refreshedFile, JSON.stringify(refreshed));
+  controller.run(['decide', refreshedFile, '--operator-approval', file]);
+  assert.equal(JSON.parse(output.mock.calls.at(-1).arguments[0]).eligible, true, 'prior report head does not invalidate unchanged source approval');
+  controller.run(['decide', refreshedFile]);
+  assert.equal(JSON.parse(output.mock.calls.at(-1).arguments[0]).eligible, false, 'approval still requires explicit operator input');
+  assert.throws(() => controller.run(['refresh-intent', evidence, refreshedFile]), /new external output file/);
+  liveBody = null;
   assert.throws(() => controller.run(['merge', evidence]), /Merge denied/);
   const changedAudit = { ...reported, humanApprovalAudit: { forged: true } };
   fs.writeFileSync(evidence, JSON.stringify(changedAudit));

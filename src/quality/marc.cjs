@@ -9,6 +9,7 @@ const { executionReasons, agentTable } = require('./agent-settings.cjs');
 const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
 const { auditJson } = require('./audit.cjs');
 const { loadOperatorApproval, checkOperatorApproval, parseOperatorApproval } = require('./operator-approval.cjs');
+const { captureIntent, intentReasons, refreshIntent, intentMarkdown } = require('./intent.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -27,7 +28,9 @@ function selectQueue(prs, p, { base, policyHash, completed = [] }) {
     if (pr.base.ref !== p.base) reasons.push(`Target is not ${p.base}`);
     if (pr.head.repo?.full_name !== p.repository) reasons.push('Foreign or unavailable source repository');
     if (!registeredProducer(pr.user.login, pr.head.ref, p)) reasons.push('Unregistered author/branch pair');
-    const key = digest(encode([pr.number, pr.head.sha, base, policyHash]));
+    const intent = captureIntent(pr.body);
+    const key = digest(encode([pr.number, pr.head.sha, base, policyHash,
+      ...(intent.status === 'absent' ? [] : [intent.hash])]));
     let status = 'held';
     if (!reasons.length) {
       if (completed.includes(key)) status = 'awaiting-change';
@@ -35,7 +38,7 @@ function selectQueue(prs, p, { base, policyHash, completed = [] }) {
       else status = 'deferred';
     }
     return { pr: pr.number, url: pr.html_url, title: pr.title, author: pr.user.login, branch: pr.head.ref,
-      sourceHead: pr.head.sha, base, policyHash, key, status, reasons };
+      sourceHead: pr.head.sha, base, policyHash, intentHash: intent.hash, key, status, reasons };
   });
 }
 // Formats published before the audit-naming cutover keep their original unsuffixed JSON name.
@@ -98,6 +101,7 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
   requireThat(e.state === 'open' && e.draft === false && e.target === p.base, `PR must be open, ready and target ${p.base}`);
   requireThat(registeredProducer(e.author, e.branch, p), 'Unregistered PR origin');
   requireThat(e.policyHash === policyHash, 'Policy changed since capture');
+  reasons.push(...intentReasons(e, p.intentSchema === 1));
   requireThat(e.baseIncluded === true, `PR must include captured ${p.base} before validation`);
   requireThat(Number.isInteger(e.repairCycles) && e.repairCycles >= 0 && e.repairCycles <= p.maxRepairCycles, 'Repair budget exceeded');
   const files = Array.isArray(e.files) ? e.files : [];
@@ -135,7 +139,7 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
     requireThat(['additive-tests', 'documentation', 'local-change'].includes(r.changeKind),
       'Simple route requires an explicit supported change kind');
     requireThat(!files.some(f => p.uiPathPatterns.some(pattern => new RegExp(pattern, 'i').test(f))) &&
-      !Object.values(e.gates || {}).some(g => g.requiresBrowser === true), 'Simple route has UI impact; use full review');
+      !Object.entries(e.gates || {}).some(([name, g]) => name !== 'intent' && g.requiresBrowser === true), 'Simple route has UI impact; use full review');
     requireThat(r.verdict === 'pass' && r.sourceHead === e.sourceHead && r.base === e.base &&
       r.policyHash === policyHash && typeof r.reviewer === 'string' && r.reviewer.trim() &&
       typeof r.summary === 'string' && r.summary.trim() && Array.isArray(r.evidence) && r.evidence.length > 0 &&
@@ -148,8 +152,9 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
       typeof t?.testRationale === 'string' && t.testRationale.trim(), 'Focused test decision and rationale required');
   }
   const gates = simple ? ['simple-tests'] : [...p.reviewGates];
+  if (e.intent?.status === 'present') gates.push('intent');
   if (files.some(f => p.uiPathPatterns.some(r => new RegExp(r, 'i').test(f))) ||
-      Object.values(e.gates || {}).some(g => g.requiresBrowser === true)) gates.push('browser');
+      Object.entries(e.gates || {}).some(([name, g]) => name !== 'intent' && g.requiresBrowser === true)) gates.push('browser');
   if (p.crew) {
     requireThat(Boolean(expectedCrew) && encode(e.crew) === encode(expectedCrew), 'Crew selection missing, edited or stale');
     const crew = expectedCrew || { holds: ['Trusted crew selection missing'], selected: [], requiresFull: true };
@@ -205,6 +210,7 @@ function reportMarkdown(e, decision) {
   if (e.reportFormat !== undefined && !['marc-v1', 'marc-v2', 'marc-v3'].includes(e.reportFormat)) throw Error('Unknown report format');
   if (e.reportFormat === 'marc-v3') return `# MARC report: PR ${e.pr}\n\nReport created: ${e.reportCreatedAt.slice(0, 16).replace('T', ' ')} UTC\n\n` +
     `Current decision: ${decision.merge ? 'Eligible for guarded merge' : decision.eligible ? 'Report-only: would merge' : 'Held'}\n\n` +
+    intentMarkdown(e) +
     (e.reportCiReuse ? `Report-only CI: reuse source run ${e.reportCiReuse.runId}, attempt ${e.reportCiReuse.runAttempt}; the merge guard rechecks CI and the exact generated report pair.\n\n` : '') +
     stagesMarkdown(e.stages || [{ ...reviewStage(e, decision), recordedAt: e.reportCreatedAt }]) +
     '\nThe adjacent JSON retains stage identities and evidence. Later CI and merge outcomes do not rewrite this report.\n';
@@ -215,6 +221,7 @@ function reportMarkdown(e, decision) {
     (e.reportCreatedAt === undefined ? '' : `Report created: ${e.reportCreatedAt.slice(0, 16).replace('T', ' ')} UTC\n\n`) +
     `Source commit: \`${e.sourceHead}\`\n\nBase commit: \`${e.base}\`\n\nPolicy digest: \`${e.policyHash}\`\n\n` +
     `Decision: ${decision.merge ? 'Eligible for guarded merge' : decision.eligible ? 'Report-only: would merge' : 'Held'}\n\n` +
+    intentMarkdown(e) +
     `Route: ${clean(e.routing?.route || 'full')} — ${clean(e.routing?.summary || 'Full review required by default')}\n\n` +
     (e.routing?.route === 'simple' && e.routing.changeKind ?
       `Change kind: ${clean(e.routing.changeKind)}\n\n` +
@@ -295,10 +302,34 @@ function collectCi(head, pr, p, read, readJobs) {
     reason: passed ? 'Reused hosted CI for this exact commit' : 'Required jobs missing, duplicated or unsuccessful',
     jobs: jobs.map(({ name, conclusion }) => ({ name, conclusion })) };
 }
+// Intent-only reassessments can append another report pair without changing the
+// reviewed source. Every earlier hop is restricted to its verified report bytes.
+function verifyPriorReports(e, readGit) {
+  let parent = e.sourceHead;
+  for (const record of e.priorReports || []) {
+    if (!sha(record.head) || !Array.isArray(record.files) || record.files.length !== 2 ||
+        new Set(record.files.map(f => f.path)).size !== 2 ||
+        !record.files.every(f => isOwnReportPath(e.pr, f.path) && /^[a-f0-9]{64}$/.test(f.hash)))
+      throw Error('Invalid prior report identity');
+    readGit('merge-base', '--is-ancestor', parent, record.head);
+    const changed = readGit('diff', '--name-only', '--no-renames', '-z', parent, record.head, '--').split('\0').filter(Boolean);
+    const added = readGit('diff', '--name-only', '--diff-filter=A', '--no-renames', '-z', parent, record.head, '--').split('\0').filter(Boolean);
+    if (changed.length !== 2 || added.length !== 2 || changed.some(file => !record.files.some(f => f.path === file)))
+      throw Error('Prior report contains source or historical evidence changes');
+    for (const file of record.files) {
+      if (!readGit('ls-tree', record.head, '--', file.path).startsWith('100644 blob ') ||
+          digest(readGit('show', `${record.head}:${file.path}`)) !== file.hash)
+        throw Error('Prior report bytes changed');
+    }
+    parent = record.head;
+  }
+  return parent;
+}
 function verifyReportCommit(e, live, decision, readGit) {
   const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
-  readGit('merge-base', '--is-ancestor', e.sourceHead, live.head.sha);
-  const changed = readGit('diff', '--name-only', '--no-renames', '-z', e.sourceHead, live.head.sha, '--').split('\0').filter(Boolean);
+  const parent = verifyPriorReports(e, readGit);
+  readGit('merge-base', '--is-ancestor', parent, live.head.sha);
+  const changed = readGit('diff', '--name-only', '--no-renames', '-z', parent, live.head.sha, '--').split('\0').filter(Boolean);
   if (changed.length !== 2 || changed.some(f => !paths.includes(f))) throw Error('Changes after review exceed the exact report files');
   const expected = [auditJson(e), reportMarkdown(e, decision)];
   paths.forEach((f, i) => {
@@ -370,7 +401,7 @@ function trustedPolicy(context = loadConfig(discoverRoot())) {
     for (const name of ['crew.json', 'SKILL.md', 'IMPROVEMENTS.md'])
       if (!bundleFiles.includes(`skills/marc-crew-${member.id}/${name}`)) throw Error('Crew inputs must be tracked');
   }
-  return { policy: { ...context.policy, agentExecutionSchema: 1, ...(context.crew ? { crew: context.crew } : {}),
+  return { policy: { ...context.policy, agentExecutionSchema: 1, intentSchema: 1, ...(context.crew ? { crew: context.crew } : {}),
     ...(context.agents ? { agents: context.agents } : {}) }, policyHash: digest(Buffer.concat(chunks)) };
 }
 function createController(context, adapters = {}) {
@@ -405,29 +436,49 @@ function createController(context, adapters = {}) {
     const evidence = { schema: 1, agentExecutionSchema: 1, repairExecutions: [], repository: REPO, pr, sourceHead: head, base, policyHash: hash,
       state: live.state, draft: live.draft, author: live.user.login, headRepository: live.head.repo?.full_name,
       branch: live.head.ref, target: live.base.ref, baseIncluded, files, changedLines: lineCount, repairCycles: 0,
-      projectChanges: collectProjectChanges(base, head, files, git),
+      projectChanges: collectProjectChanges(base, head, files, git), intent: captureIntent(live.body),
       gates: Object.fromEntries(p.reviewGates.map(name => [name, { verdict: 'blocked', sourceHead: head,
         base, policyHash: hash, reviewer: '', summary: 'Awaiting independent review', evidence: [], findings: [] }])),
       ci: collect(head, pr, p) };
     if (context.crew) Object.assign(evidence, { crew: recruit(evidence), coordinator: '', repairReviewers: [] });
     return evidence;
   }
-  function assertLive(e) {
+  function assertLive(e, { allowIntentChange = false } = {}) {
     const live = api(`repos/${REPO}/pulls/${e.pr}`);
     if (live.state !== 'open' || live.draft || live.base.ref !== context.policy.base || live.head.repo?.full_name !== REPO)
       throw Error('PR is no longer ready');
     if (api(`repos/${REPO}/git/ref/heads/${encodeURIComponent(context.policy.base)}`).object.sha !== e.base) throw Error('Target branch changed; recapture and review');
     git('fetch', 'origin', `refs/pull/${e.pr}/head`);
     if (git('rev-parse', 'FETCH_HEAD') !== live.head.sha) throw Error('PR changed during fetch');
+    if (!allowIntentChange && captureIntent(live.body).hash !== (e.intent || captureIntent(null)).hash)
+      throw Error('PR intent changed; run refresh-intent and reassess only intent if code identity is unchanged');
     return live;
+  }
+  function refreshIntentEvidence(e, p, hash) {
+    if (e.repository !== REPO || e.policyHash !== hash || !sha(e.sourceHead) || !sha(e.base))
+      throw Error('Review identity changed; recapture and review');
+    const live = assertLive(e, { allowIntentChange: true });
+    const parent = verifyPriorReports(e, git);
+    let report;
+    if (live.head.sha !== parent) {
+      // Historical decision is used only to reproduce immutable report bytes,
+      // never as authorization for this or any later assessment.
+      const previous = e.stages?.findLast(stage => stage.kind === 'review')?.decision || evaluate(e, p, hash, recruit(e));
+      verifyReportCommit(e, live, previous, git);
+      report = { head: live.head.sha, files: reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat)
+        .map(file => ({ path: file, hash: digest(git('show', `${live.head.sha}:${file}`)) })) };
+    }
+    const refreshed = refreshIntent(e, live, hash);
+    if (refreshed.intent.hash !== e.intent?.hash && report) refreshed.priorReports = [...(e.priorReports || []), report];
+    return refreshed;
   }
   function run(args) {
     const parsed = parseOperatorApproval(args);
     args = parsed.args;
     const approvalFile = parsed.approvalFile;
     const [action, first, second] = args;
-    if (!['queue', 'capture', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(action))
-      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
+    if (!['queue', 'capture', 'refresh-intent', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(action))
+      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | refresh-intent <previous-evidence.json> <new-evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
     if (action === 'capture' && !second) throw Error('An external evidence path is required');
     checkTrustedCheckout();
     const { policy: p, policyHash: hash } = trustedPolicy(context);
@@ -453,6 +504,15 @@ function createController(context, adapters = {}) {
       fs.writeFileSync(second, encode(capture(Number(first), p, hash))); return;
     }
     const e = JSON.parse(fs.readFileSync(first, 'utf8'));
+    if (action === 'refresh-intent') {
+      if (!second || path.resolve(first) === path.resolve(second) || fs.existsSync(second))
+        throw Error('refresh-intent requires a new external output file; preserve previous evidence');
+      const refreshed = refreshIntentEvidence(e, p, hash);
+      fs.writeFileSync(second, encode(refreshed), { flag: 'wx' });
+      console.log(encode({ changed: refreshed.intent.hash !== e.intent?.hash, intent: refreshed.intent,
+        preserved: 'source/base/policy, other reviews, CI and cumulative repair history', output: second }));
+      return;
+    }
     if (action === 'recover-ci') {
       const { recoverCi } = require('./ci-recovery.cjs');
       const investigation = second ? JSON.parse(fs.readFileSync(second, 'utf8')) : undefined;
@@ -472,7 +532,7 @@ function createController(context, adapters = {}) {
     }
     if (approvalFile) {
       const liveApproval = assertLive(e);
-      if (action !== 'merge' && liveApproval.head.sha !== e.sourceHead)
+      if (action !== 'merge' && liveApproval.head.sha !== verifyPriorReports(e, git))
         throw Error('Operator approval source is no longer current; recapture and rebind');
     }
     const decide = () => {
@@ -481,6 +541,8 @@ function createController(context, adapters = {}) {
         throw Error('Operator approval evidence paths differ from the committed diff');
       return evaluate(e, p, hash, recruit(e), approval);
     };
+    // Decisions and checkpoints must not silently accept stale mutable PR intent.
+    if (['decide', 'checkpoint'].includes(action)) assertLive(e);
     const decision = decide();
     if (action === 'decide') { console.log(encode(decision)); return; }
     if (action === 'checkpoint') {
@@ -493,7 +555,8 @@ function createController(context, adapters = {}) {
     if (action === 'report') {
       if (!registeredProducer(live.user.login, live.head.ref, p))
         throw Error('Cannot publish reports to an unregistered producer branch');
-      if (!second || live.head.sha !== e.sourceHead || command('git', ['rev-parse', 'HEAD'], second) !== e.sourceHead ||
+      const reportParent = verifyPriorReports(e, git);
+      if (!second || live.head.sha !== reportParent || command('git', ['rev-parse', 'HEAD'], second) !== reportParent ||
         command('git', ['status', '--porcelain'], second)) throw Error('Report requires a clean PR worktree at the reviewed head');
       const prepared = prepareReport(e);
       // Check hosted CI before creating a commit that could trigger duplicate work.
@@ -572,18 +635,18 @@ function createController(context, adapters = {}) {
   }
   const collect = (head, pr, p) => collectCi(head, pr, { ...p, workflow: context.ci.workflow }, api,
     adapters.readJobs || (id => JSON.parse(command('gh', ['api', '--paginate', '--slurp', 'repos/' + REPO + '/actions/runs/' + id + '/jobs?per_page=100'])).flatMap(x => x.jobs)));
-  return { run, capture, assertLive, checkTrustedCheckout, collectCi: collect };
+  return { run, capture, assertLive, refreshIntentEvidence, checkTrustedCheckout, collectCi: collect };
 }
 function main(args = process.argv.slice(2)) {
   let root;
   if (args[0] === '--repo') { root = args[1]; args = args.slice(2); if (!root) throw Error('Repository root required'); }
-  if (!['config', 'queue', 'capture', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(args[0]))
-    throw Error('Usage: node src/quality/marc.cjs [--repo <trusted-checkout>] config | queue | capture | decide | report | merge | recover-ci');
+  if (!['config', 'queue', 'capture', 'refresh-intent', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(args[0]))
+    throw Error('Usage: node src/quality/marc.cjs [--repo <trusted-checkout>] config | queue | capture | refresh-intent | decide | report | merge | recover-ci | checkpoint');
   const context = loadConfig(root || discoverRoot());
   if (args[0] === 'config') { console.log(encode({ ...context, trusted: false, note: 'Resolution only; operational commands verify clean current trusted code before use.' })); return; }
   createController(context).run(args);
 }
 module.exports = { evaluate, reportMarkdown, reportPaths, prepareReport, isOwnReportPath, writeReportFiles,
   changedFiles, changedLines, collectCi, verifyReportCommit, reportCiReuse, verifyMergeCi, pushMerge, registeredProducer, selectQueue,
-  main, trustedPolicy, acquireMergeLock, createController };
+  main, trustedPolicy, acquireMergeLock, createController, verifyPriorReports };
 if (require.main === module) { try { main(); } catch (error) { console.error(error.message); process.exitCode = 1; } }

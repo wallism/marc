@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-27 — Optional companions and static intent assessment
+
+Separate optional companion skills from required crew installation. Capture PR intent, require independent static alignment evidence on both routes and hold intent repairs for human approval. Bind queue, assessment and live checks to intent while preserving valid reviews and CI on intent-only edits. Verify immutable report ancestry across reassessments and show succinct human action near the report top. Synthetic tests cover parsing, route enforcement, queue wakeups, selective refresh and report/CI reuse. No runtime execution, consumer activation or merge-authority change.
+
 ## 2026-09-26 — Razor companion member collisions
 
 Include the matching code-behind component's members when filtering Razor identifier references, separately for each captured revision. A property-name collision was expanding RoleSage PR 43 into unrelated components and exhausting the four-round discovery budget. Retain explicit component/type references, unrelated-class boundaries, all discovery budgets and incomplete-scope holds. Synthetic regression coverage and a read-only local replay of the frozen PR verify the correction; activation still requires a published MARC version, trusted consumer pin update and fresh assessment. No consumer governance or prior reports are changed.

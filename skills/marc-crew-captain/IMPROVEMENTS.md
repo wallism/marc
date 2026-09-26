@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Static intent with human repair decisions
+
+Require independent static intent alignment on both review routes when the PR provides an explicit paragraph. Keep optional companions outside the Captain workflow. Highlight succinct human repair proposals, preserve ordinary repair rules for unrelated defects and refresh only intent evidence after prose-only changes. See the [contract](references/intent.md); source/base/policy changes still invalidate ordinary gates.
+
 ## 2026-09-26 — Scope rules for every covered language
 
 All 15 language members already require this Captain's evidence contract. Link a shared language-specific caller guide: confirm body-only changes, native binding/dispatch relationships and stop boundaries, reject incidental package/name matches, and report relevant paths with concise evidence. Distinguish lexical assistance from semantic review, including opaque Scratch and under-extracted routine syntax. Missing coverage/expertise still blocks. This clarifies shared evidence rules under bundle identity without changing individual member manifests. Local synthetic tests and catalogue/link checks do not assert model evaluation.

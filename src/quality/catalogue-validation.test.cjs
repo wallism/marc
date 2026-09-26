@@ -53,7 +53,18 @@ test('rejects repository-escaping references', t => {
   assert.throws(() => validateCatalogue(root), /escapes/);
 });
 
-test('all published skill names use the marc-crew namespace', () => {
+test('published names distinguish crew from optional companions', () => {
   for (const name of validateCatalogue(repository).skills)
-    assert.match(name, /^marc-crew-[a-z0-9]+(?:-[a-z0-9]+)*$/);
+    assert.match(name, /^marc-(?:crew|companion)-[a-z0-9]+(?:-[a-z0-9]+)*$/);
+});
+
+test('companions are optional, discoverable and cannot become reviewers', t => {
+  const root = fixture(t), folder = path.join(root, 'skills/marc-companion-pr-intent');
+  assert.ok(validateCatalogue(root).skills.includes('marc-companion-pr-intent'));
+  assert.ok(!validateCatalogue(root).members.includes('pr-intent'));
+  fs.writeFileSync(path.join(folder, 'crew.json'), '{}');
+  assert.throws(() => validateCatalogue(root), /Companion skill cannot/);
+  fs.unlinkSync(path.join(folder, 'crew.json'));
+  fs.renameSync(folder, path.join(root, 'optional-companion'));
+  assert.ok(!validateCatalogue(root).skills.includes('marc-companion-pr-intent'));
 });
