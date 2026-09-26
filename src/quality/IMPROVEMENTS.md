@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-26 — Submodule upgrade discovery and CI compatibility
+
+RoleSage's upgrade PR exposed two upgrade blockers: lexical discovery attempted to parse a Git commit entry as a source blob, and upstream CI verification required a test-step name replaced by the evidence-producing workflow. Treat gitlinks as opaque dependency pins while preserving changed-path inventories, governance/classification, independent review and human gates; other nonregular or unreadable source remains held. Accept exactly one successful current or legacy test step on each exact-commit platform job. Real-Git add/update/delete pin regressions and failure/duplicate-step tests cover these boundaries. Local replay of the blocked upgrade verifies discovery without altering its trusted assessment. Publication, consumer pin activation and fresh review remain separate.
+
 ## 2026-09-26 — Razor companion member collisions
 
 Include the matching code-behind component's members when filtering Razor identifier references, separately for each captured revision. A property-name collision was expanding RoleSage PR 43 into unrelated components and exhausting the four-round discovery budget. Retain explicit component/type references, unrelated-class boundaries, all discovery budgets and incomplete-scope holds. Synthetic regression coverage and a read-only local replay of the frozen PR verify the correction; activation still requires a published MARC version, trusted consumer pin update and fresh assessment. No consumer governance or prior reports are changed.

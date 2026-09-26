@@ -23,6 +23,22 @@ function upstreamCommand(runs = [successfulRun()], jobs = successfulJobs()) {
   };
   return { command, calls };
 }
+
+test('upstream evidence test step is accepted once and still must succeed on both platforms', () => {
+  const jobs = successfulJobs().map(job => ({ ...job, steps: job.steps.map(step =>
+    ({ ...step, name: step.name === 'Run npm test' ? 'Tests with review evidence' : step.name })) }));
+  assert.equal(checkLatest({ toolCommit: old, autoUpdate: true }, upstreamCommand([successfulRun()], jobs).command), latest);
+  for (const change of [
+    { status: 'in_progress', conclusion: null }, { conclusion: 'failure' }, { conclusion: 'skipped' }
+  ]) {
+    const bad = structuredClone(jobs);
+    Object.assign(bad[1].steps[1], change);
+    assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, upstreamCommand([successfulRun()], bad).command), /upstream CI/i);
+  }
+  const duplicated = structuredClone(jobs);
+  duplicated[1].steps.push(successfulJobs()[1].steps[1]);
+  assert.throws(() => checkLatest({ toolCommit: old, autoUpdate: true }, upstreamCommand([successfulRun()], duplicated).command), /upstream CI/i);
+});
 test('omitted or disabled auto update performs no upstream check, including when offline', () => {
   const command = () => { assert.fail('Default-off intake must not contact upstream'); };
   assert.equal(checkLatest({ toolCommit: old }, command), null);
