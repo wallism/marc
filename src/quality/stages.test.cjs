@@ -63,6 +63,28 @@ test('stage history cannot supply current approval and corrupted or foreign jour
   assert.equal(fs.readFileSync(file, 'utf8'), bytes.replace('initial-csharp', 'forged-reviewer'));
 });
 
+test('repair summaries link each recorded commit and preserve previously prepared reports', t => {
+  const root = directory(t), e = original();
+  for (const [index, result] of ['repaired', 'repaired', 'blocked'].entries()) {
+    const toHead = String(index + 1).repeat(40);
+    e.stages = recordStage(root, e, decision, { kind: 'repair', toHead, result,
+      reviewer: `repair-${index}`, summary: `Repair summary ${index}`, evidence: ['Synthetic check'] });
+    e.sourceHead = toHead;
+    e.repairCycles++;
+  }
+  const prepared = prepareReport(e), markdown = reportMarkdown(prepared, decision);
+  assert.equal(prepared.repairCommitLinks, true);
+  for (const [index, stage] of e.stages.entries()) {
+    assert.ok(markdown.includes(`repaired head: [\`${stage.toHead}\`](https://github.com/example/project/commit/${stage.toHead}). Repair summary ${index}`));
+  }
+  const { repairCommitLinks, ...legacy } = prepared;
+  assert.deepEqual(prepareReport(legacy), legacy, 'do not retrofit an existing report');
+  const historical = reportMarkdown(legacy, decision);
+  assert.doesNotMatch(historical, /\/commit\//);
+  for (const stage of e.stages) assert.ok(historical.includes(`repaired head: \`${stage.toHead}\``));
+  assert.doesNotMatch(reportMarkdown(prepareReport(original()), decision), /\/commit\//);
+});
+
 test('invalid events and foreign locks cannot append a misleading stage', t => {
   const root = directory(t), e = original();
   for (const event of [{ kind: 'approved' }, { kind: 'repair', toHead: 'bad' },

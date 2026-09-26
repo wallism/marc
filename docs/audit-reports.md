@@ -2,6 +2,8 @@
 
 Read the `.md` report for the decision, assessment stages, repairs, CI and crew used. Its paired `-audit.json` is the complete machine-readable evidence record.
 
+New reports link each repair stage's recorded head to its GitHub commit beside the repair summary, so reviewers can inspect the changes. Each link uses that stage's repository and `toHead`, including when later repairs have moved the PR head. Prepared reports without `repairCommitLinks: true` retain their original rendering; earlier unrecorded repairs are not inferred.
+
 New reports persist `auditFormat: "marc-audit-v1"` in trusted external evidence. The published JSON is an envelope with:
 
 - `auditSchema`: `marc-audit-v1`.

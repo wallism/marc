@@ -60,7 +60,7 @@ function reportPaths(pr, head, reportCreatedAt, reportFormat) {
 const datedReportNames = (pr, head, reportCreatedAt) =>
   [...reportPaths(pr, head, reportCreatedAt), ...reportPaths(pr, head, reportCreatedAt, 'marc-v3')];
 function prepareReport(e, now = new Date()) {
-  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v3', auditFormat: 'marc-audit-v1' } : {}),
+  const prepared = { ...e, ...(e.reportCreatedAt === undefined ? { reportFormat: 'marc-v3', auditFormat: 'marc-audit-v1', repairCommitLinks: true } : {}),
     reportCreatedAt: e.reportCreatedAt === undefined ?
     now.toISOString().slice(0, 16) + ':00.000Z' : e.reportCreatedAt };
   reportPaths(prepared.pr, prepared.sourceHead, prepared.reportCreatedAt, prepared.reportFormat);
@@ -212,7 +212,7 @@ function reportMarkdown(e, decision) {
     `Current decision: ${decision.merge ? 'Eligible for guarded merge' : decision.eligible ? 'Report-only: would merge' : 'Held'}\n\n` +
     intentMarkdown(e) +
     (e.reportCiReuse ? `Report-only CI: reuse source run ${e.reportCiReuse.runId}, attempt ${e.reportCiReuse.runAttempt}; the merge guard rechecks CI and the exact generated report pair.\n\n` : '') +
-    stagesMarkdown(e.stages || [{ ...reviewStage(e, decision), recordedAt: e.reportCreatedAt }]) +
+    stagesMarkdown(e.stages || [{ ...reviewStage(e, decision), recordedAt: e.reportCreatedAt }], e.repairCommitLinks === true) +
     '\nThe adjacent JSON retains stage identities and evidence. Later CI and merge outcomes do not rewrite this report.\n';
   // Missing format identifies immutable reports produced before the MARC cutover.
   const name = e.reportFormat?.startsWith('marc-') ? 'MARC' : 'Chief of Quality';
