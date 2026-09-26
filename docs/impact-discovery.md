@@ -7,6 +7,7 @@ For a change inside `FunctionA` that keeps its name, discovery reads declaration
 ## What enters the inventory
 
 - Every changed file remains visible to review and policy gates, including tests and documentation.
+- Submodule gitlinks remain in that inventory and retain governance, classification and approval checks. Their commit entries are not source blobs, so lexical discovery does not read or recurse into them. Reviewers still assess the pinned dependency change; this is not a review of the submodule's contents. Other nonregular entries and unreadable source still hold discovery.
 - Additional source files need an exact code identifier reference, a locally declared implemented interface, an explicit relative module import, or a local component resource reference. Strings, comments and prose do not establish ordinary symbol dependencies. A changed implementation can therefore reach interface callers without assuming that every implementation of a framework interface is affected.
 - Caller chains propagate through enclosing declarations, rather than every filename or declaration in a matching file. Tests and startup registration files can be relevant evidence but do not start further searches. Known C# namespace collisions and member names that merely share a type's spelling do not join unrelated chains.
 - Base and source trees are traced separately. Removed callers remain visible, without joining edges from different revisions into a chain that never existed.

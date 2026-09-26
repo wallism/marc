@@ -32,10 +32,10 @@ function requireUpstreamCi(commit, command) {
     if (matches.length !== 1 || matches[0].head_sha !== commit || matches[0].run_attempt !== run.run_attempt ||
         matches[0].status !== 'completed' || matches[0].conclusion !== 'success')
       throw Error(`MARC upstream CI requires one successful ${name} job for ${commit}, attempt ${run.run_attempt}; pin unchanged`);
-    for (const stepName of ['Run npm run build', 'Run npm test']) {
-      const steps = Array.isArray(matches[0].steps) ? matches[0].steps.filter(step => step?.name === stepName) : [];
+    for (const stepNames of [['Run npm run build'], ['Run npm test', 'Tests with review evidence']]) {
+      const steps = Array.isArray(matches[0].steps) ? matches[0].steps.filter(step => stepNames.includes(step?.name)) : [];
       if (steps.length !== 1 || steps[0].status !== 'completed' || steps[0].conclusion !== 'success')
-        throw Error(`MARC upstream CI requires successful ${stepName} in ${name}; pin unchanged`);
+        throw Error(`MARC upstream CI requires one successful ${stepNames.join(' or ')} in ${name}; pin unchanged`);
     }
   }
 }

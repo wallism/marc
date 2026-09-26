@@ -5,6 +5,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const { collectImpact, selectCrew, loadCatalogue } = require('./crew.cjs');
+const { discoverReferences } = require('./impact.cjs');
 
 const config = { schema: 1, members: ['csharp', 'javascript', 'blazor', 'frontend', 'terraform'].map(id =>
   ({ id, version: id === 'csharp' ? '1.1.0' : '1.0.0' })), areas: [
@@ -21,6 +22,42 @@ function fixture(t) {
   git('init');
   return { root, git, write, commit, capture: (base, head, files) => collectImpact(base, head, files, config, catalogue, git) };
 }
+
+test('added, updated and deleted submodule pins remain reviewed without reading commit entries as source', t => {
+  const { git, write, commit, capture } = fixture(t);
+  write('README.md', 'Synthetic consumer');
+  const empty = commit();
+  const pin = target => {
+    git('update-index', '--add', '--cacheinfo', `160000,${target},.marc/tool`);
+    git('-c', 'core.hooksPath=', '-c', 'user.name=Synthetic', '-c', 'user.email=test@example.invalid',
+      'commit', '-m', 'pin');
+    return git('rev-parse', 'HEAD');
+  };
+  const added = pin(empty), updated = pin(added);
+  git('update-index', '--force-remove', '.marc/tool');
+  git('-c', 'core.hooksPath=', '-c', 'user.name=Synthetic', '-c', 'user.email=test@example.invalid', 'commit', '-m', 'remove pin');
+  const removed = git('rev-parse', 'HEAD');
+  for (const [base, head] of [[empty, added], [added, updated], [updated, removed]]) {
+    const result = capture(base, head, ['.marc/tool']);
+    assert.equal(result.incomplete, false);
+    assert.deepEqual(result.holds, []);
+    assert.deepEqual(result.changedFiles, ['.marc/tool']);
+    assert.deepEqual(result.files, ['.marc/tool']);
+    assert.equal(result.uncertain, true, 'Governance still receives conservative review');
+    assert.equal(selectCrew({}, config, catalogue, result).requiresFull, true);
+  }
+});
+
+test('symlinks and unreadable source still hold discovery', () => {
+  for (const entry of [`120000 blob ${'a'.repeat(40)}\tsrc/Link.cs`, `040000 tree ${'a'.repeat(40)}\tsrc/Link.cs`]) {
+    const result = discoverReferences('base', 'head', ['src/Link.cs'], command => {
+      assert.equal(command, 'ls-tree');
+      return entry;
+    }, () => true);
+    assert.equal(result.incomplete, true);
+    assert.match(result.holds.join(' '), /inspection unavailable/);
+  }
+});
 
 test('name-preserving function changes retain callers and old callers, with concrete provenance', t => {
   const { write, commit, capture } = fixture(t);
