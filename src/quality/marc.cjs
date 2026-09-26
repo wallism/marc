@@ -541,13 +541,15 @@ function createController(context, adapters = {}) {
         throw Error('Operator approval evidence paths differ from the committed diff');
       return evaluate(e, p, hash, recruit(e), approval);
     };
+    const event = action === 'checkpoint' && second ? JSON.parse(fs.readFileSync(second, 'utf8')) : undefined;
+    if (action === 'checkpoint' && second && (!event || typeof event !== 'object' || Array.isArray(event)))
+      throw Error('Stage event must be an object');
     // Current reviews require live intent; append-only event observations may follow a merge.
     if (action === 'decide' || (action === 'checkpoint' && !second)) assertLive(e);
     const decision = decide();
     if (action === 'decide') { console.log(encode(decision)); return; }
     if (action === 'checkpoint') {
       if (e.repository !== REPO) throw Error('Stage repository differs from consumer');
-      const event = second ? JSON.parse(fs.readFileSync(second, 'utf8')) : undefined;
       const stages = recordStage(path.join(context.stateDirectory, 'assessment-stages'), e, decision, event);
       console.log(encode({ stages: stages.length, last: stages.at(-1) })); return;
     }

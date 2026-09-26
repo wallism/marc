@@ -114,6 +114,13 @@ test('controller records post-merge CI after PR closure and target advancement w
   fs.writeFileSync(eventFile, JSON.stringify({ ...event, status: 'completed', conclusion: null }));
   assert.throws(() => controller.run(['checkpoint', evidence, eventFile]), /Invalid CI stage/);
   assert.deepEqual(readStages(journal, e), stages, 'invalid events and stale review attempts append nothing');
+  const journalFile = path.join(journal, 'pr-7.jsonl'), journalBytes = fs.readFileSync(journalFile, 'utf8');
+  for (const invalidEvent of [null, false, 0, '', [], true, 1, 'invalid']) {
+    fs.writeFileSync(eventFile, JSON.stringify(invalidEvent));
+    assert.throws(() => controller.run(['checkpoint', evidence, eventFile]), /Stage event must be an object/,
+      `invalid event ${JSON.stringify(invalidEvent)} cannot become a stale review`);
+    assert.equal(fs.readFileSync(journalFile, 'utf8'), journalBytes, 'invalid event preserves journal bytes');
+  }
 });
 
 test('controller checkpoints and reports retain stages across replacement evidence', t => {
