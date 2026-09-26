@@ -72,6 +72,50 @@ test('invalid events and foreign locks cannot append a misleading stage', t => {
   assert.equal(fs.readFileSync(path.join(root, 'pr-7.lock'), 'utf8'), 'foreign owner');
 });
 
+test('controller records post-merge CI after PR closure and target advancement without approving a current review', t => {
+  const { createController } = require('./marc.cjs');
+  const root = directory(t), e = original(), bundleRoot = path.resolve(__dirname, '../..');
+  const mergedHead = 'c'.repeat(40), evidence = path.join(root, 'evidence.json');
+  const eventFile = path.join(root, 'post-merge-ci.json'), journal = path.join(root, 'assessment-stages');
+  fs.writeFileSync(evidence, JSON.stringify(e));
+  const initial = recordStage(journal, e, decision);
+  const event = { kind: 'ci', phase: 'post-merge', head: mergedHead, runId: 2, runAttempt: 1,
+    status: 'completed', conclusion: 'success', summary: 'Merged commit CI passed', evidence: ['synthetic CI observation'] };
+  fs.writeFileSync(eventFile, JSON.stringify(event));
+  const context = { repoRoot: bundleRoot, bundleRoot, stateDirectory: root, consumerFiles: ['AGENTS.md'],
+    policy: require('./fixtures/policy.json'), ci: { workflow: 'ci.yml' } };
+  const live = { state: 'closed', draft: false, user: { login: 'maintainer' }, base: { ref: 'master' },
+    head: { sha: e.sourceHead, ref: 'bugfix/example', repo: { full_name: e.repository } } };
+  const controller = createController(context, {
+    git: (...args) => {
+      if (args[0] === 'branch') return 'master';
+      if (args[0] === 'status' || args[0] === 'fetch') return '';
+      if (args[0] === 'remote') return 'https://github.com/example/project';
+      if (args[0] === 'rev-parse') return args[1] === '--show-toplevel' ? bundleRoot : e.sourceHead;
+      throw Error('Unexpected Git inspection: ' + args.join(' '));
+    },
+    api: endpoint => endpoint.includes('/git/ref/') ? { object: { sha: mergedHead } } : live
+  });
+  t.mock.method(console, 'log', () => {});
+  controller.run(['checkpoint', evidence, eventFile]);
+  const stages = readStages(journal, e);
+  assert.equal(stages.length, 2);
+  assert.deepEqual(stages[0], initial[0], 'previous review remains immutable');
+  for (const key of ['repository', 'pr', 'sourceHead', 'base', 'policyHash'])
+    assert.equal(stages[1][key], e[key], `historical ${key} remains bound to reviewed evidence`);
+  for (const [key, value] of Object.entries(event)) assert.deepEqual(stages[1][key], value);
+  assert.equal(stages[1].decision, undefined, 'a CI observation is not a new approval');
+  assert.deepEqual(JSON.parse(fs.readFileSync(evidence, 'utf8')), e, 'checkpoint preserves captured evidence');
+  assert.throws(() => controller.run(['checkpoint', evidence]), /PR is no longer ready/);
+  assert.throws(() => controller.run(['decide', evidence]), /PR is no longer ready/);
+  live.state = 'open';
+  assert.throws(() => controller.run(['checkpoint', evidence]), /Target branch changed/);
+  assert.throws(() => controller.run(['decide', evidence]), /Target branch changed/);
+  fs.writeFileSync(eventFile, JSON.stringify({ ...event, status: 'completed', conclusion: null }));
+  assert.throws(() => controller.run(['checkpoint', evidence, eventFile]), /Invalid CI stage/);
+  assert.deepEqual(readStages(journal, e), stages, 'invalid events and stale review attempts append nothing');
+});
+
 test('controller checkpoints and reports retain stages across replacement evidence', t => {
   const { execFileSync } = require('node:child_process');
   const { createController } = require('./marc.cjs');

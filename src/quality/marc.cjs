@@ -541,8 +541,8 @@ function createController(context, adapters = {}) {
         throw Error('Operator approval evidence paths differ from the committed diff');
       return evaluate(e, p, hash, recruit(e), approval);
     };
-    // Decisions and checkpoints must not silently accept stale mutable PR intent.
-    if (['decide', 'checkpoint'].includes(action)) assertLive(e);
+    // Current reviews require live intent; append-only event observations may follow a merge.
+    if (action === 'decide' || (action === 'checkpoint' && !second)) assertLive(e);
     const decision = decide();
     if (action === 'decide') { console.log(encode(decision)); return; }
     if (action === 'checkpoint') {
