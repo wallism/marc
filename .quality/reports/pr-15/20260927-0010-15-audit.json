@@ -1,0 +1,1300 @@
+{
+  "auditSchema": "marc-audit-v1",
+  "evidence": {
+    "schema": 1,
+    "agentExecutionSchema": 1,
+    "repairExecutions": [],
+    "repository": "wallism/marc",
+    "pr": 15,
+    "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+    "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+    "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+    "state": "open",
+    "draft": false,
+    "author": "wallism",
+    "headRepository": "wallism/marc",
+    "branch": "codex/repair-commit-links",
+    "target": "master",
+    "baseIncluded": true,
+    "files": ["docs/audit-reports.md","src/quality/marc.cjs","src/quality/stages.cjs","src/quality/stages.test.cjs"],
+    "changedLines": 11,
+    "repairCycles": 0,
+    "projectChanges": [],
+    "intent": {
+      "schema": 1,
+      "status": "present",
+      "text": "Let human reviewers inspect the actual changes behind each reported repair by following a commit link beside its repair summary. Each link should identify that repair’s recorded commit, even after subsequent repairs, while preserving previously prepared reports.",
+      "entries": [null],
+      "hash": "1b053d58d8a30d5fe8c21e8ca9c4a8ec58732c49467606ab1ed02bada951bcea"
+    },
+    "gates": {
+      "security": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_security",
+        "summary": "No introduced security issue found in the complete four-file diff and report/stage callers. Exact-source sanitized secrets scan passes with no findings; overall CI remains pending Windows completion and is separately enforced by Captain.",
+        "evidence": [
+          "src/quality/stages.cjs:12-15,26-36,47-80,120-126 at source 3dff18d39d712b58f8d16ca19fa9688ca156c991: links use validated owner/repository and exact 40-hex recorded repair head from the trusted locked, hash-chained journal; fixed HTTPS GitHub origin and no new command execution or outbound request.",
+          "src/quality/marc.cjs:62-68,209-216,327-340,563-581: preparation opts new reports into links, existing prepared rendering is retained, CLI populates stages from external journal, and merge verification compares regenerated exact report bytes. src/quality/audit.cjs:4-44,95-99 preserves the marker through existing lossless publication encoding.",
+          "src/quality/stages.test.cjs:66-88 and docs/audit-reports.md:5: regression covers multiple recorded repaired/blocked heads, unchanged prepared reports and no inferred repair. No manifest, workflow, authorization, privacy, dependency or agent-policy behavior changes.",
+          "Exact-source run https://github.com/wallism/marc/actions/runs/36281280915 attempt 1: Captain supplied downloaded quality-scans/secrets.json; directly inspected scanner=secrets, verdict=pass, findings=[]. Artifact: C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr15-36281280915/quality-scans/secrets.json.",
+          "Same-run Ubuntu node-results.xml directly parsed: 217 testcases, 0 failure/error elements, one repair-commit-link regression and six self-review cases. Windows job still pending at this gate; no local candidate code, tests, hooks or duplicate scans executed."
+        ],
+        "findings": [],
+        "requiresBrowser": false,
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_security with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      },
+      "correctness": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_correctness",
+        "summary": "The complete four-file diff implements captured intent: new reports link each recorded repair commit using its own stage identity, while previously prepared reports retain their rendering. No correctness defect found; Ubuntu exact-source artifact passed, and the separate Captain CI gate must retain the pending Windows requirement.",
+        "requiresBrowser": false,
+        "evidence": [
+          "Read complete base/source diff: docs/audit-reports.md, src/quality/marc.cjs, src/quality/stages.cjs, src/quality/stages.test.cjs. src/quality/marc.cjs:62-67 enables repairCommitLinks only for newly prepared reports; :209-215 passes strict true only for marc-v3 rendering.",
+          "src/quality/stages.cjs:12-38 validates repository and full SHA identities when recording repairs; :50-81 preserves stage identity and chained journal; :119-125 uses stage.repository and stage.toHead rather than current PR head. Multiple repaired/blocked stages and no-repair reports are covered in stages.test.cjs:66-86.",
+          "Traced publication and verification callers in src/quality/marc.cjs:77-96, :328-338, :556-580; audit.cjs preserves generic evidence fields; intent.cjs refresh removes report timestamp so fresh preparation sets the marker. Existing formats and missing marker retain legacy output. reports.test.cjs:120-142 covers exact report-pair byte verification across six formats.",
+          "Captain-bound exact-source run https://github.com/wallism/marc/actions/runs/36281280915 attempt 1: inspected C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr15-36281280915/node-test-results-ubuntu-latest/node-results.xml: 217 testcases, zero failure/error elements, including new repair-link regression and six report verification formats, plus .marc/self-review tests. Windows pending at handoff; no full CI success claimed.",
+          "No candidate code, tests, hooks or builds executed. Changes affect generated Markdown only; unrelated lexical references to identity/run/command do not establish C# or UI behavioral impact."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_correctness with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      },
+      "code-quality": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_quality",
+        "summary": "No actionable maintainability or architectural findings in the complete four-file diff. Each repair link uses its recorded stage identity and the persisted opt-in preserves previously prepared reports; overall hosted CI remains a separate Captain gate.",
+        "evidence": [
+          "src/quality/stages.cjs:11-35,85,119-126: existing stage validation constrains repository and toHead; renderer uses those per-stage fields without introducing execution or journal mutation.",
+          "src/quality/marc.cjs:62-68,209-215,328-337,563-579: preparation persists the opt-in only for new reports; publication and guarded byte verification share reportMarkdown and retain the same evidence flag.",
+          "src/quality/audit.cjs:5-40,87-91: generic audit serialization retains the new boolean; no schema field allowlist drops it.",
+          "src/quality/stages.test.cjs:66-86 and docs/audit-reports.md:5: coverage and documentation address sequential repairs, blocked repair records, legacy prepared reports, and no inferred repair history.",
+          "Inspected complete frozen diff and owning callers/dependencies read-only at source 3dff18d39d712b58f8d16ca19fa9688ca156c991; no candidate code, tests or hooks executed. C# and Actions lexical hits do not change the rendering contract."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_quality with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      },
+      "test-integrity": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_test_integrity",
+        "summary": "The additive repair-link coverage exercises the real stage journal, report preparation and Markdown renderer with multiple immutable repair heads, and protects legacy prepared reports. Exact-source hosted artifacts show meaningful passing tests on both operating systems; no weakened assertions, deleted coverage or unexplained skips were found.",
+        "evidence": [
+          "Full four-file source/base diff reviewed: docs/audit-reports.md, src/quality/marc.cjs, src/quality/stages.cjs and src/quality/stages.test.cjs. This adds presentation behavior, so no invented bug-fix red result is required. No snapshots or exclusions changed.",
+          "src/quality/stages.test.cjs:66-87 adds a real recordStage -> prepareReport -> reportMarkdown regression with three different recorded heads, repaired and blocked outcomes, exact commit URL/summary assertions, preservation of previously prepared evidence and a no-repairs case. Fixtures are synthetic and assertions do not depend on wall-clock values.",
+          "src/quality/marc.cjs:62-68,209-216,328-339,556-582 trace the persisted opt-in marker through report writing and exact-byte verification. src/quality/stages.cjs:11-39,85-130 validates stage identities and renders each stage repository/toHead. src/quality/audit.cjs preserves the additive marker through general evidence encoding; no changed gate or merge authority flows.",
+          "src/quality/reports.test.cjs:122-142 checks legacy-sha, legacy-dated, marc-v1/v2/v3 and compact-audit report byte binding and audit round trips. Existing stages.test.cjs checks journal integrity and that historical results cannot approve current evidence. No additional runtime callers of stagesMarkdown exist beyond reportMarkdown.",
+          "Hosted Node checks https://github.com/wallism/marc/actions/runs/36281280915 attempt 1 is captured successful for source 3dff18d39d712b58f8d16ca19fa9688ca156c991, including both Node 24 jobs and Quality scans. Separate PR checks run 36281283012 is supplied successful and is not used as a substitute.",
+          "Downloaded node-test-results-ubuntu-latest/node-results.xml: 217 testcases, 216 passed, zero failures/errors, one expected Windows-short-path skip. node-test-results-windows-latest/node-results.xml: 217 testcases, all passed, zero failures/errors/skips. The sole Linux skip is explicitly platform-gated at src/quality/installation.test.cjs:8 and runs on Windows. Both artifacts include the new repair-summary regression, all 7 stages tests, all 16 report tests and all 6 .marc/self-review.test.cjs tests.",
+          "Downloaded quality-scans/secrets.json is valid sanitized JSON with scanner secrets, verdict pass and findings []. Artifacts inspected at C:/Users/Admin/AppData/Local/Temp/marc/wallism-marc-82cb06f5a5ba/pr15-36281280915/. No candidate code, local suite or model evaluation was executed by this review."
+        ],
+        "findings": [],
+        "requiresBrowser": false,
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_test_integrity with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      },
+      "crew:javascript": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_javascript",
+        "memberVersion": "1.0.0",
+        "memberHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+        "selectionHash": "bd585298837ed523c11e502d23a22ae62c1ada10aa3599052bbc5972a9c8ceb4",
+        "summary": "No JavaScript regression found in the complete four-file diff and affected report preparation, stage rendering, audit encoding and immutable-byte verification paths. Exact-source hosted evidence includes the new multi-repair compatibility regression on both operating systems; no candidate code was executed by this reviewer.",
+        "evidence": [
+          "src/quality/marc.cjs:62,209,328,563: prepareReport sets repairCommitLinks only on first preparation; reportMarkdown checks strict true; report command persists prepared evidence before writing; verifyReportCommit reconstructs bytes using the same persisted marker. Existing timestamped evidence retains the old rendering.",
+          "src/quality/stages.cjs:12,27,85,119: eventStage validates repository identity and full toHead SHA; rendering uses each recorded repair repository/toHead rather than latest evidence source. Default false preserves direct-call compatibility and historical stages remain presentation only.",
+          "src/quality/audit.cjs:5,92: generic evidence compaction and JSON serialization retain the new boolean without a schema whitelist or runtime dependency change. Source-only review found no changed asynchronous, process, browser or shared mutable-state contract.",
+          "src/quality/stages.test.cjs:66 and src/quality/reports.test.cjs:124: new regression covers multiple repaired/blocked stages, old prepared reports and no-repair output; existing report tests cover immutable byte verification and historical formats. docs/audit-reports.md:5 matches the persisted opt-in behavior.",
+          "Exact-source run 36281280915 attempt 1, source 3dff18d39d712b58f8d16ca19fa9688ca156c991: downloaded node-results.xml on ubuntu-latest and windows-latest includes the repair-link regression and .marc/self-review.test.cjs; supplied ci-summary records 217 tests each, zero failures/errors, one Ubuntu skip and zero Windows skips. Downloaded quality-scans/secrets.json is pass with no findings.",
+          "Complete diff contains docs/audit-reports.md, src/quality/marc.cjs, src/quality/stages.cjs and src/quality/stages.test.cjs. Generic lexical matches for command/of/identity do not establish changed C# or unrelated controller behavior; the affected flow ends at generated audit/Markdown and the unchanged guarded report consumers."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_javascript with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      },
+      "intent": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_intent",
+        "summary": "The complete static diff aligns with the captured intent: new repair summaries link to each stage's recorded commit, and previously prepared reports retain their rendering. Owning code and publication/verification callers preserve stage identity and the persisted rendering flag; no runtime execution was performed.",
+        "evidence": [
+          "src/quality/stages.cjs:26-35 records repository and validated toHead on each repair event; lines 64-80 append stage snapshots without replacing prior repairs.",
+          "src/quality/stages.cjs:119-124 renders the commit link from stage.repository and stage.toHead directly beside that stage summary, independent of the current source head.",
+          "src/quality/marc.cjs:62-67 enables repairCommitLinks only for newly prepared reports; lines 209-218 pass an exact-true flag only to the marc-v3 renderer and leave older rendering branches unchanged.",
+          "src/quality/marc.cjs:563-581 persists prepared evidence before writeReportFiles; lines 77-93 refuse existing report paths; lines 328-339 regenerate and compare exact report bytes from the same persisted flag.",
+          "src/quality/audit.cjs:34-40 retains all evidence keys in compact publication, including the new rendering flag; src/quality/stages.test.cjs:66-85 statically covers multiple repaired/blocked stages, legacy absence of the flag, and no-repair output. Tests were inspected, not executed.",
+          "docs/audit-reports.md:5 documents stage-specific commit targets and historical rendering compatibility; all four changed files were inspected."
+        ],
+        "findings": [],
+        "intentHash": "1b053d58d8a30d5fe8c21e8ca9c4a8ec58732c49467606ab1ed02bada951bcea",
+        "method": "static-code",
+        "assessment": "aligned",
+        "confidence": "high",
+        "confidenceReason": "The small complete diff and traced stage recording, rendering, publication, and verification callers directly support all stated outcomes.",
+        "unresolvedOutcomes": [],
+        "outcomes": [
+          {"outcome":"Commit link beside each reported repair summary","assessment":"aligned","evidence":"src/quality/stages.cjs:119-124"},
+          {
+            "outcome": "Link retains each recorded commit after subsequent repairs",
+            "assessment": "aligned",
+            "evidence": "src/quality/stages.cjs:26-35,64-80,119-124"
+          },
+          {
+            "outcome": "Preserve previously prepared reports",
+            "assessment": "aligned",
+            "evidence": "src/quality/marc.cjs:62-67,77-93,209-218,328-339"
+          }
+        ],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_intent with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      },
+      "crew:csharp": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_csharp",
+        "memberVersion": "1.1.0",
+        "memberHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+        "selectionHash": "bd585298837ed523c11e502d23a22ae62c1ada10aa3599052bbc5972a9c8ceb4",
+        "summary": "No C# findings. Complete diff and traced boundaries establish that the repair-link presentation change does not affect the optional .NET startup hook or the synthetic C# evaluation fixtures; no .NET build or runtime claim is needed.",
+        "evidence": [
+          "Complete d06da4279c61cb159ab5aa06bd0f70df3f5f4095..3dff18d39d712b58f8d16ca19fa9688ca156c991 diff contains docs/audit-reports.md, src/quality/marc.cjs, src/quality/stages.cjs and src/quality/stages.test.cjs only. No C# source, project, launch configuration or build contract changes.",
+          "src/quality/marc.cjs:62,79,209,328,563: prepareReport persists the new marker, reportMarkdown passes it to stagesMarkdown, writeReportFiles emits audit/Markdown, and verifyReportCommit compares the same generated bytes. The changed value terminates in report rendering and serialized audit evidence, not hook provisioning.",
+          "src/quality/stages.cjs:11,85,119 and src/quality/browser-host/StartupHook.cs:44: the captured identity reference is a lexical coincidence. JavaScript identity validates stage provenance; the C# local identity describes a service registration for Console.Error and consumes no report/stage fields. StartupHook.Initialize:10-15 reads only MARC_BROWSER_UI_ONLY/COQ_BROWSER_UI_ONLY; unchanged HostBuilding registration logic is independent of report rendering.",
+          "src/quality/browser-host/Marc.BrowserHost.csproj:1 and Test-BrowserHost.ps1:5-8,55-61: unchanged net10.0/framework reference and explicit DOTNET_STARTUP_HOOKS/environment wiring establish the optional runtime boundary. No affected .NET behavior was identified and no candidate code, tests or builds were executed.",
+          "evals/marc-crew-csharp/cases/beyond-captured-selection/input/after/src/Shop.Billing/TierPricing.cs:19 and evals/marc-crew-csharp/cases/store-idioms-and-error-contract/input/after/src/Shop.Data.Dapper/SupplierQueries.cs:35: captured command references are local Dapper CommandDefinition variables in unchanged synthetic evaluation data, not callers of the JavaScript controller command function.",
+          "src/quality/stages.test.cjs:66 regression covers multiple repair heads, blocked repair rendering, legacy prepared-report preservation and reports without repairs. Supplied exact-source ci-summary.json binds Node run 36281280915 attempt 1 to the reviewed source: 217 tests per OS, zero failures/errors, repairLinkRegressionPresent and selfReviewPresent true; Ubuntu skipped 1, Windows skipped 0. This is Node evidence, not .NET runtime validation."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_csharp with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      },
+      "crew:github-actions": {
+        "verdict": "pass",
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "reviewer": "/root/pr15_actions",
+        "memberVersion": "1.0.0",
+        "memberHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+        "selectionHash": "bd585298837ed523c11e502d23a22ae62c1ada10aa3599052bbc5972a9c8ceb4",
+        "summary": "No GitHub Actions regression found. Complete four-file diff changes report presentation and its focused regression; unchanged workflows exercise it through Node tests, and supplied exact-source hosted evidence passes.",
+        "evidence": [
+          "Complete diff d06da4279c61cb159ab5aa06bd0f70df3f5f4095..3dff18d39d712b58f8d16ca19fa9688ca156c991 inspected: docs/audit-reports.md, src/quality/marc.cjs, src/quality/stages.cjs, src/quality/stages.test.cjs.",
+          "src/quality/marc.cjs:62,209,328,563 -> stages.cjs:85,119: new preparations persist repairCommitLinks; the same marker controls report writing and byte verification. Historical preparations and CI reuse checks at marc.cjs:341 remain unchanged. No workflow consumes rendered commit links as commands, permissions or required-check decisions.",
+          ".github/workflows/node-checks.yml:3,8,14,21,28,30,44: push workflow checks out the event source, runs Node 24 Ubuntu/Windows tests including stages.test.cjs and self-review, and retains sanitized scan evidence. Read-only contents permission, nonpersistent checkout credentials, pinned actions and verified Gitleaks download are unchanged; no candidate event text enters executable shell syntax.",
+          ".github/workflows/pr-checks.yml:3,8,24,29,31,39 and package.json scripts: PR contracts/scenarios run separate validation; eval:plan passes quoted environment SHAs to unchanged prompt-eval-plan.cjs argument handling. Local-origin fork jobs are intentionally skipped and cannot replace the configured source run. Shared lexical run references do not establish an altered workflow contract.",
+          "scripts/check-syntax.cjs syntax-checks source; src/quality/catalogue-validation.cjs validates skill contracts/local links, without consuming rendered reports. Workflow reach into changed behavior is through source tests and existing report/merge tests; no workflow, invoked helper implementation, action, permission or deployment boundary changed.",
+          "Supplied capture and ci-summary.json: source 3dff18d39d712b58f8d16ca19fa9688ca156c991, Node checks run 36281280915 attempt 1 success; both Node 24 jobs and Quality scans successful. Each platform has 217 JUnit cases, zero failures/errors, Ubuntu one Windows-only skip, Windows zero skips; self-review and repair-link regression present. quality-scans/secrets.json independently read: pass, findings [].",
+          "Captain-supplied separate PR run 36281283012 reports PR contracts and scenarios successful; it is supplementary and does not substitute for exact-source Node checks. Review was source/evidence-only: no candidate execution, CI dispatch, network access or deployment."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Host collaboration.spawn_agent receipt /root/pr15_actions with fork_turns none and omitted model/reasoning overrides; supported Captain inheritance"
+        }
+      }
+    },
+    "ci": {
+      "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+      "runUrl": "https://github.com/wallism/marc/actions/runs/36281280915",
+      "runId": 36281280915,
+      "runAttempt": 1,
+      "conclusion": "success",
+      "verdict": "pass",
+      "status": "complete",
+      "reason": "Reused hosted CI for this exact commit",
+      "jobs": [
+        {"name":"Quality scans","conclusion":"success"},
+        {"name":"Node 24 (windows-latest)","conclusion":"success"},
+        {"name":"Node 24 (ubuntu-latest)","conclusion":"success"}
+      ]
+    },
+    "crew": {
+      "schema": 1,
+      "compatibility": "marc-crew-v1",
+      "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+      "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+      "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+      "toolCommit": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+      "impact": {
+        "files": [
+          ".github/workflows/node-checks.yml",
+          ".github/workflows/pr-checks.yml",
+          ".marc/self-review.test.cjs",
+          "docs/audit-reports.md",
+          "evals/marc-crew-csharp/cases/beyond-captured-selection/input/after/src/Shop.Billing/TierPricing.cs",
+          "evals/marc-crew-csharp/cases/store-idioms-and-error-contract/input/after/src/Shop.Data.Dapper/SupplierQueries.cs",
+          "scripts/check-syntax.cjs",
+          "scripts/install-consumer.cjs",
+          "src/quality/agent-settings.cjs",
+          "src/quality/agent-settings.test.cjs",
+          "src/quality/audit.cjs",
+          "src/quality/audit.test.cjs",
+          "src/quality/authoring-skill.test.cjs",
+          "src/quality/auto-update.cjs",
+          "src/quality/auto-update.test.cjs",
+          "src/quality/browser-host/StartupHook.cs",
+          "src/quality/catalogue-validation.cjs",
+          "src/quality/catalogue-validation.test.cjs",
+          "src/quality/ci-recovery.cjs",
+          "src/quality/ci-recovery.test.cjs",
+          "src/quality/config.cjs",
+          "src/quality/config.test.cjs",
+          "src/quality/coq.cjs",
+          "src/quality/crew.cjs",
+          "src/quality/crew.test.cjs",
+          "src/quality/eval-corpus.cjs",
+          "src/quality/eval-corpus.test.cjs",
+          "src/quality/forwarders.cjs",
+          "src/quality/iac-coverage.test.cjs",
+          "src/quality/impact-languages.test.cjs",
+          "src/quality/impact.cjs",
+          "src/quality/impact.test.cjs",
+          "src/quality/installation.test.cjs",
+          "src/quality/intent.cjs",
+          "src/quality/intent.test.cjs",
+          "src/quality/language-coverage.test.cjs",
+          "src/quality/marc-migration.test.cjs",
+          "src/quality/marc.cjs",
+          "src/quality/marc.test.cjs",
+          "src/quality/merge.test.cjs",
+          "src/quality/operator-approval.cjs",
+          "src/quality/operator-approval.test.cjs",
+          "src/quality/project-review.cjs",
+          "src/quality/project-review.test.cjs",
+          "src/quality/prompt-eval-plan.cjs",
+          "src/quality/reports.test.cjs",
+          "src/quality/scans.cjs",
+          "src/quality/scans.test.cjs",
+          "src/quality/stages.cjs",
+          "src/quality/stages.test.cjs",
+          "src/quality/upgrade.cjs",
+          "src/quality/upgrade.test.cjs",
+          "templates/consumer-loader.cjs"
+        ],
+        "changedFiles": ["docs/audit-reports.md","src/quality/marc.cjs","src/quality/stages.cjs","src/quality/stages.test.cjs"],
+        "references": [
+          {
+            "file": ".github/workflows/node-checks.yml",
+            "from": "src/quality/marc.cjs",
+            "symbol": "run",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 28
+          },
+          {
+            "file": ".github/workflows/pr-checks.yml",
+            "from": "src/quality/marc.cjs",
+            "symbol": "run",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 29
+          },
+          {
+            "file": ".marc/self-review.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "registeredProducer",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 9
+          },
+          {
+            "file": "evals/marc-crew-csharp/cases/beyond-captured-selection/input/after/src/Shop.Billing/TierPricing.cs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "command",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 19
+          },
+          {
+            "file": "evals/marc-crew-csharp/cases/store-idioms-and-error-contract/input/after/src/Shop.Data.Dapper/SupplierQueries.cs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "command",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 35
+          },
+          {
+            "file": "scripts/check-syntax.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 7
+          },
+          {
+            "file": "scripts/install-consumer.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 43
+          },
+          {
+            "file": "src/quality/agent-settings.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 22
+          },
+          {
+            "file": "src/quality/agent-settings.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 20
+          },
+          {
+            "file": "src/quality/audit.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 22
+          },
+          {
+            "file": "src/quality/audit.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 49
+          },
+          {
+            "file": "src/quality/auto-update.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedFiles",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 118
+          },
+          {
+            "file": "src/quality/auto-update.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 31
+          },
+          {
+            "file": "src/quality/browser-host/StartupHook.cs",
+            "from": "src/quality/stages.cjs",
+            "symbol": "identity",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 44
+          },
+          {
+            "file": "src/quality/catalogue-validation.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 21
+          },
+          {
+            "file": "src/quality/catalogue-validation.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 12
+          },
+          {
+            "file": "src/quality/ci-recovery.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "registeredProducer",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 4
+          },
+          {
+            "file": "src/quality/ci-recovery.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 36
+          },
+          {
+            "file": "src/quality/config.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 15
+          },
+          {
+            "file": "src/quality/config.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 183
+          },
+          {
+            "file": "src/quality/coq.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "main",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 5
+          },
+          {
+            "file": "src/quality/crew.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedFiles",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 136
+          },
+          {
+            "file": "src/quality/crew.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 5
+          },
+          {
+            "file": "src/quality/eval-corpus.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedLines",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 84
+          },
+          {
+            "file": "src/quality/eval-corpus.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 29
+          },
+          {
+            "file": "src/quality/forwarders.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 4
+          },
+          {
+            "file": "src/quality/iac-coverage.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 13
+          },
+          {
+            "file": "src/quality/impact-languages.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 42
+          },
+          {
+            "file": "src/quality/impact.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 40
+          },
+          {
+            "file": "src/quality/impact.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedFiles",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 44
+          },
+          {
+            "file": "src/quality/installation.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 156
+          },
+          {
+            "file": "src/quality/intent.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 10
+          },
+          {
+            "file": "src/quality/intent.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "selectQueue",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 8
+          },
+          {
+            "file": "src/quality/language-coverage.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 28
+          },
+          {
+            "file": "src/quality/marc-migration.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "selectQueue",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 41
+          },
+          {
+            "file": "src/quality/marc.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "registeredProducer",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 3
+          },
+          {
+            "file": "src/quality/merge.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 9
+          },
+          {
+            "file": "src/quality/operator-approval.cjs",
+            "from": "src/quality/stages.cjs",
+            "symbol": "identity",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 65
+          },
+          {
+            "file": "src/quality/operator-approval.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "reportPaths",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 75
+          },
+          {
+            "file": "src/quality/project-review.cjs",
+            "from": "src/quality/stages.cjs",
+            "symbol": "identity",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 85
+          },
+          {
+            "file": "src/quality/project-review.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 3
+          },
+          {
+            "file": "src/quality/prompt-eval-plan.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "main",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 37
+          },
+          {
+            "file": "src/quality/reports.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "reportPaths",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 7
+          },
+          {
+            "file": "src/quality/scans.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 66
+          },
+          {
+            "file": "src/quality/scans.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 20
+          },
+          {
+            "file": "src/quality/upgrade.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "createController",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 27
+          },
+          {
+            "file": "src/quality/upgrade.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 13
+          },
+          {
+            "file": "templates/consumer-loader.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "main",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 25
+          },
+          {
+            "file": "src/quality/authoring-skill.test.cjs",
+            "from": "src/quality/catalogue-validation.cjs",
+            "symbol": "validateCatalogue",
+            "kind": "identifier",
+            "revision": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+            "line": 4
+          },
+          {
+            "file": ".github/workflows/node-checks.yml",
+            "from": "src/quality/marc.cjs",
+            "symbol": "run",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 28
+          },
+          {
+            "file": ".github/workflows/pr-checks.yml",
+            "from": "src/quality/marc.cjs",
+            "symbol": "run",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 29
+          },
+          {
+            "file": ".marc/self-review.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "registeredProducer",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 9
+          },
+          {
+            "file": "evals/marc-crew-csharp/cases/beyond-captured-selection/input/after/src/Shop.Billing/TierPricing.cs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "command",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 19
+          },
+          {
+            "file": "evals/marc-crew-csharp/cases/store-idioms-and-error-contract/input/after/src/Shop.Data.Dapper/SupplierQueries.cs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "command",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 35
+          },
+          {
+            "file": "scripts/check-syntax.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 7
+          },
+          {
+            "file": "scripts/install-consumer.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 43
+          },
+          {
+            "file": "src/quality/agent-settings.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 22
+          },
+          {
+            "file": "src/quality/agent-settings.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 20
+          },
+          {
+            "file": "src/quality/audit.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 22
+          },
+          {
+            "file": "src/quality/audit.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 49
+          },
+          {
+            "file": "src/quality/auto-update.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedFiles",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 118
+          },
+          {
+            "file": "src/quality/auto-update.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 31
+          },
+          {
+            "file": "src/quality/browser-host/StartupHook.cs",
+            "from": "src/quality/stages.cjs",
+            "symbol": "identity",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 44
+          },
+          {
+            "file": "src/quality/catalogue-validation.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 21
+          },
+          {
+            "file": "src/quality/catalogue-validation.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 12
+          },
+          {
+            "file": "src/quality/ci-recovery.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "registeredProducer",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 4
+          },
+          {
+            "file": "src/quality/ci-recovery.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 36
+          },
+          {
+            "file": "src/quality/config.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 15
+          },
+          {
+            "file": "src/quality/config.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 183
+          },
+          {
+            "file": "src/quality/coq.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "main",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 5
+          },
+          {
+            "file": "src/quality/crew.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedFiles",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 136
+          },
+          {
+            "file": "src/quality/crew.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 5
+          },
+          {
+            "file": "src/quality/eval-corpus.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedLines",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 84
+          },
+          {
+            "file": "src/quality/eval-corpus.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 29
+          },
+          {
+            "file": "src/quality/forwarders.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 4
+          },
+          {
+            "file": "src/quality/iac-coverage.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 13
+          },
+          {
+            "file": "src/quality/impact-languages.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 42
+          },
+          {
+            "file": "src/quality/impact.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 40
+          },
+          {
+            "file": "src/quality/impact.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "changedFiles",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 44
+          },
+          {
+            "file": "src/quality/installation.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 156
+          },
+          {
+            "file": "src/quality/intent.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 10
+          },
+          {
+            "file": "src/quality/intent.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "selectQueue",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 8
+          },
+          {
+            "file": "src/quality/language-coverage.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 28
+          },
+          {
+            "file": "src/quality/marc-migration.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "selectQueue",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 41
+          },
+          {
+            "file": "src/quality/marc.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "registeredProducer",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 3
+          },
+          {
+            "file": "src/quality/merge.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 9
+          },
+          {
+            "file": "src/quality/operator-approval.cjs",
+            "from": "src/quality/stages.cjs",
+            "symbol": "identity",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 65
+          },
+          {
+            "file": "src/quality/operator-approval.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "reportPaths",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 75
+          },
+          {
+            "file": "src/quality/project-review.cjs",
+            "from": "src/quality/stages.cjs",
+            "symbol": "identity",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 85
+          },
+          {
+            "file": "src/quality/project-review.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "evaluate",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 3
+          },
+          {
+            "file": "src/quality/prompt-eval-plan.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "main",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 37
+          },
+          {
+            "file": "src/quality/reports.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "reportPaths",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 7
+          },
+          {
+            "file": "src/quality/scans.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 66
+          },
+          {
+            "file": "src/quality/scans.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 20
+          },
+          {
+            "file": "src/quality/upgrade.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "createController",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 27
+          },
+          {
+            "file": "src/quality/upgrade.test.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "of",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 13
+          },
+          {
+            "file": "templates/consumer-loader.cjs",
+            "from": "src/quality/marc.cjs",
+            "symbol": "main",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 25
+          },
+          {
+            "file": "src/quality/authoring-skill.test.cjs",
+            "from": "src/quality/catalogue-validation.cjs",
+            "symbol": "validateCatalogue",
+            "kind": "identifier",
+            "revision": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+            "line": 4
+          }
+        ],
+        "technologies": ["csharp","github-actions","javascript"],
+        "reasons": [
+          ".github/workflows/node-checks.yml:28: identifier reference to run from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          ".github/workflows/node-checks.yml:28: identifier reference to run from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          ".github/workflows/pr-checks.yml:29: identifier reference to run from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          ".github/workflows/pr-checks.yml:29: identifier reference to run from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          ".marc/self-review.test.cjs:9: identifier reference to registeredProducer from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          ".marc/self-review.test.cjs:9: identifier reference to registeredProducer from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "Captured 4 changed and 49 referenced files; independent behavioral caller review remains required.",
+          "evals/marc-crew-csharp/cases/beyond-captured-selection/input/after/src/Shop.Billing/TierPricing.cs:19: identifier reference to command from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "evals/marc-crew-csharp/cases/beyond-captured-selection/input/after/src/Shop.Billing/TierPricing.cs:19: identifier reference to command from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "evals/marc-crew-csharp/cases/store-idioms-and-error-contract/input/after/src/Shop.Data.Dapper/SupplierQueries.cs:35: identifier reference to command from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "evals/marc-crew-csharp/cases/store-idioms-and-error-contract/input/after/src/Shop.Data.Dapper/SupplierQueries.cs:35: identifier reference to command from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "scripts/check-syntax.cjs:7: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "scripts/check-syntax.cjs:7: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "scripts/install-consumer.cjs:43: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "scripts/install-consumer.cjs:43: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/agent-settings.cjs:22: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/agent-settings.cjs:22: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/agent-settings.test.cjs:20: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/agent-settings.test.cjs:20: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/audit.cjs:22: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/audit.cjs:22: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/audit.test.cjs:49: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/audit.test.cjs:49: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/authoring-skill.test.cjs:4: identifier reference to validateCatalogue from src/quality/catalogue-validation.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/authoring-skill.test.cjs:4: identifier reference to validateCatalogue from src/quality/catalogue-validation.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/auto-update.cjs:118: identifier reference to changedFiles from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/auto-update.cjs:118: identifier reference to changedFiles from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/auto-update.test.cjs:31: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/auto-update.test.cjs:31: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/browser-host/StartupHook.cs:44: identifier reference to identity from src/quality/stages.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/browser-host/StartupHook.cs:44: identifier reference to identity from src/quality/stages.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/catalogue-validation.cjs:21: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/catalogue-validation.cjs:21: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/catalogue-validation.test.cjs:12: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/catalogue-validation.test.cjs:12: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/ci-recovery.cjs:4: identifier reference to registeredProducer from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/ci-recovery.cjs:4: identifier reference to registeredProducer from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/ci-recovery.test.cjs:36: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/ci-recovery.test.cjs:36: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/config.cjs:15: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/config.cjs:15: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/config.test.cjs:183: identifier reference to evaluate from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/config.test.cjs:183: identifier reference to evaluate from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/coq.cjs:5: identifier reference to main from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/coq.cjs:5: identifier reference to main from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/crew.cjs:136: identifier reference to changedFiles from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/crew.cjs:136: identifier reference to changedFiles from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/crew.test.cjs:5: identifier reference to evaluate from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/crew.test.cjs:5: identifier reference to evaluate from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/eval-corpus.cjs:84: identifier reference to changedLines from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/eval-corpus.cjs:84: identifier reference to changedLines from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/eval-corpus.test.cjs:29: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/eval-corpus.test.cjs:29: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/forwarders.cjs:4: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/forwarders.cjs:4: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/iac-coverage.test.cjs:13: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/iac-coverage.test.cjs:13: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/impact-languages.test.cjs:42: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/impact-languages.test.cjs:42: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/impact.cjs:40: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/impact.cjs:40: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/impact.test.cjs:44: identifier reference to changedFiles from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/impact.test.cjs:44: identifier reference to changedFiles from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/installation.test.cjs:156: identifier reference to evaluate from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/installation.test.cjs:156: identifier reference to evaluate from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/intent.cjs:10: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/intent.cjs:10: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/intent.test.cjs:8: identifier reference to selectQueue from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/intent.test.cjs:8: identifier reference to selectQueue from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/language-coverage.test.cjs:28: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/language-coverage.test.cjs:28: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/marc-migration.test.cjs:41: identifier reference to selectQueue from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/marc-migration.test.cjs:41: identifier reference to selectQueue from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/marc.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+          "src/quality/marc.test.cjs:3: identifier reference to registeredProducer from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/marc.test.cjs:3: identifier reference to registeredProducer from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/merge.test.cjs:9: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/merge.test.cjs:9: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/operator-approval.cjs:65: identifier reference to identity from src/quality/stages.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/operator-approval.cjs:65: identifier reference to identity from src/quality/stages.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/operator-approval.test.cjs:75: identifier reference to reportPaths from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/operator-approval.test.cjs:75: identifier reference to reportPaths from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/project-review.cjs:85: identifier reference to identity from src/quality/stages.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/project-review.cjs:85: identifier reference to identity from src/quality/stages.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/project-review.test.cjs:3: identifier reference to evaluate from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/project-review.test.cjs:3: identifier reference to evaluate from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/prompt-eval-plan.cjs:37: identifier reference to main from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/prompt-eval-plan.cjs:37: identifier reference to main from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/reports.test.cjs:7: identifier reference to reportPaths from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/reports.test.cjs:7: identifier reference to reportPaths from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/scans.cjs:66: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/scans.cjs:66: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/scans.test.cjs:20: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/scans.test.cjs:20: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/stages.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+          "src/quality/stages.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24.",
+          "src/quality/upgrade.cjs:27: identifier reference to createController from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/upgrade.cjs:27: identifier reference to createController from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "src/quality/upgrade.test.cjs:13: identifier reference to of from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "src/quality/upgrade.test.cjs:13: identifier reference to of from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095).",
+          "templates/consumer-loader.cjs:25: identifier reference to main from src/quality/marc.cjs (3dff18d39d712b58f8d16ca19fa9688ca156c991).",
+          "templates/consumer-loader.cjs:25: identifier reference to main from src/quality/marc.cjs (d06da4279c61cb159ab5aa06bd0f70df3f5f4095)."
+        ],
+        "holds": [],
+        "uncertain": false,
+        "incomplete": false,
+        "requiresBrowser": false
+      },
+      "selected": [
+        {
+          "id": "csharp",
+          "version": "1.1.0",
+          "contentHash": "cf55956a2a11ddb2db42ac070d1a7d432c131027cd096677fec265beb9d67be1",
+          "skill": "skills/marc-crew-csharp/SKILL.md",
+          "reasons": ["Applicability matches captured technologies/paths: csharp, github-actions, javascript"]
+        },
+        {
+          "id": "github-actions",
+          "version": "1.0.0",
+          "contentHash": "5b1a19208e5d0095953f4cc57ca1b17c238e46064ab88a8726c674949f4c6e31",
+          "skill": "skills/marc-crew-github-actions/SKILL.md",
+          "reasons": ["Applicability matches captured technologies/paths: csharp, github-actions, javascript"]
+        },
+        {
+          "id": "javascript",
+          "version": "1.0.0",
+          "contentHash": "96576c186b90e61db7482253a9820536e79e0dead2344db378c32d8eb20141ac",
+          "skill": "skills/marc-crew-javascript/SKILL.md",
+          "reasons": ["Applicability matches captured technologies/paths: csharp, github-actions, javascript"]
+        }
+      ],
+      "omitted": [],
+      "holds": [],
+      "requiresFull": false,
+      "requiresBrowser": false,
+      "selectionHash": "bd585298837ed523c11e502d23a22ae62c1ada10aa3599052bbc5972a9c8ceb4"
+    },
+    "coordinator": "01a0e016-d967-7aa1-a4dd-538e8238b90c",
+    "repairReviewers": [],
+    "routing": {
+      "route": "full",
+      "verdict": "pass",
+      "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+      "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+      "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+      "reviewer": "01a0e016-d967-7aa1-a4dd-538e8238b90c",
+      "summary": "Full review: adds a persisted report-rendering marker and changes commit references in immutable audit reports.",
+      "risks": ["Persisted report evidence and historical byte-verification compatibility"],
+      "evidence": [
+        "src/quality/marc.cjs:62 prepareReport -> report command -> writeReportFiles -> verifyReportCommit; reportMarkdown -> stagesMarkdown",
+        "src/quality/stages.cjs:119 repair rendering uses recorded stage repository/toHead; docs and multi-stage regression inspected"
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+        "applied": true,
+        "evidence": "Captain routing executed in current host session 01a0e016-d967-7aa1-a4dd-538e8238b90c; no setting override"
+      }
+    },
+    "reportFormat": "marc-v3",
+    "auditFormat": "marc-audit-v1",
+    "reportCreatedAt": "2026-09-27T00:10:00.000Z",
+    "reportCiReuse": {"sourceHead":"3dff18d39d712b58f8d16ca19fa9688ca156c991","runId":36281280915,"runAttempt":1},
+    "stages": [
+      {
+        "kind": "review",
+        "repository": "wallism/marc",
+        "pr": 15,
+        "sourceHead": "3dff18d39d712b58f8d16ca19fa9688ca156c991",
+        "base": "d06da4279c61cb159ab5aa06bd0f70df3f5f4095",
+        "policyHash": "33f992ec51ad9e254c550ca9e787bfcfb5f24f65a0bfd7df8be46b09a6a0d70e",
+        "repairCycles": 0,
+        "decision": {"eligible":false,"merge":false,"reasons":["Sensitive files require a human decision through --operator-approval"]},
+        "routing": null,
+        "crew": null,
+        "gates": null,
+        "ci": null,
+        "projectChanges": [],
+        "repairExecutions": [],
+        "intent": null,
+        "recordedAt": "2026-09-27T00:10:47.945Z",
+        "previousHash": null,
+        "contentHash": "4a7b964cd502a89b679eeaa6b6bb9fc26b34ef242b6e655008231d635f5e8645",
+        "hash": "b623cf76d8e559863b7f635663983b3a8eacb231a586ea3ce8a0a9532d3824bf"
+      }
+    ]
+  },
+  "references": {
+    "/intent/entries/0": "/intent/text",
+    "/stages/0/routing": "/routing",
+    "/stages/0/crew": "/crew",
+    "/stages/0/gates": "/gates",
+    "/stages/0/ci": "/ci",
+    "/stages/0/intent": "/intent"
+  }
+}

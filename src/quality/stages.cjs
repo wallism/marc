@@ -82,7 +82,7 @@ function recordStage(directory, e, decision, event, now = new Date()) {
   } finally { fs.closeSync(lockFd); fs.unlinkSync(lock); }
 }
 
-function stagesMarkdown(stages) {
+function stagesMarkdown(stages, repairCommitLinks = false) {
   let output = '\n## Assessment stages\n\nHistorical results describe their recorded source/base/policy; they do not approve the current source.\n';
   if (stages[0]?.kind === 'review' && stages[0].repairCycles > 0)
     output += '\nEarlier stages were not recorded by this installation; no earlier crew or outcome is inferred.\n';
@@ -117,7 +117,10 @@ function stagesMarkdown(stages) {
         stage.decision.reasons.map(reason => `\n- ${clean(reason)}`).join('') +
         agentTable({ ...stage, repairExecutions: [] }).replace('## Crew used', '#### Crew used');
     } else if (stage.kind === 'repair') {
-      output += `Result: ${stage.result}; repaired head: \`${stage.toHead}\`. ${clean(stage.summary)}\n` +
+      const head = repairCommitLinks
+        ? `[\`${stage.toHead}\`](https://github.com/${stage.repository}/commit/${stage.toHead})`
+        : `\`${stage.toHead}\``;
+      output += `Result: ${stage.result}; repaired head: ${head}. ${clean(stage.summary)}\n` +
         agentTable({ gates: { repair: { reviewer: stage.reviewer, execution: stage.execution } } }).replace('## Crew used', '#### Crew used');
     } else output += `Run ${stage.runId}, attempt ${stage.runAttempt}, head \`${stage.head}\`: ${stage.status}/${stage.conclusion || 'pending'}. ${clean(stage.summary)}\n`;
   }
