@@ -201,6 +201,7 @@ Record the source/base/tool/policy identities, model settings, input/cached/outp
 | 2026-09-27 | E6–E9 follow-up | Confirmed the missed legacy-report defect from source; analysed Captain and correctness transcripts; added the previously-accepted-states correctness check, a correctness defect/clean eval pair and brief size hints. | Recorded below. Next: supported frozen replay, benchmark settings without a two-slot cap, then an authorized repeated rerun. |
 | 2026-09-27 | In-flight run and follow-up | Claude Code frozen PR16 assessment with the follow-up tool; corrected the clean corpus case (v2); added read-sized shared brief parts, warm-start dispatch guidance and a two-bytes-per-token size hint. | 241/241 local tests. Next: rerun to measure staggered-start cache reads and part-based reads. |
 | 2026-09-27 | Claude rerun | Brief parts and staggered start measured; same-mode dispatch requirement found; part-boundary note added; legacy-report finding withdrawn as a false alarm and the corpus case reclassified. | Next: background-only rerun to measure first-call cache reads. |
+| 2026-09-27 | Claude background-only run | Same-mode warm start: seven reviewers each read 33,912 cached tokens on their first call; cache writes −30% and weighted tokens −19% versus the first Claude run; two of eight still re-read part 1. | Next: state part line counts in spawn messages; treat the reproduced PR16 findings as review input. |
 
 ## Measured PR #16 result — 2026-09-27
 
@@ -613,3 +614,39 @@ Findings reproduced across both Claude runs: the byte-for-byte approval-entry co
 1. Rerun with every reviewer launched as a background agent and the rest dispatched after the first reviewer's first call, to measure first-call cache reads.
 2. Confirm that the part-boundary note removes the redundant part-1 re-reads.
 3. Add a seeded correctness defect (for example the confirmed report-before-receipt ordering) before using the correctness corpus to judge detection.
+
+## Claude Code background-only run — 2026-09-27
+
+Same frozen PR16 workload and Captain, with tool commit `2ccbf3f` (same-mode warm start, part-boundary note). Every reviewer ran as a background agent: correctness first, then the other seven together after its first model call. External state is under run `20260927-claude-bg`. The run lock was acquired and released and the reviewer worktree removed. All eight reviewers made zero reads of work docs, evals, registers or earlier run directories.
+
+### Measurements across the three Claude runs
+
+| Metric | First run | Rerun | Background-only |
+| --- | ---: | ---: | ---: |
+| Reviewer calls | 63 | 63 | 67 |
+| Cache writes | 849,300 | 835,908 | **582,323** |
+| Cache reads | 4,815,313 | 4,742,091 | 5,262,047 |
+| Output | 9,163 | 8,046 | 6,286 |
+| Inclusive input | 5,664,739 | 5,578,125 | 5,844,504 |
+| Mean context per call | 89,916 | 88,542 | 87,231 |
+| Weighted input-equivalent tokens | 1,589,097 | 1,559,450 | **1,285,673** |
+| Reviewer span (first start to last finish) | ~3.4 min | ~3.8 min (staggered) | 3.4 min |
+
+Weighted tokens use relative weights declared for this comparison from Anthropic's published price ratios for Claude Opus: uncached input 1, cache writes 1.25, cache reads 0.1, output 5. They are input-equivalent tokens, not money or allowance. On that basis the background-only run was about 19% cheaper than the first Claude run, driven mainly by 30% fewer cache writes. Inclusive input rose because the run made four more calls; cached reads are cheap, so this does not offset the saving. One run per configuration cannot separate small differences from ordinary variation.
+
+### What the in-flight data showed
+
+- **Warm start works when every reviewer launches the same way.** The first reviewer wrote 42,907 tokens on its first call. Each of the other seven then **read 33,912 tokens from cache** and wrote only about 9,000 on its first call, instead of about 45,900. That turns about 237k cache-write tokens into cache reads.
+- **Part-boundary note: partial improvement.** Six reviewers read their brief in exactly two calls. Two still re-read part 1 at `offset: 500`, down from four in the rerun. The host displays an empty numbered line after the final newline, which still suggests more content. The Captain could state each part's line count in the spawn message; not yet implemented.
+
+### Quality
+
+The frozen report is **Held**, with the same pattern as the rerun:
+
+- **Security `human-required`** (`marc.cjs:631`): with a receipt present, merge verifies report bytes against the receipt rather than the current decision, so any gate resolved in external evidence can reach merge while the published report still says Held. Blocking in all three Claude runs; the rerun's security reviewer rated it `repair`, this one a human policy decision.
+- **Code quality `repair`** (`approval-publication.cjs:69`): the approval entry is matched byte for byte with LF, so a GitHub web edit that re-saves the description with CRLF strands merge and `record-approval`. Blocking in all three runs; this reviewer noted that `captureIntent` already normalises CRLF.
+- **Test integrity `repair`** (`operator-approval.test.cjs:167`): the before/after test rewrite dropped the approval-rendering and stage-hash assertions. Blocking in all three runs.
+- **Correctness `pass`**, with the report-before-receipt ordering and the receipt merge path as advisories. No reviewer repeated the withdrawn legacy-report claim; the JavaScript reviewer explicitly noted legacy report merges are unaffected.
+
+These four findings are now reproduced across three independent Claude runs and are the strongest PR16 review inputs from this work.
+
