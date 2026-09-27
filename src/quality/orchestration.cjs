@@ -80,7 +80,7 @@ function inspectArtifacts(directory, required) {
             throw Error('Missing or failing sanitized scan evidence');
           facts = { scanner: scan.scanner, findings: 0 };
         } else throw Error('Unsupported artifact format; retain manual specialist inspection: ' + relative);
-        records.push({ file: relative, sha256: hash(bytes), ...facts });
+        records.push({ file: relative, path: file, sha256: hash(bytes), ...facts });
       } else throw Error('Nonregular artifact');
     }
   }
@@ -94,6 +94,10 @@ function inspectArtifacts(directory, required) {
 
 function atomicJson(file, value) {
   const temp = file + '.pending';
+  for (const candidate of [file, temp]) {
+    const stat = fs.lstatSync(candidate, { throwIfNoEntry: false });
+    if (stat && (!stat.isFile() || stat.isSymbolicLink())) throw Error('State output must be a regular file');
+  }
   // Recovery may overwrite only this operation's temporary output, never its ledger.
   fs.writeFileSync(temp, encode(value)); fs.renameSync(temp, file);
 }
