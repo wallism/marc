@@ -4,7 +4,7 @@ tags: [development, work-planning, token-efficiency, review-quality]
 
 # MARC token-efficiency work plan
 
-**Created:** 2026-09-27  
+**Created:** 2026-09-27
 **Status:** E1–E3 and E5 retained. E4 removed at the owner's request after the fresh comparison showed higher overall token usage and elapsed time. Original independent gates and simple-route rules restored. Historical measurements below remain unchanged; no trusted activation or merge.
 **Outcome:** Reduce the token cost of completing a PR assessment while preserving evidence quality, independent review and guarded actions.
 
