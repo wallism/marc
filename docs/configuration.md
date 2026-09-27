@@ -107,6 +107,8 @@ The default scans `HEAD` history; an optional full base SHA limits the scan to `
 
 ## Commands, coverage and validation
 
+For compact CI/artifact collection, independent-result assembly and resumable assessment checkpoints, use the separate [assessment session command](assessment-sessions.md). It can generate neutral per-gate packets and bounded Captain handoffs. It requires the same clean current trusted controller and shared run ownership; publication, recovery and merge retain their existing guarded commands.
+
 The controller supports `queue`, `capture`, `refresh-intent`, `decide`, `checkpoint`, `report`, `merge` and `recover-ci` after the optional `--repo <checkout>` selector. Use [intent-only refresh](pr-intent.md#changing-intent-without-repeating-the-whole-review) to preserve other valid reviews and CI when only intent changes. The conditional `intent` reviewer supports the usual optional agent settings. Follow the Captain and [evidence contract](../skills/marc-crew-captain/references/evidence.md) for authority, independent review and frozen identities. Reports remain at `.quality/reports`; preserve historical bytes. Merge uses the configured target branch. Deployment is separate.
 
 For an explicitly authorized sensitive-path decision, `decide`, `checkpoint`, `report` and `merge` accept a trailing `--operator-approval <absolute-external-file>`. Read the [operator channel, record schema and rebinding rules](operator-approval.md). Candidate files and audit copies never grant approval; this option satisfies only the applicable human path gate.

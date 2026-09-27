@@ -7,7 +7,7 @@ description: Independently review ARM templates infrastructure changes and affec
 
 Review Azure ARM JSON templates and deployment parameters, including linked/nested contracts; excludes generic JSON, exhaustive service architecture and deployment execution.
 
-Read the [manifest](crew.json), [review guide](references/review.md), [shared IaC boundaries](../../docs/iac-review.md) and Captain's [evidence contract](../marc-crew-captain/references/evidence.md).
+Read the [manifest](crew.json), [review guide](references/review.md), [shared IaC boundaries](../../docs/iac-review.md) and Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md).
 
 - Trace schema, expressions, deployment scope and linked/nested template inputs.
 - Inspect conditional resources, dependency ordering, secrets and deletion effects.

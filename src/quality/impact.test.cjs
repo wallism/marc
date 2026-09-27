@@ -13,6 +13,51 @@ const config = { schema: 1, members: ['csharp', 'javascript', 'blazor', 'fronten
 ] };
 const catalogue = loadCatalogue(path.resolve(__dirname, '../..'), config);
 
+test('diff hunks seed body-only owners without unrelated declarations and retain cross-language leads', t => {
+  const { write, commit, capture } = fixture(t);
+  write('src/tool.cjs', 'function command() { return 1; }\nfunction identity() { return 1; }\nfunction run() { return 1; }\n');
+  write('src/caller.cjs', 'function caller() { return command(); }');
+  write('src/Unused.cs', 'class Unused { int identity = 1; int command = 1; }');
+  write('infra/main.tf', 'resource "run" "example" { value = run }');
+  const base = commit();
+  write('src/tool.cjs', 'function command() { return 2; }\nfunction identity() { return 1; }\nfunction run() { return 1; }\n');
+  const result = capture(base, commit(), ['src/tool.cjs']);
+  assert.ok(result.files.includes('src/caller.cjs'));
+  assert.ok(!result.files.includes('src/Unused.cs'));
+  assert.ok(!result.files.includes('infra/main.tf'));
+  assert.ok(result.lexicalReferences.some(r => r.file === 'src/Unused.cs' && r.symbol === 'command'));
+  assert.ok(!result.lexicalReferences.some(r => r.symbol === 'identity'));
+  assert.deepEqual(selectCrew({}, config, catalogue, result).selected.map(x => x.id), ['javascript']);
+});
+
+test('explicit workflow and cross-language process paths retain genuine indirect impact', t => {
+  const { write, commit, git } = fixture(t);
+  write('src/check.cjs', 'function check() { return 1; }');
+  write('.github/workflows/check.yml', 'steps:\n  - run: node src/check.cjs\n');
+  write('src/Host.cs', 'class Host { void Start() { Process.Start("node", "src/check.cjs"); } }');
+  write('src/Consumer.cs', 'class Consumer { Host host; }');
+  const base = commit(); write('src/check.cjs', 'function check() { return 2; }');
+  const result = discoverReferences(base, commit(), ['src/check.cjs'], git, () => true);
+  for (const file of ['.github/workflows/check.yml', 'src/Host.cs', 'src/Consumer.cs']) assert.ok(result.files.includes(file), file);
+  assert.ok(result.references.some(r => r.file === 'src/Host.cs' && r.kind === 'module'));
+  assert.equal(result.incomplete, false);
+});
+
+test('named imports follow changed exports and aliases without unrelated exports or require.main', t => {
+  const { write, commit, capture } = fixture(t);
+  write('src/tool.cjs', 'function changed() { return 1; }\nfunction stable() { return 1; }\nmodule.exports = { changed, stable };');
+  write('src/caller.cjs', "const { changed: renamed } = require('./tool.cjs');\nfunction caller() { return renamed(); }\nfunction unrelated() { return 0; }");
+  write('src/unaffected.cjs', "const { stable } = require('./tool.cjs');\nfunction main() { return stable(); }");
+  write('src/unrelated-caller.cjs', 'function other() { return unrelated(); }');
+  write('src/entry.cjs', 'if (require.main === module) start();');
+  const base = commit();
+  write('src/tool.cjs', 'function changed() { return 2; }\nfunction stable() { return 1; }\nmodule.exports = { changed, stable };');
+  const result = capture(base, commit(), ['src/tool.cjs']);
+  assert.ok(result.files.includes('src/caller.cjs'));
+  for (const file of ['src/unaffected.cjs', 'src/unrelated-caller.cjs', 'src/entry.cjs']) assert.ok(!result.files.includes(file), file);
+  assert.equal(result.incomplete, false);
+});
+
 function fixture(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'marc-impact-scope-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));

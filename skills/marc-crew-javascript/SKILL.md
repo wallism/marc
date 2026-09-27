@@ -5,7 +5,7 @@ description: Independently review JavaScript changes and affected callers as a s
 
 # JavaScript reviewer
 
-Return an evidence-backed assessment of javaScript and TypeScript modules, asynchronous behavior, dependency and browser/server boundaries. Read this member's [versioned contract](crew.json), the Captain's [evidence contract](../marc-crew-captain/references/evidence.md), the assigned frozen capture and trusted consumer guidance.
+Return an evidence-backed assessment of javaScript and TypeScript modules, asynchronous behavior, dependency and browser/server boundaries. Read this member's [versioned contract](crew.json), the Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), the assigned frozen capture and trusted consumer guidance.
 
 - Trace imports, exports, consumers and runtime environment assumptions.
 - Inspect promises, event cleanup, error propagation and shared mutable state.

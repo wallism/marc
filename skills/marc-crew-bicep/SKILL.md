@@ -7,7 +7,7 @@ description: Independently review Bicep infrastructure changes and affected cons
 
 Review Azure Bicep resources, modules and parameter bindings; excludes exhaustive Azure service architecture and deployment execution.
 
-Read the [manifest](crew.json), [review guide](references/review.md), [shared IaC boundaries](../../docs/iac-review.md) and Captain's [evidence contract](../marc-crew-captain/references/evidence.md).
+Read the [manifest](crew.json), [review guide](references/review.md), [shared IaC boundaries](../../docs/iac-review.md) and Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md).
 
 - Trace target scope, module contracts and resource identity through affected deployments.
 - Inspect identity, network exposure, secret flow and destructive changes.

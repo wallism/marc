@@ -7,7 +7,7 @@ description: Independently review C changes and affected callers as a selected M
 
 C translation units and C ABI contracts, bounds, allocation ownership and failure handling; excludes C++ object semantics and unconfirmed device-specific rules.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace buffer length arithmetic, pointer validity and allocation ownership.
 - Inspect failure cleanup, C ABI compatibility and concurrent access contracts.

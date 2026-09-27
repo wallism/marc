@@ -49,11 +49,20 @@ test('all catalogue languages reject native comment/string noise without removin
   write('unrelated/game.sb3', 'PK\u0003\u0004 printable ImpactAnchor bytes');
   const base = commit();
   write('src/anchor.js', 'export function ImpactAnchor(value) { return value > 2; }');
-  const result = capture(base, commit(), ['src/anchor.js']);
-  assert.deepEqual(result.files, ['src/anchor.js', ...languages.map(([id, ext]) => `tests/${id}.${ext}`)].sort());
+  const head = commit(), result = capture(base, head, ['src/anchor.js']);
+  assert.deepEqual(result.files, ['src/anchor.js', 'tests/javascript.js']);
   assert.deepEqual(result.holds, []);
-  assert.equal(result.references.length, languages.length * 2);
-  assert.ok(result.references.every(r => r.from === 'src/anchor.js' && r.symbol === 'ImpactAnchor'));
+  // Native code matches remain inspectable across languages, but a shared name
+  // alone cannot recruit unrelated technology. Noise is absent from BOTH lists.
+  const edges = [...result.references, ...result.lexicalReferences];
+  for (const revision of [base, head]) {
+    assert.deepEqual(result.references.filter(r => r.revision === revision).map(r => r.file), ['tests/javascript.js']);
+    assert.deepEqual(result.lexicalReferences.filter(r => r.revision === revision).map(r => r.file).sort(),
+      languages.filter(([id]) => id !== 'javascript').map(([id, ext]) => `tests/${id}.${ext}`).sort());
+  }
+  assert.equal(edges.length, languages.length * 2);
+  assert.ok(edges.every(r => r.from === 'src/anchor.js' && r.symbol === 'ImpactAnchor'));
+  assert.ok(result.lexicalReferences.every(r => r.kind === 'lexical'));
 });
 
 test('Scratch archive bytes cannot seed a textual reference search', t => {
@@ -67,14 +76,24 @@ test('Scratch archive bytes cannot seed a textual reference search', t => {
 
 test('Go, Python and Java test conventions stop further expansion but keep test evidence', t => {
   const { write, commit, capture } = fixture(t);
-  write('src/anchor.js', 'function ImpactAnchor() { return 1; }');
+  const anchors = [
+    ['src/anchor.go', 'func ImpactAnchor() int { return 1; }', 'src/anchor_test.go'],
+    ['src/anchor.py', 'def ImpactAnchor():\n    return 1', 'src/anchor_test.py'],
+    ['src/Anchor.java', 'class Anchor { static int ImpactAnchor() { return 1; } }', 'src/AnchorTest.java']
+  ];
+  for (const [file, code] of anchors) write(file, code);
   write('src/anchor_test.go', 'func TestGo() { ImpactAnchor(); }');
   write('src/anchor_test.py', 'class TestPython:\n    result = ImpactAnchor()');
-  write('src/AnchorTest.java', 'class TestJava { int result = ImpactAnchor(); }');
-  write('src/unrelated.js', 'function other() { TestGo(); TestPython(); TestJava(); }');
+  write('src/AnchorTest.java', 'class TestJava { int result = Anchor.ImpactAnchor(); }');
+  write('src/unrelated.go', 'func other() { TestGo(); }');
+  write('src/unrelated.py', 'def other():\n    return TestPython()');
+  write('src/Other.java', 'class Other { TestJava test; }');
   const base = commit();
-  write('src/anchor.js', 'function ImpactAnchor() { return 2; }');
-  const result = capture(base, commit(), ['src/anchor.js']);
-  assert.deepEqual(result.files, ['src/AnchorTest.java', 'src/anchor.js', 'src/anchor_test.go', 'src/anchor_test.py']);
+  for (const [file, code] of anchors) write(file, code.replace('return 1', 'return 2'));
+  const head = commit(), result = capture(base, head, anchors.map(([file]) => file));
+  assert.deepEqual(result.files, anchors.flatMap(([file, , testFile]) => [file, testFile]).sort());
+  for (const [file, , testFile] of anchors) for (const revision of [base, head])
+    assert.ok(result.references.some(r => r.from === file && r.file === testFile && r.revision === revision),
+      `${file} retains its native test caller in ${revision}`);
   assert.deepEqual(result.holds, []);
 });

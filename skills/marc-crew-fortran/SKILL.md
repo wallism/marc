@@ -7,7 +7,7 @@ description: Independently review Fortran changes and affected callers as a sele
 
 Fortran numerical representation, array interfaces, resource/error paths and C interoperability; excludes scientific-model validity and unconfirmed MPI/OpenMP/coarray runtime expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace kind/precision, array bounds and argument shape contracts.
 - Inspect allocation, I/O failure and saved-state ownership.
