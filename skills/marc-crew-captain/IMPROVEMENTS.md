@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Brief dispatch and on-demand guarded actions
+
+Dispatch every reviewer in one turn with only its generated brief path and wait once for all, without opening briefs, diffs or packets in the Captain context. Reviewers start from the brief, confirm identities without recomputing checksums, batch independent reads and leave result validation to assembly. Repair, recovery, publication and merge procedures move unchanged to [guarded actions](references/guarded-actions.md), loaded only when reached. Every gate, session and approval requirement remains. See [assessment sessions](../../docs/assessment-sessions.md).
+
 ## 2026-09-27 — Remove E4 and retain E5 measurement
 
 Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.

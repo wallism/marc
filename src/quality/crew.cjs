@@ -139,4 +139,4 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
     uncertain: uncertain || shared, incomplete: discovery.incomplete, requiresBrowser,
     ...(scopedDependencies.size || discovery.incomplete ? { requiresFull: true } : {}) };
 }
-module.exports = { validateCrewConfig, validateMember, loadCatalogue, selectCrew, collectImpact };
+module.exports = { validateCrewConfig, validateMember, loadCatalogue, selectCrew, collectImpact, fileTechnologies };
