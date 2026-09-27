@@ -5,7 +5,7 @@ tags: [development, work-planning, token-efficiency, review-quality]
 # MARC token-efficiency work plan
 
 **Created:** 2026-09-27  
-**Status:** E1–E3 implemented locally; frozen PR #16 before/after assessment measurement in progress. No trusted activation or merge.  
+**Status:** E1–E3 implemented and locally tested; frozen PR #16 before/after assessment completed. No demonstrated overall token reduction, trusted activation or merge. See measured results and validation limits below.
 **Outcome:** Reduce the token cost of completing a PR assessment while preserving evidence quality, independent review and guarded actions.
 
 Work through one item at a time. Record its measured result and remaining limitations below before choosing the next item. Start with E1–E3; introduce basic measurement from E5 early so their effects can be compared. E4 changes assurance policy and should be evaluated separately.
@@ -37,7 +37,7 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 ### E1 — Reduce Captain round trips and carried context
 
-- [ ] Implement and validate.
+- [x] Implement and locally validate; live fresh-Captain cost comparison remains unproven.
 
 **Observed:** The Captain retained the implementation conversation and large instruction/tool outputs while making many orchestration calls, including short waits and repeated inspections.
 
@@ -49,7 +49,7 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 ### E2 — Select specialists from meaningful impact evidence
 
-- [ ] Implement and validate.
+- [x] Implement and validate focused impact cases and source-only PR #15/#16 replays.
 
 **Observed:** Captured references matched JavaScript `command` to C# evaluation fixtures, `identity` to the C# startup hook, and `run` to workflow YAML. C# and GitHub Actions reviewers ultimately found no relevant behavior change. Discovery seeded searches from declarations throughout changed production files, including unchanged functions.
 
@@ -61,7 +61,7 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 ### E3 — Split reviewer contracts and prepare compact evidence packets
 
-- [ ] Implement and validate.
+- [x] Implement and validate packet mechanics and the PR #16 assessment pair; broad model quality controls remain unrun.
 
 **Observed:** The shared evidence contract was approximately 3,286 words and included dependency, publication, recovery and approval procedures that many reviewers did not need. The Captain entry point was approximately 4,314 words.
 
@@ -109,3 +109,88 @@ Record the source/base/tool/policy identities, model settings, input/cached/outp
 | 2026-09-27 | E1 | Added deterministic session collection/assembly, artifact validation, bounded status waits, identity/ownership checks, resumable external checkpoints and deduplicated usage accounting. | Focused interruption, drift, pending/failed CI and independent-result preservation tests passed. No action authority added; live activation remains separate. |
 | 2026-09-27 | E2 | Seed changed declarations from both diff sides; filter native-language/local-binding/member collisions; trace named imports and explicit workflow/process paths; retain cross-language lexical leads. | Genuine interface, removed-caller, alias, resource and cross-language cases pass with unchanged discovery limits. PR #15/#16 replays use source only, not reviewer conclusions. |
 | 2026-09-27 | E3 | Added common reviewer contract and neutral, checksummed packets with complete diff/source access; moved conditional dependency and Captain procedures to references. | Combined focused validation: 105 passed. Catalogue links and syntax pass. The rerun will measure consumption; instruction size alone is not a token saving claim. |
+
+## Measured PR #16 result — 2026-09-27
+
+**No overall token reduction was demonstrated.** The combined observed assessment windows used nearly identical inclusive input (+0.14%), less uncached input (-8.82%) and more output (+13.17%). Independent reviewer consumption increased. Do not describe the smaller instruction files or fewer Captain calls as a demonstrated total token saving.
+
+Both assessments used [PR #16](https://github.com/wallism/marc/pull/16), source `b905d99276b43501ad0611937f2ffc9d2d4ddb60`, base `74921a12d167dc26b6043cce5eafd32b8c66b5cd`, eight fresh independent Astra/Medium reviewers, and successful [source CI run 36283816229](https://github.com/wallism/marc/actions/runs/36283816229), attempt 1. Ubuntu had 222 testcases (one platform skip); Windows had 222; sanitized secrets findings were empty. No hosted job was dispatched or repeated.
+
+Baseline tool: `74921a12d167dc26b6043cce5eafd32b8c66b5cd`; baseline policy: `bc33aaf6cedade5228a3f4530ee74c13edb5ace15f05fdae503d14abf40a6b88`.
+
+Experimental after tool: `192c6e72513f048a0dab740aa18a71db384a0e2a`; after policy: `7717a4459a9041cb537ed78920f9ec4ece5b23445852e445cd3c26efba5946eb`. These are deliberately different tool/policy identities, with fresh reviewer results for the second capture. This is local experimental evidence, not activation of candidate-owned governance or merge authority. Raw transcripts, captures, gate JSON, host receipts and comparison data remain in external state.
+
+### Combined observed assessment windows
+
+| Metric | Before | After | Change |
+| --- | --- | --- | --- |
+| Model calls | 137 | 116 | -15.33% |
+| Input, including cache | 10,646,082 | 10,660,540 | +0.14% |
+| Cached input (subset) | 10,051,072 | 10,118,016 | +0.67% |
+| Uncached input | 595,010 | 542,524 | -8.82% |
+| Output, including reasoning | 33,709 | 38,148 | +13.17% |
+
+Cached input is a subset of input; never add it again. Uncached input is inclusive input minus cached input. These figures are not unique context length, money or allowance percentages. Implementation and final result-writing costs are excluded from both assessment windows; this is not a claim that the development work paid for itself.
+
+### Independent reviewers
+
+| Metric | Before | After | Change |
+| --- | --- | --- | --- |
+| Model calls | 88 | 91 | +3.41% |
+| Input, including cache | 5,856,597 | 6,289,463 | +7.39% |
+| Cached input (subset) | 5,379,584 | 5,769,728 | +7.25% |
+| Uncached input | 477,013 | 519,735 | +8.96% |
+| Output, including reasoning | 23,715 | 25,957 | +9.45% |
+
+| Gate | Before outcome | After outcome | Calls before / after | Input before / after | Cached before / after | Output before / after |
+| --- | --- | --- | --- | --- | --- | --- |
+| code-quality | pass | pass | 13 / 11 | 913,666 / 777,829 | 847,872 / 708,480 | 3,091 / 3,521 |
+| correctness | pass | pass | 15 / 12 | 1,098,742 / 852,252 | 1,030,272 / 785,408 | 3,581 / 2,994 |
+| csharp | blocked | pass | 11 / 11 | 631,473 / 720,293 | 586,880 / 665,216 | 2,820 / 2,998 |
+| github-actions | blocked | pass | 11 / 11 | 693,783 / 709,097 | 642,944 / 654,336 | 3,321 / 3,310 |
+| intent | pass | pass | 8 / 11 | 491,803 / 682,003 | 442,880 / 625,536 | 1,803 / 2,926 |
+| javascript | blocked | pass | 9 / 12 | 630,959 / 889,205 | 568,960 / 814,592 | 2,817 / 3,463 |
+| security | human-required | human-required | 10 / 11 | 650,228 / 809,139 | 580,736 / 736,384 | 3,305 / 3,367 |
+| test-integrity | blocked | pass | 11 / 12 | 745,943 / 849,645 | 679,040 / 779,776 | 2,977 / 3,378 |
+
+No reviewer demonstrated a concrete code defect in either run. Security retained a material governance approval finding. The baseline's incomplete discovery also held test integrity and the three specialists; these gates completed after improved discovery. Both assessments remain held for explicit sensitive-path approval. PR #16 was not repaired, published to or merged. Four hold-to-pass changes mean this is not an identical-workload quality comparison. Deeper completed reviews, residual lexical leads and ordinary model variability are possible explanations for higher reviewer cost, not proven causes.
+
+### Captain diagnostic phases
+
+| Metric | Before | After | Change |
+| --- | --- | --- | --- |
+| Model calls | 49 | 25 | -48.98% |
+| Input, including cache | 4,789,485 | 4,371,077 | -8.74% |
+| Cached input (subset) | 4,671,488 | 4,348,288 | -6.92% |
+| Uncached input | 117,997 | 22,789 | -80.69% |
+| Output, including reasoning | 9,994 | 12,191 | +21.98% |
+
+The Captain remained in this implementation chat; it did not receive a fresh bounded context. The baseline includes initial inspection/setup and ends at `2026-09-27T01:14:23.294Z`. The after window starts with packet preparation at `2026-09-27T01:33:47.075Z`, includes its initial path-normalization retry, and ends at `2026-09-27T01:43:41.115Z`. Differing history, preparation and cache state prevent a clean causal E1 estimate. The smaller number of observed calls does not establish how much a fresh Captain would save. Pending CI and interruption behavior were tested deterministically, not encountered as live benchmark conditions.
+
+### Instruction and evidence sizes
+
+The common contract changed from 3285 to 535 whitespace-delimited words; the Captain entry point changed from 4313 to 1530. Detailed action procedures remain required in their linked references. Conditional dependency and browser guidance remains available. No required gate was removed or combined.
+
+| Gate | Before entry/contract/project bytes | After entry/contract/project bytes | After packet bytes |
+| --- | --- | --- | --- |
+| security | 34,098 | 10,772 | 5,147 |
+| correctness | 31,831 | 10,140 | 5,156 |
+| code-quality | 31,724 | 10,033 | 5,159 |
+| test-integrity | 32,099 | 10,408 | 5,165 |
+| intent | 35,573 | 13,882 | 5,390 |
+| crew:csharp | 33,445 | 11,754 | 5,356 |
+| crew:github-actions | 31,896 | 10,205 | 5,380 |
+| crew:javascript | 31,658 | 9,967 | 5,368 |
+
+Across eight reviewers, the minimum entry/contract/project set decreased from 262,324 to 87,161 bytes (66.8%). These are **provided instruction sizes**, not a claim about every file actually read or a tokenizer estimate. Referenced specialist/language guidance and expanded source reads vary; actual processed tokens are reported above. Each after packet points to the same complete 56,433-byte diff and a 50,252-byte neutral scope document, plus the exact CI artifacts and unrestricted frozen source access. Packets contain no other reviewer's conclusions.
+
+### Impact replay and validation
+
+- PR #15 source-only replay: selected specialists decreased from JavaScript, C# and GitHub Actions to JavaScript; total inventory decreased from 53 to 20 files. Two fewer sessions is now a demonstrated selection result, **not measured PR #15 model-token savings**. Reviewer conclusions were not used as selection inputs.
+- PR #16: total inventory decreased from 62 to 46 files; discovery completed within the original limits. Shared instruction changes still select all three configured specialists and all eight reviewer sessions. The 105 retained lexical leads are available for investigation, not hidden or treated as semantic dependencies.
+- 105 focused Node 24 tests passed across orchestration, packets, impact, crew, gate evaluation, CI recovery, reports and stages. The final checkpoint/artifact-path adjustment reran its nine relevant tests successfully. Catalogue links and syntax checks passed.
+- Controls cover interrupted resumption, exclusive ownership, source/base/policy/selection/intent drift, pending/failed/missing CI, malformed/missing evidence, duplicate/stale sessions, preservation of a known blocking result, clean results, missing expertise, old callers, body-only edits, interface contracts, import aliases and cross-language/workflow invocation.
+- The known-defect/clean controls above are deterministic mechanism tests. This request's live model comparison was PR #16 only. The separate C# model-evaluation corpus was not run; missed-defect rates and broader prompt quality remain unproven. Retries are not separately labelled by the host and are not inferred. Usage counters were available for all 16 reviewers and both measured Captain intervals, deduplicated by response ID.
+- The new operational command supports JUnit and sanitized scan JSON; other artifact formats retain explicit manual-workflow holds. The production trusted-target check was not bypassed to activate the local tool. Final publication/merge still needs clean current trusted code, new applicable evidence, operator approval and live checks.
+
+**Conclusion:** retain the narrower impact selection, smaller contracts and deterministic controller mechanics as locally validated changes, but do not advertise an overall token-efficiency win from this PR pair. A separately authorized fresh-Captain and representative quality benchmark would be needed to establish that.
