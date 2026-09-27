@@ -12,7 +12,7 @@ Work through one item at a time. Record its measured result and remaining limita
 
 ## Results at a glance
 
-> **Current result:** E1–E3 and E5 retained · E4 removed · **92/92 current focused tests passed** · **No overall assessment-efficiency gain demonstrated**
+> **Current result:** E1–E3 and E5 retained · E4 removed · **233/233 CI-equivalent tests passed locally** · **No overall assessment-efficiency gain demonstrated**
 
 All results below were recorded on 2026-09-27. These summarize completed runs; no new benchmark was run for this summary.
 
@@ -24,11 +24,14 @@ All results below were recorded on 2026-09-27. These summarize completed runs; n
 
 Input includes cached input; do not add cache again. Retries are unknown. The assessment totals exclude implementation and benchmark administration; they are not money or allowance percentages. See the detailed comparison sections below for cached counts, role attribution, immutable identities and exclusions.
 
-| Local validation / replay | Recorded result | What it establishes |
+| Validation / replay | Recorded result | What it establishes |
 | --- | --- | --- |
 | E1–E3 focused Node 24 checks | 105 passed; final checkpoint/artifact adjustment reran 9 relevant checks successfully | Controller, packet, discovery, review, CI-recovery and report/stage mechanics; catalogue and syntax checks also passed. |
 | E4/E5 experimental checks | 96 passed | Proposed gate and measurement mechanics, not model-quality equivalence. E4 was later removed. |
 | E4 removal / E5 retained | **92 passed, 0 failed** | Restored independent gates and simple route, retained measurement, report compatibility and catalogue links. |
+| PR17 initial hosted CI (`871cb77`) | Ubuntu: 230 passed, 2 failed, 1 platform skip | [Failed job](https://github.com/wallism/marc/actions/runs/36294552694/job/108550868029): two older language-discovery tests still assumed cross-language identifier matches were dependency edges. Earlier focused checks missed this file. |
+| PR17 language-discovery fixture fix | 30 focused tests passed | Cross-language lexical leads remain inspectable, comment/string noise stays excluded, and genuine native-language test callers stop dependency expansion. Runtime rules unchanged. |
+| PR17 full CI-equivalent local check after fixture fix | **233 passed, 0 failed, 0 skipped** | Node 24 on Windows; the complete quality and self-review suite passed with JUnit evidence generated. Hosted confirmation is tracked separately in PR17 checks. |
 | E5 measurement CLI | Output exactly matched the baseline API calculation | Same deduplicated host records produced the same counts. |
 | Source-only PR15 impact replay | 53 → 20 files; 3 → 1 selected specialists | Narrower selection retained JavaScript. This was not a PR15 model-cost rerun. |
 | Source-only PR16 impact replay | 62 → 46 files; 3 specialists retained; discovery hold resolved | Discovery completed within unchanged limits; required specialist coverage remained. |
