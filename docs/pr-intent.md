@@ -4,7 +4,9 @@ MARC's `marc-crew-*` skills form its assurance system. `marc-companion-*` skills
 
 The first companion is [PR intent](../skills/marc-companion-pr-intent/SKILL.md). It consults the request, linked ticket and associated work files, corroborates the problem from code, and proposes why the PR is needed and its expected outcome. Inaccessible or unclear sources prompt a specific question. It shows existing wording beside its proposal and waits for human acceptance before changing only the PR's intent paragraph. It does not edit tickets or documents unless separately asked.
 
-Select the companion explicitly, choosing your harness as usual:
+When working in the MARC repository, Codex discovers the companion through `.agents/skills/marc-companion-pr-intent/SKILL.md`, which forwards to the canonical instructions in `skills/`. Invoke it as `$marc-companion-pr-intent`. If it has not appeared after updating the checkout, restart Codex to refresh discovery.
+
+For other repositories, install the companion explicitly, choosing your harness as usual:
 
 ```powershell
 npx skills add wallism/marc --skill marc-companion-pr-intent --agent codex --copy

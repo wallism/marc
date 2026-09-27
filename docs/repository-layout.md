@@ -10,6 +10,7 @@ CONTRIBUTING.md           Contribution and validation rules
 IMPROVEMENTS.md           Short project improvement history
 package.json              Local and CI check commands, no runtime dependencies
 .github/workflows/        Branch-push Node checks and PR contribution checks
+.agents/skills/           Repository-local companion discovery entries for Codex
 .marc/                   MARC's own self-review governance and focused checks
 src/quality/              Existing controller, adapters, tests and fixtures
   browser-host/           Optional ASP.NET UI hook and its smoke check
@@ -25,6 +26,8 @@ scripts/                  Installation and JavaScript syntax-check entry points
 ```
 
 ## References and decisions
+
+Companion discovery entries in `.agents/skills/` forward to the canonical `skills/marc-companion-*/SKILL.md` files. When adding a companion, add its repository-local entry with matching name and description so Codex can discover it while working on MARC. Keep workflow instructions and supporting references in the canonical catalogue.
 
 Reviewed on 2026-09-13:
 
