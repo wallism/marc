@@ -637,7 +637,7 @@ Weighted tokens use relative weights declared for this comparison from Anthropic
 ### What the in-flight data showed
 
 - **Warm start works when every reviewer launches the same way.** The first reviewer wrote 42,907 tokens on its first call. Each of the other seven then **read 33,912 tokens from cache** and wrote only about 9,000 on its first call, instead of about 45,900. That turns about 237k cache-write tokens into cache reads.
-- **Part-boundary note: partial improvement.** Six reviewers read their brief in exactly two calls. Two still re-read part 1 at `offset: 500`, down from four in the rerun. The host displays an empty numbered line after the final newline, which still suggests more content. The Captain could state each part's line count in the spawn message; not yet implemented.
+- **Part-boundary note: partial improvement.** Six reviewers read their brief in exactly two calls. Two still re-read part 1 at `offset: 500`, down from four in the rerun. The host displays an empty numbered line after the final newline, which still suggests more content. **Implemented afterwards:** packets and the session status now record each part's line count (`briefPartLines`), and the Captain states them in spawn messages; the reviewer contract treats a stated count as the whole part. On the PR16 replay, part 1 is 497 lines and gate parts are 570–617 lines. Unmeasured until the next run.
 
 ### Quality
 
@@ -649,4 +649,3 @@ The frozen report is **Held**, with the same pattern as the rerun:
 - **Correctness `pass`**, with the report-before-receipt ordering and the receipt merge path as advisories. No reviewer repeated the withdrawn legacy-report claim; the JavaScript reviewer explicitly noted legacy report merges are unaffected.
 
 These four findings are now reproduced across three independent Claude runs and are the strongest PR16 review inputs from this work.
-

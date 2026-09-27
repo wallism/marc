@@ -157,6 +157,10 @@ function buildPackets(e, context, { directory, git, artifactFacts = [], experime
   const scopePath = path.join(directory, 'scope.json');
   fs.writeFileSync(scopePath, encode({ files: e.files, impact: e.crew?.impact, holds: e.crew?.holds || [], projectChanges: e.projectChanges }));
   const pointer = file => ({ path: file, sha256: digest(fs.readFileSync(file)), bytes: fs.statSync(file).size });
+  // Hosts number lines and show an empty line after a final newline; a stated count
+  // tells readers where a part ends so they do not page past it.
+  const partPointer = file => { const text = fs.readFileSync(file, 'utf8');
+    return { ...pointer(file), lines: text ? text.split('\n').length - (text.endsWith('\n') ? 1 : 0) : 0 }; };
   const refs = path.join(context.bundleRoot, 'skills/marc-crew-captain/references');
   const common = pointer(path.join(refs, 'reviewer.md'));
   const project = context.guidance?.project ? pointer(context.guidance.project) : null;
@@ -206,17 +210,17 @@ function buildPackets(e, context, { directory, git, artifactFacts = [], experime
   const sharedParts = split.shared.map((bytes, i) => {
     const file = path.join(directory, `brief-part-${i + 1}.md`);
     fs.writeFileSync(file, bytes, { flag: 'wx' });
-    return pointer(file);
+    return partPointer(file);
   });
   const packets = [];
   for (const { gate, name, output, schema, instructions, expansion, tail } of drafts) {
     const briefPath = path.join(directory, `${name}-brief.md`);
     fs.writeFileSync(briefPath, prefix + tail, { flag: 'wx' });
-    let briefParts = [pointer(briefPath)];
+    let briefParts = [partPointer(briefPath)];
     if (sharedParts.length) {
       const last = path.join(directory, `${name}-brief-part-${parts}.md`);
       fs.writeFileSync(last, Buffer.concat([split.last, Buffer.from(tail)]), { flag: 'wx' });
-      briefParts = [...sharedParts, pointer(last)];
+      briefParts = [...sharedParts, partPointer(last)];
     }
     const packet = { schema: 1, experimental, authority: 'Read-only independent assessment; no repair, publication or merge authority.', gate,
       identity: identity(e), repository: e.repository, pr: e.pr, sourceHead: e.sourceHead, base: e.base, policyHash: e.policyHash,
@@ -224,7 +228,7 @@ function buildPackets(e, context, { directory, git, artifactFacts = [], experime
       intent: e.intent, ci: e.ci, artifactFacts, outputSchema: schema, output, expansion };
     const file = path.join(directory, `${name}.json`);
     fs.writeFileSync(file, encode(packet), { flag: 'wx' });
-    packets.push({ gate, role: gate.replace(/^crew:/, ''), path: file, brief: briefPath, briefParts: briefParts.map(p => p.path), output,
+    packets.push({ gate, role: gate.replace(/^crew:/, ''), path: file, brief: briefPath, briefParts: briefParts.map(p => p.path), briefPartLines: briefParts.map(p => p.lines), output,
       briefBytes: packet.brief.bytes, instructionBytes: instructions.reduce((sum, p) => sum + p.bytes, 0),
       packetBytes: fs.statSync(file).size, diffBytes: packet.diff.bytes, scopeBytes: packet.scope.bytes });
   }
@@ -235,7 +239,7 @@ function buildPackets(e, context, { directory, git, artifactFacts = [], experime
     repairCycles: e.repairCycles, repairReviewers: e.repairReviewers, repairExecutions: e.repairExecutions,
     sharedPrefix: { bytes: Buffer.byteLength(prefix), sha256: digest(prefix) },
     briefParts: { count: parts, maxBytes: briefPartBytes },
-    dispatch: 'Warm start: dispatch the first gate alone, then every remaining gate together once its first model call has completed, all launched the same way (sessions launched differently share no cache), so later sessions can read the shared system/tool prefix from the host cache. Give each reviewer its brief path, or its briefParts in order when the host limits one read below the brief size.',
+    dispatch: 'Warm start: dispatch the first gate alone, then every remaining gate together once its first model call has completed, all launched the same way (sessions launched differently share no cache), so later sessions can read the shared system/tool prefix from the host cache. Give each reviewer its brief path, or its briefParts in order with the matching line counts from briefPartLines when the host limits one read below the brief size.',
     packets, next: 'Verify live source/base/policy and exclusive run ownership before resuming. Load current trusted Captain; inspect resumable external state. Dispatch each packet brief to a fresh reviewer without opening it here. Never inherit implementation conversation or use packet CI as live merge authority.' };
   const handoffPath = path.join(directory, 'captain-handoff.json');
   fs.writeFileSync(handoffPath, encode(handoff), { flag: 'wx' });

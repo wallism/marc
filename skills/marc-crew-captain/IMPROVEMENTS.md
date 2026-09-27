@@ -2,7 +2,7 @@
 
 ## 2026-09-27 — Warm-start dispatch and brief parts
 
-Dispatch the first reviewer alone and the rest together in the next turn, so later sessions can reuse the host's cached system/tool prefix. Give reviewers ordered brief parts when the host caps one read below the brief size. Every gate and fresh session remains required. See the [harness contract](references/harnesses.md).
+Dispatch the first reviewer alone and the rest together in the next turn, so later sessions can reuse the host's cached system/tool prefix. Give reviewers ordered brief parts, with each part's line count, when the host caps one read below the brief size; without counts, two of eight reviewers in the background-only run still paged past a complete part. Every gate and fresh session remains required. See the [harness contract](references/harnesses.md).
 
 ## 2026-09-27 — Read briefs in one call
 

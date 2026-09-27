@@ -78,6 +78,9 @@ test('small briefs are one part; large briefs split into shared parts plus a gat
     assert.ok(parts.every(part => part.length <= limit));
     assert.ok(Buffer.concat(parts).equals(fs.readFileSync(p.brief)));
     assert.ok(parts.every(part => !part.toString('utf8').includes('�')), 'parts never split a UTF-8 sequence');
+    // Stated line counts match what a line-numbering reader sees, excluding the empty line after a final newline.
+    assert.deepEqual(p.briefPartLines, parts.map(part => part.toString('utf8').split('\n').length - (part.toString('utf8').endsWith('\n') ? 1 : 0)));
+    assert.ok(p.briefPartLines.every(n => n > 0));
   }
   assert.match(fs.readFileSync(a.brief, 'utf8'), new RegExp(`also written as ${handoff.briefParts.count} ordered parts of at most 8 KiB`));
   const packet = JSON.parse(fs.readFileSync(a.path));
