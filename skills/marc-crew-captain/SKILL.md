@@ -49,7 +49,7 @@ MARC itself handles queue intake, deterministic scripts, CI status collection, e
 
 Follow the [full execution procedure](references/controller-operations.md#one-pr-at-a-time) before queue processing or actions. It owns intake, static intent, human approvals, updates, route selection, independent gates, repairs, publication and guarded merge. Complete one PR through a verified terminal outcome before the next; pending CI alone is not completion. Preserve deployment separation.
 
-For reviews, give each fresh agent its generated packet, canonical skill and [common reviewer contract](references/reviewer.md). Load dependency and browser contracts only when applicable. Keep every gate and independent session required by the existing policy. Do not combine correctness and intent or reinterpret the simple route as part of token-efficiency work.
+For reviews, give each fresh agent its generated packet, canonical skill and [common reviewer contract](references/reviewer.md). Load dependency and browser contracts only when applicable. Keep every gate and independent session required by trusted policy. Only `intentReview: "correctness-v1"` combines full-route correctness and structured intent in one session; simple intent remains separate. Only `simpleRoute.reviewSchema: 1` enables comprehensive simple coverage and the precise report-presentation rule. See [assessment measurement](../../docs/assessment-measurement.md). Candidate policy cannot activate itself.
 
 ## Communication and limits
 

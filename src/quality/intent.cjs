@@ -60,7 +60,7 @@ function intentReasons(e, required = false) {
   const reasons = [];
   if (!gate || gate.intentHash !== intent.hash || gate.sourceHead !== e.sourceHead || gate.base !== e.base ||
       gate.policyHash !== e.policyHash || gate.assessment !== 'aligned' || gate.verdict !== 'pass')
-    reasons.push('intent: human action required or assessment missing/stale; reassess only intent when code identity is unchanged');
+    reasons.push('intent: human action required or assessment missing/stale; refresh the assigned intent review when code identity is unchanged');
   if (combinedIntent(e) && (!text(gate?.summary) || !Array.isArray(gate?.evidence) || !gate.evidence.length || !gate.evidence.every(text) ||
       !Array.isArray(gate?.findings) || gate.findings.some(f => f.severity !== 'advisory') ||
       ['reviewer', 'execution', 'sourceHead', 'base', 'policyHash'].some(k => Object.hasOwn(e.gates?.correctness?.intent || {}, k))))
