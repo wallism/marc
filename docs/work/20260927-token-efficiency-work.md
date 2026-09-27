@@ -5,7 +5,7 @@ tags: [development, work-planning, token-efficiency, review-quality]
 # MARC token-efficiency work plan
 
 **Created:** 2026-09-27
-**Status:** E1–E3 and E5 retained. E4 removed at the owner's request after the fresh comparison showed higher overall token usage and elapsed time. Original independent gates and simple-route rules restored. Historical measurements below remain unchanged; no trusted activation or merge.
+**Status:** E1–E3 and E5 retained. E4 removed at the owner's request after the fresh comparison showed higher overall token usage and elapsed time. Original independent gates and simple-route rules restored. E6–E9 implemented and locally validated; their live effect is unmeasured. Historical measurements below remain unchanged; no trusted activation or merge.
 **Outcome:** Reduce the token cost of completing a PR assessment while preserving evidence quality, independent review and guarded actions.
 
 Work through one item at a time. Record its measured result and remaining limitations below before choosing the next item. Start with E1–E3; introduce basic measurement from E5 early so their effects can be compared. E4 changes assurance policy and should be evaluated separately.
@@ -125,6 +125,62 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 **Starting points:** [execution and usage records](../../src/quality/agent-settings.cjs), [harness accounting](../../skills/marc-crew-captain/references/harnesses.md), [evaluation work](20260915-skill-evals-csharp-work.md).
 
+### Cost model behind E6–E9
+
+The fresh E1–E3 baseline spent 43,468 output tokens but 10,974,616 inclusive input: 94% cached. Nearly all cost is the whole context being resent on every call, approximately *calls × mean context*. The Captain averaged ~79k input per call over 51 calls; reviewers averaged ~73k over ~12 calls each. E3 removed ~3k tokens of instructions per reviewer, but every reviewer still opened a ~56KB diff and a ~50KB indented `scope.json` through separate reads, and then resent them on each later call. E6–E9 target call count, carried evidence size, cross-session cache reuse and the metric itself. None changes a gate, route, session requirement or authority.
+
+### E6 — One-read reviewer briefs
+
+- [x] Implement and locally validate; live reviewer call reduction remains unmeasured.
+
+**Observed:** A reviewer spent several calls before reviewing: packet, checksum verification, common contract, gate skill, project guidance, diff and scope, each a separate read that also grew the context for every later call.
+
+**Work:** The controller renders one Markdown brief per gate that inlines the common contract, gate skill, project guidance, applicable conditional contracts, identities, CI facts, compact scope and the frozen text diff (within a byte budget), followed by the output schema and path. The controller verifies packet and brief checksums before dispatch; reviewers confirm identities without recomputing checksums. Ask reviewers to batch independent reads, and leave result validation to controller assembly.
+
+**Acceptance:** One read gives a reviewer everything needed to start. Brief bytes are checksummed and verified with the packet; a changed brief fails verification. The complete binary-capable diff and full source remain available; files not inlined are named explicitly. No other reviewer conclusions appear. Existing packets without briefs remain verifiable.
+
+**Starting points:** [packets](../../src/quality/review-packets.cjs), [common contract](../../skills/marc-crew-captain/references/reviewer.md), [assessment handoff](../../skills/marc-crew-captain/references/assessment-session.md).
+
+### E7 — Compact, gate-relevant evidence
+
+- [x] Implement and locally validate.
+
+**Observed:** `scope.json` is pretty-printed JSON repeating every reference and lexical lead with field names. The complete diff is binary-capable, so binary files add encoded payloads that no reviewer reads. Specialists received no guidance on which files concern their technology.
+
+**Work:** Render scope as one line per changed file (with line counts), reference, lexical lead, hold and project change; keep the complete JSON as audit evidence by pointer. Inline a text diff (binary files summarised by Git) in a fixed order: production, then tests, then documentation, within a byte budget, listing any file not inlined. Give each specialist a filtered list of changed files, references and leads touching its covered technologies or applicability paths, as starting pointers, not a scope ceiling.
+
+**Acceptance:** Nothing is dropped from the evidence: every omitted item is pointed to. Specialist filters never narrow what a reviewer may inspect. Core gates still receive the complete compact scope.
+
+**Starting points:** [packets](../../src/quality/review-packets.cjs), [crew selection](../../src/quality/crew.cjs).
+
+### E8 — Cache-stable briefs and fewer Captain round trips
+
+- [x] Implement brief layout, dispatch summary and procedure split; live cross-session cache reuse depends on the host and remains unmeasured.
+
+**Observed:** Each reviewer read shared evidence in its own order, so no session could reuse another's cached prefix; reviewer uncached input averaged ~77k. The Captain loaded all action procedures (~22KB) on every run, polled reviewers individually and ran at most two reviewers concurrently.
+
+**Work:** Every brief starts with a byte-identical shared prefix (identity, contracts, CI facts, compact scope, diff) and ends with the gate-specific part, and the handoff records the prefix digest. Where a host starts fresh sessions from an initial prompt, supplying the brief bytes lets its prompt cache serve later reviewers' prefix. The handoff lists every gate's brief, output and agent-selection role so the Captain need not open packets. The Captain dispatches all gates in one turn up to available slots, waits once for all of them rather than polling, and does not load briefs, diffs or scope. Move repair, recovery, publication and merge procedures into a separate reference loaded only when those actions are reached.
+
+**Acceptance:** Tests prove identical prefixes across gates and that prefix digests change with evidence. All required gates and fresh sessions remain; capacity limits still mean waiting for slots. Action procedures are unchanged in substance and still mandatory before any guarded action.
+
+**Starting points:** [Captain](../../skills/marc-crew-captain/SKILL.md), [action procedures](../../skills/marc-crew-captain/references/controller-operations.md), [harness contract](../../skills/marc-crew-captain/references/harnesses.md).
+
+### E9 — Weighted cost and context metrics
+
+- [x] Implement and locally validate.
+
+**Observed:** Comparisons used inclusive input, which weights a cached token like a fresh one. E4's −9% uncached input but +25% inclusive input could not be judged, and the calls × context decomposition was not reported.
+
+**Work:** Report mean input per call for each session, role, phase and total. When the manifest declares relative weights for uncached input, cached input and output, with their source, report weighted input-equivalent tokens and compare them. Without declared weights, report weighted totals as missing, not estimated.
+
+**Acceptance:** Weights are never defaulted or converted into money or allowance. Missing counts make weighted and mean values null. `compareUsage` reports both metrics alongside existing categories.
+
+**Starting points:** [usage](../../src/quality/usage.cjs), [measurement contract](../assessment-measurement.md).
+
+### Not planned: assurance-policy options
+
+Re-reviewing only gates affected by a repair, and lower reasoning or alternative models for specialists, would change assurance policy. They remain owner decisions requiring the representative quality corpus, like E4, and are not part of E6–E9.
+
 ## Delivery and measurement rules
 
 Keep each change focused and reviewable. E1–E3 should retain existing review gates; E4 is an explicit assurance-policy proposal. Update the affected component/member improvement register and root register when material process changes are actually implemented. This planning document does not activate changes in MARC or consumers.
@@ -140,6 +196,7 @@ Record the source/base/tool/policy identities, model settings, input/cached/outp
 | 2026-09-27 | E1 | Added deterministic session collection/assembly, artifact validation, bounded status waits, identity/ownership checks, resumable external checkpoints and deduplicated usage accounting. | Focused interruption, drift, pending/failed CI and independent-result preservation tests passed. No action authority added; live activation remains separate. |
 | 2026-09-27 | E2 | Seed changed declarations from both diff sides; filter native-language/local-binding/member collisions; trace named imports and explicit workflow/process paths; retain cross-language lexical leads. | Genuine interface, removed-caller, alias, resource and cross-language cases pass with unchanged discovery limits. PR #15/#16 replays use source only, not reviewer conclusions. |
 | 2026-09-27 | E3 | Added common reviewer contract and neutral, checksummed packets with complete diff/source access; moved conditional dependency and Captain procedures to references. | Combined focused validation: 105 passed. Catalogue links and syntax pass. The rerun will measure consumption; instruction size alone is not a token saving claim. |
+| 2026-09-27 | E6–E9 | One checksummed brief per gate with inline contracts, compact scope and budgeted text diff; specialist focus lists; byte-identical shared prefix with recorded digest; handoff dispatch list; guarded actions split out of intake/review procedures; mean-context and declared-weight usage metrics. | Focused tests pass (see validation below). Next: a separately authorized fresh-Captain comparison against the E1–E3 baseline, reporting calls, mean context and weighted tokens per role. |
 
 ## Measured PR #16 result — 2026-09-27
 
@@ -306,3 +363,30 @@ This pair removes inherited implementation/report history as a confounder. It st
 Restored the pre-E4 policy, controller gate validation, separate intent assessment and intent-only refresh, reviewer packets, original simple-route rules and corresponding skill instructions. Removed E4-specific tests and active policy documentation. Kept E1–E3, E5 usage aggregation/CLI/tests, fresh-Captain measurement guidance and both comparison records. Existing external experimental results remain historical evidence; they do not approve a new assessment.
 
 Validation: all 92 focused Node 24 tests passed across restored gates, intent, configuration, packets, orchestration, usage, report history, stages and catalogue links. The policy and runtime review modules match pre-E4 commit `8f67ae5`; only E5 usage code/tests differ in the runtime tree. No additional model assessment or hosted CI was requested or dispatched for this removal.
+
+## E6–E9 implementation — 2026-09-27
+
+Implemented E6–E9 without changing any gate, route, required session, budget or authority. See [assessment sessions](../assessment-sessions.md) and [assessment measurement](../assessment-measurement.md).
+
+### Offline PR16 brief replay
+
+A source-only replay built packets for [PR #16](https://github.com/wallism/marc/pull/16) (source `b905d99276b43501ad0611937f2ffc9d2d4ddb60`, base `74921a12d167dc26b6043cce5eafd32b8c66b5cd`) with this branch's controller and MARC's own crew configuration, using a synthetic policy/intent identity and no CI artifacts. It selected the same eight gates as the measured runs. No model, reviewer or hosted CI ran; these are **byte sizes of provided evidence**, not token measurements.
+
+| Measure | Before (E3 packet set) | After (E6–E8 brief) |
+| --- | ---: | ---: |
+| Files a reviewer opens to start | ~6 (packet, contract, skill, guidance, diff, scope) | 1 |
+| Bytes provided per gate (range) | 120,347–124,363 | 87,109–91,098 |
+| Scope bytes | 50,228 (indented JSON) | ~17,150 (one line per entry, nothing dropped) |
+| Diff bytes | 56,433 (binary-capable) | ~56,740 (text, inlined in full) |
+| Byte-identical shared prefix | none | 84,417 |
+
+The complete scope JSON and binary-capable diff remain available by checksummed pointer. The diff is now most of each brief and is evidence every reviewer must read. The main expected saving is fewer reviewer calls, each resending less context, plus cross-session cache reuse where a host starts sessions from the brief bytes. Both depend on live model behavior and remain unmeasured.
+
+### Validation
+
+- Focused packet tests cover one-read briefs with inlined contracts, absolute reference links and demoted headings; byte-identical shared prefixes and changed digests; brief tampering and pre-E6 packet verification; over-budget ordering with every file not inlined named; and specialist focus without narrowing scope.
+- Usage tests cover mean context by session, role, phase and total; declared-weight totals; null weighted totals with missing counts; rejection of malformed weights; and weight mismatches in comparisons.
+- CI-equivalent local run on Node 24 (Windows): `src/quality/*.test.cjs` plus `.marc/self-review.test.cjs`, **238 passed, 0 failed, 0 skipped**. Syntax check and catalogue link validation passed; the C# eval corpus contract check passed.
+- Guarded-action procedures moved to [guarded actions](../../skills/marc-crew-captain/references/guarded-actions.md) verbatim; intake and review steps link to them.
+
+**Next:** a separately authorized fresh-Captain comparison against the fresh E1–E3 baseline on PR #16, recording calls, mean context, uncached/cached/output tokens and declared-weight totals per role, alongside review outcomes. Do not claim an E6–E9 saving before that run.

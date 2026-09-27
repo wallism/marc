@@ -37,6 +37,9 @@ function assessmentUsage(manifest, readRecords) {
   if (manifest?.schema !== 1 || !manifest.identity || !['repository', 'sourceHead', 'base', 'policyHash', 'toolCommit'].every(k =>
     typeof manifest.identity[k] === 'string' && manifest.identity[k]) || !Array.isArray(manifest.sessions) || !manifest.sessions.length)
     throw Error('Assessment identity and explicit session manifest required');
+  const weights = manifest.weights;
+  if (weights !== undefined && (!['uncachedInput', 'cachedInput', 'output'].every(k => Number.isFinite(weights[k]) && weights[k] >= 0) ||
+      typeof weights.source !== 'string' || !weights.source.trim())) throw Error('Weights need nonnegative uncachedInput, cachedInput, output and a source');
   const claimed = new Set(), windows = new Map(), sessions = [];
   for (const entry of manifest.sessions) {
     if (!['captain', 'reviewer', 'repair'].includes(entry.role) || !entry.phase || !entry.threadId || !entry.turnId ||
@@ -83,22 +86,30 @@ function assessmentUsage(manifest, readRecords) {
     missingSettingsSessions: entries.filter(e => e.missing.includes('model/settings')).length,
     missing: [...new Set(entries.flatMap(e => e.missing))],
     sessionTimeMs: entries.every(e => e.latencyMs !== null) ? entries.reduce((n, e) => n + e.latencyMs, 0) : null });
-  const group = field => Object.fromEntries([...new Set(sessions.map(s => s[field]))].map(value => [value, aggregate(sessions.filter(s => s[field] === value))]));
+  // Calls x mean context explains most assessment cost; weights come only from the manifest.
+  const known = x => Number.isSafeInteger(x) && x >= 0;
+  const derived = totals => ({ ...totals,
+    meanContextTokens: totals.calls > 0 && known(totals.inputTokens) ? Math.round(totals.inputTokens / totals.calls) : null,
+    weightedTokens: weights && ['uncachedInputTokens', 'cachedInputTokens', 'outputTokens'].every(k => known(totals[k]))
+      ? Math.round(totals.uncachedInputTokens * weights.uncachedInput + totals.cachedInputTokens * weights.cachedInput + totals.outputTokens * weights.output) : null });
+  for (const s of sessions) Object.assign(s, derived(s));
+  const group = field => Object.fromEntries([...new Set(sessions.map(s => s[field]))].map(value => [value, derived(aggregate(sessions.filter(s => s[field] === value)))]));
   return { schema: 1, identity: manifest.identity, coverage: manifest.coverage || 'Not declared; completeness unverified',
-    sessions, phases: group('phase'), roles: group('role'), total: aggregate(sessions),
+    weights: weights || null, sessions, phases: group('phase'), roles: group('role'), total: derived(aggregate(sessions)),
     wallTimeMs: date(manifest.startedAt) && date(manifest.completedAt) && Date.parse(manifest.completedAt) >= Date.parse(manifest.startedAt)
       ? Date.parse(manifest.completedAt) - Date.parse(manifest.startedAt) : null,
-    semantics: 'Input includes cache; output includes reasoning. Session time is summed and may overlap; wall time is elapsed. Retry counts require receipts. Not money or allowance.' };
+    semantics: 'Input includes cache; output includes reasoning. Session time is summed and may overlap; wall time is elapsed. Retry counts require receipts. Weighted tokens use only manifest-declared relative weights; neither they nor any count is money or allowance.' };
 }
 function compareUsage(before, after) {
   const mismatches = ['repository', 'sourceHead', 'base', 'intentHash'].filter(k => before.identity[k] !== after.identity[k]);
   const settings = r => [...new Set(r.sessions.flatMap(s => s.settings.map(x => JSON.stringify(x))))].sort();
   if (JSON.stringify(settings(before)) !== JSON.stringify(settings(after))) mismatches.push('model/settings');
   if ([before, after].some(r => r.sessions.some(s => s.missing.includes('model/settings')))) mismatches.push('missing model/settings');
+  if (JSON.stringify(before.weights) !== JSON.stringify(after.weights)) mismatches.push('weights');
   const metric = (a, b) => ({ before: a ?? null, after: b ?? null,
     changePercent: typeof a === 'number' && a > 0 && typeof b === 'number' ? (b - a) * 100 / a : null });
   return { comparableInputsAndSettings: mismatches.length === 0, mismatches,
-    metrics: Object.fromEntries([...counts, 'wallTimeMs'].map(k => [k, metric(k === 'wallTimeMs' ? before[k] : before.total[k], k === 'wallTimeMs' ? after[k] : after.total[k])])),
+    metrics: Object.fromEntries([...counts, 'meanContextTokens', 'weightedTokens', 'wallTimeMs'].map(k => [k, metric(k === 'wallTimeMs' ? before[k] : before.total[k], k === 'wallTimeMs' ? after[k] : after.total[k])])),
     limitation: 'One paired run is descriptive, not causal proof. Review quality and holds must be assessed separately; absent phases are not zero-cost proof.' };
 }
 module.exports.assessmentUsage = assessmentUsage;

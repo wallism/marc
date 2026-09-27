@@ -43,3 +43,19 @@ test('comparisons expose identity/settings differences without inventing retry s
   after.identity = identity; after.sessions[0].settings[0].reasoningEffort = 'low';
   assert.equal(compareUsage(before, after).comparableInputsAndSettings, false);
 });
+test('reports mean context per call and weighted tokens only from declared weights', () => {
+  const records = [settings, usage('one', 100), usage('two', 300)];
+  const plain = assessmentUsage(manifest([session]), () => records);
+  assert.equal(plain.total.meanContextTokens, 200); assert.equal(plain.roles.captain.meanContextTokens, 200);
+  assert.equal(plain.sessions[0].meanContextTokens, 200); assert.equal(plain.total.weightedTokens, null);
+  const weights = { uncachedInput: 1, cachedInput: 0.1, output: 8, source: 'Synthetic relative price ratios' };
+  const weighted = assessmentUsage({ ...manifest([session]), weights }, () => records);
+  // Uncached 400 - 160 = 240; cached 160 x 0.1 = 16; output 10 x 8 = 80.
+  assert.equal(weighted.total.weightedTokens, 336); assert.equal(weighted.phases.assessment.weightedTokens, 336);
+  assert.equal(compareUsage(plain, weighted).comparableInputsAndSettings, false);
+  assert.equal(compareUsage(weighted, weighted).metrics.weightedTokens.changePercent, 0);
+  const missing = usage('three'); delete missing.payload.usage.output_tokens;
+  assert.equal(assessmentUsage({ ...manifest([session]), weights }, () => [settings, missing]).total.weightedTokens, null);
+  assert.throws(() => assessmentUsage({ ...manifest([session]), weights: { ...weights, source: '' } }, () => records), /Weights/);
+  assert.throws(() => assessmentUsage({ ...manifest([session]), weights: { ...weights, output: -1 } }, () => records), /Weights/);
+});

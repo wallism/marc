@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-27 — One-read reviewer briefs and weighted measurement
+
+E6–E9: render one checksummed Markdown brief per gate that inlines the common contract, gate skill, project guidance, applicable dependency contract, identities, CI facts, one-line scope and the text diff within a 96 KiB budget, naming any file left out. Specialists get a technology focus list that never narrows scope. Every brief shares a byte-identical, digest-recorded prefix for host prompt caches. The handoff and session status list each gate's brief, output and selection role. Usage reports mean context per call and manifest-weighted input-equivalent tokens, null without declared weights. Gates, routes, sessions and authority are unchanged; live reviewer and cache effects are unmeasured. See the [work log](../../docs/work/20260927-token-efficiency-work.md).
+
 ## 2026-09-27 — Remove E4 and retain E5 measurement
 
 Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.
