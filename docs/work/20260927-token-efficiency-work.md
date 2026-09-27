@@ -10,6 +10,33 @@ tags: [development, work-planning, token-efficiency, review-quality]
 
 Work through one item at a time. Record its measured result and remaining limitations below before choosing the next item. Start with E1–E3; introduce basic measurement from E5 early so their effects can be compared. E4 changes assurance policy and should be evaluated separately.
 
+## Results at a glance
+
+> **Current result:** E1–E3 and E5 retained · E4 removed · **92/92 current focused tests passed** · **No overall assessment-efficiency gain demonstrated**
+
+All results below were recorded on 2026-09-27. These summarize completed runs; no new benchmark was run for this summary.
+
+| Assessment comparison | Model calls | Input including cache | Uncached input | Output including reasoning | Elapsed time | Interpretation |
+| --- | ---: | ---: | ---: | ---: | --- | --- |
+| PR16: before → E1–E3 | 137 → 116 (−15.33%) | 10,646,082 → 10,660,540 (+0.14%) | 595,010 → 542,524 (−8.82%) | 33,709 → 38,148 (+13.17%) | Different Captain windows; no clean timing comparison | No overall token reduction. Captain retained implementation history; review coverage also changed. |
+| PR16: fresh E1–E3 baseline → E4/E5 | 146 → 162 (+10.96%) | 10,974,616 → 13,699,223 (+24.83%) | 704,152 → 642,839 (−8.71%) | 43,468 → 51,464 (+18.40%) | 15m 18.139s → 17m 38.806s (+15.32%) | Fresh Captains and reviewers, same source/model/settings; slower and more tokens overall. E4 subsequently removed. |
+| Current E1–E3/E5 after removing E4 | Not rerun | Not rerun | Not rerun | Not rerun | Not rerun | Local validation passed; do not treat either earlier benchmark as a new measurement of the final combination. |
+
+Input includes cached input; do not add cache again. Retries are unknown. The assessment totals exclude implementation and benchmark administration; they are not money or allowance percentages. See the detailed comparison sections below for cached counts, role attribution, immutable identities and exclusions.
+
+| Local validation / replay | Recorded result | What it establishes |
+| --- | --- | --- |
+| E1–E3 focused Node 24 checks | 105 passed; final checkpoint/artifact adjustment reran 9 relevant checks successfully | Controller, packet, discovery, review, CI-recovery and report/stage mechanics; catalogue and syntax checks also passed. |
+| E4/E5 experimental checks | 96 passed | Proposed gate and measurement mechanics, not model-quality equivalence. E4 was later removed. |
+| E4 removal / E5 retained | **92 passed, 0 failed** | Restored independent gates and simple route, retained measurement, report compatibility and catalogue links. |
+| E5 measurement CLI | Output exactly matched the baseline API calculation | Same deduplicated host records produced the same counts. |
+| Source-only PR15 impact replay | 53 → 20 files; 3 → 1 selected specialists | Narrower selection retained JavaScript. This was not a PR15 model-cost rerun. |
+| Source-only PR16 impact replay | 62 → 46 files; 3 specialists retained; discovery hold resolved | Discovery completed within unchanged limits; required specialist coverage remained. |
+
+The older PR15 baseline measured only its Captain: 68 calls, 10,650,198 inclusive input, 132,182 uncached input and 14,547 output. Reviewer totals were unavailable, so it is not comparable to the complete Captain-plus-reviewer rows above.
+
+Both fresh PR16 runs retained the legacy-report compatibility finding and governance-approval hold. The combined reviewer additionally flagged partial intent alignment. The broader known-defect/clean model corpus and alternative model settings remain unrun; passing local tests does not establish model defect-detection rates. Existing PR16 CI was reused, and the PR was not repaired or merged during these comparisons.
+
 ## Baseline: PR #15
 
 [PR #15](https://github.com/wallism/marc/pull/15) added repair-commit links. Its [approved assessment](https://github.com/wallism/marc/blob/42340d486c49a2375e145e1e96b35ce2b82b4fcc/.quality/reports/pr-15/20260927-0013-15.md) records the reviewed source `3dff18d39d712b58f8d16ca19fa9688ca156c991` and trusted base `d06da4279c61cb159ab5aa06bd0f70df3f5f4095`.
