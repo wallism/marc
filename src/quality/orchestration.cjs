@@ -20,7 +20,6 @@ function assemble(evidence, results) {
     const member = e.crew?.selected.find(m => name === 'crew:' + m.id);
     if (name.startsWith('crew:') && (!member || gate.memberVersion !== member.version ||
         gate.memberHash !== member.contentHash || gate.selectionHash !== e.crew.selectionHash)) throw Error('Stale specialist selection');
-    if (gate.intent && (name !== 'correctness' || e.intentReview !== 'correctness-v1' || gate.intent.intentHash !== e.intent?.hash)) throw Error('Invalid combined intent result');
     if (name === 'intent' && gate.intentHash !== e.intent?.hash) throw Error('Stale intent result');
     e.gates ||= {}; e.gates[name] = structuredClone(gate);
   }

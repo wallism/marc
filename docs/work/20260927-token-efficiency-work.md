@@ -5,7 +5,7 @@ tags: [development, work-planning, token-efficiency, review-quality]
 # MARC token-efficiency work plan
 
 **Created:** 2026-09-27  
-**Status:** E1–E5 implementations locally validated, including explicit E4 policy proposals. Original and fresh-Captain PR #16 comparisons completed. Neither demonstrates an overall token reduction; the fresh E4/E5 run was slower. No trusted activation or merge. See measured results and validation limits below.
+**Status:** E1–E3 and E5 retained. E4 removed at the owner's request after the fresh comparison showed higher overall token usage and elapsed time. Original independent gates and simple-route rules restored. Historical measurements below remain unchanged; no trusted activation or merge.
 **Outcome:** Reduce the token cost of completing a PR assessment while preserving evidence quality, independent review and guarded actions.
 
 Work through one item at a time. Record its measured result and remaining limitations below before choosing the next item. Start with E1–E3; introduce basic measurement from E5 early so their effects can be compared. E4 changes assurance policy and should be evaluated separately.
@@ -73,8 +73,7 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 ### E4 — Evaluate overlapping gates and simple-route precision
 
-- [x] Implement opt-in combined correctness/intent, comprehensive simple review and explicit report-presentation boundaries; validate gate controls separately.
-- [ ] Establish broad model-quality equivalence on a separately authorized representative corpus before general activation.
+- [x] Evaluated and removed at the owner's request. Separate correctness/intent review and original simple-route rules are restored. No E4 activation is planned.
 
 **Observed:** Correctness already evaluates intended behavior; a separate intent reviewer repeats part of that investigation. PR #15 used full review because its persisted rendering marker fell under the current persistence/serialization routing rule.
 
@@ -199,6 +198,8 @@ Across eight reviewers, the minimum entry/contract/project set decreased from 26
 
 ## E4/E5 implementation — 2026-09-27
 
+**Historical experiment:** E4 was subsequently removed; only E5 remains from this implementation.
+
 Implemented the explicit `intentReview: "correctness-v1"` policy proposal: one full-route correctness reviewer supplies nested static intent evidence, with one identity and execution receipt. Other full gates and specialists remain independent. Simple-route intent remains separate; `simpleRoute.reviewSchema: 1` requires comprehensive correctness/security/quality/test evidence. Report-presentation routing requires source-backed proof that persistence, approval and runtime contracts are unchanged. Intent-only refresh invalidates the entire combined session; intent repairs still require human approval.
 
 Added exact-thread/turn phase and session usage aggregation, response deduplication, observed model/settings, separate elapsed and summed session time, approval-continuation support and explicit missing counters/retries. See [contracts and manifest](../assessment-measurement.md). No alternative model/effort, hosted CI or broad model evaluation was dispatched. The proposed `.marc` policy is not trusted self-activation.
@@ -206,6 +207,8 @@ Added exact-thread/turn phase and session usage aggregation, response deduplicat
 Local controls: 96 distinct focused Node 24 tests across gate/intent evaluation, configuration, packets, orchestration, usage, report history, stages and catalogue links passed. Controls include clean alignment, mismatches/partial or uncertain intent, preserved blocking results, stale identity, repeated sessions, missing evidence, changed persisted/approval contracts, duplicate/missing telemetry and approval continuations. These establish gate mechanics, not a model missed-defect rate. Fresh PR16 assessment measurements are recorded below.
 
 ## Fresh-Captain E4/E5 comparison — 2026-09-27
+
+**Decision after measurement:** The owner chose to keep E5 and remove E4. The figures and observations below describe the historical experiment, not the current review policy.
 
 **No overall efficiency improvement was demonstrated.** Seven reviewers replaced eight, but the measured Captain-plus-reviewer calls, inclusive input, output and elapsed time increased. Uncached input decreased. Retain E4 as an explicit policy proposal; this result does not justify general activation on efficiency grounds. E5 provides better accounting, not an automatic cost reduction.
 
@@ -267,3 +270,9 @@ After-run test-integrity work included investigating a policy-hash mismatch from
 All token categories were exposed for all 17 measured sessions. Retries were not exposed and remain unknown, never zero by inference. Response IDs were deduplicated; cumulative host counters were ignored. The measurement CLI reproduced the baseline API totals exactly. Summed reviewer session time rose from 1,449.500s to 1,599.529s; overlapping session times must not be added to elapsed wall time. Raw transcripts, gate results, manifests, usage and comparison JSON remain outside the repository in the `20260927-e4e5-fresh-baseline`, `20260927-e4e5-fresh-after` and neutral input run directories.
 
 This pair removes inherited implementation/report history as a confounder. It still includes ordinary model variability, different review conclusions and additional verification. It provides no basis to claim that E4 reduced overall assessment cost or time. The implementation remains opt-in and reviewable; no consumer or trusted-master policy was activated.
+
+## Owner decision — retain E5, remove E4
+
+Restored the pre-E4 policy, controller gate validation, separate intent assessment and intent-only refresh, reviewer packets, original simple-route rules and corresponding skill instructions. Removed E4-specific tests and active policy documentation. Kept E1–E3, E5 usage aggregation/CLI/tests, fresh-Captain measurement guidance and both comparison records. Existing external experimental results remain historical evidence; they do not approve a new assessment.
+
+Validation: all 92 focused Node 24 tests passed across restored gates, intent, configuration, packets, orchestration, usage, report history, stages and catalogue links. The policy and runtime review modules match pre-E4 commit `8f67ae5`; only E5 usage code/tests differ in the runtime tree. No additional model assessment or hosted CI was requested or dispatched for this removal.

@@ -31,19 +31,3 @@ test('required gates retain intent, specialist and browser expertise on both rou
     crew: { selected: [{ id: 'javascript' }], requiresBrowser: true } }, { reviewGates: ['security'], uiPathPatterns: [] }),
   ['simple-tests', 'intent', 'crew:javascript', 'browser']);
 });
-
-test('combined packets request nested intent from one reviewer and preserve simple-route independence', t => {
-  const parent = fs.mkdtempSync(path.join(os.tmpdir(), 'marc-combined-packets-'));
-  t.after(() => fs.rmSync(parent, { recursive: true, force: true }));
-  const policy = { reviewGates: ['correctness', 'security'], uiPathPatterns: [], intentReview: 'correctness-v1', simpleRoute: { reviewSchema: 1 } };
-  const current = { ...e, intentReview: policy.intentReview, intent: { status: 'present', hash: 'frozen-intent' } };
-  const result = buildPackets(current, { repoRoot: root, bundleRoot: root, policy }, {
-    directory: path.join(parent, 'packets'), git: () => 'complete diff' });
-  assert.deepEqual(result.packets.map(p => p.gate), ['correctness', 'security']);
-  const packet = JSON.parse(fs.readFileSync(result.packets[0].path));
-  assert.equal(packet.outputSchema.intent.intentHash, 'frozen-intent');
-  assert.ok(packet.instructions.some(i => i.path.endsWith('intent.md')));
-  assert.deepEqual(requiredGates({ ...current, routing: { route: 'simple' } }, policy), ['simple-tests', 'intent']);
-  assert.throws(() => buildPackets({ ...current, intentReview: undefined }, { repoRoot: root, bundleRoot: root, policy }, {
-    directory: path.join(parent, 'mismatch'), git: () => '' }), /policy mismatch/);
-});

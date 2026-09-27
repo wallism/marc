@@ -1,6 +1,12 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Remove E4 and retain E5 measurement
+
+Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.
+
 ## 2026-09-27 — Combined intent and fresh Captain measurements
+
+**Withdrawn:** E4 review-policy changes described in this entry were removed at the owner's request after the fresh comparison. E5 measurement remains; see the removal entry above.
 
 Dispatch one explicitly combined correctness/intent session only under trusted opt-in policy; retain other independent gates and human repair authority. Record all fresh Captain/reviewer turns, phase coverage and approval continuations in external telemetry manifests. See [measurement](../../docs/assessment-measurement.md).
 

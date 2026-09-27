@@ -1,14 +1,6 @@
-# Assessment measurement and combined review
+# Assessment measurement
 
-E4 adds explicit policy choices; E5 measures complete assessment sessions. These are proposals until adopted through the consumer's trusted policy process. The self-review `.marc/policy.json` proposal does not authorize its own assessment, activate a consumer, publish or merge.
-
-## Review policy
-
-`intentReview: "correctness-v1"` uses one independent full-route correctness session for correctness and structured static intent. Its result contains `intent` with the normal intent fields plus verdict, summary, evidence and findings. Parent identity, reviewer and execution are authoritative; duplicated nested identity or a separate intent result holds. Other full-review gates and selected specialists remain independent. Omission preserves separate intent review. Simple review retains separate intent.
-
-Intent mismatches, partial alignment, uncertainty, stale hashes, missing evidence and suggested repairs hold. Intent repairs always require explicit human approval. Refreshing intent invalidates the entire combined correctness session while preserving other reviews and cumulative history; a new correctness reviewer must examine the updated contract. Removing intent still requires replacing that cleared correctness result.
-
-`simpleRoute.reviewSchema: 1` requires the independent `simple-tests` reviewer to provide source-backed `coverage` arrays for correctness, security, codeQuality and testIntegrity. It is one comprehensive session, plus selected expertise and separate intent where applicable. The new `report-presentation` routing kind requires explicit evidence that persisted evidence, approval behavior and runtime contracts are unchanged. Stored markers, serialization fields, ancestry/byte verification and approval interpretation changes require full review. Small diffs alone never qualify. Existing risk, uncertainty, CI, human-path and specialist holds remain.
+E5 measures assessment sessions without changing review gates, routing or approval authority. E4 was removed after the fresh comparison failed to demonstrate an efficiency benefit; the separate correctness and intent reviews and original simple-route rules remain in force.
 
 ## External usage manifest
 

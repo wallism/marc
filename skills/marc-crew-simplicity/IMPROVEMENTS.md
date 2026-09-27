@@ -1,6 +1,12 @@
 # marc-crew-simplicity improvements
 
+## 2026-09-27 — Remove E4 and retain E5 measurement
+
+Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.
+
 ## 2026-09-27 — Report presentation boundary
+
+**Withdrawn:** E4 review-policy changes described in this entry were removed at the owner's request after the fresh comparison. E5 measurement remains; see the removal entry above.
 
 Permit evidence-backed report-presentation routing under reviewSchema 1 only when persisted evidence, approval and runtime contracts are unchanged. Stored markers, serialization and approval interpretation remain full-route risks; diff size never proves simplicity.
 

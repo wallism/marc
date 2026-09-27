@@ -37,6 +37,6 @@ For a fresh Captain, supply `captain-handoff.json` plus its referenced request a
 
 The PR #16 comparison is a frozen, assessment-only local replay. It does not activate the proposed controller or grant it authority over the real PR. See the [work log](work/20260927-token-efficiency-work.md) for measurements and limits.
 
-## Optional combined review and measurement
+## Phase and session measurement
 
-See [assessment measurement](assessment-measurement.md) for `intentReview: "correctness-v1"`, comprehensive simple review and external phase/session telemetry. The supplied self-review policy change is a proposal; only clean trusted target governance can activate it.
+See [assessment measurement](assessment-measurement.md) for external phase/session telemetry, missing counters and fresh-Captain comparisons. Measurement does not change review gates or action authority.

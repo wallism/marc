@@ -40,19 +40,8 @@ function validIntent(intent) {
     intent.hash === hash({ status, entries: intent.entries });
 }
 
-function combinedIntent(e) {
-  return e.intentReview === 'correctness-v1' && e.routing?.route !== 'simple';
-}
-function intentGate(e) {
-  if (!combinedIntent(e)) return e.gates?.intent;
-  const parent = e.gates?.correctness, detail = parent?.intent;
-  return detail && { ...detail, sourceHead: parent.sourceHead, base: parent.base, policyHash: parent.policyHash,
-    reviewer: parent.reviewer };
-}
 function intentReasons(e, required = false) {
-  const intent = e.intent, gate = intentGate(e);
-  if (combinedIntent(e) && e.gates?.intent) return ['intent: combined review cannot also claim a separate intent session'];
-  if (!combinedIntent(e) && e.gates?.correctness?.intent) return ['intent: nested assessment requires combined policy'];
+  const intent = e.intent, gate = e.gates?.intent;
   if (!intent && !required && !gate) return []; // Legacy evidence has no intent contract.
   if (!validIntent(intent)) return ['intent: missing or invalid capture; capture or refresh intent'];
   if (intent.status === 'absent') return gate ? ['intent: unexpected assessment without captured intent'] : [];
@@ -60,16 +49,12 @@ function intentReasons(e, required = false) {
   const reasons = [];
   if (!gate || gate.intentHash !== intent.hash || gate.sourceHead !== e.sourceHead || gate.base !== e.base ||
       gate.policyHash !== e.policyHash || gate.assessment !== 'aligned' || gate.verdict !== 'pass')
-    reasons.push('intent: human action required or assessment missing/stale; refresh the assigned intent review when code identity is unchanged');
-  if (combinedIntent(e) && (!text(gate?.summary) || !Array.isArray(gate?.evidence) || !gate.evidence.length || !gate.evidence.every(text) ||
-      !Array.isArray(gate?.findings) || gate.findings.some(f => f.severity !== 'advisory') ||
-      ['reviewer', 'execution', 'sourceHead', 'base', 'policyHash'].some(k => Object.hasOwn(e.gates?.correctness?.intent || {}, k))))
-    reasons.push('intent: invalid combined result or duplicate session attribution');
+    reasons.push('intent: human action required or assessment missing/stale; reassess only intent when code identity is unchanged');
   if (!['high', 'medium', 'low'].includes(gate?.confidence) || !text(gate?.confidenceReason) || gate?.method !== 'static-code' ||
       !Array.isArray(gate?.unresolvedOutcomes) || gate.unresolvedOutcomes.length || gate.suggestedRepair !== undefined || gate.requiresBrowser === true)
     reasons.push('intent: sufficient static evidence and resolved outcomes required; confidence alone cannot approve');
   const sessions = [e.coordinator, e.routing?.reviewer, ...(e.repairReviewers || []),
-    ...Object.entries(e.gates || {}).filter(([name]) => name !== (combinedIntent(e) ? 'correctness' : 'intent')).map(([, result]) => result.reviewer)].filter(Boolean);
+    ...Object.entries(e.gates || {}).filter(([name]) => name !== 'intent').map(([, result]) => result.reviewer)].filter(Boolean);
   if (!text(gate?.reviewer) || sessions.includes(gate.reviewer)) reasons.push('intent: independent fresh reviewer required');
   return reasons;
 }
@@ -84,8 +69,6 @@ function refreshIntent(e, live, policyHash) {
   result.intent = intent;
   result.gates ||= {};
   delete result.gates.intent;
-  // Intent is part of the single correctness decision: refresh that whole session.
-  if (combinedIntent(e)) delete result.gates.correctness;
   // Old reports and journals stay immutable. A fresh report describes the new intent.
   for (const key of ['reportCreatedAt', 'reportFormat', 'auditFormat', 'reportCiReuse', 'humanApprovalAudit', 'stages']) delete result[key];
   return result;
@@ -97,10 +80,9 @@ const clean = (value, maximum = 360) => {
 };
 function intentMarkdown(e) {
   if (!e.intent || e.intent.status === 'absent') return '';
-  const gate = intentGate(e), held = intentReasons(e).length > 0 || gate?.verdict !== 'pass';
+  const gate = e.gates?.intent, held = intentReasons(e).length > 0 || gate?.verdict !== 'pass';
   return '\n## Intent assessment\n\n' +
     (held ? '**Human action required:** clarify the intent or review the suggested repair below. No intent-related repair is authorized automatically.\n\n' : '') +
-    (combinedIntent(e) ? 'Correctness and intent were assessed in one independent reviewer session.\n\n' : '') +
     `INTENT: ${clean(e.intent.text || '(empty or duplicate; clarification required)', 600)}\n\n` +
     `Static code assessment: **${clean(gate?.assessment || 'unclear', 40)}**. Confidence: ${clean(gate?.confidence || 'not assessed', 20)}. ${clean(gate?.confidenceReason)}\n\n` +
     (gate?.summary ? `${clean(gate.summary)}\n\n` : '') +
@@ -110,4 +92,4 @@ function intentMarkdown(e) {
     'This assesses alignment from code; it is not runtime proof.\n\n';
 }
 
-module.exports = { combinedIntent, intentGate, captureIntent, validIntent, intentReasons, refreshIntent, intentMarkdown };
+module.exports = { captureIntent, validIntent, intentReasons, refreshIntent, intentMarkdown };

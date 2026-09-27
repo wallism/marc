@@ -6,8 +6,6 @@ Start reviewers in fresh independent sessions with only their packet path, assig
 
 A fresh Captain receives `captain-handoff.json`, current external evidence/request/state paths, authority and actual ownership records. Check live identity and shared lock ownership before resuming. Never silently transfer another Captain's lock, reset budgets or reuse cached live state for a guarded action. Load [action procedures](controller-operations.md) before recovery, repair, publication or merge. An offline experimental handoff is never production authority.
 
-## Combined review and measurement
-
-Only a trusted policy containing `intentReview: "correctness-v1"` combines full-route correctness and intent. The packet carries nested intent requirements and both contracts. Count one session. Simple-route intent remains separate; `simpleRoute.reviewSchema: 1` requires comprehensive coverage in the simple reviewer. Do not activate candidate governance to assess itself.
+## Phase and session measurement
 
 For every dispatched Captain/reviewer/repair turn, retain actual host thread and turn IDs in an external measurement manifest. Include approval continuations and declared phase coverage; record missing telemetry rather than estimating it. Use [assessment measurement](../../../docs/assessment-measurement.md). A fresh Captain starts with `fork_turns: none` and a neutral handoff, never an implementation transcript or previous review conclusions.
