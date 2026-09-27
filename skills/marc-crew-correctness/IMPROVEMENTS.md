@@ -2,7 +2,7 @@
 
 ## 2026-09-27 — Check previously accepted states when guards change
 
-The fresh E6–E9 PR16 assessment passed a change that added a `reportCreatedAt` precondition and removed the `merge` exemption, blocking operator-approved merges of PRs with still-supported legacy SHA-named reports. The reviewer read the code but did not consider the legacy state; three earlier fresh reviews had flagged it. When a guard is added or an exemption removed, list the states the old code accepted and confirm each is still handled or deliberately retired. A seeded-defect and clean-alternative pair in the repository's `evals/marc-crew-correctness` corpus cover it; model detection rates remain unmeasured.
+PR16 exposed how easily guard changes are misjudged: three fresh reviews called a new `reportCreatedAt` precondition a regression for legacy SHA-named reports, and later reviews and source history showed the base never accepted that state. When a guard is added or an exemption removed, list the states the old code accepted and confirm each is still handled or deliberately retired; this cuts both ways, catching real regressions and refuting false ones. The repository's `evals/marc-crew-correctness` corpus keeps the PR16 seam as a false-alarm probe; model detection rates remain unmeasured.
 
 ## 2026-09-27 — Remove E4 and retain E5 measurement
 

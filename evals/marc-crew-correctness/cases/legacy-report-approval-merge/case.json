@@ -1,8 +1,8 @@
 {
   "id": "legacy-report-approval-merge",
-  "caseVersion": 2,
-  "class": "seeded-defect",
-  "title": "A new approval precondition blocks operator-approved merges of PRs with legacy SHA-named reports",
+  "caseVersion": 3,
+  "class": "clean-alternative",
+  "title": "Approval publication rejects legacy evidence that could never merge with approval",
   "contentDigest": "227599f04cb812f25cc3e95f4b5f11eab14cbb6bd20bdc3327ebb2d70153726e",
   "rules": [
     "read-diff-owner-callers",
@@ -41,29 +41,21 @@
   "evidence": [
     "shared/ci-success.json"
   ],
-  "expectedVerdict": "repair",
-  "requiredFindings": [
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
     {
       "rule": "previously-accepted-states",
-      "where": "src/quality/marc.cjs:549",
-      "severity": "blocking",
-      "mustCite": [
-        "the new `if (!e.reportCreatedAt) throw` guard, which replaced the base exemption `action !== 'merge'` when the live head has moved past the reviewed source",
-        "reportPaths (marc.cjs:47-55) still accepting evidence without reportCreatedAt and naming legacy reports by source SHA",
-        "the consequence that record-approval cannot record approval for a published legacy SHA-named report, and merge --operator-approval now requires that recorded entry (marc.cjs:633), so such a PR can no longer merge with approval although the base merged it",
-        "a correction that lets verifyReportCommit decide for evidence without reportCreatedAt (it already reproduces legacy report bytes and fails closed on other head movement), so record-approval can bootstrap a receipt; exempting merge alone is insufficient"
-      ]
-    }
-  ],
-  "forbiddenFindings": [
+      "example": "Claiming the reportCreatedAt guard at marc.cjs:549 removes an approval-merge path for legacy SHA-named reports; the base required a matching humanApprovalAudit, which no legacy report can carry, so that state never merged with approval."
+    },
     {
       "rule": "demonstrated-not-speculative",
       "example": "Reporting the documented non-atomic GitHub description update in record-approval as a defect, or asking for a different receipt hash algorithm."
     },
     {
       "rule": "verdict-mapping",
-      "example": "Returning human-required for this defect as if it were an unresolved business decision."
+      "example": "Returning repair or human-required for this seam as if the legacy guard were a defect or an open business decision."
     }
   ],
-  "notes": "From the fresh E6-E9 PR16 assessment on 2026-09-27, which passed this change; three earlier fresh reviews flagged it. Source-confirmed, not executed. Version 2 corrects the consequence and correction: merge also requires the entry only record-approval writes."
+  "notes": "False-alarm probe from PR16. Three fresh reviewers and the first adjudication flagged a legacy-report regression here; source history refutes it (see rubric). Version 3 reclassifies the earlier seeded-defect versions. Other PR16 defects are outside this reduced case."
 }

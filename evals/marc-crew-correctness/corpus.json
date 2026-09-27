@@ -9,7 +9,7 @@
   ],
   "createdOn": "2026-09-27",
   "rules": "rules.json",
-  "note": "Core-gate corpus: no specialist selection. Cases are reduced from real MARC assessments and scored per class, never averaged. Universal rules are scored on every case from the returned gate artifact.",
+  "note": "Core-gate corpus: no specialist selection. Cases are reduced from real MARC assessments and scored per class, never averaged. Universal rules are scored on every case from the returned gate artifact. It currently holds one false-alarm probe; add a seeded defect before scoring detection.",
   "universalRules": [
     "read-trusted-handoff",
     "unknown-technology-hold",
@@ -20,15 +20,9 @@
   "cases": [
     {
       "id": "legacy-report-approval-merge",
-      "class": "seeded-defect",
-      "expectedVerdict": "repair",
-      "title": "A new approval precondition blocks operator-approved merges of PRs with legacy SHA-named reports"
-    },
-    {
-      "id": "legacy-report-approval-preserved",
       "class": "clean-alternative",
       "expectedVerdict": "pass",
-      "title": "The same approval publication change lets verified legacy SHA-named reports record approval and merge"
+      "title": "Approval publication rejects legacy evidence that could never merge with approval"
     }
   ]
 }

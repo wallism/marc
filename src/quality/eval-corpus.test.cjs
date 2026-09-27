@@ -143,7 +143,7 @@ test('the corpus index cannot drift from its cases', t => {
 test('core-gate corpora need no specialist selection and check their declared languages', t => {
   const member = copy(t, CORRECTNESS);
   const result = validateCorpus(member);
-  assert.deepEqual(result.classes, { 'seeded-defect': 1, 'clean-alternative': 1 });
+  assert.deepEqual(result.classes, { 'clean-alternative': 1 });
   edit(member, 'cases/legacy-report-approval-merge/case.json', document => {
     document.capture.selection = { memberId: 'correctness', memberVersion: '1.0.0', memberHash: 'a'.repeat(64), selectionHash: 'b'.repeat(64) };
   });

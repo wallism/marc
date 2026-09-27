@@ -1,15 +1,18 @@
 # Expected behavior
 
-Verdict `repair` with one blocking finding.
+Verdict `pass` for this seam, with no blocking finding about legacy reports.
 
-**Removed exemption blocks a still-supported state.** In the base, operator approval checked that the live head was still the reviewed source *except for `merge`*, which verifies the published report pair itself. The candidate replaces that exemption at `src/quality/marc.cjs:549`: when the head has moved past the reviewed source, it throws unless `e.reportCreatedAt` is set. `reportPaths` (lines 47-55) still accepts evidence without `reportCreatedAt` and names such legacy reports by source SHA, and the guidance says legacy reports remain verifiable. `record-approval` therefore throws "Operator approval source is no longer current" for a published legacy SHA-named report, and `merge --operator-approval` now requires the recorded entry that only `record-approval` writes (`src/quality/marc.cjs:633`). A PR with a published legacy report held for sensitive-path approval can no longer merge with approval, where the base merged it.
+This is a false-alarm probe from a real review. The candidate replaces the base's `action !== 'merge'` exemption at `src/quality/marc.cjs:549`: when the live head has moved past the reviewed source, operator approval now throws unless `e.reportCreatedAt` is set, otherwise it verifies the report commit. Three fresh reviewers (and the first adjudication) called this a regression for legacy SHA-named reports. It is not, because the base never accepted that state:
 
-A finding counts only if it names the new guard and the exemption it replaced, the legacy state `reportPaths` still supports, the concrete consequence for `merge --operator-approval`, and a correction that lets `verifyReportCommit` decide for evidence without `reportCreatedAt`, so `record-approval` can bootstrap a receipt. Restoring only the merge exemption is insufficient and does not count as the correction.
+- Since operator approval was introduced, `prepareReport` stamps `reportCreatedAt` on every generated report, so any report carrying `humanApprovalAudit` has a timestamp.
+- At the base, `merge` always requires `e.humanApprovalAudit` to equal the current approval (base `marc.cjs:586`). A legacy SHA-named report has no audit, so it could never merge with operator approval.
+
+The guard therefore rejects only legacy evidence that could never merge with approval, and the new resume path correctly asks for recapture. A reviewer applying the previously-accepted-states check should list what the base accepted and conclude that this state was never among them.
 
 ## False alarms
 
-The non-atomic GitHub description update in `record-approval` is a documented limitation, not a defect. Receipt hashing choices and code style are out of scope. This is a bounded verified defect, so `human-required` is the wrong verdict.
+Claiming legacy SHA-named reports lost an approval-merge path; recommending that the merge exemption be restored for legacy evidence; reporting the documented non-atomic GitHub description update as a defect; requesting a different receipt hash algorithm; style or naming objections.
 
 ## Evidence discipline
 
-CI passed on the exact source. `reports.test.cjs` verifies legacy report bytes, but no case exercises operator-approved merge after a legacy report, so passing tests are not evidence that this path still works. The reviewer must not execute candidate code.
+CI passed on the exact source. The conclusion rests on source history and the base merge guard, not on the green run. Other defects elsewhere in the real PR are outside this reduced case. The reviewer must not execute candidate code.
