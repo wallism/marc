@@ -10,6 +10,7 @@ const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
 const { auditJson } = require('./audit.cjs');
 const { loadOperatorApproval, checkOperatorApproval, parseOperatorApproval } = require('./operator-approval.cjs');
 const { captureIntent, intentReasons, refreshIntent, intentMarkdown } = require('./intent.cjs');
+const { appendApproval, requireApprovalPublication, saveReceipt, loadReceipt, checkReceipt } = require('./approval-publication.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -325,16 +326,22 @@ function verifyPriorReports(e, readGit) {
   }
   return parent;
 }
-function verifyReportCommit(e, live, decision, readGit) {
+function verifyReportCommit(e, live, decision, readGit, receipt) {
   const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat);
   const parent = verifyPriorReports(e, readGit);
   readGit('merge-base', '--is-ancestor', parent, live.head.sha);
   const changed = readGit('diff', '--name-only', '--no-renames', '-z', parent, live.head.sha, '--').split('\0').filter(Boolean);
   if (changed.length !== 2 || changed.some(f => !paths.includes(f))) throw Error('Changes after review exceed the exact report files');
-  const expected = [auditJson(e), reportMarkdown(e, decision)];
+  if (receipt) {
+    checkReceipt(receipt, e);
+    if (encode(receipt.files.map(f => f.path)) !== encode(paths)) throw Error('Published report receipt paths differ');
+  }
+  const expected = receipt ? null : [auditJson(e), reportMarkdown(e, decision)];
   paths.forEach((f, i) => {
     if (!readGit('ls-tree', live.head.sha, '--', f).startsWith('100644 blob ')) throw Error('Report is not a regular file');
-    if (readGit('show', `${live.head.sha}:${f}`) !== expected[i].trimEnd()) throw Error('Published report differs from trusted evidence');
+    const bytes = readGit('show', `${live.head.sha}:${f}`);
+    if (receipt ? digest(bytes) !== receipt.files[i].hash : bytes !== expected[i].trimEnd())
+      throw Error('Published report differs from trusted evidence');
   });
 }
 function reportCiReuse(e, current) {
@@ -346,8 +353,8 @@ function reportCiReuse(e, current) {
       !Number.isSafeInteger(current.runAttempt) || current.runAttempt < 1) return undefined;
   return { sourceHead: e.sourceHead, runId: current.runId, runAttempt: current.runAttempt };
 }
-function verifyMergeCi(e, live, decision, readGit, collect) {
-  verifyReportCommit(e, live, decision, readGit);
+function verifyMergeCi(e, live, decision, readGit, collect, receipt) {
+  verifyReportCommit(e, live, decision, readGit, receipt);
   const source = collect(e.sourceHead);
   if (source.verdict !== 'pass') throw Error('Reviewed source CI is no longer valid');
   const final = collect(live.head.sha);
@@ -464,7 +471,7 @@ function createController(context, adapters = {}) {
       // Historical decision is used only to reproduce immutable report bytes,
       // never as authorization for this or any later assessment.
       const previous = e.stages?.findLast(stage => stage.kind === 'review')?.decision || evaluate(e, p, hash, recruit(e));
-      verifyReportCommit(e, live, previous, git);
+      verifyReportCommit(e, live, previous, git, context.stateDirectory ? loadReceipt(context.stateDirectory, e) : undefined);
       report = { head: live.head.sha, files: reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat)
         .map(file => ({ path: file, hash: digest(git('show', `${live.head.sha}:${file}`)) })) };
     }
@@ -477,8 +484,8 @@ function createController(context, adapters = {}) {
     args = parsed.args;
     const approvalFile = parsed.approvalFile;
     const [action, first, second] = args;
-    if (!['queue', 'capture', 'refresh-intent', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(action))
-      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | refresh-intent <previous-evidence.json> <new-evidence.json> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
+    if (!['queue', 'capture', 'refresh-intent', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint', 'record-approval'].includes(action))
+      throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | refresh-intent <previous-evidence.json> <new-evidence.json> | record-approval <evidence.json> --operator-approval <absolute-file> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
     if (action === 'capture' && !second) throw Error('An external evidence path is required');
     checkTrustedCheckout();
     const { policy: p, policyHash: hash } = trustedPolicy(context);
@@ -530,10 +537,23 @@ function createController(context, adapters = {}) {
       });
       console.log(encode(result)); return;
     }
+    if (action === 'record-approval' && !approvalFile) throw Error('record-approval requires explicit --operator-approval');
+    if (action === 'record-approval' && (e.repository !== REPO || e.policyHash !== hash))
+      throw Error('Approval publication identity changed; recapture and obtain a new decision');
+    let receipt = context.stateDirectory ? loadReceipt(context.stateDirectory, e) : undefined;
+    let approvalHead;
     if (approvalFile) {
       const liveApproval = assertLive(e);
-      if (action !== 'merge' && liveApproval.head.sha !== verifyPriorReports(e, git))
-        throw Error('Operator approval source is no longer current; recapture and rebind');
+      approvalHead = liveApproval.head.sha;
+      if (liveApproval.head.sha !== verifyPriorReports(e, git)) {
+        if (!e.reportCreatedAt) throw Error('Operator approval source is no longer current; recapture and rebind');
+        // Reproduce historical report bytes only; its old decision grants no authority.
+        const previous = e.stages?.findLast(stage => stage.kind === 'review')?.decision || evaluate(e, p, hash, recruit(e));
+        verifyReportCommit(e, liveApproval, previous, git, receipt);
+        if (!receipt && action === 'record-approval') receipt = saveReceipt(context.stateDirectory, e,
+          reportPaths(e.pr, e.sourceHead, e.reportCreatedAt, e.reportFormat)
+            .map(file => ({ path: file, hash: digest(git('show', `${liveApproval.head.sha}:${file}`)) })));
+      }
     }
     const decide = () => {
       const approval = approvalFile ? loadOperatorApproval(approvalFile) : undefined;
@@ -547,6 +567,29 @@ function createController(context, adapters = {}) {
     // Current reviews require live intent; append-only event observations may follow a merge.
     if (action === 'decide' || (action === 'checkpoint' && !second)) assertLive(e);
     const decision = decide();
+    if (action === 'record-approval') {
+      if (!decision.humanApproval) throw Error('Operator approval is not valid for the captured scope');
+      const live = assertLive(e);
+      if (live.head.sha !== approvalHead) throw Error('PR changed before approval publication; recapture and review');
+      if (!registeredProducer(live.user.login, live.head.ref, p) || live.user.login !== e.author || live.head.ref !== e.branch)
+        throw Error('Approval publication requires the captured registered producer');
+      const body = appendApproval(live.body, decision.humanApproval);
+      const current = assertLive(e);
+      if (current.head.sha !== live.head.sha || current.body !== live.body)
+        throw Error('PR changed before approval publication; reread and retry');
+      // Reload at the write boundary; revocation or expiry must stop publication too.
+      if (encode(decide().humanApproval) !== encode(decision.humanApproval)) throw Error('Operator approval changed before publication');
+      if (body !== (live.body || '')) {
+        if (adapters.updatePullRequest) adapters.updatePullRequest(e.pr, body);
+        else command('gh', ['api', '--method', 'PATCH', `repos/${REPO}/pulls/${e.pr}`, '--input', '-'], ROOT, JSON.stringify({ body }));
+      }
+      const recorded = assertLive(e);
+      if (recorded.head.sha !== live.head.sha || recorded.body !== body) throw Error('PR changed during approval publication; inspect before retrying');
+      requireApprovalPublication(recorded.body, decision.humanApproval);
+      console.log(encode({ pr: e.pr, sourceHead: e.sourceHead, head: recorded.head.sha,
+        approvalId: decision.humanApproval.record.id, recorded: true, changed: body !== (live.body || '') }));
+      return;
+    }
     if (action === 'decide') { console.log(encode(decision)); return; }
     if (action === 'checkpoint') {
       if (e.repository !== REPO) throw Error('Stage repository differs from consumer');
@@ -577,15 +620,18 @@ function createController(context, adapters = {}) {
       // later derives the exact same names/content without consulting the current clock.
       fs.writeFileSync(first, encode(prepared));
       const files = writeReportFiles(prepared, decision, second);
+      saveReceipt(context.stateDirectory, prepared, files.map(file => ({ path: file,
+        hash: digest(fs.readFileSync(path.join(second, file), 'utf8').trimEnd()) })));
       console.log(encode({ reportCreatedAt: prepared.reportCreatedAt, files,
         reportCiReuse: prepared.reportCiReuse,
         commitMessage: `docs: record MARC assessment for PR ${e.pr}${prepared.reportCiReuse ? ' [skip ci]' : ''}` }));
       console.log('Report files written. Inspect, commit and push only these two files to the existing PR branch.'); return;
     }
     if (!decision.merge) throw Error('Merge denied: ' + (decision.reasons.join('; ') || 'report-only policy'));
-    if (encode(e.humanApprovalAudit) !== encode(decision.humanApproval))
+    if (!receipt && encode(e.humanApprovalAudit) !== encode(decision.humanApproval))
       throw Error('Published operator approval audit differs; preserve the report and reassess');
-    const mergeCi = verifyMergeCi(e, live, decision, git, head => collect(head, e.pr, p));
+    if (decision.humanApproval) requireApprovalPublication(live.body, decision.humanApproval);
+    const mergeCi = verifyMergeCi(e, live, decision, git, head => collect(head, e.pr, p), receipt);
     // Check source metadata and changed paths independently instead of trusting editable JSON.
     const source = capture(e.pr, p, hash);
     if (source.sourceHead !== live.head.sha) throw Error('PR moved');
@@ -603,8 +649,9 @@ function createController(context, adapters = {}) {
       const finalDecision = decide();
       if (!finalDecision.merge || encode(finalDecision.humanApproval) !== encode(decision.humanApproval))
         throw Error('Operator approval or decision changed before merge');
+      if (finalDecision.humanApproval) requireApprovalPublication(refreshed.body, finalDecision.humanApproval);
       // Non-force update refuses a concurrent divergent target. No head/base race fallback.
-      const commit = pushMerge((args, input) => command('git', args, ROOT, input), e.base, live.head.sha, e.pr, context.policy.base);
+      const commit = (adapters.pushMerge || pushMerge)((args, input) => command('git', args, ROOT, input), e.base, live.head.sha, e.pr, context.policy.base);
       console.log(encode({ mergeCommit: commit, pr: e.pr, deployment: false, ci: mergeCi,
         note: 'Verify GitHub merged state and target-branch CI; do not repeat a push after an uncertain response.' }));
     } finally { releaseLock(); }
@@ -642,8 +689,8 @@ function createController(context, adapters = {}) {
 function main(args = process.argv.slice(2)) {
   let root;
   if (args[0] === '--repo') { root = args[1]; args = args.slice(2); if (!root) throw Error('Repository root required'); }
-  if (!['config', 'queue', 'capture', 'refresh-intent', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint'].includes(args[0]))
-    throw Error('Usage: node src/quality/marc.cjs [--repo <trusted-checkout>] config | queue | capture | refresh-intent | decide | report | merge | recover-ci | checkpoint');
+  if (!['config', 'queue', 'capture', 'refresh-intent', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint', 'record-approval'].includes(args[0]))
+    throw Error('Usage: node src/quality/marc.cjs [--repo <trusted-checkout>] config | queue | capture | refresh-intent | record-approval | decide | report | merge | recover-ci | checkpoint');
   const context = loadConfig(root || discoverRoot());
   if (args[0] === 'config') { console.log(encode({ ...context, trusted: false, note: 'Resolution only; operational commands verify clean current trusted code before use.' })); return; }
   createController(context).run(args);

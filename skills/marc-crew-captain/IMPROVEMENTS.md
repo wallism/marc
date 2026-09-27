@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Public human approval records
+
+Record actual human approvals in each PR description with who, when, scope and reviewed identity. Resume a held report by retaining its bytes and verifying the later external approval independently; resolve only the affected governance finding and reuse valid reviews/CI. Include intent-repair approvals in the public audit trail without turning repair permission into merge authority. See [the contract](../../docs/operator-approval.md).
+
 ## 2026-09-27 — Static intent with human repair decisions
 
 Require independent static intent alignment on both review routes when the PR provides an explicit paragraph. Keep optional companions outside the Captain workflow. Highlight succinct human repair proposals, preserve ordinary repair rules for unrelated defects and refresh only intent evidence after prose-only changes. See the [contract](references/intent.md); source/base/policy changes still invalidate ordinary gates.

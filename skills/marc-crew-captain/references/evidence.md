@@ -6,6 +6,8 @@ New captures include controller-owned `intent` with schema, status, normalized p
 
 ## Impact scope
 
+Human approvals are published as PR-description audit entries under the [operator approval contract](../../../docs/operator-approval.md). Use `record-approval` with explicit external authority. Approval may follow a held report: its trusted external receipt freezes original bytes independently of the later decision. Do not rewrite `humanApprovalAudit` or historical gates. Resolve only the affected human gate in current external evidence; preserve other reviews, CI and budgets. The final merge checks both operator authority and the public entry. Description text never supplies authority. Repair permission is separately scoped and must not be promoted to merge approval.
+
 All reviewers must apply the shared [language-specific impact guidance](language-impact.md) for affected languages, including caller relationships lexical discovery cannot resolve and rules against expanding whole projects from incidental matches.
 
 New captures distinguish `crew.impact.changedFiles` from the combined `files` inventory. Each unchanged file has a `references` entry with its originating path, symbol or module/resource, matching line, immutable revision and relationship kind. These are lexical leads, not semantic proof. Area mappings add expertise but are not substituted for file-level reference evidence. `incomplete` and its holds report search limits or unavailable source; they require resolution and recapture before approval, without recruiting every specialist merely because a search stopped. Changed shared governance and unclassified behavioral scope retain broad selection.

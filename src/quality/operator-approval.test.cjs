@@ -71,7 +71,7 @@ test('CLI approval input is explicit, singular and limited to decision consumers
     assert.throws(() => parseOperatorApproval(args), /approval/i);
 });
 
-test('trusted CLI records approval in reports, rejects diff forgery and reloads at the final merge boundary', t => {
+for (const approveBeforeReport of [true, false]) test(`trusted CLI resumes approval ${approveBeforeReport ? 'before' : 'after'} immutable report publication`, t => {
   const { createController, trustedPolicy, reportPaths } = require('./marc.cjs');
   const { resolveAgentSettings } = require('./agent-settings.cjs');
   const { root, file, record } = fixture();
@@ -98,7 +98,8 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
       reviewer: name, summary: 'Checked', evidence: ['AGENTS.md:1'], findings: [],
       execution: { settings: resolveAgentSettings(undefined, name), applied: true, evidence: 'fixture receipt' } }])) };
   const evidence = path.join(root, 'evidence.json'); fs.writeFileSync(evidence, JSON.stringify(e));
-  let head = sourceHead, liveBase = base, drift = false, revokeAtLock = false, liveBody = null;
+  let head = sourceHead, liveBase = base, drift = false, revokeAtLock = false, liveBody = null, pushes = 0, updates = 0;
+  let bodyReads = 0, concurrentBodyAtRead = 0, moveHeadAtRead = 0, removeApprovalAtLock = false;
   const controller = createController(context, {
     git: (...args) => {
       if (args[0] === 'branch') return 'master';
@@ -108,6 +109,7 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
         if (args[1] === '--show-toplevel') return bundleRoot;
         if (args[1] === '--git-common-dir') {
           if (revokeAtLock) fs.writeFileSync(file, JSON.stringify({ ...record, approved: false }));
+          if (removeApprovalAtLock) liveBody = 'Approval removed while acquiring lock';
           return root;
         }
         return head;
@@ -115,13 +117,20 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
       if (drift && args[0] === 'diff') return 'AGENTS.md\0unapproved.md\0';
       return git(...args);
     },
-    api: endpoint => endpoint.includes('/git/ref/') ? { object: { sha: liveBase } } :
+    api: endpoint => { if (endpoint.endsWith('/pulls/7')) {
+      bodyReads++;
+      if (bodyReads === concurrentBodyAtRead) liveBody = 'Concurrent edit';
+      if (bodyReads === moveHeadAtRead) head = base;
+    }
+      return endpoint.includes('/git/ref/') ? { object: { sha: liveBase } } :
       endpoint.includes('/actions/') ? { workflow_runs: head !== sourceHead && endpoint.includes(`head_sha=${head}`) ? [] : [{ id: 12, run_attempt: 1,
         head_sha: new URL('https://example.invalid/' + endpoint).searchParams.get('head_sha'), event: 'push',
         status: 'completed', conclusion: 'success', html_url: 'https://github.com/example/project/actions/runs/12' }] } :
       { state: 'open', draft: false, body: liveBody, user: { login: e.author }, base: { ref: 'master' },
-        head: { sha: head, ref: e.branch, repo: { full_name: e.repository } } },
-    readJobs: () => policy.requiredJobs.map(name => ({ name, conclusion: 'success' }))
+        head: { sha: head, ref: e.branch, repo: { full_name: e.repository } } }; },
+    readJobs: () => policy.requiredJobs.map(name => ({ name, conclusion: 'success' })),
+    updatePullRequest: (pr, body) => { assert.equal(pr, e.pr); liveBody = body; updates++; },
+    pushMerge: () => { pushes++; return 'f'.repeat(40); }
   });
   const output = t.mock.method(console, 'log', () => {});
   controller.run(['decide', evidence]);
@@ -136,16 +145,48 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   drift = true;
   assert.throws(() => controller.run(['decide', evidence, '--operator-approval', file]), /committed diff/);
   drift = false;
-  controller.run(['report', evidence, candidate, '--operator-approval', file]);
+  assert.throws(() => controller.run(['record-approval', evidence]), /explicit/);
+  moveHeadAtRead = bodyReads + 2;
+  assert.throws(() => controller.run(['record-approval', evidence, '--operator-approval', file]), /PR changed before/);
+  assert.equal(updates, 0, 'source movement cannot receive a stale approval entry');
+  moveHeadAtRead = 0; head = sourceHead;
+  concurrentBodyAtRead = bodyReads + 3;
+  assert.throws(() => controller.run(['record-approval', evidence, '--operator-approval', file]), /PR changed before/);
+  assert.equal(updates, 0, 'concurrent description edit is not overwritten');
+  concurrentBodyAtRead = 0; liveBody = null;
+  if (approveBeforeReport) controller.run(['record-approval', evidence, '--operator-approval', file]);
+  if (!approveBeforeReport) {
+    e.gates.security.verdict = 'human-required';
+    fs.writeFileSync(evidence, JSON.stringify(e));
+  }
+  controller.run(['report', evidence, candidate, ...(approveBeforeReport ? ['--operator-approval', file] : [])]);
   const reported = JSON.parse(fs.readFileSync(evidence));
   assert.deepEqual(reported.reportCiReuse, { sourceHead, runId: 12, runAttempt: 1 });
   const publication = JSON.parse(output.mock.calls.at(-2).arguments[0]);
   assert.match(publication.commitMessage, /\[skip ci\]$/);
-  assert.equal(reported.humanApprovalAudit.record.id, record.id);
-  assert.equal(reported.stages.at(-1).decision.humanApproval.sha256, reported.humanApprovalAudit.sha256);
+  assert.equal(reported.humanApprovalAudit?.record.id, approveBeforeReport ? record.id : undefined);
   const paths = reportPaths(e.pr, sourceHead, reported.reportCreatedAt, reported.reportFormat);
-  assert.match(fs.readFileSync(path.join(candidate, paths[1]), 'utf8'), /Human sensitive-path approval/);
+  const reportBytes = paths.map(p => fs.readFileSync(path.join(candidate, p), 'utf8'));
   head = commit();
+  if (!approveBeforeReport) {
+    // Older installations have no external receipt. Bootstrap only by verifying
+    // the retained original evidence against both immutable published files.
+    const directory = path.join(context.stateDirectory, 'report-receipts');
+    for (const entry of fs.readdirSync(directory)) fs.unlinkSync(path.join(directory, entry));
+  }
+  controller.run(['record-approval', evidence, '--operator-approval', file]);
+  controller.run(['record-approval', evidence, '--operator-approval', file]);
+  assert.equal(updates, 1, 'recording and resuming are idempotent');
+  assert.match(liveBody, /Human approval record/);
+  assert.equal(git('rev-parse', 'HEAD'), head, 'PR metadata publication does not create a commit');
+  assert.deepEqual(paths.map(p => fs.readFileSync(path.join(candidate, p), 'utf8')), reportBytes);
+  if (!approveBeforeReport) {
+    reported.gates.security.verdict = 'pass';
+    fs.writeFileSync(evidence, JSON.stringify(reported));
+  }
+  controller.run(['decide', evidence, '--operator-approval', file]);
+  assert.equal(JSON.parse(output.mock.calls.at(-1).arguments[0]).eligible, true);
+  const approvalBody = liveBody;
   liveBody = 'INTENT: Clarify the project contributor guidance.';
   assert.throws(() => controller.run(['merge', evidence, '--operator-approval', file]), /intent changed/);
   const refreshedFile = path.join(root, 'refreshed-intent.json');
@@ -163,7 +204,7 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   controller.run(['decide', refreshedFile]);
   assert.equal(JSON.parse(output.mock.calls.at(-1).arguments[0]).eligible, false, 'approval still requires explicit operator input');
   assert.throws(() => controller.run(['refresh-intent', evidence, refreshedFile]), /new external output file/);
-  liveBody = null;
+  liveBody = approvalBody;
   assert.throws(() => controller.run(['merge', evidence]), /Merge denied/);
   const changedAudit = { ...reported, humanApprovalAudit: { forged: true } };
   fs.writeFileSync(evidence, JSON.stringify(changedAudit));
@@ -175,4 +216,15 @@ test('trusted CLI records approval in reports, rejects diff forgery and reloads 
   assert.throws(() => controller.run(['merge', evidence, '--operator-approval', file]), /approval.*malformed/i);
   assert.equal(fs.existsSync(path.join(root, 'marc-merge.lock')), false);
   assert.equal(git('rev-parse', 'HEAD'), head, 'no merge or push ran');
+  assert.equal(pushes, 0);
+  revokeAtLock = false; fs.writeFileSync(file, JSON.stringify(record));
+  liveBody = 'Unrelated description with no approval';
+  assert.throws(() => controller.run(['merge', evidence, '--operator-approval', file]), /record-approval/);
+  liveBody = approvalBody;
+  removeApprovalAtLock = true;
+  assert.throws(() => controller.run(['merge', evidence, '--operator-approval', file]), /record-approval/);
+  assert.equal(pushes, 0, 'approval audit publication rechecked at final boundary');
+  removeApprovalAtLock = false; liveBody = approvalBody;
+  controller.run(['merge', evidence, '--operator-approval', file]);
+  assert.equal(pushes, 1, 'all guards reach the merge adapter with the approved unchanged source');
 });

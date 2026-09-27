@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-27 — Approval records without report rewrites
+
+PR #14 exposed a dead end when human approval followed a published held report. Add explicit `record-approval` to append an idempotent PR-description audit entry while preserving prose, intent and HEAD. External receipts verify immutable reports separately from later approval and independently resolved gates. Preserve external authority, exact scope, source/base/policy/intent, report bytes, CI and final revocation/race checks. Synthetic controller regressions cover approval before/after publication, legacy receipt adoption, unchanged history, missing/altered public entries and revoked authority. Activation still requires a trusted bundle update; local tests do not activate this process in consumers.
+
 ## 2026-09-27 — Optional companions and static intent assessment
 
 Separate optional companion skills from required crew installation. Capture PR intent, require independent static alignment evidence on both routes and hold intent repairs for human approval. Bind queue, assessment and live checks to intent while preserving valid reviews and CI on intent-only edits. Verify immutable report ancestry across reassessments and show succinct human action near the report top. Synthetic tests cover parsing, route enforcement, queue wakeups, selective refresh and report/CI reuse. No runtime execution, consumer activation or merge-authority change.

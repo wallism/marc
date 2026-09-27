@@ -42,6 +42,30 @@ test('historical reports without a reuse record still require report-head CI', t
   assert.equal(verifyMergeCi(e, live, decision, git, () => passed).reusedSource, false);
 });
 
+test('report receipts allow a later decision but still reject changed reports, source and failed CI', t => {
+  const { saveReceipt } = require('./approval-publication.cjs');
+  const { verifyMergeCi } = require('./marc.cjs');
+  const { root, git, e } = fixture(t);
+  const state = fs.mkdtempSync(path.join(os.tmpdir(), 'marc-report-receipt-'));
+  t.after(() => fs.rmSync(state, { recursive: true, force: true }));
+  const held = { eligible: false, merge: false, reasons: ['Human decision required'] };
+  const paths = writeReportFiles(e, held, root);
+  const receipt = saveReceipt(state, e, paths.map(file => ({ path: file,
+    hash: require('node:crypto').createHash('sha256').update(fs.readFileSync(path.join(root, file), 'utf8').trimEnd()).digest('hex') })));
+  git('add', '.'); git('commit', '-m', 'held report');
+  const live = { head: { sha: git('rev-parse', 'HEAD') } }, approved = { eligible: true, merge: true, reasons: [] };
+  assert.throws(() => verifyReportCommit(e, live, approved, git), /differs/);
+  verifyReportCommit(e, live, approved, git, receipt);
+  assert.throws(() => verifyMergeCi(e, live, approved, git, () => ({ verdict: 'blocked' }), receipt), /source CI/);
+  verifyMergeCi(e, live, approved, git, () => ({ verdict: 'pass' }), receipt);
+  fs.appendFileSync(path.join(root, paths[1]), '\nTampered historical report');
+  git('add', '.'); git('commit', '-m', 'alter report'); live.head.sha = git('rev-parse', 'HEAD');
+  assert.throws(() => verifyReportCommit(e, live, approved, git, receipt), /differs/);
+  fs.appendFileSync(path.join(root, 'app.txt'), '\nUnreviewed code');
+  git('add', '.'); git('commit', '-m', 'alter source'); live.head.sha = git('rev-parse', 'HEAD');
+  assert.throws(() => verifyReportCommit(e, live, approved, git, receipt), /exact report files/);
+});
+
 test('new MARC reports preserve legacy rendering for previously prepared evidence', () => {
   const { reportMarkdown } = require('./marc.cjs');
   const original = { pr: 24, sourceHead: 'a'.repeat(40), base: 'b'.repeat(40), policyHash: 'policy' };
