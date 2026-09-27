@@ -7,7 +7,7 @@ description: Independently review Rust changes and affected callers as a selecte
 
 Rust ownership contracts, unsafe boundaries, error/drop behavior and feature-dependent builds; excludes automatic async-runtime and foreign-language expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace safe API soundness, FFI validity and unsafe invariants.
 - Inspect Send/Sync assumptions, Drop paths and error ownership.

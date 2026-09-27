@@ -7,7 +7,7 @@ description: Independently review Go changes and affected callers as a selected 
 
 Go goroutine/channel ownership, context cancellation, error/resource contracts and concurrency evidence; excludes unconfirmed framework, cgo and protocol-specific expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace goroutine termination, channel ownership and synchronization.
 - Inspect context propagation, error returns and deferred cleanup.

@@ -637,7 +637,7 @@ function createController(context, adapters = {}) {
   }
   const collect = (head, pr, p) => collectCi(head, pr, { ...p, workflow: context.ci.workflow }, api,
     adapters.readJobs || (id => JSON.parse(command('gh', ['api', '--paginate', '--slurp', 'repos/' + REPO + '/actions/runs/' + id + '/jobs?per_page=100'])).flatMap(x => x.jobs)));
-  return { run, capture, assertLive, refreshIntentEvidence, checkTrustedCheckout, collectCi: collect };
+  return { run, capture, assertLive, refreshIntentEvidence, checkTrustedCheckout, collectCi: collect, recruit };
 }
 function main(args = process.argv.slice(2)) {
   let root;

@@ -7,7 +7,7 @@ description: Independently review Delphi/Object Pascal changes and affected call
 
 Delphi/Object Pascal units, ownership, exception and binary/string contracts under a confirmed compiler; excludes unverified Free Pascal dialect differences and framework-specific UI/database semantics.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace manual, component and interface ownership across failure paths.
 - Inspect exception propagation and string/binary boundary compatibility.

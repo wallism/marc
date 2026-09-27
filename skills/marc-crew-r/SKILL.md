@@ -7,7 +7,7 @@ description: Independently review R changes and affected callers as a selected M
 
 R data shape, missing values, evaluation environments and reproducibility; excludes domain-statistical validity and automatic tidyverse, Shiny or native extension expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace vector length, dimensions, missing values and environment-dependent evaluation.
 - Inspect random-state and numerical reproducibility at data boundaries.

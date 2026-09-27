@@ -7,7 +7,7 @@ description: Independently review C++ changes and affected callers as a selected
 
 C++ object and view lifetimes, value semantics, exception safety and concurrent ownership; excludes automatic C, GPU or framework expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace ownership, borrowed views, invalidation and copy/move contracts.
 - Inspect failure guarantees, thread ownership and ABI consumers.

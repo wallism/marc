@@ -2,7 +2,9 @@
 
 MARC uses two complementary checks. The controller deterministically collects lexical reference evidence to select specialists. Independent model reviewers reason about changed behavior, callers, contracts and runtime relationships. Neither a long path list nor a successful text search proves complete coverage.
 
-For a change inside `FunctionA` that keeps its name, discovery reads declarations from the full files in both captured revisions. Recognized functions and owning types remain search roots even when their declarations are outside the diff hunk. Reviewers must identify the actual changed function and trace its callers until the consequences and boundaries are understood; the captured inventory is not their scope limit.
+For a change inside `FunctionA` that keeps its name, discovery maps zero-context diff hunks to enclosing declarations in both captured revisions. Body-only changes retain their owners and interface contracts; unrelated declarations no longer become initial search roots. Unrecognized top-level syntax retains conservative file scope. Removed callers remain visible through base-tree inspection. Reviewers still trace actual consequences and boundaries; the captured inventory is not their scope limit.
+
+Explicit imports, resource paths and repository-relative workflow/process invocations establish relationships across technologies. Named imports follow changed exports and aliases; unrelated exports do not seed whole modules. Cross-language identifier collisions and JavaScript member spellings remain inspectable `lexicalReferences`, separate from the relationship evidence used to recruit specialists. Local declarations/bindings and native-language keywords prevent incidental name matches. No fixture blanket exclusion or discovery-budget increase is used. Dynamic or unresolved relationships still require reviewer investigation and visible holds; lexical filtering is not semantic proof.
 
 ## What enters the inventory
 
