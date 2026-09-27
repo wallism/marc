@@ -39,6 +39,7 @@ function loadConfig(repositoryRoot) {
       !['maxFiles', 'maxChangedLines', 'maxRepairCycles'].every(k => Number.isInteger(policy[k]) && policy[k] > 0))
     throw Error('Invalid consumer policy');
   for (const pattern of [...policy.humanPathPatterns, ...policy.uiPathPatterns]) new RegExp(pattern);
+  require('./risk.cjs').validateRiskPolicy(policy);
   const consumerFiles = ['.marc/config.json', config.policy];
   const guidance = {};
   for (const [name, relative] of Object.entries(config.guidance)) {
@@ -68,7 +69,7 @@ function loadConfig(repositoryRoot) {
   if (config.autoUpdate !== undefined && typeof config.autoUpdate !== 'boolean') throw Error('autoUpdate must be a boolean');
   if (config.crew !== undefined) require('./crew.cjs').validateCrewConfig(config.crew);
   const agentMembers = [...new Set(['simplicity', 'simple-tests', 'security', 'correctness', 'code-quality',
-    'test-integrity', 'browser', 'repair', 'intent', ...policy.reviewGates, ...(config.crew?.members || []).map(m => m.id)])];
+    'test-integrity', 'browser', 'repair', 'intent', ...(policy.riskAssessment === 1 ? ['risk'] : []), ...policy.reviewGates, ...(config.crew?.members || []).map(m => m.id)])];
   const { validateAgentSettings, resolveAgentSettings } = require('./agent-settings.cjs');
   validateAgentSettings(config.agents, agentMembers);
   const controllerDirectory = platformPath(config.controllerDirectory) || null;

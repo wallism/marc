@@ -57,7 +57,7 @@ function executionReasons(config, member, execution) {
   return reasons;
 }
 function agentTable(e) {
-  const rows = [ ...(e.routing?.reviewer ? [['simplicity', e.routing]] : []),
+  const rows = [ ...(e.routing?.reviewer ? [['simplicity', e.routing]] : []), ...(e.risk?.reviewer ? [['risk', e.risk]] : []),
     ...Object.entries(e.gates || {}).filter(([, g]) => g.reviewer),
     ...(Array.isArray(e.repairExecutions) ? e.repairExecutions : []).filter(Boolean).map(r => ['repair', r]) ];
   const clean = x => String(x ?? '').replace(/[\r\n|<>]/g, ' ').replace(/[`*_[\]]/g, '');

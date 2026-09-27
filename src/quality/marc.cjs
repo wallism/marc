@@ -10,6 +10,7 @@ const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
 const { auditJson } = require('./audit.cjs');
 const { loadOperatorApproval, checkOperatorApproval, parseOperatorApproval } = require('./operator-approval.cjs');
 const { captureIntent, intentReasons, refreshIntent, intentMarkdown } = require('./intent.cjs');
+const { riskReasons, riskLine } = require('./risk.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -151,6 +152,7 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
     requireThat(['existing-sufficient', 'updated', 'not-needed'].includes(t?.testDecision) &&
       typeof t?.testRationale === 'string' && t.testRationale.trim(), 'Focused test decision and rationale required');
   }
+  reasons.push(...riskReasons(e, p, policyHash));
   const gates = simple ? ['simple-tests'] : [...p.reviewGates];
   if (e.intent?.status === 'present') gates.push('intent');
   if (files.some(f => p.uiPathPatterns.some(r => new RegExp(r, 'i').test(f))) ||
@@ -196,6 +198,7 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
     for (const name of new Set([...gates, ...Object.keys(e.gates || {})]))
       reasons.push(...executionReasons(p.agents, name, e.gates?.[name]?.execution));
     if (e.routing?.reviewer) reasons.push(...executionReasons(p.agents, 'simplicity', e.routing.execution));
+    if (p.riskAssessment === 1 && e.risk?.reviewer) reasons.push(...executionReasons(p.agents, 'risk', e.risk.execution));
     const repairs = e.repairExecutions;
     requireThat(Array.isArray(repairs) && repairs.length >= e.repairCycles, 'Repair model execution history required');
     if (Array.isArray(repairs)) for (const repair of repairs) {
@@ -226,7 +229,8 @@ function reportMarkdown(e, decision) {
     (e.routing?.route === 'simple' && e.routing.changeKind ?
       `Change kind: ${clean(e.routing.changeKind)}\n\n` +
       (e.routing.sizeRationale ? `Size rationale: ${clean(e.routing.sizeRationale)}\n\n` : '') : '') +
-    `CI: ${clean(e.ci?.verdict || 'blocked')} ${clean(e.ci?.runUrl || '')}\n\n` +
+    riskLine(e.risk) +
+    `CI:${clean(e.ci?.verdict || 'blocked')} ${clean(e.ci?.runUrl || '')}\n\n` +
     (e.crew ? `MARC commit: \`${clean(e.crew.toolCommit)}\`\n\nCrew selection: \`${clean(e.crew.selectionHash)}\`\n\n` +
       '| Specialist | Version | Selection | Reason |\n| --- | --- | --- | --- |\n' +
       [...e.crew.selected.map(m => ({ ...m, status: 'Selected' })), ...e.crew.omitted.map(m => ({ ...m, status: 'Omitted' }))]
@@ -385,7 +389,8 @@ function trustedPolicy(context = loadConfig(discoverRoot())) {
   const readGit = (root, ...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trimEnd();
   const bundleFiles = readGit(context.bundleRoot, 'ls-files', '-z', 'src/quality', 'scripts', 'templates', 'AGENTS.md', 'skills')
     .split('\0').filter(Boolean).filter(x => x !== 'src/quality/policy.json').sort();
-  for (const suffix of ['-captain', '-security', '-correctness', '-code-quality', '-test-integrity', '-repair', '-simplicity', '-simple-tests']) {
+  for (const suffix of ['-captain', '-security', '-correctness', '-code-quality', '-test-integrity', '-repair', '-simplicity', '-simple-tests',
+    ...(context.policy.riskAssessment === 1 ? ['-risk'] : [])]) {
     if (!bundleFiles.includes(`skills/marc-crew${suffix}/SKILL.md`)) throw Error('Required trusted skill missing');
   }
   const tracked = new Set(readGit(context.repoRoot, 'ls-files', '-z').split('\0'));

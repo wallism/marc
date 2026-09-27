@@ -5,11 +5,19 @@ const crypto = require('node:crypto');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const text = x => typeof x === 'string' && x.trim().length > 0;
 const encode = x => JSON.stringify(x, null, 2) + '\n';
+const { validRisk } = require('./risk.cjs');
 const identity = e => [e.repository, e.pr, e.sourceHead, e.base, e.policyHash, e.crew?.selectionHash, e.intent?.hash];
 
 function assemble(evidence, results) {
   const e = structuredClone(evidence), sessions = new Set([e.coordinator, e.routing?.reviewer, ...(e.repairReviewers || [])].filter(Boolean));
+  if (results.risk !== undefined) {
+    if (!validRisk(results.risk, e)) throw Error('Invalid or stale risk assessment');
+    if (e.risk?.reviewer && encode(e.risk) !== encode(results.risk)) throw Error('Preserve existing result: risk; resolve through a new assessment');
+    e.risk = structuredClone(results.risk);
+  }
+  if (e.risk?.reviewer) sessions.add(e.risk.reviewer);
   for (const [name, gate] of Object.entries(results)) {
+    if (name === 'risk') continue;
     if (!/^(security|correctness|code-quality|test-integrity|simple-tests|intent|browser|crew:[a-z][a-z0-9-]*)$/.test(name) ||
         !gate || !['pass', 'repair', 'human-required', 'blocked'].includes(gate.verdict) || !text(gate.reviewer) ||
         !text(gate.summary) || !Array.isArray(gate.findings) || !Array.isArray(gate.evidence) || !gate.evidence.length ||
