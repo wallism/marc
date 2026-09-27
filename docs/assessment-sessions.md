@@ -36,3 +36,7 @@ For a fresh Captain, supply `captain-handoff.json` plus its referenced request a
 `usage.cjs` sums Codex `token_usage_record` entries for exact thread/optional turn and time boundaries, deduplicated by response ID. Inclusive input already contains cached input; report uncached input by subtraction. Do not also sum cumulative `token_count` events. Missing counters stay missing; retries without host labels are not inferred. Legacy `execution.usage.inputTokens` uses uncached input, so subtract cached input when populating that field. These counts are neither price nor weekly-allowance percentages.
 
 The PR #16 comparison is a frozen, assessment-only local replay. It does not activate the proposed controller or grant it authority over the real PR. See the [work log](work/20260927-token-efficiency-work.md) for measurements and limits.
+
+## Optional combined review and measurement
+
+See [assessment measurement](assessment-measurement.md) for `intentReview: "correctness-v1"`, comprehensive simple review and external phase/session telemetry. The supplied self-review policy change is a proposal; only clean trusted target governance can activate it.

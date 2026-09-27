@@ -1,5 +1,9 @@
 # marc-crew-simplicity improvements
 
+## 2026-09-27 — Report presentation boundary
+
+Permit evidence-backed report-presentation routing under reviewSchema 1 only when persisted evidence, approval and runtime contracts are unchanged. Stored markers, serialization and approval interpretation remain full-route risks; diff size never proves simplicity.
+
 ## 2026-09-24 â€” Configurable size limits and 3,000-line default
 
 Aligned routing guidance with supplied defaults of 3,000 counted lines and 50 counted files, excluding documentation/tests from both size metrics. The actual consumer policy remains authoritative, and the simple-route advisory guides remain five counted files and 200 counted lines with the same exclusions. Size never replaces complete-diff review or other gates.

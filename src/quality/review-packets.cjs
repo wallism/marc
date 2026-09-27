@@ -1,13 +1,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const { combinedIntent } = require('./intent.cjs');
 const { identity } = require('./orchestration.cjs');
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const encode = value => JSON.stringify(value, null, 2) + '\n';
 
 function requiredGates(e, policy) {
   const gates = e.routing?.route === 'simple' ? ['simple-tests'] : [...policy.reviewGates];
-  if (e.intent?.status === 'present') gates.push('intent');
+  if (e.intent?.status === 'present' && !(policy.intentReview === 'correctness-v1' && e.routing?.route !== 'simple')) gates.push('intent');
   for (const member of e.crew?.selected || []) gates.push('crew:' + member.id);
   if (e.crew?.requiresBrowser || e.files.some(f => policy.uiPathPatterns.some(p => new RegExp(p, 'i').test(f))) ||
       Object.values(e.gates || {}).some(g => g.requiresBrowser)) gates.push('browser');
@@ -17,6 +18,7 @@ function requiredGates(e, policy) {
 // Called only with controller-owned capture and frozen Git data. The builder is
 // also exported for explicit offline experiments; packets never authorize actions.
 function buildPackets(e, context, { directory, git, artifactFacts = [], experimental = false, resume = {} }) {
+  if (e.intentReview !== context.policy.intentReview) throw Error('Packet intent review policy mismatch');
   if (!path.isAbsolute(directory) || fs.existsSync(directory)) throw Error('Packets require a new external directory');
   const parent = fs.realpathSync(path.dirname(directory));
   for (const root of [context.repoRoot, context.bundleRoot]) {
@@ -43,13 +45,20 @@ function buildPackets(e, context, { directory, git, artifactFacts = [], experime
       ...(member ? { memberVersion: member.version, memberHash: member.contentHash, selectionHash: e.crew.selectionHash } : {}),
       ...(gate === 'intent' ? { intentHash: e.intent.hash, method: 'static-code', additional: ['assessment', 'confidence', 'confidenceReason', 'unresolvedOutcomes'] } : {}),
       ...(gate === 'simple-tests' ? { additional: ['testDecision', 'testRationale'] } : {}) };
+    if (gate === 'simple-tests' && context.policy.simpleRoute?.reviewSchema === 1)
+      schema.coverage = ['correctness', 'security', 'codeQuality', 'testIntegrity'];
+    const combined = gate === 'correctness' && combinedIntent(e) && e.intent?.status === 'present';
+    if (combined) schema.intent = { intentHash: e.intent.hash, method: 'static-code',
+      required: ['verdict', 'assessment', 'confidence', 'confidenceReason', 'unresolvedOutcomes', 'summary', 'evidence', 'findings'],
+      attribution: 'Nested intent result from this same correctness session; no separate reviewer or execution.' };
     const instructions = [common, pointer(skill), ...(project ? [project] : [])];
+    if (combined) instructions.push(pointer(path.join(refs, 'intent.md')));
     if (e.projectChanges?.some(p => p.classification === 'dependency-only' || p.classification === 'review-required'))
       instructions.push(pointer(path.join(refs, 'dependency-evidence.md')));
     const packet = { schema: 1, experimental, authority: 'Read-only independent assessment; no repair, publication or merge authority.', gate,
       identity: identity(e), repository: e.repository, pr: e.pr, sourceHead: e.sourceHead, base: e.base, policyHash: e.policyHash,
       sourceRepository: context.repoRoot, instructions, diff: pointer(diffPath), scope: pointer(scopePath),
-      intent: e.intent, ci: e.ci, artifactFacts, outputSchema: schema,
+      intentReview: e.intentReview, intent: e.intent, ci: e.ci, artifactFacts, outputSchema: schema,
       output: path.join(directory, `${gate.replace(':', '-')}-result.json`),
       expansion: 'Read complete diff and owning callers. Inspect scope, lexical leads and unresolved holds. Full source remains available through read-only git show <revision>:<path>. No other reviewer conclusions are included.' };
     const file = path.join(directory, `${gate.replace(':', '-')}.json`);

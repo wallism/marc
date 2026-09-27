@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Combined intent and fresh Captain measurements
+
+Dispatch one explicitly combined correctness/intent session only under trusted opt-in policy; retain other independent gates and human repair authority. Record all fresh Captain/reviewer turns, phase coverage and approval continuations in external telemetry manifests. See [measurement](../../docs/assessment-measurement.md).
+
 ## 2026-09-27 â€” Bounded handoffs and focused contracts
 
 Use deterministic assessment sessions and neutral per-gate packets to reduce orchestration and carried instructions. Keep a concise common independent-review contract; retain conditional dependency/browser guidance and full Captain action procedures. Fresh Captain handoffs preserve identity, external state and budgets without inheriting implementation history or transferring lock authority. Existing review/approval/merge requirements remain unchanged. See [assessment sessions](../../docs/assessment-sessions.md) and the [measured work log](../../docs/work/20260927-token-efficiency-work.md).

@@ -14,3 +14,5 @@ Check the concrete before/after behavior, boundary cases, errors, cancellation, 
 Return only the `correctness` gate JSON. Flag missing business decisions as `human-required`; missing evidence as `blocked`; bounded verified defects as `repair`. Set `requiresBrowser: true` when behavior needs UI confirmation, including changes through shared services with no Razor diff. Do not repair code during this review.
 
 Reuse the exact-commit hosted CI results, logs and artifacts supplied by MARC. Do not repeat builds, suites or scans already covered. Report missing evidence to MARC for its hosted fallback; identify any specific uncovered validation separately.
+
+When the trusted packet requests `intentReview: "correctness-v1"`, also follow [static intent assessment](../marc-crew-captain/references/intent.md) and return structured intent under your correctness result. This is one session, not two independent approvals. A mismatch remains a human decision; do not authorize an intent repair through correctness.

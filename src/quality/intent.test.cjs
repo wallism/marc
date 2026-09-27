@@ -215,3 +215,52 @@ test('refresh preserves sensitive-path identity but historical reports never gra
   assert.equal(evaluate(next, p, hash, undefined, approval).merge, true, 'unchanged source retains its explicitly supplied approval');
   assert.equal(verifyPriorReports(next, f.git), f.live.head.sha);
 });
+
+test('combined correctness and intent is one session, explicitly policy-bound', () => {
+  const p = { ...policy, intentReview: 'correctness-v1' };
+  const combined = () => {
+    const e = fixture(); e.intentReview = p.intentReview;
+    const { sourceHead, base, policyHash, reviewer, ...detail } = e.gates.intent;
+    e.gates.correctness.intent = detail; delete e.gates.intent;
+    return e;
+  };
+  assert.equal(evaluate(combined(), p, 'policy').merge, true);
+  assert.match(intentMarkdown(combined()), /one independent reviewer session/);
+  assert.equal(evaluate(combined(), policy, 'policy').merge, false, 'candidate cannot opt itself in');
+  for (const delta of [{ intentHash: 'stale' }, { assessment: 'misaligned' }, { unresolvedOutcomes: ['missing outcome'] },
+    { suggestedRepair: { change: 'implement missing outcome', reason: 'intent mismatch' } }, { evidence: [] },
+    { findings: [{ severity: 'blocking' }] }, { reviewer: 'invented-second-session' }, { verdict: 'repair' }]) {
+    const e = combined(); Object.assign(e.gates.correctness.intent, delta);
+    assert.equal(evaluate(e, p, 'policy').merge, false, JSON.stringify(delta));
+  }
+  for (const reviewer of ['captain', 'security-session', 'repair-session']) {
+    const e = combined(); e.repairReviewers = ['repair-session']; e.gates.correctness.reviewer = reviewer;
+    assert.equal(evaluate(e, p, 'policy').merge, false, reviewer);
+  }
+  const duplicate = combined(); duplicate.gates.intent = fixture().gates.intent;
+  assert.equal(evaluate(duplicate, p, 'policy').merge, false);
+  const e = combined(), refreshed = refreshIntent(e, liveFor(e, 'INTENT: Different outcome.'), 'policy');
+  assert.equal(refreshed.gates.correctness, undefined);
+  assert.deepEqual(refreshed.gates.security, e.gates.security);
+  assert.equal(evaluate(refreshed, p, 'policy').merge, false);
+  const simple = fixture(true); simple.intentReview = p.intentReview;
+  assert.equal(evaluate(simple, p, 'policy').merge, true, 'simple keeps independent intent');
+});
+
+test('comprehensive simple review distinguishes presentation from persisted contracts', () => {
+  const p = { ...policy, simpleRoute: { ...policy.simpleRoute, reviewSchema: 1 } };
+  const e = fixture(true); e.routing.changeKind = 'report-presentation';
+  e.routing.presentation = { persistedEvidenceChanged: false, approvalBehaviorChanged: false, runtimeContractChanged: false,
+    evidence: ['Only display text changes; stored marker and exact-byte verification remain unchanged.'] };
+  e.gates['simple-tests'].coverage = Object.fromEntries(['correctness', 'security', 'codeQuality', 'testIntegrity'].map(k => [k, ['Concrete source and caller evidence.']]));
+  assert.equal(evaluate(e, p, 'policy').merge, true);
+  for (const field of ['persistedEvidenceChanged', 'approvalBehaviorChanged', 'runtimeContractChanged']) {
+    const changed = structuredClone(e); changed.routing.presentation[field] = true;
+    assert.equal(evaluate(changed, p, 'policy').merge, false, field);
+  }
+  for (const area of Object.keys(e.gates['simple-tests'].coverage)) {
+    const missing = structuredClone(e); delete missing.gates['simple-tests'].coverage[area];
+    assert.equal(evaluate(missing, p, 'policy').merge, false, area);
+  }
+  assert.equal(evaluate(e, policy, 'policy').merge, false, 'new route requires policy opt-in');
+});

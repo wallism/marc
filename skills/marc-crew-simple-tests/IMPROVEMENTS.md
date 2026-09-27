@@ -1,5 +1,9 @@
 # marc-crew-simple-tests improvements
 
+## 2026-09-27 — Comprehensive simple review
+
+Under reviewSchema 1, require explicit correctness, security, code-quality and test-integrity coverage in one independent session with relevant selected expertise. Retain escalation, separate intent review and all CI/human holds.
+
 ## 2026-09-27 â€” Focused reviewer contract
 
 Load the common independent-review contract and applicable specialized evidence only. Neutral packets retain complete diff access, frozen identities, scope expansion and existing gates. See [assessment sessions](../../docs/assessment-sessions.md). Local validation and an experimental PR replay do not activate consumer policy.

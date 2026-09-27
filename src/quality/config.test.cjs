@@ -193,3 +193,18 @@ test('CI result validation follows the configured consumer rather than a fixed r
   e.ci.runUrl = 'https://github.com/another/project/actions/runs/12';
   assert.equal(evaluate(e, p, 'policy').merge, false);
 });
+
+test('combined intent and comprehensive simple policies are explicit and fail closed', t => {
+  const { loadConfig } = require('./config.cjs');
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'marc-review-policy-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  fs.mkdirSync(path.join(root, '.marc'));
+  fs.writeFileSync(path.join(root, '.marc/config.json'), JSON.stringify({ schema: 1, policy: '.marc/policy.json',
+    ci: { workflow: 'ci.yml', requiredArtifacts: ['tests'] }, technologies: [], guidance: {}, scans: {} }));
+  const policy = { ...require('./fixtures/policy.json'), intentReview: 'correctness-v1' };
+  const write = p => fs.writeFileSync(path.join(root, '.marc/policy.json'), JSON.stringify(p));
+  write(policy); assert.equal(loadConfig(root).policy.intentReview, 'correctness-v1');
+  write({ ...policy, intentReview: 'skip-intent' }); assert.throws(() => loadConfig(root), /policy/);
+  write({ ...policy, reviewGates: ['security'] }); assert.throws(() => loadConfig(root), /policy/);
+  write({ ...policy, simpleRoute: { ...policy.simpleRoute, reviewSchema: 2 } }); assert.throws(() => loadConfig(root), /schema/);
+});

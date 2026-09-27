@@ -9,7 +9,7 @@ const { executionReasons, agentTable } = require('./agent-settings.cjs');
 const { recordStage, reviewStage, stagesMarkdown } = require('./stages.cjs');
 const { auditJson } = require('./audit.cjs');
 const { loadOperatorApproval, checkOperatorApproval, parseOperatorApproval } = require('./operator-approval.cjs');
-const { captureIntent, intentReasons, refreshIntent, intentMarkdown } = require('./intent.cjs');
+const { combinedIntent, captureIntent, intentReasons, refreshIntent, intentMarkdown } = require('./intent.cjs');
 const sha = x => typeof x === 'string' && /^[a-f0-9]{40}$/.test(x);
 const digest = x => crypto.createHash('sha256').update(x).digest('hex');
 const encode = x => JSON.stringify(x, null, 2) + '\n';
@@ -101,6 +101,8 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
   requireThat(e.state === 'open' && e.draft === false && e.target === p.base, `PR must be open, ready and target ${p.base}`);
   requireThat(registeredProducer(e.author, e.branch, p), 'Unregistered PR origin');
   requireThat(e.policyHash === policyHash, 'Policy changed since capture');
+  requireThat(e.intentReview === p.intentReview, 'Intent review policy missing or changed');
+  requireThat(p.intentReview === undefined || p.intentReview === 'correctness-v1' && p.reviewGates.includes('correctness'), 'Unsupported intent review policy');
   reasons.push(...intentReasons(e, p.intentSchema === 1));
   requireThat(e.baseIncluded === true, `PR must include captured ${p.base} before validation`);
   requireThat(Number.isInteger(e.repairCycles) && e.repairCycles >= 0 && e.repairCycles <= p.maxRepairCycles, 'Repair budget exceeded');
@@ -136,7 +138,7 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
     const exceedsGuide = countedFiles > guide?.recommendedMaxFiles || e.changedLines > guide?.recommendedMaxChangedLines;
     requireThat(!exceedsGuide || typeof r.sizeRationale === 'string' && r.sizeRationale.trim(),
       'Simple route above size guide requires a scope rationale');
-    requireThat(['additive-tests', 'documentation', 'local-change'].includes(r.changeKind),
+    requireThat(['additive-tests', 'documentation', 'local-change', ...(guide?.reviewSchema === 1 ? ['report-presentation'] : [])].includes(r.changeKind),
       'Simple route requires an explicit supported change kind');
     requireThat(!files.some(f => p.uiPathPatterns.some(pattern => new RegExp(pattern, 'i').test(f))) &&
       !Object.entries(e.gates || {}).some(([name, g]) => name !== 'intent' && g.requiresBrowser === true), 'Simple route has UI impact; use full review');
@@ -148,11 +150,20 @@ function evaluate(e, p, policyHash, expectedCrew, operatorApproval) {
       'Simple routing evidence missing, stale or risky');
     requireThat(!p.reviewGates.some(name => e.gates?.[name]), 'Simple route cannot discard specialist results; use full review');
     const t = e.gates?.['simple-tests'];
+    if (guide?.reviewSchema === 1) {
+      requireThat(['correctness', 'security', 'codeQuality', 'testIntegrity'].every(area =>
+        Array.isArray(t?.coverage?.[area]) && t.coverage[area].length > 0 && t.coverage[area].every(x => typeof x === 'string' && x.trim())),
+        'Comprehensive simple review coverage required');
+      if (r.changeKind === 'report-presentation') requireThat(
+        ['persistedEvidenceChanged', 'approvalBehaviorChanged', 'runtimeContractChanged'].every(k => r.presentation?.[k] === false) &&
+        Array.isArray(r.presentation?.evidence) && r.presentation.evidence.length > 0 && r.presentation.evidence.every(x => typeof x === 'string' && x.trim()),
+        'Report presentation changes require evidence of unchanged persistence, approval and runtime contracts; otherwise use full review');
+    }
     requireThat(['existing-sufficient', 'updated', 'not-needed'].includes(t?.testDecision) &&
       typeof t?.testRationale === 'string' && t.testRationale.trim(), 'Focused test decision and rationale required');
   }
   const gates = simple ? ['simple-tests'] : [...p.reviewGates];
-  if (e.intent?.status === 'present') gates.push('intent');
+  if (e.intent?.status === 'present' && !combinedIntent(e)) gates.push('intent');
   if (files.some(f => p.uiPathPatterns.some(r => new RegExp(r, 'i').test(f))) ||
       Object.entries(e.gates || {}).some(([name, g]) => name !== 'intent' && g.requiresBrowser === true)) gates.push('browser');
   if (p.crew) {
@@ -437,6 +448,7 @@ function createController(context, adapters = {}) {
       state: live.state, draft: live.draft, author: live.user.login, headRepository: live.head.repo?.full_name,
       branch: live.head.ref, target: live.base.ref, baseIncluded, files, changedLines: lineCount, repairCycles: 0,
       projectChanges: collectProjectChanges(base, head, files, git), intent: captureIntent(live.body),
+      ...(p.intentReview ? { intentReview: p.intentReview } : {}),
       gates: Object.fromEntries(p.reviewGates.map(name => [name, { verdict: 'blocked', sourceHead: head,
         base, policyHash: hash, reviewer: '', summary: 'Awaiting independent review', evidence: [], findings: [] }])),
       ci: collect(head, pr, p) };

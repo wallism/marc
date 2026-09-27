@@ -33,11 +33,13 @@ function loadConfig(repositoryRoot) {
       policy.base.includes('..') || !['automatic', 'report-only'].includes(policy.mode) ||
       !strings(policy.requiredJobs) || !policy.requiredJobs.length ||
       !strings(policy.reviewGates) || !policy.reviewGates.length ||
+      policy.intentReview !== undefined && (policy.intentReview !== 'correctness-v1' || !policy.reviewGates.includes('correctness')) ||
       !strings(policy.humanPathPatterns) || !strings(policy.uiPathPatterns) ||
       !Array.isArray(policy.producers) || !policy.producers.length ||
       policy.producers.some(p => !nonempty(p.author) || !strings(p.branchPrefixes) || !p.branchPrefixes.length) ||
       !['maxFiles', 'maxChangedLines', 'maxRepairCycles'].every(k => Number.isInteger(policy[k]) && policy[k] > 0))
     throw Error('Invalid consumer policy');
+  if (policy.simpleRoute?.reviewSchema !== undefined && policy.simpleRoute.reviewSchema !== 1) throw Error('Invalid simple review schema');
   for (const pattern of [...policy.humanPathPatterns, ...policy.uiPathPatterns]) new RegExp(pattern);
   const consumerFiles = ['.marc/config.json', config.policy];
   const guidance = {};

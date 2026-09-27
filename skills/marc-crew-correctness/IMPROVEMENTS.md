@@ -1,5 +1,9 @@
 # marc-crew-correctness improvements
 
+## 2026-09-27 — Structured intent in one correctness session
+
+Under explicit correctness-v1 policy, inspect intended outcomes alongside correctness and return nested static intent evidence with a single reviewer identity. Mismatches still hold for human action. Separate full-review gates remain independent.
+
 ## 2026-09-27 â€” Focused reviewer contract
 
 Load the common independent-review contract and applicable specialized evidence only. Neutral packets retain complete diff access, frozen identities, scope expansion and existing gates. See [assessment sessions](../../docs/assessment-sessions.md). Local validation and an experimental PR replay do not activate consumer policy.
