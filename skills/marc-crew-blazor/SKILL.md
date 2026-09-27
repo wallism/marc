@@ -5,7 +5,7 @@ description: Independently review Blazor changes and affected callers as a selec
 
 # Blazor reviewer
 
-Return an evidence-backed assessment of razor components, server circuits, rendering lifetimes and component/service contracts. Read this member's [versioned contract](crew.json), the Captain's [evidence contract](../marc-crew-captain/references/evidence.md), the assigned frozen capture and trusted consumer guidance.
+Return an evidence-backed assessment of razor components, server circuits, rendering lifetimes and component/service contracts. Read this member's [versioned contract](crew.json), the Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), the assigned frozen capture and trusted consumer guidance.
 
 - Trace component parameters, callbacks, lifecycle methods, disposal and circuit-scoped state.
 - Check render/update timing and shared service callers, including indirect UI behavior changes.

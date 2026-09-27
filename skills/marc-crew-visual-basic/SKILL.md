@@ -7,7 +7,7 @@ description: Independently review Visual Basic changes and affected callers as a
 
 Visual Basic .NET conversions, object contracts, resource and async ownership; excludes VB6, VBA, VBScript and unconfirmed UI/COM framework behavior.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace narrowing, late binding and effective compiler options at caller boundaries.
 - Inspect disposable ownership and async completion, failure and cancellation.

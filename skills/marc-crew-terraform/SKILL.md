@@ -7,7 +7,7 @@ description: Independently review Terraform infrastructure changes and affected 
 
 Review Terraform configuration, state ownership and planned resource changes; excludes exhaustive provider/service expertise, OpenTofu-specific behavior and apply/state operations.
 
-Read the [manifest](crew.json), [review guide](references/review.md), [shared IaC boundaries](../../docs/iac-review.md) and Captain's [evidence contract](../marc-crew-captain/references/evidence.md).
+Read the [manifest](crew.json), [review guide](references/review.md), [shared IaC boundaries](../../docs/iac-review.md) and Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md).
 
 - Trace workspace/backend, provider aliases and module callers into the target environment.
 - Inspect replacement, state migration, secret retention and privilege changes.

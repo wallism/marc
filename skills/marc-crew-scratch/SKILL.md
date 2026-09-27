@@ -7,7 +7,7 @@ description: Independently review Scratch changes and affected callers as a sele
 
 Scratch 3 block/event graphs, sprite/clone state and project assets from exact-source readable evidence; excludes automatic JavaScript VM, hardware extension or modified-runtime expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace event ordering, broadcast completion and shared versus sprite-local state.
 - Inspect clone lifecycle, restart behavior and asset/block references.

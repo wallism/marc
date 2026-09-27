@@ -5,7 +5,7 @@ description: Independently review Front end changes and affected callers as a se
 
 # Front end reviewer
 
-Return an evidence-backed assessment of hTML/CSS behavior and interactions across component, JavaScript and browser boundaries. Read this member's [versioned contract](crew.json), the Captain's [evidence contract](../marc-crew-captain/references/evidence.md), the assigned frozen capture and trusted consumer guidance.
+Return an evidence-backed assessment of hTML/CSS behavior and interactions across component, JavaScript and browser boundaries. Read this member's [versioned contract](crew.json), the Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), the assigned frozen capture and trusted consumer guidance.
 
 - Trace state and data across component, JavaScript, DOM and CSS boundaries.
 - Check interaction ordering, cleanup, focus/keyboard behavior and error/empty states affected by the change.

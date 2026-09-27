@@ -7,7 +7,7 @@ description: Independently review PHP changes and affected callers as a selected
 
 PHP input/coercion, exception and serialization boundaries, resource ownership and database call contracts; excludes automatic Laravel, WordPress or browser-rendering expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace external inputs through coercion and authorization decisions.
 - Inspect query parameterization, deserialization and failure/resource contracts.

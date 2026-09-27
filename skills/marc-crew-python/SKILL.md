@@ -7,7 +7,7 @@ description: Independently review Python changes and affected callers as a selec
 
 Python 3 modules, mutable data, resource and asynchronous task ownership; excludes automatic expertise in application frameworks and native extensions.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace shared mutable objects, iterator consumption and caller-visible contracts.
 - Inspect resource cleanup, task ownership, cancellation and propagated failure.

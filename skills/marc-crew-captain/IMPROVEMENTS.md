@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Bounded handoffs and focused contracts
+
+Use deterministic assessment sessions and neutral per-gate packets to reduce orchestration and carried instructions. Keep a concise common independent-review contract; retain conditional dependency/browser guidance and full Captain action procedures. Fresh Captain handoffs preserve identity, external state and budgets without inheriting implementation history or transferring lock authority. Existing review/approval/merge requirements remain unchanged. See [assessment sessions](../../docs/assessment-sessions.md) and the [measured work log](../../docs/work/20260927-token-efficiency-work.md).
+
 ## 2026-09-27 — Static intent with human repair decisions
 
 Require independent static intent alignment on both review routes when the PR provides an explicit paragraph. Keep optional companions outside the Captain workflow. Highlight succinct human repair proposals, preserve ordinary repair rules for unrelated defects and refresh only intent evidence after prose-only changes. See the [contract](references/intent.md); source/base/policy changes still invalidate ordinary gates.
