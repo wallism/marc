@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Read briefs in one call
+
+Reviewers read their whole brief in one call, raising the tool output limit to its stated size instead of paging; each page resent the full context in the PR16 E6–E9 run. See the [common contract](references/reviewer.md).
+
 ## 2026-09-27 — Brief dispatch and on-demand guarded actions
 
 Dispatch every reviewer in one turn with only its generated brief path and wait once for all, without opening briefs, diffs or packets in the Captain context. Reviewers start from the brief, confirm identities without recomputing checksums, batch independent reads and leave result validation to assembly. Repair, recovery, publication and merge procedures move unchanged to [guarded actions](references/guarded-actions.md), loaded only when reached. Every gate, session and approval requirement remains. See [assessment sessions](../../docs/assessment-sessions.md).

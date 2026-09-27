@@ -1,5 +1,9 @@
 # marc-crew-correctness improvements
 
+## 2026-09-27 — Check previously accepted states when guards change
+
+The fresh E6–E9 PR16 assessment passed a change that added a `reportCreatedAt` precondition and removed the `merge` exemption, blocking operator-approved merges of PRs with still-supported legacy SHA-named reports. The reviewer read the code but did not consider the legacy state; three earlier fresh reviews had flagged it. When a guard is added or an exemption removed, list the states the old code accepted and confirm each is still handled or deliberately retired. A seeded-defect and clean-alternative pair in the repository's `evals/marc-crew-correctness` corpus cover it; model detection rates remain unmeasured.
+
 ## 2026-09-27 — Remove E4 and retain E5 measurement
 
 Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.

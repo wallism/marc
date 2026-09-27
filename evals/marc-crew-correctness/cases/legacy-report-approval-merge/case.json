@@ -1,0 +1,69 @@
+{
+  "id": "legacy-report-approval-merge",
+  "caseVersion": 1,
+  "class": "seeded-defect",
+  "title": "A new approval precondition blocks operator-approved merges of PRs with legacy SHA-named reports",
+  "contentDigest": "227599f04cb812f25cc3e95f4b5f11eab14cbb6bd20bdc3327ebb2d70153726e",
+  "rules": [
+    "read-diff-owner-callers",
+    "before-after-behavior",
+    "tests-do-not-prove-correctness",
+    "verdict-mapping",
+    "browser-flag"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "wallism/marc",
+    "pr": 16,
+    "sourceHead": "b905d99276b43501ad0611937f2ffc9d2d4ddb60",
+    "base": "74921a12d167dc26b6043cce5eafd32b8c66b5cd",
+    "policyHash": "948fbd9a863e3625e684c4e1325f4ae943718b080e2ce718da7150192a854203",
+    "state": "open",
+    "draft": false,
+    "files": [
+      "src/quality/approval-publication.cjs",
+      "src/quality/marc.cjs"
+    ],
+    "changedLines": 150,
+    "ci": {
+      "runId": 36283816229,
+      "runAttempt": 1,
+      "conclusion": "success"
+    }
+  },
+  "consumerGuidance": {
+    "runtime": [
+      "node24"
+    ],
+    "architecture": "MARC's trusted controller is Node.js CommonJS with no runtime dependencies. Legacy SHA-named report evidence without reportCreatedAt remains unchanged and verifiable; never rename history. Operator approval may be supplied to merge after the report pair is published.",
+    "notes": "Reduced from PR16 to the two controller files that own approval publication; the other PR16 files do not affect this behavior."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "repair",
+  "requiredFindings": [
+    {
+      "rule": "previously-accepted-states",
+      "where": "src/quality/marc.cjs:549",
+      "severity": "blocking",
+      "mustCite": [
+        "the new `if (!e.reportCreatedAt) throw` guard, which replaced the base exemption `action !== 'merge'` when the live head has moved past the reviewed source",
+        "reportPaths (marc.cjs:47-55) still accepting evidence without reportCreatedAt and naming legacy reports by source SHA",
+        "the consequence that `merge --operator-approval` for a PR whose legacy SHA-named report is already published now fails with 'Operator approval source is no longer current' although the base merged it",
+        "a correction that keeps the legacy merge path, such as retaining the merge exemption or letting verifyReportCommit decide for evidence without reportCreatedAt"
+      ]
+    }
+  ],
+  "forbiddenFindings": [
+    {
+      "rule": "demonstrated-not-speculative",
+      "example": "Reporting the documented non-atomic GitHub description update in record-approval as a defect, or asking for a different receipt hash algorithm."
+    },
+    {
+      "rule": "verdict-mapping",
+      "example": "Returning human-required for this defect as if it were an unresolved business decision."
+    }
+  ],
+  "notes": "From the fresh E6-E9 PR16 assessment on 2026-09-27, which passed this change; three earlier fresh reviews flagged it. Source-confirmed, not executed."
+}

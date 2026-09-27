@@ -49,6 +49,10 @@ test('one brief per gate inlines contracts, scope and diff behind a byte-identic
     assert.ok(brief.includes(slash(result.packets[i].output)));
     assert.match(Buffer.from(brief).subarray(handoff.sharedPrefix.bytes).toString(), new RegExp(`^## Your assignment: ${result.packets[i].gate}`));
   }
+  // One shared size hint covers the largest brief, so readers need not page.
+  const kib = Number(/Size: at most (\d+) KiB/.exec(briefs[0])[1]);
+  assert.ok(briefs.every(brief => Buffer.byteLength(brief) <= kib * 1024));
+  assert.ok(Buffer.byteLength(briefs[0]) > (kib - 1) * 1024 || briefs.some(brief => Buffer.byteLength(brief) > (kib - 1) * 1024));
   // Relative reference links resolve from the external brief location.
   assert.ok(briefs[0].includes(`](${slash(root)}/skills/marc-crew-captain/references/language-impact.md)`));
   assert.deepEqual(result.packets.map(p => p.role), ['correctness', 'security']);

@@ -65,11 +65,11 @@ For an actual manual eval:
 
 ## Eval corpora
 
-A versioned case corpus now exists for one member, the C# specialist, under `evals/marc-crew-csharp`. Run `npm run validate:evals`. It is contribution material, not published skill content: `evals` is outside the trusted policy digest and outside catalogue validation, so a case edit cannot change a consumer's policy identity or invalidate an existing approval.
+Versioned case corpora exist for the C# specialist under `evals/marc-crew-csharp` and for the core correctness gate under `evals/marc-crew-correctness`. Run `npm run validate:evals`. It is contribution material, not published skill content: `evals` is outside the trusted policy digest and outside catalogue validation, so a case edit cannot change a consumer's policy identity or invalidate an existing approval.
 
 `rules.json` holds every rule extracted from that member's `SKILL.md`, manifest and references, each with a source anchor and a polarity: `must-find`, `must-not-find` or `conduct`. Cases declare the rules they score, the findings required with the facts each must cite, and the findings that count as false alarms. The validator rejects a malformed case, an unlisted case directory, a missing evidence reference, an expectation file placed inside the reviewer input, and any rule that no case covers, so adding a rule to a skill without adding a case fails the check. `node --test src/quality/eval-corpus.test.cjs` also retains the rejection assertions.
 
-The corpus carries five case classes: seeded defects, legitimate alternatives paired against them, insufficient evidence, hostile candidate content and impact beyond the captured selection. Cases are digest-identified and versioned; edit a case by raising its version, never silently.
+The C# corpus carries five case classes: seeded defects, legitimate alternatives paired against them, insufficient evidence, hostile candidate content and impact beyond the captured selection. A core-gate corpus declares `"gate": true`, so its captures carry no specialist selection, and `sourceExtensions` names the reviewed languages (default `.cs`). The correctness corpus starts with a defect/clean pair reduced from the PR16 assessment that missed a removed legacy-report exemption; it does not yet cover every case class. Cases are digest-identified and versioned; edit a case by raising its version, never silently.
 
 No model runner is claimed. Nothing here prepares reviewer inputs, calls a model, scores saved outputs or establishes a baseline. The next increment should add the preparation and scoring commands; live model execution stays explicitly requested. See [the C# eval work document](work/20260915-skill-evals-csharp-work.md) for the decisions, procedure and open items.
 

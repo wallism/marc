@@ -1,0 +1,57 @@
+{
+  "id": "legacy-report-approval-preserved",
+  "caseVersion": 1,
+  "class": "clean-alternative",
+  "title": "The same approval publication change keeps the merge exemption for legacy SHA-named reports",
+  "contentDigest": "5fea9d13e8adf37e2ed08eb92b174854d73024c1505a7e92c823e6aaf8c382b5",
+  "rules": [
+    "read-diff-owner-callers",
+    "before-after-behavior",
+    "tests-do-not-prove-correctness",
+    "verdict-mapping",
+    "browser-flag"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "wallism/marc",
+    "pr": 16,
+    "sourceHead": "b905d99276b43501ad0611937f2ffc9d2d4ddb60",
+    "base": "74921a12d167dc26b6043cce5eafd32b8c66b5cd",
+    "policyHash": "948fbd9a863e3625e684c4e1325f4ae943718b080e2ce718da7150192a854203",
+    "state": "open",
+    "draft": false,
+    "files": [
+      "src/quality/approval-publication.cjs",
+      "src/quality/marc.cjs"
+    ],
+    "changedLines": 151,
+    "ci": {
+      "runId": 36283816229,
+      "runAttempt": 1,
+      "conclusion": "success"
+    }
+  },
+  "consumerGuidance": {
+    "runtime": [
+      "node24"
+    ],
+    "architecture": "MARC's trusted controller is Node.js CommonJS with no runtime dependencies. Legacy SHA-named report evidence without reportCreatedAt remains unchanged and verifiable; never rename history. Operator approval may be supplied to merge after the report pair is published.",
+    "notes": "Reduced from PR16 to the two controller files that own approval publication; the other PR16 files do not affect this behavior."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "previously-accepted-states",
+      "example": "Claiming the reportCreatedAt guard still blocks legacy operator-approved merges although merge keeps its exemption and verifies the report pair."
+    },
+    {
+      "rule": "demonstrated-not-speculative",
+      "example": "Reporting the documented non-atomic GitHub description update in record-approval as a defect, or asking for a different receipt hash algorithm."
+    }
+  ],
+  "notes": "Counterpart to legacy-report-approval-merge: identical except that merge keeps the historical exemption. record-approval is a new action, so rejecting legacy evidence there retires no previously accepted state."
+}
