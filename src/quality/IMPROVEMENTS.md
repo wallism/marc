@@ -1,6 +1,6 @@
 # Shared controller improvements
 
-## 2026-09-27 — Combined intent policy and phase measurement
+## 2026-09-27 â€” Combined intent policy and phase measurement
 
 Add opt-in correctness/intent session validation, comprehensive simple-review coverage and precise report-presentation routing. Preserve human intent-repair approval and invalidate the whole combined session after intent refresh. Aggregate deduplicated exact-thread/turn host usage by role/phase, including explicit missing telemetry, settings, retries and elapsed time. See [contracts](../../docs/assessment-measurement.md). Proposed self-review policy is not trusted activation.
 

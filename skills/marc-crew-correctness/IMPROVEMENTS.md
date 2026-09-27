@@ -1,6 +1,6 @@
 # marc-crew-correctness improvements
 
-## 2026-09-27 — Structured intent in one correctness session
+## 2026-09-27 â€” Structured intent in one correctness session
 
 Under explicit correctness-v1 policy, inspect intended outcomes alongside correctness and return nested static intent evidence with a single reviewer identity. Mismatches still hold for human action. Separate full-review gates remain independent.
 

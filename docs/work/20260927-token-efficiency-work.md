@@ -73,7 +73,8 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 ### E4 — Evaluate overlapping gates and simple-route precision
 
-- [ ] Design and evaluate separately before changing policy.
+- [x] Implement opt-in combined correctness/intent, comprehensive simple review and explicit report-presentation boundaries; validate gate controls separately.
+- [ ] Establish broad model-quality equivalence on a separately authorized representative corpus before general activation.
 
 **Observed:** Correctness already evaluates intended behavior; a separate intent reviewer repeats part of that investigation. PR #15 used full review because its persisted rendering marker fell under the current persistence/serialization routing rule.
 
@@ -85,8 +86,8 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 ### E5 — Measure cost by phase, then evaluate model settings
 
-- [ ] Add available per-phase and per-session measurement.
-- [ ] Establish a comparable baseline and evaluate alternative settings when requested.
+- [x] Add available per-phase and per-session measurement, explicit missing telemetry and comparative latency.
+- [ ] Complete the fresh-Captain pair below; alternative settings remain a separately requested experiment.
 
 **Work:** Report Captain and reviewer calls, input, cached input, output, retries and missing telemetry separately. Attribute local host usage records to the correct session and turn, with deduplication and explicit field semantics. Compare complete assessment cost, including orchestration and approval continuation. Evaluate lower reasoning or alternative models only after removing avoidable work.
 
@@ -194,3 +195,11 @@ Across eight reviewers, the minimum entry/contract/project set decreased from 26
 - The new operational command supports JUnit and sanitized scan JSON; other artifact formats retain explicit manual-workflow holds. The production trusted-target check was not bypassed to activate the local tool. Final publication/merge still needs clean current trusted code, new applicable evidence, operator approval and live checks.
 
 **Conclusion:** retain the narrower impact selection, smaller contracts and deterministic controller mechanics as locally validated changes, but do not advertise an overall token-efficiency win from this PR pair. A separately authorized fresh-Captain and representative quality benchmark would be needed to establish that.
+
+## E4/E5 implementation — 2026-09-27
+
+Implemented the explicit `intentReview: "correctness-v1"` policy proposal: one full-route correctness reviewer supplies nested static intent evidence, with one identity and execution receipt. Other full gates and specialists remain independent. Simple-route intent remains separate; `simpleRoute.reviewSchema: 1` requires comprehensive correctness/security/quality/test evidence. Report-presentation routing requires source-backed proof that persistence, approval and runtime contracts are unchanged. Intent-only refresh invalidates the entire combined session; intent repairs still require human approval.
+
+Added exact-thread/turn phase and session usage aggregation, response deduplication, observed model/settings, separate elapsed and summed session time, approval-continuation support and explicit missing counters/retries. See [contracts and manifest](../assessment-measurement.md). No alternative model/effort, hosted CI or broad model evaluation was dispatched. The proposed `.marc` policy is not trusted self-activation.
+
+Local controls: 96 distinct focused Node 24 tests across gate/intent evaluation, configuration, packets, orchestration, usage, report history, stages and catalogue links passed. Controls include clean alignment, mismatches/partial or uncertain intent, preserved blocking results, stale identity, repeated sessions, missing evidence, changed persisted/approval contracts, duplicate/missing telemetry and approval continuations. These establish gate mechanics, not a model missed-defect rate. Fresh PR16 assessment measurements follow after both clean Captains finish.

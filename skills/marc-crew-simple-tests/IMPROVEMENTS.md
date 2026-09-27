@@ -1,6 +1,6 @@
 # marc-crew-simple-tests improvements
 
-## 2026-09-27 — Comprehensive simple review
+## 2026-09-27 â€” Comprehensive simple review
 
 Under reviewSchema 1, require explicit correctness, security, code-quality and test-integrity coverage in one independent session with relevant selected expertise. Retain escalation, separate intent review and all CI/human holds.
 

@@ -1,6 +1,6 @@
 # marc-crew-simplicity improvements
 
-## 2026-09-27 — Report presentation boundary
+## 2026-09-27 â€” Report presentation boundary
 
 Permit evidence-backed report-presentation routing under reviewSchema 1 only when persisted evidence, approval and runtime contracts are unchanged. Stored markers, serialization and approval interpretation remain full-route risks; diff size never proves simplicity.
 

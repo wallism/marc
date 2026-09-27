@@ -1,6 +1,6 @@
 # marc-crew-captain improvements
 
-## 2026-09-27 — Combined intent and fresh Captain measurements
+## 2026-09-27 â€” Combined intent and fresh Captain measurements
 
 Dispatch one explicitly combined correctness/intent session only under trusted opt-in policy; retain other independent gates and human repair authority. Record all fresh Captain/reviewer turns, phase coverage and approval continuations in external telemetry manifests. See [measurement](../../docs/assessment-measurement.md).
 
