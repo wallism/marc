@@ -5,7 +5,7 @@ tags: [development, work-planning, token-efficiency, review-quality]
 # MARC token-efficiency work plan
 
 **Created:** 2026-09-27  
-**Status:** E1–E3 implemented and locally tested; frozen PR #16 before/after assessment completed. No demonstrated overall token reduction, trusted activation or merge. See measured results and validation limits below.
+**Status:** E1–E5 implementations locally validated, including explicit E4 policy proposals. Original and fresh-Captain PR #16 comparisons completed. Neither demonstrates an overall token reduction; the fresh E4/E5 run was slower. No trusted activation or merge. See measured results and validation limits below.
 **Outcome:** Reduce the token cost of completing a PR assessment while preserving evidence quality, independent review and guarded actions.
 
 Work through one item at a time. Record its measured result and remaining limitations below before choosing the next item. Start with E1–E3; introduce basic measurement from E5 early so their effects can be compared. E4 changes assurance policy and should be evaluated separately.
@@ -87,7 +87,8 @@ Cached input is a subset of input, and repeated processing of history is counted
 ### E5 — Measure cost by phase, then evaluate model settings
 
 - [x] Add available per-phase and per-session measurement, explicit missing telemetry and comparative latency.
-- [ ] Complete the fresh-Captain pair below; alternative settings remain a separately requested experiment.
+- [x] Complete a fresh-Captain, fixed-source/settings comparison.
+- [ ] Evaluate alternative settings only when separately requested, with representative quality controls.
 
 **Work:** Report Captain and reviewer calls, input, cached input, output, retries and missing telemetry separately. Attribute local host usage records to the correct session and turn, with deduplication and explicit field semantics. Compare complete assessment cost, including orchestration and approval continuation. Evaluate lower reasoning or alternative models only after removing avoidable work.
 
@@ -202,4 +203,67 @@ Implemented the explicit `intentReview: "correctness-v1"` policy proposal: one f
 
 Added exact-thread/turn phase and session usage aggregation, response deduplication, observed model/settings, separate elapsed and summed session time, approval-continuation support and explicit missing counters/retries. See [contracts and manifest](../assessment-measurement.md). No alternative model/effort, hosted CI or broad model evaluation was dispatched. The proposed `.marc` policy is not trusted self-activation.
 
-Local controls: 96 distinct focused Node 24 tests across gate/intent evaluation, configuration, packets, orchestration, usage, report history, stages and catalogue links passed. Controls include clean alignment, mismatches/partial or uncertain intent, preserved blocking results, stale identity, repeated sessions, missing evidence, changed persisted/approval contracts, duplicate/missing telemetry and approval continuations. These establish gate mechanics, not a model missed-defect rate. Fresh PR16 assessment measurements follow after both clean Captains finish.
+Local controls: 96 distinct focused Node 24 tests across gate/intent evaluation, configuration, packets, orchestration, usage, report history, stages and catalogue links passed. Controls include clean alignment, mismatches/partial or uncertain intent, preserved blocking results, stale identity, repeated sessions, missing evidence, changed persisted/approval contracts, duplicate/missing telemetry and approval continuations. These establish gate mechanics, not a model missed-defect rate. Fresh PR16 assessment measurements are recorded below.
+
+## Fresh-Captain E4/E5 comparison — 2026-09-27
+
+**No overall efficiency improvement was demonstrated.** Seven reviewers replaced eight, but the measured Captain-plus-reviewer calls, inclusive input, output and elapsed time increased. Uncached input decreased. Retain E4 as an explicit policy proposal; this result does not justify general activation on efficiency grounds. E5 provides better accounting, not an automatic cost reduction.
+
+Both Captains started in their own `fork_turns: none` agents. Every reviewer also used a fresh non-inheriting agent. Neither Captain received an implementation transcript or an earlier assessment report; reviewer packets contained neutral facts only. All 17 sessions (two Captains, 15 reviewers) have host-confirmed `gpt-6-astra` / `medium`, with at most two reviewers active concurrently. The source, base, intent and exact-source CI were identical. No alternative model, effort setting or additional hosted CI was used.
+
+- Source: `b905d99276b43501ad0611937f2ffc9d2d4ddb60`; base: `74921a12d167dc26b6043cce5eafd32b8c66b5cd`.
+- Intent: `7cd5b27e06c89bbd8dff44f5ef3746c5e6bea6dcfd08cdca5fc15d5ea92237b5`.
+- Baseline bundle: `8f67ae591dadf7f85a2fceba204960662c4135d3`, with source/skill bytes equivalent to `192c6e72513f048a0dab740aa18a71db384a0e2a`, whose neutral packet selection identity was retained. Policy: `7717a4459a9041cb537ed78920f9ec4ece5b23445852e445cd3c26efba5946eb`.
+- E4/E5 bundle: `ed66e24cbedb3fc3bccc0ba45f3f387fd1ec0729`. Policy: `658e9936d820e1f4b880a560f099e5c471999d36a4d13b2b5d399d0a8f35767b`.
+- Reused successful CI: run `36283816229`, attempt 1; 222 cases in each platform artifact, no failures, one Ubuntu skip; sanitized secrets scan passed.
+
+### Captain plus reviewers
+
+| Metric | Fresh E1–E3 baseline | Fresh E4/E5 | Change |
+| --- | ---: | ---: | ---: |
+| Independent reviewers | 8 | 7 | -12.50% |
+| Model calls | 146 | 162 | +10.96% |
+| Input, including cache | 10,974,616 | 13,699,223 | +24.83% |
+| Cached input (subset) | 10,270,464 | 13,056,384 | +27.13% |
+| Uncached input | 704,152 | 642,839 | -8.71% |
+| Output, including reasoning | 43,468 | 51,464 | +18.40% |
+| Elapsed assessment time | 15m 18.139s | 17m 38.806s | +15.32% |
+
+Elapsed time covers each Captain's host `task_started` through `task_complete`, including its preparation, waits, decision and final reporting. Baseline interval: `02:51:26.406Z–03:06:44.545Z`; after interval: `03:07:17.136Z–03:24:55.942Z`. Reviewer completion and usage are included. These are assessment-session totals, not total development expenditure: implementation, prebuilt neutral-fact preparation and root benchmark administration (including one neutral policy-provenance reply) are excluded. No repair, approval continuation, publication, merge or deployment occurred; future continuation costs are unmeasured.
+
+### Role attribution
+
+| Role / metric | Baseline | E4/E5 | Change |
+| --- | ---: | ---: | ---: |
+| Captain calls | 51 | 55 | +7.84% |
+| Captain input including cache | 4,016,381 | 5,473,052 | +36.27% |
+| Captain cached input | 3,931,136 | 5,369,728 | +36.59% |
+| Captain uncached input | 85,245 | 103,324 | +21.21% |
+| Captain output | 12,617 | 13,695 | +8.54% |
+| Reviewer calls | 95 | 107 | +12.63% |
+| Reviewer input including cache | 6,958,235 | 8,226,171 | +18.22% |
+| Reviewer cached input | 6,339,328 | 7,686,656 | +21.25% |
+| Reviewer uncached input | 618,907 | 539,515 | -12.83% |
+| Reviewer output | 30,851 | 37,769 | +22.42% |
+
+Combining correctness and intent alone changed 23 calls / 1,660,992 inclusive input / 7,111 output into 22 calls / 1,939,776 input / 7,421 output. Removing a session did not remove the underlying investigation. The combined reviewer also reached a stricter intent conclusion. More carried context within a combined session and extra verification are plausible contributors, not isolated causal estimates.
+
+### Review outcomes and limits
+
+| Review | Baseline | E4/E5 |
+| --- | --- | --- |
+| Correctness | Repair: legacy report compatibility | Same repair finding |
+| Intent | Separate reviewer: aligned/pass | Combined reviewer: partially aligned/human-required |
+| Security | Human-required governance approval | Same hold |
+| JavaScript | Pass | Independently found same legacy compatibility issue |
+| Code quality, test integrity, C#, GitHub Actions | Pass | Pass |
+
+Both processes held PR16 for the legacy SHA-named report path at candidate `src/quality/marc.cjs:549` and sensitive governance approval. The new timestamp precheck precedes exact report verification even though legacy SHA-named reports without `reportCreatedAt` remain supported by `reportPaths` and the report-verification fixture. This is source-backed review evidence, not an executed candidate reproduction. The after correctness reviewer also classified the issue as incomplete intent alignment and proposed a human-approved repair. No repair was performed because the source was frozen for comparison.
+
+The two processes retained the same compatibility concern, but their intent and specialist conclusions differed. One PR cannot establish missed-defect or false-alarm rates. The representative model-quality corpus remains unrun; deterministic gate controls do not substitute for it. The simple report-presentation route was not exercised by this full-route PR, so its model cost/quality impact remains unmeasured.
+
+After-run test-integrity work included investigating a policy-hash mismatch from a faulty PowerShell reconstruction. The reviewer independently reproduced the exact original digest using Node's standard library; the input identity hold was resolved, not waived. Its investigation remains in the measured totals. The security reviewer disclosed seeing one neighboring session-metadata line while finding its own UUID; no neighboring messages or review conclusions were read. No earlier report was fed into either fresh Captain or any reviewer.
+
+All token categories were exposed for all 17 measured sessions. Retries were not exposed and remain unknown, never zero by inference. Response IDs were deduplicated; cumulative host counters were ignored. The measurement CLI reproduced the baseline API totals exactly. Summed reviewer session time rose from 1,449.500s to 1,599.529s; overlapping session times must not be added to elapsed wall time. Raw transcripts, gate results, manifests, usage and comparison JSON remain outside the repository in the `20260927-e4e5-fresh-baseline`, `20260927-e4e5-fresh-after` and neutral input run directories.
+
+This pair removes inherited implementation/report history as a confounder. It still includes ordinary model variability, different review conclusions and additional verification. It provides no basis to claim that E4 reduced overall assessment cost or time. The implementation remains opt-in and reviewable; no consumer or trusted-master policy was activated.
