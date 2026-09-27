@@ -28,7 +28,7 @@
       "id": "legacy-report-approval-preserved",
       "class": "clean-alternative",
       "expectedVerdict": "pass",
-      "title": "The same approval publication change keeps the merge exemption for legacy SHA-named reports"
+      "title": "The same approval publication change lets verified legacy SHA-named reports record approval and merge"
     }
   ]
 }

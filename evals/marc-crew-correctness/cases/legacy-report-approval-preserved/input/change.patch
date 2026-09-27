@@ -146,7 +146,7 @@ index f14b693..dcf5839 100644
      if (action === 'capture' && !second) throw Error('An external evidence path is required');
      checkTrustedCheckout();
      const { policy: p, policyHash: hash } = trustedPolicy(context);
-@@ -530,10 +537,24 @@ function createController(context, adapters = {}) {
+@@ -530,10 +537,22 @@ function createController(context, adapters = {}) {
        });
        console.log(encode(result)); return;
      }
@@ -161,8 +161,6 @@ index f14b693..dcf5839 100644
 -        throw Error('Operator approval source is no longer current; recapture and rebind');
 +      approvalHead = liveApproval.head.sha;
 +      if (liveApproval.head.sha !== verifyPriorReports(e, git)) {
-+        // Legacy SHA-named reports have no timestamp; merge keeps its historical exemption and verifies the report pair.
-+        if (!e.reportCreatedAt && action !== 'merge') throw Error('Operator approval source is no longer current; recapture and rebind');
 +        // Reproduce historical report bytes only; its old decision grants no authority.
 +        const previous = e.stages?.findLast(stage => stage.kind === 'review')?.decision || evaluate(e, p, hash, recruit(e));
 +        verifyReportCommit(e, liveApproval, previous, git, receipt);
@@ -173,7 +171,7 @@ index f14b693..dcf5839 100644
      }
      const decide = () => {
        const approval = approvalFile ? loadOperatorApproval(approvalFile) : undefined;
-@@ -547,6 +568,29 @@ function createController(context, adapters = {}) {
+@@ -547,6 +566,29 @@ function createController(context, adapters = {}) {
      // Current reviews require live intent; append-only event observations may follow a merge.
      if (action === 'decide' || (action === 'checkpoint' && !second)) assertLive(e);
      const decision = decide();
@@ -203,7 +201,7 @@ index f14b693..dcf5839 100644
      if (action === 'decide') { console.log(encode(decision)); return; }
      if (action === 'checkpoint') {
        if (e.repository !== REPO) throw Error('Stage repository differs from consumer');
-@@ -577,15 +621,18 @@ function createController(context, adapters = {}) {
+@@ -577,15 +619,18 @@ function createController(context, adapters = {}) {
        // later derives the exact same names/content without consulting the current clock.
        fs.writeFileSync(first, encode(prepared));
        const files = writeReportFiles(prepared, decision, second);
@@ -224,7 +222,7 @@ index f14b693..dcf5839 100644
      // Check source metadata and changed paths independently instead of trusting editable JSON.
      const source = capture(e.pr, p, hash);
      if (source.sourceHead !== live.head.sha) throw Error('PR moved');
-@@ -603,8 +650,9 @@ function createController(context, adapters = {}) {
+@@ -603,8 +648,9 @@ function createController(context, adapters = {}) {
        const finalDecision = decide();
        if (!finalDecision.merge || encode(finalDecision.humanApproval) !== encode(decision.humanApproval))
          throw Error('Operator approval or decision changed before merge');
@@ -235,7 +233,7 @@ index f14b693..dcf5839 100644
        console.log(encode({ mergeCommit: commit, pr: e.pr, deployment: false, ci: mergeCi,
          note: 'Verify GitHub merged state and target-branch CI; do not repeat a push after an uncertain response.' }));
      } finally { releaseLock(); }
-@@ -642,8 +690,8 @@ function createController(context, adapters = {}) {
+@@ -642,8 +688,8 @@ function createController(context, adapters = {}) {
  function main(args = process.argv.slice(2)) {
    let root;
    if (args[0] === '--repo') { root = args[1]; args = args.slice(2); if (!root) throw Error('Repository root required'); }

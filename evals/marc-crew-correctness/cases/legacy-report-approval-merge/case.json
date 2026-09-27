@@ -1,6 +1,6 @@
 {
   "id": "legacy-report-approval-merge",
-  "caseVersion": 1,
+  "caseVersion": 2,
   "class": "seeded-defect",
   "title": "A new approval precondition blocks operator-approved merges of PRs with legacy SHA-named reports",
   "contentDigest": "227599f04cb812f25cc3e95f4b5f11eab14cbb6bd20bdc3327ebb2d70153726e",
@@ -50,8 +50,8 @@
       "mustCite": [
         "the new `if (!e.reportCreatedAt) throw` guard, which replaced the base exemption `action !== 'merge'` when the live head has moved past the reviewed source",
         "reportPaths (marc.cjs:47-55) still accepting evidence without reportCreatedAt and naming legacy reports by source SHA",
-        "the consequence that `merge --operator-approval` for a PR whose legacy SHA-named report is already published now fails with 'Operator approval source is no longer current' although the base merged it",
-        "a correction that keeps the legacy merge path, such as retaining the merge exemption or letting verifyReportCommit decide for evidence without reportCreatedAt"
+        "the consequence that record-approval cannot record approval for a published legacy SHA-named report, and merge --operator-approval now requires that recorded entry (marc.cjs:633), so such a PR can no longer merge with approval although the base merged it",
+        "a correction that lets verifyReportCommit decide for evidence without reportCreatedAt (it already reproduces legacy report bytes and fails closed on other head movement), so record-approval can bootstrap a receipt; exempting merge alone is insufficient"
       ]
     }
   ],
@@ -65,5 +65,5 @@
       "example": "Returning human-required for this defect as if it were an unresolved business decision."
     }
   ],
-  "notes": "From the fresh E6-E9 PR16 assessment on 2026-09-27, which passed this change; three earlier fresh reviews flagged it. Source-confirmed, not executed."
+  "notes": "From the fresh E6-E9 PR16 assessment on 2026-09-27, which passed this change; three earlier fresh reviews flagged it. Source-confirmed, not executed. Version 2 corrects the consequence and correction: merge also requires the entry only record-approval writes."
 }

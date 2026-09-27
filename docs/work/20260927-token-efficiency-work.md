@@ -475,7 +475,7 @@ Read-only source inspection of candidate `b905d99` against base `74921a1`, witho
 - **Base:** when the live head had moved past the reviewed source, operator approval required the head to still be the reviewed source *except for `merge`* (`action !== 'merge'`); merge verifies the published report pair itself through `verifyMergeCi`.
 - **Candidate `src/quality/marc.cjs:549`:** the exemption is removed; if the head has moved, it throws unless `e.reportCreatedAt` is set, otherwise it verifies the report commit.
 - **Still-supported state:** `reportPaths` (lines 47–55) accepts evidence without `reportCreatedAt` and names legacy reports by source SHA; `reports.test.cjs:149–157` verifies such legacy reports.
-- **Consequence:** a PR whose legacy SHA-named report is published and which is held for sensitive-path approval can no longer run `merge --operator-approval`. It fails with "Operator approval source is no longer current", where the base merged it. No candidate test covers this path, so the green CI does not contradict the finding.
+- **Consequence:** `record-approval` throws "Operator approval source is no longer current" for a published legacy SHA-named report, and `merge --operator-approval` now requires the recorded entry that only `record-approval` writes (line 633). A PR with a published legacy report held for sensitive-path approval can no longer merge with approval, where the base merged it. Restoring only the merge exemption would not fix it; the guard must go so `verifyReportCommit` decides (it reproduces legacy bytes and fails closed on other head movement). No candidate test covers this path, so the green CI does not contradict the finding. *(Corrected during the Claude Code run below; the first adjudication understated the scope.)*
 
 The fresh E1–E3 baseline correctness reviewer and both E4 correctness and JavaScript reviewers raised it; all eight E6–E9 reviewers missed it. The E6–E9 result is therefore **a cost reduction with a missed defect, not a quality-preserving saving**. One PR still cannot establish detection rates.
 
@@ -497,7 +497,7 @@ Only about eight calls were ordinary orchestration. E8's dispatch guidance could
 ### Changes made
 
 - **Correctness skill:** when a change adds a guard or precondition or removes an exemption or fallback, list the states the old code accepted, including still-supported legacy fields, and confirm each is handled or deliberately retired.
-- **Correctness eval corpus:** `evals/marc-crew-correctness` adds a seeded-defect case (`legacy-report-approval-merge`, expected `repair`) and a clean counterpart that keeps the merge exemption (`legacy-report-approval-preserved`, expected `pass`), reduced to the two owning controller files. The validator now accepts core-gate corpora without specialist selections and non-C# sources; C# rules are unchanged.
+- **Correctness eval corpus:** `evals/marc-crew-correctness` adds a seeded-defect case (`legacy-report-approval-merge`, expected `repair`) and a clean counterpart with the guard removed (`legacy-report-approval-preserved`, expected `pass`), reduced to the two owning controller files. Both are at case version 2: version 1 of the clean case exempted only `merge`, which still stranded legacy PRs at `record-approval`. The validator now accepts core-gate corpora without specialist selections and non-C# sources; C# rules are unchanged.
 - **Brief size hint:** each brief's shared prefix states the largest brief size in KiB and asks for one complete read with a raised tool output limit; prefixes remain byte-identical. The PR16 replay reports "at most 90 KiB" for briefs of 87,488–91,477 bytes. The common reviewer contract repeats the instruction.
 
 Validation on Node 24 (Windows): corpus validation passed (correctness 2 cases covering 12 rules; C# 26 cases covering 77 rules, unchanged); the CI-equivalent suite `src/quality/*.test.cjs` plus `.marc/self-review.test.cjs` passed **240/240** (two new corpus tests, plus the size-hint assertion within an existing packet test); syntax and catalogue link checks passed. Both case patches reproduce their after-files when applied to the base. No model, reviewer or hosted CI ran.
@@ -507,4 +507,53 @@ Validation on Node 24 (Windows): corpus validation passed (correctness 2 cases c
 1. Add a supported frozen-replay command (packets, assembly and usage for a frozen capture, with no action authority), so benchmarks stop measuring Captain improvisation.
 2. Run comparisons with the host's available reviewer slots rather than a two-slot cap, and without per-step progress messages, or report those calls separately.
 3. Run the correctness corpus pair and a PR16 rerun with the new check and size hint, repeated to expose variance. These need separate authorization; no model run is implied here.
+
+## Claude Code in-flight PR16 assessment — 2026-09-27
+
+The Captain (this Claude Code session) ran the frozen PR16 workload with the committed follow-up tool `277a015` (the size-hint arithmetic fix below came after the run): source `b905d99`, base `74921a1`, intent `7cd5b27e…`, reused CI run 36283816229 attempt 1 (artifacts re-inspected from the previous run's download). This was an explicit local experiment: the trusted-master check was not applied, no CI was dispatched, and nothing was published, repaired or merged. The run lock was acquired and released by this run. External state is under run `20260927-claude-followup`.
+
+**Not comparable to the Codex rows.** The model (`claude-opus-5-5`), harness, system prompt and tokenizer differ, and Claude reports cache writes separately from uncached input. The Captain carried this whole implementation conversation, so its tokens are not measured; it made about eight assessment calls, dispatching all eight reviewers in one turn and waiting once.
+
+Reviewers got a clean detached worktree at the source commit, because the branch checkout now contains this adjudication and the eval corpus. Transcripts show no reads of work docs, evals, registers or earlier run directories. One correctness `git show` output was saved to a temporary scratch file, outside its assigned output.
+
+### Reviewer measurements
+
+| Gate | Verdict | Calls | Cache write | Cache read | Output | Mean context | Wall time |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Security | human-required | 7 | 105,822 | 511,358 | 322 | 88,171 | 91s |
+| Correctness | repair | 11 | 117,981 | 935,372 | 3,652 | 95,761 | 155s |
+| Code quality | repair | 8 | 106,663 | 614,351 | 876 | 90,129 | 103s |
+| Test integrity | repair | 7 | 103,324 | 501,455 | 903 | 86,399 | 101s |
+| Intent | pass (1 advisory) | 7 | 103,228 | 507,295 | 765 | 87,220 | 80s |
+| C# | pass | 5 | 90,332 | 294,485 | 656 | 76,965 | 43s |
+| GitHub Actions | pass | 8 | 95,177 | 575,143 | 866 | 83,792 | 69s |
+| JavaScript | pass (3 advisory) | 10 | 126,773 | 875,854 | 1,123 | 100,265 | 205s |
+| **Total** | **Held** | **63** | **849,300** | **4,815,313** | **9,163** | **89,916** | **~3.4 min elapsed** |
+
+Uncached input was 126 tokens in total; inclusive input was 5,664,739. Output is as recorded by the host.
+
+### In-flight observations
+
+- **Brief reads:** every reviewer read its brief in exactly two calls. The host's Read tool truncated at about 630 lines, and each reviewer then read the whole remainder in one call as the size hint instructs (the Codex run took four). Two calls is the floor on this host unless briefs are split to fit its read limit.
+- **Brief tokens:** the first two reads wrote about 41k tokens of cache, so briefs run about 2.2 bytes per token. The hint's estimate used three bytes per token; it now uses two.
+- **No cross-session cache reuse:** every reviewer's first call wrote about 45.8k tokens of cache (system prompt and tools) with zero cache reads, because all eight started within two seconds, before any cache existed. That is about 320k avoidable cache-write tokens. Starting one reviewer, letting its first call complete, then dispatching the rest would let them read that shared prefix.
+- **Calls:** reviewers averaged 7.9 calls, versus 9.75 in the Codex E6–E9 run and 11.9 in the Codex baseline, with a larger mean context because the brief is front-loaded.
+
+### Quality
+
+The frozen report is **Held**: sensitive-path approval plus four unresolved gates.
+
+- **Known legacy-report defect: missed again.** The correctness reviewer inspected `marc.cjs:545-557` and described the legacy receipt bootstrap, but did not flag the stranded legacy approval path. The new previously-accepted-states check did surface a different regression of that kind (below). One run cannot show whether the check helps.
+- **New findings not reported by the Codex runs:**
+  - Correctness, code quality and JavaScript independently found that the public approval entry is compared byte for byte (`approval-publication.cjs:28-29`). A PR description edited in the GitHub web editor can come back with CRLF line endings, stranding both merge and `record-approval`. Plausible from source; the line-ending behavior was not verified here.
+  - Correctness found that `report` writes evidence and both report files before `saveReceipt`, so regenerating an unpublished report with a different approval leaves evidence that every later command rejects (`marc.cjs:606-624`). **Spot-checked against the source and confirmed.**
+  - Security and JavaScript found that with a receipt present, merge skips re-rendering and the approval-audit equality check, so gate changes in external evidence can reach merge while the public report still says Held (`marc.cjs:338`, `631`).
+  - Test integrity found the rewritten operator-approval test now passes on a different error, and two report assertions were deleted (`operator-approval.test.cjs:209`).
+- **Corpus correction:** reviewer analysis showed that exempting only `merge` still strands legacy PRs at `record-approval`, because merge requires the entry only `record-approval` writes (line 633). The clean corpus case now removes the guard instead, and both cases moved to version 2.
+
+### Recommended next changes
+
+1. Warm-start dispatch: launch one reviewer, wait for its first model call, then dispatch the rest, so the shared system prompt (and, on hosts that start sessions from the brief, the shared prefix) is read from cache.
+2. Split briefs at the shared-prefix boundary (or into chunks under common host read limits) so hosts with a ~25k-token read cap can read each part in one call.
+3. Treat the new CRLF, receipt-ordering, receipt-bypass and test-weakening findings as PR16 review input; they are independent of the efficiency work.
 

@@ -546,8 +546,6 @@ function createController(context, adapters = {}) {
       const liveApproval = assertLive(e);
       approvalHead = liveApproval.head.sha;
       if (liveApproval.head.sha !== verifyPriorReports(e, git)) {
-        // Legacy SHA-named reports have no timestamp; merge keeps its historical exemption and verifies the report pair.
-        if (!e.reportCreatedAt && action !== 'merge') throw Error('Operator approval source is no longer current; recapture and rebind');
         // Reproduce historical report bytes only; its old decision grants no authority.
         const previous = e.stages?.findLast(stage => stage.kind === 'review')?.decision || evaluate(e, p, hash, recruit(e));
         verifyReportCommit(e, liveApproval, previous, git, receipt);

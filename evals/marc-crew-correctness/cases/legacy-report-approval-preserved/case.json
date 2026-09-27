@@ -1,9 +1,9 @@
 {
   "id": "legacy-report-approval-preserved",
-  "caseVersion": 1,
+  "caseVersion": 2,
   "class": "clean-alternative",
-  "title": "The same approval publication change keeps the merge exemption for legacy SHA-named reports",
-  "contentDigest": "5fea9d13e8adf37e2ed08eb92b174854d73024c1505a7e92c823e6aaf8c382b5",
+  "title": "The same approval publication change lets verified legacy SHA-named reports record approval and merge",
+  "contentDigest": "fb68bff199fad0e5458063cb5f39c042f70b35dabd1dd5cb446e8b4a650dfdf5",
   "rules": [
     "read-diff-owner-callers",
     "before-after-behavior",
@@ -24,7 +24,7 @@
       "src/quality/approval-publication.cjs",
       "src/quality/marc.cjs"
     ],
-    "changedLines": 151,
+    "changedLines": 149,
     "ci": {
       "runId": 36283816229,
       "runAttempt": 1,
@@ -46,12 +46,12 @@
   "forbiddenFindings": [
     {
       "rule": "previously-accepted-states",
-      "example": "Claiming the reportCreatedAt guard still blocks legacy operator-approved merges although merge keeps its exemption and verifies the report pair."
+      "example": "Claiming legacy SHA-named reports can no longer record approval or merge, although the guard is gone and verifyReportCommit reproduces and verifies their bytes."
     },
     {
       "rule": "demonstrated-not-speculative",
       "example": "Reporting the documented non-atomic GitHub description update in record-approval as a defect, or asking for a different receipt hash algorithm."
     }
   ],
-  "notes": "Counterpart to legacy-report-approval-merge: identical except that merge keeps the historical exemption. record-approval is a new action, so rejecting legacy evidence there retires no previously accepted state."
+  "notes": "Counterpart to legacy-report-approval-merge: identical except that the reportCreatedAt guard is removed, so verifyReportCommit decides for legacy evidence and fails closed on any other head movement. Version 2 replaces a merge-only exemption, which still stranded legacy PRs at record-approval."
 }
