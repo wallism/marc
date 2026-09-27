@@ -6,7 +6,7 @@
 
 Added an opt-in (`policy.riskAssessment: 1`) independent read-only session that rates the frozen PR from its position in the codebase tree (leaf, branch, trunk), its reversibility (gated, revertible, one-way) and sensitivity floors, taking the worst. Proof such as tests or screenshots never lowers a rating; unestablished facts give at least medium. Consumers may declare `riskTrunkPatterns`; a matching change must be high. See the [design and research record](../../docs/work/20260928-risk-assessment-work.md).
 
-**Activation limits:** Ratings currently only harden decisions: high risk holds a simple route, and a stale, missing, inconsistent or non-independent rating holds an enabled consumer. No level relaxes any gate. MARC's own policy does not enable it yet; that needs a separate human-approved policy change.
+**Activation limits:** Ratings currently only harden decisions: high risk holds a simple route, and a stale, missing, inconsistent or non-independent rating holds an enabled consumer. No level relaxes any gate. The owner approved enabling it in MARC's own policy (`.marc/policy.json`, no declared trunk patterns); it takes effect once this change is on trusted `master`.
 
 **Validation:** Focused Node tests for the risk contract, packet ordering, assembly and report rendering. No model evaluation has been run.
 

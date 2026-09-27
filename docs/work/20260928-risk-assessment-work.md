@@ -35,5 +35,5 @@ The session writes a top-level `risk` object, not a gate: `level`, `position` (`
 ## Later work
 
 - Use the level in the hold/merge decision (the soften/harden rules).
-- Enable it in MARC's own `.marc/policy.json` through a human-approved change, with suitable `riskTrunkPatterns`.
+- Consider `riskTrunkPatterns` for MARC's own policy. The owner approved enabling `riskAssessment` there on 2026-09-28 with none declared.
 - Add manual prompt-eval cases for leaf, gated trunk, one-way migration and unknown-caller PRs.
