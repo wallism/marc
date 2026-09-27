@@ -5,22 +5,23 @@ tags: [development, work-planning, token-efficiency, review-quality]
 # MARC token-efficiency work plan
 
 **Created:** 2026-09-27
-**Status:** E1–E3 and E5 retained. E4 removed at the owner's request after the fresh comparison showed higher overall token usage and elapsed time. Original independent gates and simple-route rules restored. E6–E9 implemented and locally validated; their live effect is unmeasured. Historical measurements below remain unchanged; no trusted activation or merge.
+**Status:** E1–E3 and E5 retained; E4 removed and the original independent gates and simple-route rules restored. E6–E9 merged to master and measured in a fresh PR16 assessment. Input, output and elapsed time decreased, but the unchanged source's earlier compatibility finding was not re-identified: review-quality parity remains unresolved. Historical measurements remain unchanged. PR16 remains held and was not repaired, published to or merged.
 **Outcome:** Reduce the token cost of completing a PR assessment while preserving evidence quality, independent review and guarded actions.
 
 Work through one item at a time. Record its measured result and remaining limitations below before choosing the next item. Start with E1–E3; introduce basic measurement from E5 early so their effects can be compared. E4 changes assurance policy and should be evaluated separately.
 
 ## Results at a glance
 
-> **Current result:** E1–E3 and E5 retained · E4 removed · **233/233 CI-equivalent tests passed locally** · **No overall assessment-efficiency gain demonstrated**
+> **Current result:** E6–E9 fresh assessment: **input −17.43%, output −28.55%, elapsed −12.71%** versus the fresh E1–E3 baseline · **The earlier "missed defect" was a false alarm; review-quality parity is still unmeasured** · E6–E9 implementation validation: **238/238 local tests passed**
 
-All results below were recorded on 2026-09-27. These summarize completed runs; no new benchmark was run for this summary.
+All results below were recorded on 2026-09-27. The latest row records the fresh assessment after E6–E9 reached master; earlier rows retain their historical measurements.
 
 | Assessment comparison | Model calls | Input including cache | Uncached input | Output including reasoning | Elapsed time | Interpretation |
 | --- | ---: | ---: | ---: | ---: | --- | --- |
 | PR16: before → E1–E3 | 137 → 116 (−15.33%) | 10,646,082 → 10,660,540 (+0.14%) | 595,010 → 542,524 (−8.82%) | 33,709 → 38,148 (+13.17%) | Different Captain windows; no clean timing comparison | No overall token reduction. Captain retained implementation history; review coverage also changed. |
 | PR16: fresh E1–E3 baseline → E4/E5 | 146 → 162 (+10.96%) | 10,974,616 → 13,699,223 (+24.83%) | 704,152 → 642,839 (−8.71%) | 43,468 → 51,464 (+18.40%) | 15m 18.139s → 17m 38.806s (+15.32%) | Fresh Captains and reviewers, same source/model/settings; slower and more tokens overall. E4 subsequently removed. |
-| Current E1–E3/E5 after removing E4 | Not rerun | Not rerun | Not rerun | Not rerun | Not rerun | Local validation passed; do not treat either earlier benchmark as a new measurement of the final combination. |
+| E1–E3/E5 after removing E4, before E6–E9 | Not rerun | Not rerun | Not rerun | Not rerun | Not rerun | Local validation passed; neither earlier benchmark measured this combination. |
+| PR16: fresh E1–E3 baseline → merged E6–E9 | 146 → 129 (−11.64%) | 10,974,616 → 9,061,367 (−17.43%) | 704,152 → 553,079 (−21.45%) | 43,468 → 31,057 (−28.55%) | 15m 18.139s → 13m 21.448s (−12.71%) | Lower observed cost/time with eight reviewers retained. Its pass on the legacy-report seam was later shown correct (the earlier finding was a false alarm); broader quality parity remains unmeasured. |
 
 Input includes cached input; do not add cache again. Retries are unknown. The assessment totals exclude implementation and benchmark administration; they are not money or allowance percentages. See the detailed comparison sections below for cached counts, role attribution, immutable identities and exclusions.
 
@@ -38,7 +39,7 @@ Input includes cached input; do not add cache again. Retries are unknown. The as
 
 The older PR15 baseline measured only its Captain: 68 calls, 10,650,198 inclusive input, 132,182 uncached input and 14,547 output. Reviewer totals were unavailable, so it is not comparable to the complete Captain-plus-reviewer rows above.
 
-Both fresh PR16 runs retained the legacy-report compatibility finding and governance-approval hold. The combined reviewer additionally flagged partial intent alignment. The broader known-defect/clean model corpus and alternative model settings remain unrun; passing local tests does not establish model defect-detection rates. Existing PR16 CI was reused, and the PR was not repaired or merged during these comparisons.
+Both fresh E4/E5-comparison runs retained the legacy-report compatibility finding and governance-approval hold. The combined reviewer additionally flagged partial intent alignment. The later E6–E9 run retained the governance hold but did not re-identify the compatibility finding. The broader known-defect/clean model corpus and alternative model settings remain unrun; passing local tests does not establish model defect-detection rates. Existing PR16 CI was reused, and the PR was not repaired or merged during these comparisons.
 
 ## Baseline: PR #15
 
@@ -67,7 +68,7 @@ Cached input is a subset of input, and repeated processing of history is counted
 
 ### E1 — Reduce Captain round trips and carried context
 
-- [x] Implement and locally validate; live fresh-Captain cost comparison remains unproven.
+- [x] Implement and locally validate; fresh comparisons are recorded below, but an isolated E1 saving remains unproven.
 
 **Observed:** The Captain retained the implementation conversation and large instruction/tool outputs while making many orchestration calls, including short waits and repeated inspections.
 
@@ -131,7 +132,7 @@ The fresh E1–E3 baseline spent 43,468 output tokens but 10,974,616 inclusive i
 
 ### E6 — One-read reviewer briefs
 
-- [x] Implement and locally validate; live reviewer call reduction remains unmeasured.
+- [x] Implement, locally validate and measure a fresh PR16 assessment: reviewer calls decreased from 95 to 78; quality parity remains unresolved.
 
 **Observed:** A reviewer spent several calls before reviewing: packet, checksum verification, common contract, gate skill, project guidance, diff and scope, each a separate read that also grew the context for every later call.
 
@@ -197,6 +198,10 @@ Record the source/base/tool/policy identities, model settings, input/cached/outp
 | 2026-09-27 | E2 | Seed changed declarations from both diff sides; filter native-language/local-binding/member collisions; trace named imports and explicit workflow/process paths; retain cross-language lexical leads. | Genuine interface, removed-caller, alias, resource and cross-language cases pass with unchanged discovery limits. PR #15/#16 replays use source only, not reviewer conclusions. |
 | 2026-09-27 | E3 | Added common reviewer contract and neutral, checksummed packets with complete diff/source access; moved conditional dependency and Captain procedures to references. | Combined focused validation: 105 passed. Catalogue links and syntax pass. The rerun will measure consumption; instruction size alone is not a token saving claim. |
 | 2026-09-27 | E6–E9 | One checksummed brief per gate with inline contracts, compact scope and budgeted text diff; specialist focus lists; byte-identical shared prefix with recorded digest; handoff dispatch list; guarded actions split out of intake/review procedures; mean-context and declared-weight usage metrics. | Focused tests pass (see validation below). Next: a separately authorized fresh-Captain comparison against the E1–E3 baseline, reporting calls, mean context and weighted tokens per role. |
+| 2026-09-27 | E6–E9 follow-up | Confirmed the missed legacy-report defect from source; analysed Captain and correctness transcripts; added the previously-accepted-states correctness check, a correctness defect/clean eval pair and brief size hints. | Recorded below. Next: supported frozen replay, benchmark settings without a two-slot cap, then an authorized repeated rerun. |
+| 2026-09-27 | In-flight run and follow-up | Claude Code frozen PR16 assessment with the follow-up tool; corrected the clean corpus case (v2); added read-sized shared brief parts, warm-start dispatch guidance and a two-bytes-per-token size hint. | 241/241 local tests. Next: rerun to measure staggered-start cache reads and part-based reads. |
+| 2026-09-27 | Claude rerun | Brief parts and staggered start measured; same-mode dispatch requirement found; part-boundary note added; legacy-report finding withdrawn as a false alarm and the corpus case reclassified. | Next: background-only rerun to measure first-call cache reads. |
+| 2026-09-27 | Claude background-only run | Same-mode warm start: seven reviewers each read 33,912 cached tokens on their first call; cache writes −30% and weighted tokens −19% versus the first Claude run; two of eight still re-read part 1. | Next: state part line counts in spawn messages; treat the reproduced PR16 findings as review input. |
 
 ## Measured PR #16 result — 2026-09-27
 
@@ -380,7 +385,7 @@ A source-only replay built packets for [PR #16](https://github.com/wallism/marc/
 | Diff bytes | 56,433 (binary-capable) | ~56,740 (text, inlined in full) |
 | Byte-identical shared prefix | none | 84,417 |
 
-The complete scope JSON and binary-capable diff remain available by checksummed pointer. The diff is now most of each brief and is evidence every reviewer must read. The main expected saving is fewer reviewer calls, each resending less context, plus cross-session cache reuse where a host starts sessions from the brief bytes. Both depend on live model behavior and remain unmeasured.
+The complete scope JSON and binary-capable diff remain available by checksummed pointer. The diff is now most of each brief and is evidence every reviewer must read. At implementation time, fewer reviewer calls, smaller contexts and cross-session cache reuse were unmeasured hypotheses. The fresh assessment below measures calls and context; cross-session prefix-cache reuse remains unproven.
 
 ### Validation
 
@@ -389,4 +394,258 @@ The complete scope JSON and binary-capable diff remain available by checksummed 
 - CI-equivalent local run on Node 24 (Windows): `src/quality/*.test.cjs` plus `.marc/self-review.test.cjs`, **238 passed, 0 failed, 0 skipped**. Syntax check and catalogue link validation passed; the C# eval corpus contract check passed.
 - Guarded-action procedures moved to [guarded actions](../../skills/marc-crew-captain/references/guarded-actions.md) verbatim; intake and review steps link to them.
 
-**Next:** a separately authorized fresh-Captain comparison against the fresh E1–E3 baseline on PR #16, recording calls, mean context, uncached/cached/output tokens and declared-weight totals per role, alongside review outcomes. Do not claim an E6–E9 saving before that run.
+**Follow-up:** the owner-authorized fresh-Captain comparison is recorded below. Cross-session prefix caching and broader review-quality equivalence remain unproven.
+
+## Fresh assessment with merged E6–E9 — 2026-09-27
+
+**Observed cost and time decreased; review-quality parity is unresolved.** The fresh Captain and all eight independent reviewers used host-confirmed `gpt-6-astra` / `medium`, fresh non-inheriting sessions and at most two concurrent reviewers, matching the fresh E1–E3 baseline. No gate was removed or combined. The reviewer call count fell; the Captain still made 51 calls. These are measured results for one assessment, not an isolated causal estimate for any individual improvement.
+
+The controller and skills came from clean, current master `e109cb6a726ed454aba779c661e8e993326e10ee`, which includes merged PR18. The candidate source/base and intent were frozen to preserve the earlier workload:
+
+- Source: `b905d99276b43501ad0611937f2ffc9d2d4ddb60`; base: `74921a12d167dc26b6043cce5eafd32b8c66b5cd`.
+- Intent: `7cd5b27e06c89bbd8dff44f5ef3746c5e6bea6dcfd08cdca5fc15d5ea92237b5`.
+- Current policy digest: `948fbd9a863e3625e684c4e1325f4ae943718b080e2ce718da7150192a854203`; selection: `a16ba165175e86719a7c278d5ffc53d5b69857a480b715d9bccb6a51904e3be4`.
+- Exact-source CI [run 36283816229, attempt 1](https://github.com/wallism/marc/actions/runs/36283816229) was revalidated successful. Both JUnit artifacts contained 222 cases with no failures/errors; Ubuntu had one Windows-specific skip. Sanitized secret scanning passed. No CI was dispatched.
+
+This was a frozen assessment through the current tool's experimental packet and assembly APIs. The live controller separately rejected the historical capture with `Target branch changed; recapture and review`; that check was not bypassed. Live source and intent were unchanged, but live master was `e109cb6a`. The only open PR was [PR16](https://github.com/wallism/marc/pull/16), held for current-base recapture and explicit governance approval. The frozen result supplies no merge authority against today's base.
+
+### Captain plus reviewers
+
+| Metric | Fresh E1–E3 baseline | Merged E6–E9 | Change |
+| --- | ---: | ---: | ---: |
+| Independent reviewers | 8 | 8 | 0.00% |
+| Model calls | 146 | 129 | −11.64% |
+| Mean context per call | 75,169 | 70,243 | −6.55% |
+| Input, including cache | 10,974,616 | 9,061,367 | −17.43% |
+| Cached input (subset) | 10,270,464 | 8,508,288 | −17.16% |
+| Uncached input | 704,152 | 553,079 | −21.45% |
+| Output, including reasoning | 43,468 | 31,057 | −28.55% |
+| Elapsed assessment time | 15m 18.139s | 13m 21.448s | −12.71% |
+| Weighted tokens | Unavailable | Unavailable | No verified host price/allowance ratios declared |
+
+The after interval is `06:26:38.650Z–06:40:00.098Z`, from the Captain's host `task_started` through `task_complete`, including preparation, CI/artifact verification, review waits, assembly and final reporting. Baseline boundaries remain `02:51:26.406Z–03:06:44.545Z`. Root benchmark administration, documentation and the earlier neutral capture are excluded. No repair, approval continuation, publication, merge or deployment occurred; future continuation cost remains unmeasured.
+
+### Role attribution
+
+| Role / metric | Baseline | E6–E9 | Change |
+| --- | ---: | ---: | ---: |
+| Captain calls | 51 | 51 | 0.00% |
+| Captain mean context | 78,753 | 72,256 | −8.25% |
+| Captain inclusive input | 4,016,381 | 3,685,057 | −8.25% |
+| Captain cached input | 3,931,136 | 3,611,392 | −8.13% |
+| Captain uncached input | 85,245 | 73,665 | −13.58% |
+| Captain output | 12,617 | 8,691 | −31.12% |
+| Reviewer calls | 95 | 78 | −17.89% |
+| Reviewer mean context | 73,245 | 68,927 | −5.90% |
+| Reviewer inclusive input | 6,958,235 | 5,376,310 | −22.73% |
+| Reviewer cached input | 6,339,328 | 4,896,896 | −22.75% |
+| Reviewer uncached input | 618,907 | 479,414 | −22.54% |
+| Reviewer output | 30,851 | 22,366 | −27.50% |
+
+### Independent outcomes and session measurements
+
+| Gate | Baseline verdict → E6–E9 verdict | Calls | Mean context | Uncached input | Cached input | Output |
+| --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Security | Human-required → human-required | 10 | 70,749 | 62,109 | 645,376 | 3,923 |
+| Correctness | Repair → pass | 10 | 72,222 | 67,113 | 655,104 | 2,985 |
+| Code quality | Pass → pass | 10 | 69,158 | 59,772 | 631,808 | 3,126 |
+| Test integrity | Pass → pass | 11 | 71,430 | 67,395 | 718,336 | 2,708 |
+| Intent | Pass → pass | 9 | 62,906 | 52,490 | 513,664 | 1,870 |
+| C# | Pass → pass | 9 | 63,995 | 48,341 | 527,616 | 2,240 |
+| GitHub Actions | Pass → pass | 9 | 67,669 | 58,111 | 550,912 | 2,776 |
+| JavaScript | Pass → pass | 10 | 71,816 | 64,083 | 654,080 | 2,738 |
+
+The frozen report is **Held**: sensitive paths need an explicit operator decision, and the security review's governance finding remains preserved. Seven gates passed; no new implementation defect was reported. All eight reviewers inherited the Captain's confirmed Astra/Medium settings. Actual session IDs, turn IDs, execution receipts, complete findings and settings are retained in external evidence.
+
+**Quality qualification:** the fresh baseline's legacy SHA-named report compatibility finding at candidate `src/quality/marc.cjs:549` was not re-identified by this run. The earlier E4/E5 correctness and JavaScript reviewers had both raised it. Source and base are unchanged, so a new pass is not evidence that the issue was repaired or the earlier finding disproved. The original finding was source-backed rather than an executed candidate reproduction; this run does not adjudicate it. This discrepancy must remain visible when judging savings. One PR cannot establish missed-defect or false-alarm rates, and the representative defect/clean corpus remains unrun.
+
+### Evidence and limitations
+
+- The current tool generated and verified all eight briefs before dispatch. Their byte-identical shared prefix was 85,872 bytes, digest `7c96ff33b4f264290038b4883e5847ea01414254629a2009dc9b3f4812014a60`. All source and omitted-evidence pointers remained available. The host starts reviewers with a brief-path prompt and then a read, so this run does not demonstrate cross-session initial-prompt prefix-cache reuse.
+- The Captain had no prior reviewer conclusions or implementation transcript; reviewers received only their assigned brief and essential constraints. Ordinary model variability and the different review conclusions remain confounders. Preparation also differed: the Captain built the new briefs and downloaded the existing CI artifacts once because the permitted old artifact directory lacked an immutable download receipt. Those costs are included, not subtracted.
+- All nine sessions exposed token counts and model/settings. Records were attributed to exact thread/turn IDs and deduplicated by response ID. The current usage CLI exactly reproduced the API result. The baseline was recomputed from its archived transcripts with the current measurement code and exactly matched its historical counts; only transcript locations changed.
+- Retries remain unknown. Weighted totals remain null, including per-role/session totals, because verified host ratios were unavailable. Inclusive input already contains cached input; counts are not money or weekly-allowance percentages. Mean context is rounded to whole tokens. Summed reviewer time decreased from 1,449.500s to 1,109.229s; overlapping reviewer times are not elapsed wall time.
+- Raw reports, receipts, packets, CI artifacts and finalized usage manifests stay outside the repository under the shared state run `20260927-e6e9-fresh-after`; remeasured baseline and comparison artifacts are under `20260927-e6e9-measurement`. The Captain's own lock was released and trusted master stayed clean during execution. This documentation was then edited on `codex/pr16-e6-e9-measurement`. The report remains unpublished.
+
+**Next:** see the adjudication and follow-up below.
+
+## Adjudication and follow-up — 2026-09-27
+
+### The compatibility finding is valid — **withdrawn; see the rerun below**
+
+> **Correction:** the Claude Code rerun showed this adjudication was wrong. The base never merged a legacy SHA-named report with operator approval, so the guard retires no accepted state. The reasoning below is kept as a record of the error.
+
+Read-only source inspection of candidate `b905d99` against base `74921a1`, without executing candidate code:
+
+- **Base:** when the live head had moved past the reviewed source, operator approval required the head to still be the reviewed source *except for `merge`* (`action !== 'merge'`); merge verifies the published report pair itself through `verifyMergeCi`.
+- **Candidate `src/quality/marc.cjs:549`:** the exemption is removed; if the head has moved, it throws unless `e.reportCreatedAt` is set, otherwise it verifies the report commit.
+- **Still-supported state:** `reportPaths` (lines 47–55) accepts evidence without `reportCreatedAt` and names legacy reports by source SHA; `reports.test.cjs:149–157` verifies such legacy reports.
+- **Consequence:** `record-approval` throws "Operator approval source is no longer current" for a published legacy SHA-named report, and `merge --operator-approval` now requires the recorded entry that only `record-approval` writes (line 633). A PR with a published legacy report held for sensitive-path approval can no longer merge with approval, where the base merged it. Restoring only the merge exemption would not fix it; the guard must go so `verifyReportCommit` decides (it reproduces legacy bytes and fails closed on other head movement). No candidate test covers this path, so the green CI does not contradict the finding. *(Corrected during the Claude Code run below; the first adjudication understated the scope.)*
+
+The fresh E1–E3 baseline correctness reviewer and both E4 correctness and JavaScript reviewers raised it; all eight E6–E9 reviewers missed it. The E6–E9 result is therefore **a cost reduction with a missed defect, not a quality-preserving saving**. One PR still cannot establish detection rates.
+
+### Why the reviewer missed it
+
+The correctness reviewer's transcript shows it read `marc.cjs:540–657`, including line 549, and cited it as evidence for a pass. Its reasoning never mentioned legacy reports or `reportCreatedAt`. The miss was attention to previously accepted states, not missing files. Separately, it read the ~88KB brief in four calls (a 14,000-token tool output cap, then pages at lines 290, 580 and 868), so E6's one-read goal did not hold in practice.
+
+### Why the Captain still made 51 calls
+
+| Calls | Activity | Assessment work or benchmark artifact |
+| ---: | --- | --- |
+| 11 | Progress messages to the benchmark's root agent | Benchmark administration |
+| ~13 | Reading MARC source and writing `setup.cjs`/`assemble.cjs`/`finalize.cjs`, because the live controller rejected the historical capture (`Target branch changed`) | Benchmark artifact: frozen replay has no supported command |
+| 8 + 11 | One `spawn_agent` per call and `wait_agent` between them, forced by the two-reviewer concurrency cap | Benchmark setting |
+| ~8 | Instruction reads, result reads, polling and the final report | Assessment work |
+
+Only about eight calls were ordinary orchestration. E8's dispatch guidance could not apply under a two-slot cap, and the frozen-replay path forced the Captain to build its own tooling. Captain cost in these benchmarks mostly measures benchmark setup, not the production workflow.
+
+### Changes made
+
+- **Correctness skill:** when a change adds a guard or precondition or removes an exemption or fallback, list the states the old code accepted, including still-supported legacy fields, and confirm each is handled or deliberately retired.
+- **Correctness eval corpus:** `evals/marc-crew-correctness` adds a seeded-defect case (`legacy-report-approval-merge`, expected `repair`) and a clean counterpart with the guard removed (`legacy-report-approval-preserved`, expected `pass`), reduced to the two owning controller files. Both are at case version 2: version 1 of the clean case exempted only `merge`, which still stranded legacy PRs at `record-approval`. The validator now accepts core-gate corpora without specialist selections and non-C# sources; C# rules are unchanged.
+- **Brief size hint:** each brief's shared prefix states the largest brief size in KiB and asks for one complete read with a raised tool output limit; prefixes remain byte-identical. The PR16 replay reports "at most 90 KiB" for briefs of 87,488–91,477 bytes. The common reviewer contract repeats the instruction.
+
+Validation on Node 24 (Windows): corpus validation passed (correctness 2 cases covering 12 rules; C# 26 cases covering 77 rules, unchanged); the CI-equivalent suite `src/quality/*.test.cjs` plus `.marc/self-review.test.cjs` passed **240/240** (two new corpus tests, plus the size-hint assertion within an existing packet test); syntax and catalogue link checks passed. Both case patches reproduce their after-files when applied to the base. No model, reviewer or hosted CI ran.
+
+### Recommended before the next comparison
+
+1. Add a supported frozen-replay command (packets, assembly and usage for a frozen capture, with no action authority), so benchmarks stop measuring Captain improvisation.
+2. Run comparisons with the host's available reviewer slots rather than a two-slot cap, and without per-step progress messages, or report those calls separately.
+3. Run the correctness corpus pair and a PR16 rerun with the new check and size hint, repeated to expose variance. These need separate authorization; no model run is implied here.
+
+## Claude Code in-flight PR16 assessment — 2026-09-27
+
+The Captain (this Claude Code session) ran the frozen PR16 workload with the committed follow-up tool `277a015` (the size-hint arithmetic fix below came after the run): source `b905d99`, base `74921a1`, intent `7cd5b27e…`, reused CI run 36283816229 attempt 1 (artifacts re-inspected from the previous run's download). This was an explicit local experiment: the trusted-master check was not applied, no CI was dispatched, and nothing was published, repaired or merged. The run lock was acquired and released by this run. External state is under run `20260927-claude-followup`.
+
+**Not comparable to the Codex rows.** The model (`claude-opus-5-5`), harness, system prompt and tokenizer differ, and Claude reports cache writes separately from uncached input. The Captain carried this whole implementation conversation, so its tokens are not measured; it made about eight assessment calls, dispatching all eight reviewers in one turn and waiting once.
+
+Reviewers got a clean detached worktree at the source commit, because the branch checkout now contains this adjudication and the eval corpus. Transcripts show no reads of work docs, evals, registers or earlier run directories. One correctness `git show` output was saved to a temporary scratch file, outside its assigned output.
+
+### Reviewer measurements
+
+| Gate | Verdict | Calls | Cache write | Cache read | Output | Mean context | Wall time |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Security | human-required | 7 | 105,822 | 511,358 | 322 | 88,171 | 91s |
+| Correctness | repair | 11 | 117,981 | 935,372 | 3,652 | 95,761 | 155s |
+| Code quality | repair | 8 | 106,663 | 614,351 | 876 | 90,129 | 103s |
+| Test integrity | repair | 7 | 103,324 | 501,455 | 903 | 86,399 | 101s |
+| Intent | pass (1 advisory) | 7 | 103,228 | 507,295 | 765 | 87,220 | 80s |
+| C# | pass | 5 | 90,332 | 294,485 | 656 | 76,965 | 43s |
+| GitHub Actions | pass | 8 | 95,177 | 575,143 | 866 | 83,792 | 69s |
+| JavaScript | pass (3 advisory) | 10 | 126,773 | 875,854 | 1,123 | 100,265 | 205s |
+| **Total** | **Held** | **63** | **849,300** | **4,815,313** | **9,163** | **89,916** | **~3.4 min elapsed** |
+
+Uncached input was 126 tokens in total; inclusive input was 5,664,739. Output is as recorded by the host.
+
+### In-flight observations
+
+- **Brief reads:** every reviewer read its brief in exactly two calls. The host's Read tool truncated at about 630 lines, and each reviewer then read the whole remainder in one call as the size hint instructs (the Codex run took four). Two calls is the floor on this host unless briefs are split to fit its read limit.
+- **Brief tokens:** the first two reads wrote about 41k tokens of cache, so briefs run about 2.2 bytes per token. The hint's estimate used three bytes per token; it now uses two.
+- **No cross-session cache reuse:** every reviewer's first call wrote about 45.8k tokens of cache (system prompt and tools) with zero cache reads, because all eight started within two seconds, before any cache existed. That is about 320k avoidable cache-write tokens. Starting one reviewer, letting its first call complete, then dispatching the rest would let them read that shared prefix.
+- **Calls:** reviewers averaged 7.9 calls, versus 9.75 in the Codex E6–E9 run and 11.9 in the Codex baseline, with a larger mean context because the brief is front-loaded.
+
+### Quality
+
+The frozen report is **Held**: sensitive-path approval plus four unresolved gates.
+
+- **Legacy-report seam (later shown to be a false alarm):** The correctness reviewer inspected `marc.cjs:545-557` and described the legacy receipt bootstrap, but did not flag the stranded legacy approval path. The new previously-accepted-states check did surface a different regression of that kind (below). One run cannot show whether the check helps.
+- **New findings not reported by the Codex runs:**
+  - Correctness, code quality and JavaScript independently found that the public approval entry is compared byte for byte (`approval-publication.cjs:28-29`). A PR description edited in the GitHub web editor can come back with CRLF line endings, stranding both merge and `record-approval`. Plausible from source; the line-ending behavior was not verified here.
+  - Correctness found that `report` writes evidence and both report files before `saveReceipt`, so regenerating an unpublished report with a different approval leaves evidence that every later command rejects (`marc.cjs:606-624`). **Spot-checked against the source and confirmed.**
+  - Security and JavaScript found that with a receipt present, merge skips re-rendering and the approval-audit equality check, so gate changes in external evidence can reach merge while the public report still says Held (`marc.cjs:338`, `631`).
+  - Test integrity found the rewritten operator-approval test now passes on a different error, and two report assertions were deleted (`operator-approval.test.cjs:209`).
+- **Corpus correction:** reviewer analysis showed that exempting only `merge` still strands legacy PRs at `record-approval`, because merge requires the entry only `record-approval` writes (line 633). The clean corpus case now removes the guard instead, and both cases moved to version 2.
+
+### Recommended next changes
+
+1. **Implemented (guidance):** warm-start dispatch: launch one reviewer, wait for its first model call, then dispatch the rest, so the shared system prompt (and, on hosts that start sessions from the brief, the shared prefix) is read from cache.
+2. **Implemented:** split briefs at the shared-prefix boundary (or into chunks under common host read limits) so hosts with a ~25k-token read cap can read each part in one call.
+3. **Not a MARC tooling change:** treat the new CRLF, receipt-ordering, receipt-bypass and test-weakening findings as PR16 review input; they are independent of the efficiency work.
+
+### Implementation of the recommended changes
+
+- **Brief parts:** each brief is also written as ordered, checksummed parts of at most 48 KiB (`briefPartBytes`). Cuts prefer line ends and never split a UTF-8 sequence; the parts concatenate to the exact brief. All but the last part lie within the shared prefix and are written once for every gate; the last carries the gate tail. On the PR16 workload this gives two parts: a 45,541-byte shared part and a 42,047–46,036-byte gate part, each within one read on a 48 KiB cap. The brief header names the part count, and size hints now assume about two bytes per token.
+- **Warm-start dispatch:** the Captain starts the first reviewer alone and the rest together in its next turn. The handoff records this as a `dispatch` instruction. The Captain gives reviewers ordered `briefParts` when the host caps one read below the brief size. This is Captain guidance; no controller code launches reviewers.
+- **Validation:** a new packet test covers single-part briefs, multi-part splits with shared leading files, exact reconstruction, the part limit, UTF-8 boundaries, the header and part tampering. The CI-equivalent suite on Node 24 (Windows) passed **241/241**; syntax, catalogue link and corpus checks passed. No model or hosted CI ran.
+- **Unmeasured:** whether a staggered start yields cache reads depends on host cache timing; a rerun would show it in first-call cache reads.
+
+## Claude Code rerun with brief parts and staggered start — 2026-09-27
+
+Same frozen PR16 workload and Captain as the previous section, run with the follow-up tool whose content was then committed as `0a9cfe8` (brief parts, staggered dispatch guidance, two-bytes-per-token hint). External state is under run `20260927-claude-rerun`. The run lock was acquired and released; the reviewer worktree was removed. All eight reviewers made zero reads of work docs, evals, registers or earlier run directories.
+
+### Measurements
+
+| Metric | First Claude run | Rerun | Change |
+| --- | ---: | ---: | ---: |
+| Reviewer calls | 63 | 63 | 0% |
+| Inclusive input | 5,664,739 | 5,578,125 | −1.5% |
+| Cache writes | 849,300 | 835,908 | −1.6% |
+| Cache reads | 4,815,313 | 4,742,091 | −1.5% |
+| Output | 9,163 | 8,046 | −12.2% |
+| Mean context per call | 89,916 | 88,542 | −1.5% |
+| Slowest reviewer | 205s | 182s | −11% |
+
+One pair of runs cannot separate these small differences from ordinary variation.
+
+### What the in-flight data showed
+
+- **Brief parts:** every part fit one read; no host truncation occurred. Four reviewers read their brief in exactly two calls. The other four re-read part 1 at `offset: 500` (part 1 has 499 lines), wasting one call each: part 1 ends mid-diff, and nothing said a part may stop mid-section. The brief header now says parts end at line boundaries and a part that stops mid-section is complete.
+- **Staggered start: no cache reads.** The first reviewer ran as a background agent and wrote 42,930 tokens on its first call. The other seven started about 40 seconds later, after that call had completed, yet each wrote about 45,890 tokens with zero cache reads. Background and foreground agents have different system prompts (about 3k tokens apart), so the warm-up could not donate a matching prefix, and the seven started together. A follow-up probe confirmed the mechanism: a later trivial background agent read **33,912 tokens from cache on its first call**. The guidance now requires launching every reviewer the same way (in Claude Code, all in the background) and dispatching the rest after the first reviewer's first model call.
+
+### Quality and a corrected adjudication
+
+The frozen report is **Held**: security, code quality and test integrity returned `repair`; correctness, intent and the three specialists passed; sensitive-path approval is still required.
+
+The correctness reviewer passed the legacy-report seam with a specific argument, which source history confirms:
+
+- Since operator approval was introduced (`10d00fc`, 2026-09-20), `prepareReport` stamps `reportCreatedAt` on every generated report; timestamped names already existed on 2026-09-13. A report carrying an approval audit therefore always has a timestamp.
+- At the base, `merge` requires `e.humanApprovalAudit` to equal the current approval (`marc.cjs:586`). A legacy SHA-named report has no audit, so it could never merge with operator approval.
+
+The guard therefore retires no state the base accepted. **The legacy-report "defect" was a false alarm** raised by three earlier fresh reviewers and repeated in this document's first adjudication. The Codex E6–E9 run and this rerun were right to pass it. Consequences:
+
+- The E6–E9 headline no longer counts this as a missed defect. Review-quality parity is still unmeasured; one PR is not a quality benchmark.
+- The correctness corpus now holds the PR16 seam as a **false-alarm probe** (clean alternative, case version 3); the synthetic "clean" counterpart was removed. It needs a seeded defect before it can score detection.
+- The previously-accepted-states check stays: in this run it is what let correctness refute the false alarm precisely.
+
+Findings reproduced across both Claude runs: the byte-for-byte approval-entry comparison that CRLF edits can break (code quality blocking in both runs, plus other gates), the receipt path skipping report/decision re-verification at merge (security blocking in both), the weakened operator-approval test (test integrity blocking in both), and the report-before-receipt ordering (blocking in the first run, advisory in the rerun). These are PR16 review inputs, independent of the efficiency work.
+
+### Next
+
+1. Rerun with every reviewer launched as a background agent and the rest dispatched after the first reviewer's first call, to measure first-call cache reads.
+2. Confirm that the part-boundary note removes the redundant part-1 re-reads.
+3. Add a seeded correctness defect (for example the confirmed report-before-receipt ordering) before using the correctness corpus to judge detection.
+
+## Claude Code background-only run — 2026-09-27
+
+Same frozen PR16 workload and Captain, with tool commit `2ccbf3f` (same-mode warm start, part-boundary note). Every reviewer ran as a background agent: correctness first, then the other seven together after its first model call. External state is under run `20260927-claude-bg`. The run lock was acquired and released and the reviewer worktree removed. All eight reviewers made zero reads of work docs, evals, registers or earlier run directories.
+
+### Measurements across the three Claude runs
+
+| Metric | First run | Rerun | Background-only |
+| --- | ---: | ---: | ---: |
+| Reviewer calls | 63 | 63 | 67 |
+| Cache writes | 849,300 | 835,908 | **582,323** |
+| Cache reads | 4,815,313 | 4,742,091 | 5,262,047 |
+| Output | 9,163 | 8,046 | 6,286 |
+| Inclusive input | 5,664,739 | 5,578,125 | 5,844,504 |
+| Mean context per call | 89,916 | 88,542 | 87,231 |
+| Weighted input-equivalent tokens | 1,589,097 | 1,559,450 | **1,285,673** |
+| Reviewer span (first start to last finish) | ~3.4 min | ~3.8 min (staggered) | 3.4 min |
+
+Weighted tokens use relative weights declared for this comparison from Anthropic's published price ratios for Claude Opus: uncached input 1, cache writes 1.25, cache reads 0.1, output 5. They are input-equivalent tokens, not money or allowance. On that basis the background-only run was about 19% cheaper than the first Claude run, driven mainly by 30% fewer cache writes. Inclusive input rose because the run made four more calls; cached reads are cheap, so this does not offset the saving. One run per configuration cannot separate small differences from ordinary variation.
+
+### What the in-flight data showed
+
+- **Warm start works when every reviewer launches the same way.** The first reviewer wrote 42,907 tokens on its first call. Each of the other seven then **read 33,912 tokens from cache** and wrote only about 9,000 on its first call, instead of about 45,900. That turns about 237k cache-write tokens into cache reads.
+- **Part-boundary note: partial improvement.** Six reviewers read their brief in exactly two calls. Two still re-read part 1 at `offset: 500`, down from four in the rerun. The host displays an empty numbered line after the final newline, which still suggests more content. **Implemented afterwards:** packets and the session status now record each part's line count (`briefPartLines`), and the Captain states them in spawn messages; the reviewer contract treats a stated count as the whole part. On the PR16 replay, part 1 is 497 lines and gate parts are 570–617 lines. Unmeasured until the next run.
+
+### Quality
+
+The frozen report is **Held**, with the same pattern as the rerun:
+
+- **Security `human-required`** (`marc.cjs:631`): with a receipt present, merge verifies report bytes against the receipt rather than the current decision, so any gate resolved in external evidence can reach merge while the published report still says Held. Blocking in all three Claude runs; the rerun's security reviewer rated it `repair`, this one a human policy decision.
+- **Code quality `repair`** (`approval-publication.cjs:69`): the approval entry is matched byte for byte with LF, so a GitHub web edit that re-saves the description with CRLF strands merge and `record-approval`. Blocking in all three runs; this reviewer noted that `captureIntent` already normalises CRLF.
+- **Test integrity `repair`** (`operator-approval.test.cjs:167`): the before/after test rewrite dropped the approval-rendering and stage-hash assertions. Blocking in all three runs.
+- **Correctness `pass`**, with the report-before-receipt ordering and the receipt merge path as advisories. No reviewer repeated the withdrawn legacy-report claim; the JavaScript reviewer explicitly noted legacy report merges are unaffected.
+
+These four findings are now reproduced across three independent Claude runs and are the strongest PR16 review inputs from this work.

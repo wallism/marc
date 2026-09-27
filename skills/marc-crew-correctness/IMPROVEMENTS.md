@@ -1,5 +1,9 @@
 # marc-crew-correctness improvements
 
+## 2026-09-27 — Check previously accepted states when guards change
+
+PR16 exposed how easily guard changes are misjudged: three fresh reviews called a new `reportCreatedAt` precondition a regression for legacy SHA-named reports, and later reviews and source history showed the base never accepted that state. When a guard is added or an exemption removed, list the states the old code accepted and confirm each is still handled or deliberately retired; this cuts both ways, catching real regressions and refuting false ones. The repository's `evals/marc-crew-correctness` corpus keeps the PR16 seam as a false-alarm probe; model detection rates remain unmeasured.
+
 ## 2026-09-27 — Remove E4 and retain E5 measurement
 
 Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.

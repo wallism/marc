@@ -1,0 +1,32 @@
+{
+  "note": "Sanitized hosted-CI facts from MARC run 36283816229 attempt 1 for PR16 source b905d99. Counts and summaries only; no logs or credentials. The preparation step substitutes ${capture.sourceHead} so the evidence is bound to the reviewed commit.",
+  "runId": 36283816229,
+  "runAttempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "head": "${capture.sourceHead}",
+  "jobs": [
+    {
+      "name": "node (ubuntu-latest)",
+      "conclusion": "success"
+    },
+    {
+      "name": "node (windows-latest)",
+      "conclusion": "success"
+    }
+  ],
+  "testResults": {
+    "artifact": "node-test-results",
+    "total": 222,
+    "passed": 221,
+    "failed": 0,
+    "skipped": 1,
+    "summary": "Node 24 suite on the exact source commit (Ubuntu shown); one Windows-only case skipped."
+  },
+  "scans": {
+    "secrets": {
+      "verdict": "pass",
+      "findings": 0
+    }
+  }
+}

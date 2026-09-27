@@ -1,0 +1,61 @@
+{
+  "id": "legacy-report-approval-merge",
+  "caseVersion": 3,
+  "class": "clean-alternative",
+  "title": "Approval publication rejects legacy evidence that could never merge with approval",
+  "contentDigest": "227599f04cb812f25cc3e95f4b5f11eab14cbb6bd20bdc3327ebb2d70153726e",
+  "rules": [
+    "read-diff-owner-callers",
+    "before-after-behavior",
+    "tests-do-not-prove-correctness",
+    "verdict-mapping",
+    "browser-flag"
+  ],
+  "capture": {
+    "schema": 1,
+    "repository": "wallism/marc",
+    "pr": 16,
+    "sourceHead": "b905d99276b43501ad0611937f2ffc9d2d4ddb60",
+    "base": "74921a12d167dc26b6043cce5eafd32b8c66b5cd",
+    "policyHash": "948fbd9a863e3625e684c4e1325f4ae943718b080e2ce718da7150192a854203",
+    "state": "open",
+    "draft": false,
+    "files": [
+      "src/quality/approval-publication.cjs",
+      "src/quality/marc.cjs"
+    ],
+    "changedLines": 150,
+    "ci": {
+      "runId": 36283816229,
+      "runAttempt": 1,
+      "conclusion": "success"
+    }
+  },
+  "consumerGuidance": {
+    "runtime": [
+      "node24"
+    ],
+    "architecture": "MARC's trusted controller is Node.js CommonJS with no runtime dependencies. Legacy SHA-named report evidence without reportCreatedAt remains unchanged and verifiable; never rename history. Operator approval may be supplied to merge after the report pair is published.",
+    "notes": "Reduced from PR16 to the two controller files that own approval publication; the other PR16 files do not affect this behavior."
+  },
+  "evidence": [
+    "shared/ci-success.json"
+  ],
+  "expectedVerdict": "pass",
+  "requiredFindings": [],
+  "forbiddenFindings": [
+    {
+      "rule": "previously-accepted-states",
+      "example": "Claiming the reportCreatedAt guard at marc.cjs:549 removes an approval-merge path for legacy SHA-named reports; the base required a matching humanApprovalAudit, which no legacy report can carry, so that state never merged with approval."
+    },
+    {
+      "rule": "demonstrated-not-speculative",
+      "example": "Reporting the documented non-atomic GitHub description update in record-approval as a defect, or asking for a different receipt hash algorithm."
+    },
+    {
+      "rule": "verdict-mapping",
+      "example": "Returning repair or human-required for this seam as if the legacy guard were a defect or an open business decision."
+    }
+  ],
+  "notes": "False-alarm probe from PR16. Three fresh reviewers and the first adjudication flagged a legacy-report regression here; source history refutes it (see rubric). Version 3 reclassifies the earlier seeded-defect versions. Other PR16 defects are outside this reduced case."
+}
