@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-27 — Warm-start dispatch and brief parts
+
+Dispatch the first reviewer alone and the rest together in the next turn, so later sessions can reuse the host's cached system/tool prefix. Give reviewers ordered brief parts when the host caps one read below the brief size. Every gate and fresh session remains required. See the [harness contract](references/harnesses.md).
+
 ## 2026-09-27 — Read briefs in one call
 
 Reviewers read their whole brief in one call, raising the tool output limit to its stated size instead of paging; each page resent the full context in the PR16 E6–E9 run. See the [common contract](references/reviewer.md).

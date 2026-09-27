@@ -58,7 +58,31 @@ test('one brief per gate inlines contracts, scope and diff behind a byte-identic
   assert.deepEqual(result.packets.map(p => p.role), ['correctness', 'security']);
   const packet = JSON.parse(fs.readFileSync(result.packets[1].path));
   fs.appendFileSync(packet.brief.path, 'tampered'); assert.throws(() => verifyPacket(packet, e), /changed/);
-  delete packet.brief; assert.equal(verifyPacket(packet, e), true);
+  delete packet.brief; delete packet.briefParts; assert.equal(verifyPacket(packet, e), true);
+});
+test('small briefs are one part; large briefs split into shared parts plus a gate part that reproduce each brief exactly', t => {
+  const context = { repoRoot: root, bundleRoot: root, policy: { reviewGates: ['correctness', 'security'], uiPathPatterns: [] } };
+  const whole = buildPackets(e, context, { directory: setup(t), git: fakeGit([['src/code.js', '+one']]), briefPartBytes: 1024 * 1024 });
+  for (const p of whole.packets) assert.deepEqual(p.briefParts, [p.brief]);
+  assert.ok(!fs.readFileSync(whole.packets[0].brief, 'utf8').includes('ordered parts'));
+  const limit = 8 * 1024, files = [['src/code.js', '+' + 'é'.repeat(9000) + '\n+' + 'x'.repeat(3000)]];
+  const result = buildPackets(e, context, { directory: setup(t), git: fakeGit(files), briefPartBytes: limit });
+  const handoff = JSON.parse(fs.readFileSync(result.handoff));
+  assert.ok(handoff.briefParts.count > 2); assert.match(handoff.dispatch, /Warm start/);
+  const [a, b] = result.packets;
+  assert.equal(a.briefParts.length, handoff.briefParts.count);
+  // Leading parts are the same files for every gate; only the last differs.
+  assert.deepEqual(a.briefParts.slice(0, -1), b.briefParts.slice(0, -1)); assert.notEqual(a.briefParts.at(-1), b.briefParts.at(-1));
+  for (const p of result.packets) {
+    const parts = p.briefParts.map(file => fs.readFileSync(file));
+    assert.ok(parts.every(part => part.length <= limit));
+    assert.ok(Buffer.concat(parts).equals(fs.readFileSync(p.brief)));
+    assert.ok(parts.every(part => !part.toString('utf8').includes('�')), 'parts never split a UTF-8 sequence');
+  }
+  assert.match(fs.readFileSync(a.brief, 'utf8'), new RegExp(`also written as ${handoff.briefParts.count} ordered parts of at most 8 KiB`));
+  const packet = JSON.parse(fs.readFileSync(a.path));
+  assert.equal(verifyPacket(packet, e), true);
+  fs.appendFileSync(packet.briefParts[0].path, 'tampered'); assert.throws(() => verifyPacket(packet, e), /changed/);
 });
 test('shared prefix digests change with frozen evidence', t => {
   const context = { repoRoot: root, bundleRoot: root, policy: { reviewGates: ['correctness'], uiPathPatterns: [] } };

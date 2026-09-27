@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-09-27 — Brief parts and warm-start dispatch guidance
+
+The Claude Code PR16 run showed a host read cap (about 25k tokens) forcing a truncated first read, and eight simultaneous reviewers each writing the same ~45.8k-token system prefix to cache. Briefs are now also written as checksummed ordered parts of at most 48 KiB that concatenate to the exact brief, with all but the last part shared by every gate. The handoff records the part count and a warm-start dispatch instruction. Size hints now assume about two bytes per token. Live effects are unmeasured. See the [work log](../../docs/work/20260927-token-efficiency-work.md).
+
 ## 2026-09-27 — Brief size hints and core-gate eval corpora
 
 The fresh E6–E9 PR16 assessment showed reviewers paging a ~88KB brief through capped tool output (four reads, each resending the context). Every brief now states, in its shared prefix, the largest brief size in KiB with an instruction to read it in one call; prefixes stay byte-identical. The eval validator accepts core-gate corpora without specialist selections and declared source languages; existing C# rules are unchanged. A correctness corpus adds the PR16 legacy-report defect with a clean counterpart. Live effects are unmeasured. See the [work log](../../docs/work/20260927-token-efficiency-work.md).

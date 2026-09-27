@@ -199,6 +199,7 @@ Record the source/base/tool/policy identities, model settings, input/cached/outp
 | 2026-09-27 | E3 | Added common reviewer contract and neutral, checksummed packets with complete diff/source access; moved conditional dependency and Captain procedures to references. | Combined focused validation: 105 passed. Catalogue links and syntax pass. The rerun will measure consumption; instruction size alone is not a token saving claim. |
 | 2026-09-27 | E6–E9 | One checksummed brief per gate with inline contracts, compact scope and budgeted text diff; specialist focus lists; byte-identical shared prefix with recorded digest; handoff dispatch list; guarded actions split out of intake/review procedures; mean-context and declared-weight usage metrics. | Focused tests pass (see validation below). Next: a separately authorized fresh-Captain comparison against the E1–E3 baseline, reporting calls, mean context and weighted tokens per role. |
 | 2026-09-27 | E6–E9 follow-up | Confirmed the missed legacy-report defect from source; analysed Captain and correctness transcripts; added the previously-accepted-states correctness check, a correctness defect/clean eval pair and brief size hints. | Recorded below. Next: supported frozen replay, benchmark settings without a two-slot cap, then an authorized repeated rerun. |
+| 2026-09-27 | In-flight run and follow-up | Claude Code frozen PR16 assessment with the follow-up tool; corrected the clean corpus case (v2); added read-sized shared brief parts, warm-start dispatch guidance and a two-bytes-per-token size hint. | 241/241 local tests. Next: rerun to measure staggered-start cache reads and part-based reads. |
 
 ## Measured PR #16 result — 2026-09-27
 
@@ -553,7 +554,14 @@ The frozen report is **Held**: sensitive-path approval plus four unresolved gate
 
 ### Recommended next changes
 
-1. Warm-start dispatch: launch one reviewer, wait for its first model call, then dispatch the rest, so the shared system prompt (and, on hosts that start sessions from the brief, the shared prefix) is read from cache.
-2. Split briefs at the shared-prefix boundary (or into chunks under common host read limits) so hosts with a ~25k-token read cap can read each part in one call.
-3. Treat the new CRLF, receipt-ordering, receipt-bypass and test-weakening findings as PR16 review input; they are independent of the efficiency work.
+1. **Implemented (guidance):** warm-start dispatch: launch one reviewer, wait for its first model call, then dispatch the rest, so the shared system prompt (and, on hosts that start sessions from the brief, the shared prefix) is read from cache.
+2. **Implemented:** split briefs at the shared-prefix boundary (or into chunks under common host read limits) so hosts with a ~25k-token read cap can read each part in one call.
+3. **Not a MARC tooling change:** treat the new CRLF, receipt-ordering, receipt-bypass and test-weakening findings as PR16 review input; they are independent of the efficiency work.
+
+### Implementation of the recommended changes
+
+- **Brief parts:** each brief is also written as ordered, checksummed parts of at most 48 KiB (`briefPartBytes`). Cuts prefer line ends and never split a UTF-8 sequence; the parts concatenate to the exact brief. All but the last part lie within the shared prefix and are written once for every gate; the last carries the gate tail. On the PR16 workload this gives two parts: a 45,541-byte shared part and a 42,047–46,036-byte gate part, each within one read on a 48 KiB cap. The brief header names the part count, and size hints now assume about two bytes per token.
+- **Warm-start dispatch:** the Captain starts the first reviewer alone and the rest together in its next turn. The handoff records this as a `dispatch` instruction. The Captain gives reviewers ordered `briefParts` when the host caps one read below the brief size. This is Captain guidance; no controller code launches reviewers.
+- **Validation:** a new packet test covers single-part briefs, multi-part splits with shared leading files, exact reconstruction, the part limit, UTF-8 boundaries, the header and part tampering. The CI-equivalent suite on Node 24 (Windows) passed **241/241**; syntax, catalogue link and corpus checks passed. No model or hosted CI ran.
+- **Unmeasured:** whether a staggered start yields cache reads depends on host cache timing; a rerun would show it in first-call cache reads.
 
