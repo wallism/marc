@@ -1,8 +1,38 @@
 # marc-crew-captain improvements
 
+## 2026-09-28 — Optional risk rating before review dispatch
+
+When trusted policy enables `riskAssessment`, launch the independent [risk assessor](../marc-crew-risk/SKILL.md) as the warm-start session after routing and assemble its rating first. A high rating switches a simple route to full before other reviewers start. The rating only hardens decisions; merge-rule softening remains future work. See the [work log](../../docs/work/20260928-risk-assessment-work.md).
+
 ## 2026-09-27 — Public human approval records
 
 Record actual human approvals in each PR description with who, when, scope and reviewed identity. Resume a held report by retaining its bytes and verifying the later external approval independently; resolve only the affected governance finding and reuse valid reviews/CI. Include intent-repair approvals in the public audit trail without turning repair permission into merge authority. See [the contract](../../docs/operator-approval.md).
+
+## 2026-09-27 — Warm-start dispatch and brief parts
+
+Dispatch the first reviewer alone and the rest together in the next turn, so later sessions can reuse the host's cached system/tool prefix. Give reviewers ordered brief parts, with each part's line count, when the host caps one read below the brief size; without counts, two of eight reviewers in the background-only run still paged past a complete part. Every gate and fresh session remains required. See the [harness contract](references/harnesses.md).
+
+## 2026-09-27 — Read briefs in one call
+
+Reviewers read their whole brief in one call, raising the tool output limit to its stated size instead of paging; each page resent the full context in the PR16 E6–E9 run. See the [common contract](references/reviewer.md).
+
+## 2026-09-27 — Brief dispatch and on-demand guarded actions
+
+Dispatch every reviewer in one turn with only its generated brief path and wait once for all, without opening briefs, diffs or packets in the Captain context. Reviewers start from the brief, confirm identities without recomputing checksums, batch independent reads and leave result validation to assembly. Repair, recovery, publication and merge procedures move unchanged to [guarded actions](references/guarded-actions.md), loaded only when reached. Every gate, session and approval requirement remains. See [assessment sessions](../../docs/assessment-sessions.md).
+
+## 2026-09-27 — Remove E4 and retain E5 measurement
+
+Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.
+
+## 2026-09-27 — Combined intent and fresh Captain measurements
+
+**Withdrawn:** E4 review-policy changes described in this entry were removed at the owner's request after the fresh comparison. E5 measurement remains; see the removal entry above.
+
+Dispatch one explicitly combined correctness/intent session only under trusted opt-in policy; retain other independent gates and human repair authority. Record all fresh Captain/reviewer turns, phase coverage and approval continuations in external telemetry manifests. See [measurement](../../docs/assessment-measurement.md).
+
+## 2026-09-27 — Bounded handoffs and focused contracts
+
+Use deterministic assessment sessions and neutral per-gate packets to reduce orchestration and carried instructions. Keep a concise common independent-review contract; retain conditional dependency/browser guidance and full Captain action procedures. Fresh Captain handoffs preserve identity, external state and budgets without inheriting implementation history or transferring lock authority. Existing review/approval/merge requirements remain unchanged. See [assessment sessions](../../docs/assessment-sessions.md) and the [measured work log](../../docs/work/20260927-token-efficiency-work.md).
 
 ## 2026-09-27 — Static intent with human repair decisions
 

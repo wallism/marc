@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "corpusVersion": 1,
+  "member": "correctness",
+  "gate": true,
+  "sourceExtensions": [
+    ".cjs",
+    ".js"
+  ],
+  "createdOn": "2026-09-27",
+  "rules": "rules.json",
+  "note": "Core-gate corpus: no specialist selection. Cases are reduced from real MARC assessments and scored per class, never averaged. Universal rules are scored on every case from the returned gate artifact. It currently holds one false-alarm probe; add a seeded defect before scoring detection.",
+  "universalRules": [
+    "read-trusted-handoff",
+    "unknown-technology-hold",
+    "fresh-read-only-review",
+    "no-repair-during-review",
+    "reuse-hosted-ci"
+  ],
+  "cases": [
+    {
+      "id": "legacy-report-approval-merge",
+      "class": "clean-alternative",
+      "expectedVerdict": "pass",
+      "title": "Approval publication rejects legacy evidence that could never merge with approval"
+    }
+  ]
+}

@@ -7,7 +7,7 @@ description: Independently review Java changes and affected callers as a selecte
 
 Java/JVM source contracts, resource cleanup, publication and executor lifecycle; excludes automatic Spring, Android, persistence-provider or native-code expertise.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace caller contracts and mutable state publication across threads.
 - Inspect close ownership, interruption and executor shutdown.

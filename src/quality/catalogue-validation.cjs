@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { validateMember } = require('./crew.cjs');
 const mandatory = ['marc-crew-captain', 'marc-crew-simplicity', 'marc-crew-simple-tests', 'marc-crew-security',
-  'marc-crew-correctness', 'marc-crew-code-quality', 'marc-crew-test-integrity', 'marc-crew-repair'];
+  'marc-crew-correctness', 'marc-crew-code-quality', 'marc-crew-test-integrity', 'marc-crew-repair', 'marc-crew-risk'];
 // Explicit authoring utilities are discoverable skills, never review members.
 const authoring = ['marc-crew-creator'];
 

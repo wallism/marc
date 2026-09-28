@@ -238,6 +238,7 @@ test('React consumers referenced only in the old tree still recruit React expert
   const members = loadCatalogue(path.resolve(__dirname, '../..'), reactConfig);
   const inspected = new Set();
   const read = (...args) => {
+    if (args[0] === 'diff') return '@@ -1 +1 @@';
     if (args[0] === 'ls-tree') return `100644 blob ${'d'.repeat(40)}\t${args.at(-1)}`;
     if (args[0] === 'show') return args[1].endsWith('shared/policy.ts') ? 'export function sharedPolicy() {}' : 'sharedPolicy();';
     const revision = args.at(-2); inspected.add(revision);

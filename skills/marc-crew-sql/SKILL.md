@@ -7,7 +7,7 @@ description: Independently review SQL changes and affected callers as a selected
 
 SQL query/data invariants, null semantics, parameter boundaries, transactions and migration review under a confirmed database dialect; no implicit database execution or administration.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace query cardinality, null behavior and data authorization boundaries.
 - Inspect transaction invariants, retry effects and migration compatibility.

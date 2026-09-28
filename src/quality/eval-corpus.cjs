@@ -60,7 +60,9 @@ function validateRules(memberRoot) {
   }
   return { document, ids };
 }
-function validateCase(memberRoot, entry, ruleIds) {
+// Crew corpora bind a captured specialist selection; core-gate corpora (`gate: true`) have none.
+// `sourceExtensions` names the reviewed languages and defaults to C# for existing corpora.
+function validateCase(memberRoot, entry, ruleIds, { gate = false, sourceExtensions = ['.cs'] } = {}) {
   const folder = path.join(memberRoot, 'cases', entry.id);
   if (!fs.existsSync(folder) || !fs.statSync(folder).isDirectory()) throw Error('Missing case directory: ' + entry.id);
   const document = readJson(path.join(folder, 'case.json')), cited = new Set();
@@ -82,14 +84,19 @@ function validateCase(memberRoot, entry, ruleIds) {
   if (!/^[0-9a-f]{64}$/.test(capture.policyHash ?? '')) fail('capture needs a 64-character policy digest');
   if (!Array.isArray(capture.files) || !capture.files.length) fail('capture needs a changed file inventory');
   if (!Number.isInteger(capture.changedLines) || capture.changedLines < 1) fail('capture needs a positive changedLines count');
-  const selection = capture.selection ?? {};
-  if (selection.memberId !== path.basename(memberRoot).replace(/^marc-crew-/, '')) fail('captured selection names another member');
-  if (!/^\d+\.\d+\.\d+$/.test(selection.memberVersion ?? '')) fail('captured selection needs a semantic memberVersion');
-  for (const field of ['memberHash', 'selectionHash'])
-    if (!/^[0-9a-f]{64}$/.test(selection[field] ?? '')) fail(`captured selection needs a 64-character ${field}`);
+  if (gate) {
+    if (capture.selection !== undefined) fail('a core-gate case has no specialist selection');
+  } else {
+    const selection = capture.selection ?? {};
+    if (selection.memberId !== path.basename(memberRoot).replace(/^marc-crew-/, '')) fail('captured selection names another member');
+    if (!/^\d+\.\d+\.\d+$/.test(selection.memberVersion ?? '')) fail('captured selection needs a semantic memberVersion');
+    for (const field of ['memberHash', 'selectionHash'])
+      if (!/^[0-9a-f]{64}$/.test(selection[field] ?? '')) fail(`captured selection needs a 64-character ${field}`);
+  }
 
   const guidance = document.consumerGuidance ?? {};
-  if (!Array.isArray(guidance.targetFrameworks) || !guidance.targetFrameworks.length) fail('needs trusted consumer guidance with target frameworks');
+  const platforms = guidance.targetFrameworks ?? guidance.runtime;
+  if (!Array.isArray(platforms) || !platforms.length) fail('needs trusted consumer guidance with target frameworks or runtime');
   if (!guidance.architecture) fail('needs the trusted architecture statement the reviewer must respect');
 
   if (!Array.isArray(document.evidence)) fail('evidence must be an array, empty only for a deliberate gap');
@@ -146,7 +153,8 @@ function validateCase(memberRoot, entry, ruleIds) {
       else sources.push(file);
     }
   })(after);
-  if (!sources.some(file => file.endsWith('.cs'))) fail('needs at least one C# source file under input/after');
+  if (!sources.some(file => sourceExtensions.some(extension => file.endsWith(extension))))
+    fail(`needs at least one ${sourceExtensions.join('/')} source file under input/after`);
   if (sources.some(file => path.basename(file) === 'rubric.md' || path.basename(file) === 'case.json'))
     fail('expectations must never sit inside the reviewer input');
   // A changed case is a new case version, never a silent edit under an existing identity.
@@ -162,6 +170,10 @@ function validateCorpus(directory) {
   if (!Array.isArray(corpus.cases) || !corpus.cases.length) throw Error('corpus.json must list cases');
   const { document: rules, ids: ruleIds } = validateRules(memberRoot);
   if (corpus.member !== rules.member) throw Error('corpus.json and rules.json name different members');
+  if (corpus.gate !== undefined && typeof corpus.gate !== 'boolean') throw Error('corpus.json gate must be a boolean');
+  const sourceExtensions = corpus.sourceExtensions ?? ['.cs'];
+  if (!Array.isArray(sourceExtensions) || !sourceExtensions.length || !sourceExtensions.every(x => /^\.[a-z0-9]+$/.test(x)))
+    throw Error('corpus.json sourceExtensions must list file extensions such as ".cjs"');
 
   const covered = new Set();
   for (const rule of corpus.universalRules ?? []) {
@@ -172,7 +184,7 @@ function validateCorpus(directory) {
   for (const entry of corpus.cases) {
     if (listed.has(entry.id)) throw Error('Duplicate case in corpus.json: ' + entry.id);
     listed.add(entry.id);
-    for (const rule of validateCase(memberRoot, entry, ruleIds)) covered.add(rule);
+    for (const rule of validateCase(memberRoot, entry, ruleIds, { gate: corpus.gate === true, sourceExtensions })) covered.add(rule);
   }
   const present = fs.readdirSync(path.join(memberRoot, 'cases')).sort();
   for (const name of present) if (!listed.has(name)) throw Error('Case directory is not listed in corpus.json: ' + name);

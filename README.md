@@ -40,6 +40,20 @@ After a repair, selection is recomputed from the full PR diff. Verified applicat
 
 The Markdown report is the readable summary. Its JSON audit shares repeated evidence and records inventory differences without dropping files or findings. See [audit reports and the lossless reader](docs/audit-reports.md).
 
+## PR risk level
+
+The optional [risk assessor](skills/marc-crew-risk/SKILL.md) rates each PR **low**, **medium** or **high**. Picture the codebase as a tree: a **leaf** is isolated or feature-gated code, a **branch** changes existing behavior in one area, and the **trunk** is code many things stand on, such as entry points, shared state, infrastructure and public contracts. The rating is the worst of three things:
+
+- **Tree position:** leaf is low, branch is medium, trunk is high.
+- **Reversibility:** a change a revert cannot undo, such as a data migration, destructive operation or external side effect, is high. Default-off feature gating is the only mitigation that lowers a rating.
+- **Sensitive areas:** auth, privacy, secrets, money and stored-data schema set a high floor; dependencies, infrastructure, CI, prompts, concurrency and UI behavior set a medium floor.
+
+Tests and screenshots never lower the rating, because the review gates already judge proof. Low needs positive evidence. Anything that cannot be established rates at least medium.
+
+A fresh, independent session produces the rating, so the Captain or implementer cannot rate its own PR low. Enable it with `"riskAssessment": 1` in the consumer policy. Optionally list `riskTrunkPatterns`, paths whose changes must rate high. It is off by default.
+
+For now the rating only hardens decisions: high risk forces full review, and a missing, stale or inconsistent rating holds the PR. The intended next step is for medium to keep current merge rules, low to soften them and high to harden them. No level relaxes a gate yet. See the [design and research notes](docs/work/20260928-risk-assessment-work.md).
+
 ## Crew models and reasoning
 
 By default, crew members use the Captain's model and reasoning settings; no model configuration is needed. You can optionally set crew-wide defaults or per-member overrides in the consumer's `.marc/config.json`. The model and reasoning level must be available in your harness. See the [optional JSON configuration](docs/configuration.md#optional-crew-model-overrides).

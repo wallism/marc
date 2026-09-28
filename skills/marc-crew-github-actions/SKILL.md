@@ -7,7 +7,7 @@ description: Independently review GitHub Actions workflows and affected jobs as 
 
 Basic workflow trigger, job dependency, permission and untrusted-input review; excludes exhaustive action implementation, runner infrastructure and cloud IAM assurance.
 
-Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [evidence contract](../marc-crew-captain/references/evidence.md), assigned frozen capture and trusted consumer guidance.
+Read the [versioned contract](crew.json), [review guide](references/review.md), Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), assigned frozen capture and trusted consumer guidance.
 
 - Trace event, source revision and job dependencies into the required result.
 - Inspect token and secret boundaries, untrusted inputs and action provenance.

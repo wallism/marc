@@ -1,8 +1,38 @@
 # Shared controller improvements
 
+## 2026-09-28 — Opt-in risk rating evidence
+
+With `policy.riskAssessment: 1`, packets lead with a `risk` brief, assembly stores one immutable top-level `risk` result from its own session, and `decide` holds a missing, stale, internally inconsistent or non-independent rating, a high rating on a simple route, low risk beside routing risks, and a non-high rating when a `riskTrunkPatterns` path changed. Reports and stages show the rating. No level relaxes a gate; disabled consumers are unchanged. See `risk.cjs` and the [work log](../../docs/work/20260928-risk-assessment-work.md).
+
 ## 2026-09-27 — Approval records without report rewrites
 
 PR #14 exposed a dead end when human approval followed a published held report. Add explicit `record-approval` to append an idempotent PR-description audit entry while preserving prose, intent and HEAD. External receipts verify immutable reports separately from later approval and independently resolved gates. Preserve external authority, exact scope, source/base/policy/intent, report bytes, CI and final revocation/race checks. Synthetic controller regressions cover approval before/after publication, legacy receipt adoption, unchanged history, missing/altered public entries and revoked authority. Activation still requires a trusted bundle update; local tests do not activate this process in consumers.
+
+## 2026-09-27 — Brief parts and warm-start dispatch guidance
+
+The Claude Code PR16 run showed a host read cap (about 25k tokens) forcing a truncated first read, and eight simultaneous reviewers each writing the same ~45.8k-token system prefix to cache. Briefs are now also written as checksummed ordered parts of at most 48 KiB that concatenate to the exact brief, with all but the last part shared by every gate. The handoff records the part count and a warm-start dispatch instruction. Size hints now assume about two bytes per token. Live effects are unmeasured. See the [work log](../../docs/work/20260927-token-efficiency-work.md).
+
+## 2026-09-27 — Brief size hints and core-gate eval corpora
+
+The fresh E6–E9 PR16 assessment showed reviewers paging a ~88KB brief through capped tool output (four reads, each resending the context). Every brief now states, in its shared prefix, the largest brief size in KiB with an instruction to read it in one call; prefixes stay byte-identical. The eval validator accepts core-gate corpora without specialist selections and declared source languages; existing C# rules are unchanged. A correctness corpus adds the PR16 legacy-report defect with a clean counterpart. Live effects are unmeasured. See the [work log](../../docs/work/20260927-token-efficiency-work.md).
+
+## 2026-09-27 — One-read reviewer briefs and weighted measurement
+
+E6–E9: render one checksummed Markdown brief per gate that inlines the common contract, gate skill, project guidance, applicable dependency contract, identities, CI facts, one-line scope and the text diff within a 96 KiB budget, naming any file left out. Specialists get a technology focus list that never narrows scope. Every brief shares a byte-identical, digest-recorded prefix for host prompt caches. The handoff and session status list each gate's brief, output and selection role. Usage reports mean context per call and manifest-weighted input-equivalent tokens, null without declared weights. Gates, routes, sessions and authority are unchanged; live reviewer and cache effects are unmeasured. See the [work log](../../docs/work/20260927-token-efficiency-work.md).
+
+## 2026-09-27 — Remove E4 and retain E5 measurement
+
+Restore separate correctness and intent sessions, original intent-only refresh and the original simple-route rules after the owner rejected E4. Keep E1–E3 and E5 phase/session measurement unchanged. The fresh comparison showed higher overall input, output and elapsed time; it did not justify the proposed gate changes. Historical experiment results remain recorded; no trusted policy was activated.
+
+## 2026-09-27 — Combined intent policy and phase measurement
+
+**Withdrawn:** E4 review-policy changes described in this entry were removed at the owner's request after the fresh comparison. E5 measurement remains; see the removal entry above.
+
+Add opt-in correctness/intent session validation, comprehensive simple-review coverage and precise report-presentation routing. Preserve human intent-repair approval and invalidate the whole combined session after intent refresh. Aggregate deduplicated exact-thread/turn host usage by role/phase, including explicit missing telemetry, settings, retries and elapsed time. See [contracts](../../docs/assessment-measurement.md). Proposed self-review policy is not trusted activation.
+
+## 2026-09-27 — Compact assessment orchestration and relevant packets
+
+Reduce repeated Captain collection/assembly calls with a resumable deterministic session operation, bounded waits, strict hosted artifact inspection and compact external checkpoints. Bind neutral per-gate packets to complete diffs, immutable identities and trusted instruction hashes. Scope declaration discovery to changed hunks, distinguish cross-language/member-name leads from recruitment evidence, and trace explicit imports/resources/invocations without raising limits. Normalize deduplicated Codex usage with missing telemetry explicit. Focused tests cover interruption, drift, CI states, independent sessions, preserved defects, malformed evidence and genuine indirect callers. Experimental PR15/16 replays and measurement are recorded in the [work log](../../docs/work/20260927-token-efficiency-work.md); local code is not trusted activation. Existing approval, lock, budget, gate and merge rules remain mandatory.
 
 ## 2026-09-27 — Optional companions and static intent assessment
 

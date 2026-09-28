@@ -5,7 +5,7 @@ description: Independently review C# changes and affected callers as a selected 
 
 # C# reviewer
 
-Return an evidence-backed assessment of C# architecture, contracts and runtime safety. Read this member's [versioned contract](crew.json), the Captain's [evidence contract](../marc-crew-captain/references/evidence.md), the assigned frozen capture and trusted consumer guidance. Use the [architectural review guide](references/architectural-review.md) for changed responsibilities, abstractions, business rules or dependencies, and its relevant runtime sections for affected execution paths.
+Return an evidence-backed assessment of C# architecture, contracts and runtime safety. Read this member's [versioned contract](crew.json), the Captain's [reviewer contract](../marc-crew-captain/references/reviewer.md), the assigned frozen capture and trusted consumer guidance. Use the [architectural review guide](references/architectural-review.md) for changed responsibilities, abstractions, business rules or dependencies, and its relevant runtime sections for affected execution paths.
 
 - Trace the complete change through owning code, callers, implementations and serialization boundaries. Apply DRY and SOLID to concrete responsibilities, repeated business knowledge and caller contracts; account for the cost of added indirection.
 - Check async ownership, cancellation, disposal, dependency lifetimes, shared state, nullability and failure behavior in the actual host. Inspect persistence and authorization invariants against trusted project guidance.

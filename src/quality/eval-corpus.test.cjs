@@ -7,14 +7,15 @@ const { validateCorpus, validateRules, corpora } = require('./eval-corpus.cjs');
 
 const REPO = path.resolve(__dirname, '../..');
 const CSHARP = path.join(REPO, 'evals/marc-crew-csharp');
+const CORRECTNESS = path.join(REPO, 'evals/marc-crew-correctness');
 
-function copy(t) {
+function copy(t, source = CSHARP) {
   const parent = process.env.MARC_TEST_ARTIFACTS || os.tmpdir();
   fs.mkdirSync(parent, { recursive: true });
   const root = fs.mkdtempSync(path.join(parent, 'evals-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  const member = path.join(root, 'marc-crew-csharp');
-  fs.cpSync(CSHARP, member, { recursive: true });
+  const member = path.join(root, path.basename(source));
+  fs.cpSync(source, member, { recursive: true });
   return member;
 }
 function edit(member, relative, mutate) {
@@ -137,4 +138,25 @@ test('the corpus index cannot drift from its cases', t => {
   const member = copy(t);
   edit(member, 'corpus.json', document => { document.cases[0].title = 'A title nobody maintained'; });
   assert.throws(() => validateCorpus(member), /title does not match the corpus manifest/);
+});
+
+test('core-gate corpora need no specialist selection and check their declared languages', t => {
+  const member = copy(t, CORRECTNESS);
+  const result = validateCorpus(member);
+  assert.deepEqual(result.classes, { 'clean-alternative': 1 });
+  edit(member, 'cases/legacy-report-approval-merge/case.json', document => {
+    document.capture.selection = { memberId: 'correctness', memberVersion: '1.0.0', memberHash: 'a'.repeat(64), selectionHash: 'b'.repeat(64) };
+  });
+  assert.throws(() => validateCorpus(member), /core-gate case has no specialist selection/);
+  const other = copy(t, CORRECTNESS);
+  edit(other, 'corpus.json', document => { document.sourceExtensions = ['.py']; });
+  assert.throws(() => validateCorpus(other), /needs at least one \.py source file/);
+  edit(other, 'corpus.json', document => { document.sourceExtensions = ['py']; });
+  assert.throws(() => validateCorpus(other), /sourceExtensions must list file extensions/);
+});
+
+test('crew corpora still require a captured specialist selection', t => {
+  const member = copy(t);
+  edit(member, 'cases/cohesive-growth/case.json', document => { delete document.capture.selection; });
+  assert.throws(() => validateCorpus(member), /captured selection names another member/);
 });

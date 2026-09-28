@@ -134,8 +134,9 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
     [...affected].some(f => /(^|\/)(wwwroot|ClientApp)\/|\.(jsx|tsx)$/i.test(f));
   reasons.push(`Captured ${files.length} changed and ${affected.size - files.length} referenced files; independent behavioral caller review remains required.`);
   return { files: [...affected].sort(), changedFiles: [...files].sort(), references: discovery.references,
+    lexicalReferences: discovery.lexicalReferences,
     technologies: [...technologies].sort(), reasons: unique(reasons), holds: unique(holds),
     uncertain: uncertain || shared, incomplete: discovery.incomplete, requiresBrowser,
     ...(scopedDependencies.size || discovery.incomplete ? { requiresFull: true } : {}) };
 }
-module.exports = { validateCrewConfig, validateMember, loadCatalogue, selectCrew, collectImpact };
+module.exports = { validateCrewConfig, validateMember, loadCatalogue, selectCrew, collectImpact, fileTechnologies };

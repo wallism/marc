@@ -27,6 +27,8 @@ test('self-review resolves automatic mode with otherwise portable standard defau
   assert.equal(result.policy.maxChangedLines, 3000);
   assert.equal(result.policy.maxRepairCycles, 2);
   assert.deepEqual(result.policy.simpleRoute, { recommendedMaxFiles: 5, recommendedMaxChangedLines: 200 });
+  assert.equal(result.policy.riskAssessment, 1);
+  assert.equal(result.policy.riskTrunkPatterns, undefined);
   assert.ok(result.stateDirectory.startsWith(path.join(os.homedir(), '.marc', 'state') + path.sep));
   assert.ok(result.artifactRoot.startsWith(path.join(os.tmpdir(), 'marc') + path.sep));
   assert.equal(result.runLock, path.join(result.stateDirectory, 'run.lock'));
