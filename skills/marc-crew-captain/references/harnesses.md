@@ -24,9 +24,7 @@ Where a host caps a single read below the brief size (Claude Code's Read stops n
 
 ## Dispatch
 
-Warm-start: start the first session alone (the [risk assessor](../../marc-crew-risk/SKILL.md) when trusted policy enables `riskAssessment`, otherwise the first required read-only reviewer), then every remaining reviewer together once its first model call has completed, up to the host's available slots. Caches are written when a request completes, so sessions started at the same moment cannot share even an identical system prompt. Launch every reviewer the same way (in Claude Code, all as background agents): sessions launched differently have different prompts and share no cache. Then wait once for all of them with the host's blocking wait or completion notifications rather than polling, and start remaining gates in fresh sessions as slots free. A capacity or tool limit means waiting for a slot or running fresh reviewers serially, never skipping a gate or reusing another reviewer's conversation. Serialize shared browser/session access; a required browser gate still gets its own agent.
-
-Measured basis: in the Claude Code PR16 run all eight simultaneously started reviewers each wrote about 45.8k tokens of the same prefix. In the rerun, a background warm-up reviewer gave no cache reads to seven foreground reviewers (their system prompts differ by about 3k tokens), while a later background agent read 33,912 tokens from cache on its first call.
+Warm-start: start the first session alone (the [risk assessor](../../marc-crew-risk/SKILL.md) when trusted policy enables `riskAssessment`, otherwise the first required read-only reviewer), then every remaining reviewer together once its first model call has completed, up to the host's available slots. Caches are written when a request completes, so sessions started at the same moment cannot share even an identical system prompt ([measured basis](../../../docs/work/20260927-token-efficiency-work.md)). Launch every reviewer the same way (in Claude Code, all as background agents): sessions launched differently have different prompts and share no cache. Then wait once for all of them with the host's blocking wait or completion notifications rather than polling, and start remaining gates in fresh sessions as slots free. A capacity or tool limit means waiting for a slot or running fresh reviewers serially, never skipping a gate or reusing another reviewer's conversation. Serialize shared browser/session access; a required browser gate still gets its own agent.
 
 Keep independent reviews free of other reviewers' conclusions until each has returned its own verdict. Each agent writes only its assigned external gate JSON and returns a terse verdict, blocking findings and artifact path; it does not write the shared evidence JSON or PR files. MARC validates the captured identities, reads these compact results and consults detailed artifacts only to resolve findings or conflicts. Do not paste exploration transcripts or bulk logs into the Captain context.
 
@@ -52,19 +50,4 @@ Claude Code keeps per-message `usage` for each subagent in its transcript, obser
 
 Consumption is cost and capacity visibility, not evidence quality. It never becomes a gate, threshold, budget or review criterion, and a large or small count neither supports nor undermines a verdict. A malformed recorded count is rejected; an absent one is reported as not exposed. Reports show per-session and total counts rounded for reading, with exact values in the adjacent JSON. The Captain's own coordinating session is still running when the report is written, so it is excluded from the total; report it separately in chat if the host exposes it.
 
-## Verification and evidence limits
-
-Local Node regressions exercise default Codex installation, additive Claude installation, shared Cursor paths, preservation/replacement, pin rejection, rollback and tracked instruction digest changes. They do not launch models or prove skill discovery in a live harness.
-
-When a live harness smoke check is explicitly authorized, use a synthetic pinned consumer in report-only mode:
-
-1. Record harness version/mode and installer command. Confirm the Captain is discoverable (for example `/marc-crew-captain` in Claude Code); inspect duplicate discovery if multiple host directories exist.
-2. Invoke only an installation check: verify the bundle and read the canonical Captain and a sibling reference. Confirm paths and pin; do not process a real PR.
-3. Ask for two fresh read-only synthetic reviews with different bounded inputs. Retain actual Captain/reviewer identities, separate results and evidence that neither reviewer inherited the other's conversation. Verify unavailable capabilities produce a hold.
-4. Record discovery, canonical loading and independent-session results separately. No live merge, hosted CI, model quality claim or automatic authority follows from this smoke check.
-
-Live Codex, Claude Code and Cursor smoke results are not claimed by this change. Required operational capabilities must be checked in the installed harness version/mode before a real run.
-
-## Official references
-
-Checked 2026-09-13: [Claude Code skills](https://code.claude.com/docs/en/skills), [Claude Code subagents](https://code.claude.com/docs/en/sub-agents), [Cursor skills](https://cursor.com/docs/skills), [Cursor subagents](https://cursor.com/docs/subagents). These document discovery and context isolation; actual MARC handoff and identity compatibility still requires the checks above.
+Before a real run, check the required operational capabilities in the installed harness version and mode; local installer tests do not prove live discovery or independent sessions. See the [live harness smoke check](../../../docs/installation.md#live-harness-smoke-check).
