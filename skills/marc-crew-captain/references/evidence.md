@@ -1,8 +1,10 @@
 # Gate evidence contract, version 1
 
+Captain-side evidence rules. Reviewers use the concise [independent reviewer contract](reviewer.md), which owns the gate result schema and verdict rules; ordinary reviewers need not load this file.
+
 ## Explicit PR intent
 
-New captures include controller-owned `intent` with schema, status, normalized paragraph, entries and hash. Follow the [static intent contract](intent.md) for the conditional `gates.intent` result on both routes, human-approved repair boundary and intent-only refresh command. Capture fields are not reviewer-editable. Confidence is qualitative and never overrides a finding. Reports put a succinct current intent assessment and required human action near the top; stages retain the complete captured intent and gate result in the audit. Prior report-only ancestry retained by refresh is evidence, not permission to modify historical reports or reuse changed source.
+New captures include controller-owned `intent` with schema, status, normalized paragraph, entries and hash; capture fields are not reviewer-editable. The [static intent contract](intent.md) owns the conditional `gates.intent` result, the human-approved repair boundary and the intent-only refresh command. Confidence is qualitative and never overrides a finding. Reports put a succinct current intent assessment and required human action near the top; stages retain the complete captured intent and gate result in the audit.
 
 ## Impact scope
 
@@ -10,9 +12,11 @@ All reviewers must apply the shared [language-specific impact guidance](language
 
 New captures distinguish `crew.impact.changedFiles` from the combined `files` inventory. Each unchanged file has a `references` entry with its originating path, symbol or module/resource, matching line, immutable revision and relationship kind. These are lexical leads, not semantic proof. Area mappings add expertise but are not substituted for file-level reference evidence. `incomplete` and its holds report search limits or unavailable source; they require resolution and recapture before approval, without recruiting every specialist merely because a search stopped. Changed shared governance and unclassified behavioral scope retain broad selection.
 
-Reviewers must read the complete diff and owning code, identify body-only changes with unchanged names/signatures, and trace relevant callers upward and dependencies downward through interfaces, runtime wiring and data/provisioning contracts. Continue while behavior can propagate; stop a chain only with a concrete unchanged boundary or demonstrated irrelevance. Tests, documentation and startup registrations may supply evidence but their filenames do not make everything mentioning them affected. Record relevant additional paths and the source relationship, not exploration logs. Missing expertise or unresolved coverage blocks; never assume the captured list is exhaustive or edit capture-owned fields to add approval.
+Reviewers trace scope under the [reviewer contract](reviewer.md) and language guidance. Missing expertise or unresolved coverage blocks; never assume the captured list is exhaustive or edit capture-owned fields to add approval.
 
-Sensitive-path approval is separate operator input, never a reviewer/evidence assertion. See the [operator approval contract](../../../docs/operator-approval.md) for the exact repository/PR/source/base/policy/path binding and CLI channel. Decisions may include `humanApproval`; new report evidence and stages retain the record and its SHA-256 in `humanApprovalAudit` and the stage decision. These copies are audit only: supply the same authorized external record again at merge. Other gates remain mandatory. Historical reports keep their bytes and never become approval inputs.
+## Capture, approval and execution records
+
+Sensitive-path approval is separate operator input under the [operator approval contract](../../../docs/operator-approval.md), never a reviewer/evidence assertion. Decisions may include `humanApproval`; new report evidence and stages retain the record and its SHA-256 in `humanApprovalAudit` and the stage decision. These copies are audit only: supply the same authorized external record again at merge.
 
 New captures include `agentExecutionSchema: 1` and an initially empty `repairExecutions` array. The Captain records each session's `execution` using the [harness contract](harnesses.md#model-selection-at-dispatch); gate and routing execution records stay attached to their immutable review identities. Repair execution history stays with the cumulative ledger and is restored on recapture. The controller checks selections against trusted configuration and rejects missing application evidence or observed substitutions. Each record may also carry the session's observed `usage` token counts from the host, following [token consumption](harnesses.md#token-consumption); the controller validates the shape of a recorded count and never gates on the amount or its absence. These are host-record attestations, not independent model telemetry. New `marc-v3` reports retain these tables within assessment stages; existing `marc-v2`, `marc-v1` and legacy rendering remains unchanged.
 
@@ -24,33 +28,21 @@ The metric uses explicit Git rename detection at 50% similarity. Unchanged moves
 
 The consumer policy selected by `.marc/config.json`'s `policy` field sets the inclusive `maxChangedLines` and `maxFiles` limits. Supplied policies default to `"maxChangedLines": 3000` and `"maxFiles": 50`, permitting up to 3,000 counted additions/deletions across 50 counted paths; these are configurable policy values, not hard-coded runtime ceilings. Existing consumer values are not overwritten by tool upgrades. `simpleRoute.recommendedMaxChangedLines` and `recommendedMaxFiles` use the same exclusions and remain separate advisory guides requiring a rationale above either. Publish policy changes through the consumer's trusted configuration workflow. Adopting the new tool version or changing policy requires fresh capture/review; historical report counts and cumulative budgets are not rewritten.
 
-For manifest classification and dependency-only security results, load the [dependency evidence contract](dependency-evidence.md). Ordinary reviewers use the concise [independent reviewer contract](reviewer.md); this document retains Captain coordination and publication rules.
+For manifest classification and dependency-only security results, load the [dependency evidence contract](dependency-evidence.md).
 
-Each independent reviewer fills only its named `gates` entry:
+## Crew and gate results
+
 When `crew` is configured, the controller captures a `crew` record containing the tool commit, immutable source/base/policy identity, inspected impact, selected and omitted member IDs, versions, content hashes, reasons and `selectionHash`. The Captain cannot edit these fields: operational decisions recompute them from both Git trees and trusted configuration. Core Captain/gate/repair skill versions are the full bundle commit; optional specialists additionally have semantic versions. All tracked skill/reference bytes participate in the policy digest.
 
-Selected specialist results use `gates["crew:<id>"]` and the standard fields below plus `memberVersion`, `memberHash` (the selected `contentHash`) and `selectionHash`. Missing, incompatible or unavailable required expertise holds. `coordinator` records the actual Captain session and `repairReviewers` records cumulative repair-session IDs from the external ledger. Required reviewers, including browser and selected specialists, must have distinct sessions, separate from Captain/router/repair sessions. No result may erase or outvote another blocking result. These IDs are audit assertions verified by the Captain against host session receipts; JSON is not cryptographic attestation or proof that a host sandbox exists.
+Selected specialist results use `gates["crew:<id>"]` with the standard gate fields plus `memberVersion`, `memberHash` (the selected `contentHash`) and `selectionHash`. Missing, incompatible or unavailable required expertise holds. `coordinator` records the actual Captain session and `repairReviewers` records cumulative repair-session IDs from the external ledger. Required reviewers, including browser and selected specialists, must have distinct sessions, separate from Captain/router/repair sessions. These IDs are audit assertions verified by the Captain against host session receipts; JSON is not cryptographic attestation or proof that a host sandbox exists.
 
-The reviewer saves that entry as a standalone JSON artifact at its assigned external path. MARC checks the identity fields and then assembles it into the shared `gates` document; reviewers do not concurrently edit that document. `reviewer` records the actual fresh-agent session identifier, not a made-up role label. Return the artifact path and a terse summary to avoid copying investigation logs into the parent context.
+Each reviewer saves only its gate entry, in the [reviewer contract's](reviewer.md) schema, at its assigned external path. MARC checks the identity fields and assembles it into the shared `gates` document; reviewers never edit that document concurrently.
 
-```json
-{
-  "verdict": "blocked",
-  "sourceHead": "copy captured full SHA",
-  "base": "copy captured full SHA",
-  "policyHash": "copy captured policy digest",
-  "reviewer": "actual independent session identifier",
-  "summary": "One or two sentences stating the outcome and evidence limits.",
-  "evidence": ["repo/path.cs:123 and the observed test command/result or artifact URL"],
-  "findings": []
-}
-```
-
-Verdicts: `pass`, `repair`, `human-required`, `blocked`. A finding has `severity` (`blocking` or `advisory`), `file`, `line`, `detail`, `evidence`, and `recommendedChange`. Cite observed behavior and the real owning seam. A pass has no blocking findings, nonempty evidence and a real reviewer identity. Unsupported speculation is not a finding. Missing access/coverage is blocked. Critical privacy/security/money issues stay explicit even when snapshots pass.
-
-`browser` uses the same gate structure when needed. A reviewer can set `requiresBrowser: true`; the orchestrator must then supply browser evidence. Do not assert runtime behavior from source alone.
+`browser` uses the same gate structure. When a reviewer sets `requiresBrowser: true`, the Captain must supply browser evidence; source alone cannot assert runtime behavior.
 
 Browser evidence also references the external runtime record: captured source/build provenance, URL and data environment, listener reuse or isolated startup attempts, readiness, effective persona/permissions, chosen tool and capability fallbacks, expected/observed checkpoints, sanitized artifacts and process cleanup. Follow [browser-runtime.md](browser-runtime.md). A missing listener triggers provisioning discovery, not an immediate blocked verdict. An explicit retry records fresh observations separately without rewriting historical reports or reusing gates against changed identities.
+
+## Reports
 
 Reports are append-only evidence artifacts owned by this workflow, outside `docs` because their names and structured content are machine-generated per commit. The work document under `docs/work` is their indexed entry point. Never include credentials, access tokens, raw resumes, candidate data, secret matches or unrestricted command logs; recorded model token counts are consumption figures, not secrets. Preserve sanitized facts and safe source/artifact references. CI artifacts expire; preserve the important counts, scanner summaries and findings in the gate evidence rather than relying exclusively on URLs.
 
@@ -63,6 +55,8 @@ The controller adds `reportCreatedAt` when first preparing publication, using a 
 New preparations persist `reportFormat: "marc-v3"`, which renders chronological assessment stages under the MARC heading. Missing `reportFormat` preserves the former Chief of Quality heading for both SHA-named and timestamped historical reports; unknown formats fail closed. Preparing an already timestamped report preserves its existing format, including `marc-v1` and `marc-v2`. Never change the marker on previously published evidence. Byte verification of historical reports does not waive the current policy digest or authorize a merge after a tool change.
 
 New preparations also persist `auditFormat: "marc-audit-v1"`. Published JSON uses a lossless envelope that shares identical evidence and represents near-identical inventories as array differences; use `expandAudit` from `src/quality/audit.cjs` before reading its evidence fields. The readable Markdown, expanded working evidence and stage journal retain their existing forms. Previously prepared evidence without this marker keeps its original audit bytes. See [audit encoding and reader](../../../docs/audit-reports.md).
+
+Evidence without `reportCreatedAt` uses legacy SHA filenames and its original Markdown bytes for verification. Preserve those historical files. Only new regular-file additions in the owning PR's exact legacy or valid timestamp namespace are metadata; edits/deletions, foreign PR names, malformed dates and symlinks are still reviewed changes. A minute collision stops rather than overwriting either file. Recheck the completed-assessment ledger; only an actually new assessment may be prepared in a later minute with a fresh publication timestamp.
 
 ## Assessment stages
 
@@ -85,9 +79,7 @@ Observed repair/CI events use `checkpoint <evidence.json> <event.json>`. Use pre
 
 Each later report retains earlier crew/results alongside the new review, allowing an initial narrow selection and subsequent broad selection to be compared honestly. Earlier missing stages are not reconstructed automatically. Later report CI and merge outcomes remain external, and appear only if another assessment requires a new report. Published report bytes stay unchanged; the journal and historical `stages` never authorize a merge of the current candidate.
 
-Evidence without `reportCreatedAt` uses legacy SHA filenames and its original Markdown bytes for verification. Preserve those historical files. Only new regular-file additions in the owning PR's exact legacy or valid timestamp namespace are metadata; edits/deletions, foreign PR names, malformed dates and symlinks are still reviewed changes. A minute collision stops rather than overwriting either file. Recheck the completed-assessment ledger; only an actually new assessment may be prepared in a later minute with a fresh publication timestamp.
-
-On completion, render the generated Markdown body in chat and link to the Markdown file's normal GitHub `blob/<report-head>/...` view, pinned to the verified report commit. Keep subsequent report CI and merge outcomes outside that immutable report body. If the response cannot accommodate the full body, include the decision and gate table plus the rendered link. Historical SHA-named reports can use the same rendered-link format; no rename or new report commit is needed merely to improve presentation.
+The Captain's chat presentation rules are in its [SKILL.md](../SKILL.md#communication). Historical SHA-named reports use the same rendered-link format; no rename or new report commit is needed merely to improve presentation.
 
 ## CI recovery investigation
 
@@ -105,9 +97,9 @@ On completion, render the generated Markdown body in chat and link to the Markdo
 }
 ```
 
-Allowed reasons are `infrastructure` and `artifacts-unavailable`. The latter requires successful required jobs, unavailable `test-results` or `quality-scans` artifacts and no retained usable evidence. Cancellation/timeouts/failures require investigation; never set `testOrScanFailure: false` without checking. Missing/duplicated jobs are held. CI capture records `runId`, `runAttempt` and `conclusion` for binding; do not edit capture-owned fields.
+Allowed reasons are `infrastructure` and `artifacts-unavailable`, under the conditions in [guarded actions](guarded-actions.md#ci-recovery-and-report-ci-reuse); never set `testOrScanFailure: false` without checking. CI capture records `runId`, `runAttempt` and `conclusion` for binding.
 
-The immutable request record stores PR/head/base/policy, timestamp, CI state, action and investigation before the POST. One recovery request total per PR/head survives new run directories and policy changes. The separate accepted receipt proves only API acceptance. After any request, wait and recapture CI; verify the exact run SHA and inspect the actual results/artifacts. The recovery command never modifies a capture, approves a review or merges. To recover a final report head, capture that current head separately; retain the original source assessment unchanged.
+The immutable request record stores PR/head/base/policy, timestamp, CI state, action and investigation before the POST; the separate accepted receipt proves only API acceptance. After any request, wait and recapture CI, verify the exact run SHA and inspect the actual results/artifacts. The recovery command never modifies a capture, approves a review or merges. To recover a final report head, capture that current head separately; retain the original source assessment unchanged.
 
 ## Simplicity route
 

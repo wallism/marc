@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-29 — One owner per Captain rule
+
+Each Captain rule now has one owning reference, with shared invariants stated once in SKILL.md. This removes a contradiction: step 5 of controller operations still said to dispatch all gates together, against the warm-start order (risk assessor or first reviewer alone, then the rest). Dispatch now follows the [harness contract](references/harnesses.md#dispatch). No gate, session, authority or budget changed.
+
 ## 2026-09-28 — Optional risk rating before review dispatch
 
 When trusted policy enables `riskAssessment`, launch the independent [risk assessor](../marc-crew-risk/SKILL.md) as the warm-start session after routing and assemble its rating first. A high rating switches a simple route to full before other reviewers start. The rating only hardens decisions; merge-rule softening remains future work. See the [work log](../../docs/work/20260928-risk-assessment-work.md).
