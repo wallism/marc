@@ -3,6 +3,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { identity } = require('./orchestration.cjs');
 const { fileTechnologies } = require('./crew.cjs');
+const { LEVELS, declaredTrunk } = require('./risk.cjs');
 const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
 const encode = value => JSON.stringify(value, null, 2) + '\n';
 // Inline budget for the text diff in each brief; larger diffs name every file left out.
@@ -131,8 +132,17 @@ function specialistFocus(e, member, bundleRoot) {
     `Above, ${touching(impact.references)} references and ${touching(impact.lexicalReferences)} lexical leads involve these technologies.`, ''];
 }
 
+function riskFocus(e, policy) {
+  const patterns = policy.riskTrunkPatterns || [], matched = declaredTrunk(e.files, policy);
+  return ['## Declared trunk', '', patterns.length ? `Trusted trunk patterns: ${patterns.map(p => '`' + p + '`').join(', ')}.` : 'No trunk patterns are declared; infer position from the code.', '',
+    ...(matched.length ? ['Changed files matching them (risk must be high):', '', ...matched.map(f => `- ${f}`)] : ['No changed file matches a declared trunk pattern.']), ''];
+}
+
+// An enabled risk assessment leads so it can be the warm-start session; an existing
+// identity-bound rating stays valid across a route change and is not repeated.
 function requiredGates(e, policy) {
-  const gates = e.routing?.route === 'simple' ? ['simple-tests'] : [...policy.reviewGates];
+  const gates = policy.riskAssessment === 1 && !e.risk?.reviewer ? ['risk'] : [];
+  gates.push(...(e.routing?.route === 'simple' ? ['simple-tests'] : policy.reviewGates));
   if (e.intent?.status === 'present') gates.push('intent');
   for (const member of e.crew?.selected || []) gates.push('crew:' + member.id);
   if (e.crew?.requiresBrowser || e.files.some(f => policy.uiPathPatterns.some(p => new RegExp(p, 'i').test(f))) ||
@@ -178,6 +188,11 @@ function buildPackets(e, context, { directory, git, artifactFacts = [], experime
       ...(member ? { memberVersion: member.version, memberHash: member.contentHash, selectionHash: e.crew.selectionHash } : {}),
       ...(gate === 'intent' ? { intentHash: e.intent.hash, method: 'static-code', additional: ['assessment', 'confidence', 'confidenceReason', 'unresolvedOutcomes'] } : {}),
       ...(gate === 'simple-tests' ? { additional: ['testDecision', 'testRationale'] } : {}) };
+    if (gate === 'risk') {
+      delete schema.verdict; schema.required = ['sourceHead', 'base', 'policyHash', 'reviewer', 'summary', 'evidence',
+        'level', 'position', 'reversibility', 'triggers', 'unknowns'];
+      Object.assign(schema, { level: LEVELS, position: ['leaf', 'branch', 'trunk'], reversibility: ['gated', 'revertible', 'one-way'] });
+    }
     const gateSkill = pointer(skill);
     const instructions = [common, gateSkill, ...(project ? [project] : []), ...(dependency ? [dependency] : [])];
     const name = gate.replace(':', '-');
@@ -186,8 +201,10 @@ function buildPackets(e, context, { directory, git, artifactFacts = [], experime
     const tail = [`## Your assignment: ${gate}`, '', `Source: ${posix(gateSkill.path)} (sha256 ${gateSkill.sha256})`, '',
       demote(absoluteLinks(fs.readFileSync(skill, 'utf8').trim(), skill)), '',
       ...(member ? ['## Specialist focus', '', ...specialistFocus(e, member, context.bundleRoot)] : []),
+      ...(gate === 'risk' ? riskFocus(e, context.policy) : []),
       '## Output', '', expansion, '', `Write only this standalone gate JSON: ${posix(output)}`, '', '```json', JSON.stringify(schema, null, 2), '```', '',
-      'Return a terse verdict, blocking findings and the output path. The controller validates the result during assembly.', ''].join('\n');
+      gate === 'risk' ? 'Return the level, a one-line reason and the output path. The controller validates the result during assembly.' :
+        'Return a terse verdict, blocking findings and the output path. The controller validates the result during assembly.', ''].join('\n');
     return { gate, name, output, schema, instructions, expansion, tail };
   });
   // Paging a truncated brief costs a full context resend per page. State the largest

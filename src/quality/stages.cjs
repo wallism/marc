@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
 const { agentTable } = require('./agent-settings.cjs');
+const { riskLine } = require('./risk.cjs');
 const digest = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 const text = value => typeof value === 'string' && value.trim().length > 0;
 const sha = value => typeof value === 'string' && /^[a-f0-9]{40}$/.test(value);
@@ -21,7 +22,7 @@ function reviewStage(e, decision) {
     routing: structuredClone(e.routing || { route: 'full' }), crew: structuredClone(e.crew || { selected: [], omitted: [] }),
     gates: structuredClone(e.gates || {}), ci: structuredClone(e.ci || {}), projectChanges: structuredClone(e.projectChanges || []),
     repairExecutions: structuredClone(e.repairExecutions || []),
-    ...(e.intent ? { intent: structuredClone(e.intent) } : {}) };
+    ...(e.intent ? { intent: structuredClone(e.intent) } : {}), ...(e.risk ? { risk: structuredClone(e.risk) } : {}) };
 }
 
 function eventStage(e, event) {
@@ -98,6 +99,7 @@ function stagesMarkdown(stages, repairCommitLinks = false) {
         (stage.decision.humanApproval ? `Human sensitive-path approval: ${clean(stage.decision.humanApproval.record.id)}; ` +
           `operator ${clean(stage.decision.humanApproval.record.approvedBy)}; SHA-256 \`${stage.decision.humanApproval.sha256}\`. ` +
           `Paths: ${stage.decision.humanApproval.record.paths.map(clean).join(', ')}. Other gates remain required.\n\n` : '') +
+        riskLine(stage.risk) +
         (stage.routing.changeKind ? `Change kind: ${clean(stage.routing.changeKind)}. ${clean(stage.routing.sizeRationale)}\n\n` : '') +
         (stage.crew.impact?.changedFiles ? `Impact: ${stage.crew.impact.changedFiles.length} changed files; ` +
           `${stage.crew.impact.files.filter(file => !stage.crew.impact.changedFiles.includes(file)).length} referenced unchanged files. ` +

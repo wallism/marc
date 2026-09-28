@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-09-28 — Optional risk rating before review dispatch
+
+When trusted policy enables `riskAssessment`, launch the independent [risk assessor](../marc-crew-risk/SKILL.md) as the warm-start session after routing and assemble its rating first. A high rating switches a simple route to full before other reviewers start. The rating only hardens decisions; merge-rule softening remains future work. See the [work log](../../docs/work/20260928-risk-assessment-work.md).
+
 ## 2026-09-27 — Warm-start dispatch and brief parts
 
 Dispatch the first reviewer alone and the rest together in the next turn, so later sessions can reuse the host's cached system/tool prefix. Give reviewers ordered brief parts, with each part's line count, when the host caps one read below the brief size; without counts, two of eight reviewers in the background-only run still paged past a complete part. Every gate and fresh session remains required. See the [harness contract](references/harnesses.md).

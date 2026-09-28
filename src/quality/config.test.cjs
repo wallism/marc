@@ -34,6 +34,14 @@ test('separate consumers resolve their own repository, base, CI and state', t =>
   assert.equal(loadConfig(a.repoRoot).agentSelections.intent.model.value, 'intent-model');
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, agents: { members: { securty: { model: 'host-model' } } } }));
   assert.throws(() => loadConfig(a.repoRoot), /Unknown agent member/);
+  fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, agents: { members: { risk: { model: 'risk-model' } } } }));
+  assert.throws(() => loadConfig(a.repoRoot), /Unknown agent member/, 'risk is a member only when enabled');
+  const policyPath = path.join(a.repoRoot, '.marc/policy.json'), policy = JSON.parse(fs.readFileSync(policyPath));
+  fs.writeFileSync(policyPath, JSON.stringify({ ...policy, riskAssessment: 1, riskTrunkPatterns: ['^src/core/'] }));
+  assert.equal(loadConfig(a.repoRoot).agentSelections.risk.model.value, 'risk-model');
+  fs.writeFileSync(policyPath, JSON.stringify({ ...policy, riskAssessment: true }));
+  assert.throws(() => loadConfig(a.repoRoot), /riskAssessment must be 1/);
+  fs.writeFileSync(policyPath, JSON.stringify(policy));
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, autoUpdate: false }));
   assert.equal(loadConfig(a.repoRoot).autoUpdate, false);
   fs.writeFileSync(settingsPath, JSON.stringify({ ...settings, autoUpdate: true }));

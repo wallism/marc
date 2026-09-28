@@ -12,7 +12,9 @@ updates off, inherited Captain model/reasoning,
 50 files, 3,000 changed lines, two repair cycles, and simple-route guides of five
 files and 200 lines. The configured source controls counting semantics; the size
 exclusions in a candidate are not effective until that change reaches trusted
-`master`. Automatic mode permits guarded merges only after all applicable
+`master`. The owner approved the independent risk rating (`riskAssessment: 1`)
+on 2026-09-28 with no declared trunk patterns; it only hardens decisions.
+Automatic mode permits guarded merges only after all applicable
 reviews, CI, sensitive-path approvals and integrity checks pass. Deployment
 remains separate; no schedule is configured here.
 
