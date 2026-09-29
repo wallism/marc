@@ -38,4 +38,4 @@ Infrastructure belongs in scope through a concrete changed provisioning/configur
 
 Common native comments and ordinary strings are filtered; interpolation, embedded SQL, generated declarations and unusual/nested literal syntax can still hide real relationships or produce misleading leads. Inspect these when changed behavior reaches them. Scratch archives/binary blobs do not seed textual discovery. Require source-bound readable evidence; absence of lexical leads is not a clean review.
 
-Discovery budgets and unreadable-source holds remain enforced. Missing expertise requires trusted configuration and recapture; reviewers cannot edit frozen inventories or waive holds. This shared Captain clarification leaves member manifests/applicability and consumer pins unchanged; adoption changes bundle/policy identity and requires fresh evidence.
+Discovery budgets and unreadable-source holds remain enforced. Missing expertise requires trusted configuration and recapture; reviewers cannot edit frozen inventories or waive holds.
