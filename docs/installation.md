@@ -92,6 +92,23 @@ Use your existing maintenance workflow rather than adopting another scheduler me
 
 For frequent checks, run the [reusable upgrade PR command](upgrades.md) from your own scheduler. It creates one dedicated branch and PR, then appends newer verified upgrades to that same open PR. Repeating a check with no newer pin makes no commit or push. New source commits require fresh evidence and applicable exact human approval; the command respects Captain's active run lock but does not freeze an unacted PR between runs. Daily checks favor freshness; weekly checks reduce churn. Scheduling prepares upgrades; it cannot guarantee the latest version is installed while approval and merge gates remain outstanding.
 
+## Live harness smoke check
+
+Local Node regressions exercise default Codex installation, additive Claude installation, shared Cursor paths, preservation/replacement, pin rejection, rollback and tracked instruction digest changes. They do not launch models or prove skill discovery in a live harness.
+
+When a live harness smoke check is explicitly authorized, use a synthetic pinned consumer in report-only mode:
+
+1. Record harness version/mode and installer command. Confirm the Captain is discoverable (for example `/marc-crew-captain` in Claude Code); inspect duplicate discovery if multiple host directories exist.
+2. Invoke only an installation check: verify the bundle and read the canonical Captain and a sibling reference. Confirm paths and pin; do not process a real PR.
+3. Ask for two fresh read-only synthetic reviews with different bounded inputs. Retain actual Captain/reviewer identities, separate results and evidence that neither reviewer inherited the other's conversation. Verify unavailable capabilities produce a hold.
+4. Record discovery, canonical loading and independent-session results separately. No live merge, hosted CI, model quality claim or automatic authority follows from this smoke check.
+
+Required operational capabilities must be checked in the installed harness version/mode before a real run.
+
+### Official references
+
+Checked 2026-09-13: [Claude Code skills](https://code.claude.com/docs/en/skills), [Claude Code subagents](https://code.claude.com/docs/en/sub-agents), [Cursor skills](https://cursor.com/docs/skills), [Cursor subagents](https://cursor.com/docs/subagents). These document discovery and context isolation; actual MARC handoff and identity compatibility still requires the checks above.
+
 ## Skill naming
 
 System skill directories and frontmatter names use `marc-crew-<name>`, including `marc-crew-captain` and `marc-crew-creator`. Specialist manifest IDs and versions remain stable (for example, `csharp`); the controller resolves them under `skills/marc-crew-<id>`. Optional helpers use `marc-companion-<name>`, have no review manifest and are excluded from default installation and automatic crew forwarding. Install them only when selected; see [PR intent](pr-intent.md).
