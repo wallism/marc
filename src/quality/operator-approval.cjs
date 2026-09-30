@@ -78,9 +78,9 @@ function checkOperatorApproval(capability, identity, sensitivePaths, now = new D
 function parseOperatorApproval(args) {
   const index = args.indexOf('--operator-approval');
   if (index === -1) return { args };
-  if (!['decide', 'report', 'merge', 'checkpoint'].includes(args[0]) || index !== args.length - 2 ||
+  if (!['decide', 'report', 'merge', 'checkpoint', 'record-approval'].includes(args[0]) || index !== args.length - 2 ||
       args.lastIndexOf('--operator-approval') !== index || !args[index + 1] || args[index + 1].startsWith('--'))
-    throw Error('Use one trailing --operator-approval <absolute-external-file> on decide/report/merge/checkpoint');
+    throw Error('Use one trailing --operator-approval <absolute-external-file> on decide/report/merge/checkpoint/record-approval');
   return { args: args.slice(0, index), approvalFile: args[index + 1] };
 }
 

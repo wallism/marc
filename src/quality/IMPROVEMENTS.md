@@ -4,6 +4,10 @@
 
 With `policy.riskAssessment: 1`, packets lead with a `risk` brief, assembly stores one immutable top-level `risk` result from its own session, and `decide` holds a missing, stale, internally inconsistent or non-independent rating, a high rating on a simple route, low risk beside routing risks, and a non-high rating when a `riskTrunkPatterns` path changed. Reports and stages show the rating. No level relaxes a gate; disabled consumers are unchanged. See `risk.cjs` and the [work log](../../docs/work/20260928-risk-assessment-work.md).
 
+## 2026-09-27 — Approval records without report rewrites
+
+PR #14 exposed a dead end when human approval followed a published held report. Add explicit `record-approval` to append an idempotent PR-description audit entry while preserving prose, intent and HEAD. External receipts verify immutable reports separately from later approval and independently resolved gates. Preserve external authority, exact scope, source/base/policy/intent, report bytes, CI and final revocation/race checks. Synthetic controller regressions cover approval before/after publication, legacy receipt adoption, unchanged history, missing/altered public entries and revoked authority. Activation still requires a trusted bundle update; local tests do not activate this process in consumers.
+
 ## 2026-09-27 — Brief parts and warm-start dispatch guidance
 
 The Claude Code PR16 run showed a host read cap (about 25k tokens) forcing a truncated first read, and eight simultaneous reviewers each writing the same ~45.8k-token system prefix to cache. Briefs are now also written as checksummed ordered parts of at most 48 KiB that concatenate to the exact brief, with all but the last part shared by every gate. The handoff records the part count and a warm-start dispatch instruction. Size hints now assume about two bytes per token. Live effects are unmeasured. See the [work log](../../docs/work/20260927-token-efficiency-work.md).

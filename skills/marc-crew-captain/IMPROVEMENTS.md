@@ -8,6 +8,10 @@ Each Captain rule now has one owning reference, with shared invariants stated on
 
 When trusted policy enables `riskAssessment`, launch the independent [risk assessor](../marc-crew-risk/SKILL.md) as the warm-start session after routing and assemble its rating first. A high rating switches a simple route to full before other reviewers start. The rating only hardens decisions; merge-rule softening remains future work. See the [work log](../../docs/work/20260928-risk-assessment-work.md).
 
+## 2026-09-27 — Public human approval records
+
+Record actual human approvals in each PR description with who, when, scope and reviewed identity. Resume a held report by retaining its bytes and verifying the later external approval independently; resolve only the affected governance finding and reuse valid reviews/CI. Include intent-repair approvals in the public audit trail without turning repair permission into merge authority. See [the contract](../../docs/operator-approval.md).
+
 ## 2026-09-27 — Warm-start dispatch and brief parts
 
 Dispatch the first reviewer alone and the rest together in the next turn, so later sessions can reuse the host's cached system/tool prefix. Give reviewers ordered brief parts, with each part's line count, when the host caps one read below the brief size; without counts, two of eight reviewers in the background-only run still paged past a complete part. Every gate and fresh session remains required. See the [harness contract](references/harnesses.md).
