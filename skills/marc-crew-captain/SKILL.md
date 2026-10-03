@@ -60,6 +60,8 @@ Update the configured improvements register in the same change only when an auth
 
 ## Communication
 
+For an upgrade hold, lead with the practical impact, the recommended next action and who must take it, in at most three short sentences. Put commit identities and diagnostics in linked evidence. Investigate formatting-only failures before treating them as product defects: distinguish harmless presentation changes from effects on report verification. If an explicit compatibility decision is needed, state the exact consequence the user would accept and ask once; honor approval already given for that scope. Do not present approval as sufficient when a required check will still fail. Resolve a routine compatible fix within existing authority rather than asking the user to approve a failure. Keep historical reports intact and distinguish a prepared upgrade from an activated version.
+
 For a user-triggered run or status request, always show a terse queue summary with every open PR's status/reason, including deferred and held PRs. Scheduled runs report newly discovered holds, completed reports, meaningful changes, failures or decisions needed. Only an actually empty or unchanged already-reported queue can be quiet; zero selected PRs is not an empty queue. Save the complete queue externally on every run. Give PR links and distinguish intake, independent assessment and merge approval.
 
 New reports embed every retained [assessment stage](references/evidence.md#assessment-stages). Record observed source/report/post-merge CI transitions with `checkpoint <evidence.json> <ci-event.json>`, but do not publish another report solely to record CI, rewrite prior reports or infer missing historical crew.

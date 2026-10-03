@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-10-04 — Actionable upgrade holds
+
+At the owner's request after an overly technical RoleSage upgrade hold, lead with practical impact, next action and action owner. Investigate cosmetic compatibility differences, honor existing approval and ask only for a concrete decision still needed. Distinguish an approval-only hold from a required check that needs correction; approval does not silently waive verification. Routine compatible fixes proceed within existing authority, with diagnostics linked separately.
+
 ## 2026-09-29 — One owner per Captain rule
 
 Each Captain rule now has one owning reference, with shared invariants stated once in SKILL.md. This removes a contradiction: step 5 of controller operations still said to dispatch all gates together, against the warm-start order (risk assessor or first reviewer alone, then the rest). Dispatch now follows the [harness contract](references/harnesses.md#dispatch). No gate, session, authority or budget changed.

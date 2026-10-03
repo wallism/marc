@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-10-04 — Historical report CI spacing
+
+RoleSage's existing PR #33 historical-report test exposed a space removed from the legacy `CI: pass` line by risk integration commit `1d833a96`. Restore the space without removing risk assessment or changing the current marc-v3 report path. A focused regression freezes the old CI line, verifies it without a receipt and still rejects changed verdict bytes. Historical reports and consumer tests stay intact; consumer activation remains separate from this fix.
+
 ## 2026-09-28 — Opt-in risk rating evidence
 
 With `policy.riskAssessment: 1`, packets lead with a `risk` brief, assembly stores one immutable top-level `risk` result from its own session, and `decide` holds a missing, stale, internally inconsistent or non-independent rating, a high rating on a simple route, low risk beside routing risks, and a non-high rating when a `riskTrunkPatterns` path changed. Reports and stages show the rating. No level relaxes a gate; disabled consumers are unchanged. See `risk.cjs` and the [work log](../../docs/work/20260928-risk-assessment-work.md).
