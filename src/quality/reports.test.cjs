@@ -6,6 +6,28 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const { prepareReport, reportPaths, writeReportFiles, verifyReportCommit, changedFiles, changedLines } = require('./marc.cjs');
 
+test('historical CI spacing survives verification without a receipt', t => {
+  const { reportMarkdown } = require('./marc.cjs');
+  const { root, git, e, decision } = fixture(t);
+  delete e.reportFormat;
+  e.ci = { verdict: 'pass', runUrl: 'https://example.test/run/42' };
+  const paths = reportPaths(e.pr, e.sourceHead, e.reportCreatedAt);
+  writeReportFiles(e, decision, root);
+  // Freeze the historical line independently of the renderer under test.
+  const file = path.join(root, paths[1]);
+  const published = fs.readFileSync(file, 'utf8').replace(/^CI:.*$/m,
+    'CI: pass https://example.test/run/42');
+  fs.writeFileSync(file, published);
+  git('add', '.'); git('commit', '-m', 'historical report');
+  const live = { head: { sha: git('rev-parse', 'HEAD') } };
+  assert.doesNotThrow(() => verifyReportCommit(e, live, decision, git));
+  assert.match(reportMarkdown(e, decision), /\nCI: pass https:\/\/example\.test\/run\/42\n/);
+  fs.writeFileSync(file, published.replace('CI: pass', 'CI: fail'));
+  git('add', '.'); git('commit', '-m', 'tampered report');
+  assert.throws(() => verifyReportCommit(e, { head: { sha: git('rev-parse', 'HEAD') } }, decision, git),
+    /Published report differs/);
+});
+
 test('report-only publication reuses successful current source CI without another build', t => {
   const { reportCiReuse, verifyMergeCi } = require('./marc.cjs');
   const { root, git, e, decision } = fixture(t);

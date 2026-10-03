@@ -231,7 +231,7 @@ function reportMarkdown(e, decision) {
       `Change kind: ${clean(e.routing.changeKind)}\n\n` +
       (e.routing.sizeRationale ? `Size rationale: ${clean(e.routing.sizeRationale)}\n\n` : '') : '') +
     riskLine(e.risk) +
-    `CI:${clean(e.ci?.verdict || 'blocked')} ${clean(e.ci?.runUrl || '')}\n\n` +
+    `CI: ${clean(e.ci?.verdict || 'blocked')} ${clean(e.ci?.runUrl || '')}\n\n` +
     (e.crew ? `MARC commit: \`${clean(e.crew.toolCommit)}\`\n\nCrew selection: \`${clean(e.crew.selectionHash)}\`\n\n` +
       '| Specialist | Version | Selection | Reason |\n| --- | --- | --- | --- |\n' +
       [...e.crew.selected.map(m => ({ ...m, status: 'Selected' })), ...e.crew.omitted.map(m => ({ ...m, status: 'Omitted' }))]
