@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-10-04 — Multiple npm package exceptions
+
+Allow distinct packages in one consumer lockfile to have separate, advisory-specific accepted-risk entries. Duplicate manifest/package pairs still fail closed. Expiry, patched dependencies and new advisories disable each entry independently; shared parents require every cause to be deferred and retain reasons plus the earliest deadline. An optional owner-approved rejectedFix binds a breaking remediation to its exact package/version; any different available fix remains blocking.
+
 ## 2026-10-04 — Historical report CI spacing
 
 RoleSage's existing PR #33 historical-report test exposed a space removed from the legacy `CI: pass` line by risk integration commit `1d833a96`. Restore the space without removing risk assessment or changing the current marc-v3 report path. A focused regression freezes the old CI line, verifies it without a receipt and still rejects changed verdict bytes. Historical reports and consumer tests stay intact; consumer activation remains separate from this fix.

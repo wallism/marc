@@ -133,3 +133,48 @@ test('NuGet evidence retains resolved versions for direct and transitive depende
   assert.throws(() => nugetInventory(report), /resolved version/);
   assert.throws(() => nugetInventory({ version: 1, projects: [], logs: [{ level: 'warning' }] }), /Incomplete/);
 });
+
+test('multiple package exceptions defer shared parents with the earliest deadline', () => {
+  const report = deferredReport();
+  report.vulnerabilities.second = { severity: 'high', fixAvailable: false,
+    via: [{ url: 'https://example.invalid/second' }] };
+  report.vulnerabilities.core.via.push('second');
+  const second = { ...exceptions[0], package: 'second', reviewBy: '2026-10-05',
+    reason: 'Second synthetic acceptance.', advisories: ['https://example.invalid/second'] };
+  const approved = [...exceptions, second];
+  const result = summarizeNpm(report, helpManifest, reviewTime, approved);
+  assert.equal(result.verdict, 'pass');
+  const parent = result.deferredFindings.find(f => f.package === 'core');
+  assert.equal(parent.reviewBy, '2026-10-05');
+  assert.match(parent.reason, /Synthetic acceptance/);
+  assert.match(parent.reason, /Second synthetic acceptance/);
+  for (const change of ['expired', 'patched', 'new-advisory']) {
+    const changed = structuredClone(report);
+    if (change === 'patched') changed.vulnerabilities.second.fixAvailable = true;
+    if (change === 'new-advisory') changed.vulnerabilities.second.via.push({ url: 'https://example.invalid/new' });
+    const now = change === 'expired' ? new Date('2026-10-05T00:00:00Z') : reviewTime;
+    const blocked = summarizeNpm(changed, helpManifest, now, approved);
+    assert.equal(blocked.verdict, 'fail');
+    assert.ok(blocked.findings.some(f => f.package === 'core'));
+    assert.ok(blocked.deferredFindings.some(f => f.package === 'image-size'));
+  }
+  assert.equal(summarizeNpm(report, 'other/package-lock.json', reviewTime, approved).verdict, 'fail');
+});
+
+test('an explicitly rejected breaking remediation is exact and advisory scoped', () => {
+  const report = deferredReport();
+  const rejectedFix = { name: 'synthetic-parent', version: '0.26.1', isSemVerMajor: true };
+  report.vulnerabilities['image-size'].fixAvailable = rejectedFix;
+  const approved = [{ ...exceptions[0], rejectedFix }];
+  assert.equal(summarizeNpm(report, helpManifest, reviewTime, approved).verdict, 'pass');
+  for (const fix of [true, { ...rejectedFix, version: '0.26.2' },
+    { ...rejectedFix, name: 'other' }, { ...rejectedFix, isSemVerMajor: false }]) {
+    report.vulnerabilities['image-size'].fixAvailable = fix;
+    assert.equal(summarizeNpm(report, helpManifest, reviewTime, approved).verdict, 'fail');
+  }
+  report.vulnerabilities['image-size'].fixAvailable = rejectedFix;
+  report.vulnerabilities['image-size'].via.push({ url: 'https://example.invalid/new' });
+  assert.equal(summarizeNpm(report, helpManifest, reviewTime, approved).verdict, 'fail');
+  assert.throws(() => summarizeNpm(deferredReport(), helpManifest, reviewTime,
+    [{ ...exceptions[0], rejectedFix: { ...rejectedFix, isSemVerMajor: false } }]), /Malformed/);
+});

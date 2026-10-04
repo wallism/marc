@@ -44,39 +44,53 @@ function npmSummary(report, manifest, now = new Date(), exceptions = []) {
   const original = summarize(findings); // Validate every severity before considering exceptions.
   if (!Array.isArray(exceptions)) throw Error('Malformed npm exception configuration');
   const matches = exceptions.filter(x => x.manifest === manifest);
-  if (matches.length > 1) throw Error('Duplicate npm exception for manifest');
   if (!matches.length) return original;
-  const exception = matches[0], { reviewBy } = exception;
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(reviewBy || '') || !Number.isFinite(Date.parse(reviewBy)) ||
-      !exception.package || exception.severity !== 'high' || !exception.reason?.trim() ||
-      !Array.isArray(exception.advisories) || !exception.advisories.length ||
-      exception.advisories.some(x => typeof x !== 'string' || !x.startsWith('https://')))
-    throw Error('Malformed npm exception configuration');
-  if (!(now < new Date(reviewBy + 'T00:00:00Z'))) return original;
-  const advisories = new Set(exception.advisories);
-  const selected = report.vulnerabilities[exception.package];
-  if (!selected || selected.fixAvailable !== false || selected.severity !== exception.severity || !selected.via.length ||
-      !selected.via.every(v => v && typeof v === 'object' && advisories.has(v.url))) return original;
-  const deferred = new Set([exception.package]);
-  // Only inherit the exception when EVERY cause is already deferred. Unknown,
-  // direct, empty and cyclic causes cannot become accepted by association.
+  const packages = new Set();
+  const deferred = new Map();
+  for (const exception of matches) {
+    const { reviewBy } = exception;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(reviewBy || '') || !Number.isFinite(Date.parse(reviewBy)) ||
+        !exception.package || exception.severity !== 'high' || !exception.reason?.trim() ||
+        !Array.isArray(exception.advisories) || !exception.advisories.length ||
+        exception.advisories.some(x => typeof x !== 'string' || !x.startsWith('https://')))
+      throw Error('Malformed npm exception configuration');
+    const rejected = exception.rejectedFix;
+    if (rejected !== undefined && (!rejected || typeof rejected !== 'object' ||
+        typeof rejected.name !== 'string' || !rejected.name ||
+        !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(rejected.version || '') || rejected.isSemVerMajor !== true))
+      throw Error('Malformed npm rejected remediation configuration');
+    if (packages.has(exception.package)) throw Error('Duplicate npm exception for manifest and package');
+    packages.add(exception.package);
+    if (!(now < new Date(reviewBy + 'T00:00:00Z'))) continue;
+    const advisories = new Set(exception.advisories);
+    const selected = report.vulnerabilities[exception.package];
+    const fix = selected?.fixAvailable;
+    const rejectedMatch = rejected && fix && typeof fix === 'object' &&
+      fix.name === rejected.name && fix.version === rejected.version && fix.isSemVerMajor === true;
+    if (!selected || (fix !== false && !rejectedMatch) || selected.severity !== exception.severity || !selected.via.length ||
+        !selected.via.every(v => v && typeof v === 'object' && advisories.has(v.url))) continue;
+    deferred.set(exception.package, { reason: exception.reason, reviewBy });
+  }
+  // Only inherit when EVERY cause is deferred. Preserve all reasons and the
+  // earliest deadline; expired, patched, unknown, direct and cyclic causes block.
   let changed;
   do {
     changed = false;
     for (const [name, vulnerability] of Object.entries(report.vulnerabilities)) {
       if (!deferred.has(name) && vulnerability.severity === 'high' && vulnerability.via.length &&
           vulnerability.via.every(v => typeof v === 'string' && deferred.has(v))) {
-        deferred.add(name);
+        const causes = vulnerability.via.map(v => deferred.get(v));
+        deferred.set(name, {
+          reason: [...new Set(causes.map(c => c.reason))].join('; '),
+          reviewBy: causes.map(c => c.reviewBy).sort()[0]
+        });
         changed = true;
       }
     }
   } while (changed);
   return {
     ...summarize(findings.filter(f => !deferred.has(f.package))),
-    deferredFindings: findings.filter(f => deferred.has(f.package)).map(f => ({ ...f,
-      reason: exception.reason,
-      reviewBy
-    }))
+    deferredFindings: findings.filter(f => deferred.has(f.package)).map(f => ({ ...f, ...deferred.get(f.package) }))
   };
 }
 function reviewedSecretIgnores(contents) {
