@@ -160,3 +160,21 @@ test('multiple package exceptions defer shared parents with the earliest deadlin
   }
   assert.equal(summarizeNpm(report, 'other/package-lock.json', reviewTime, approved).verdict, 'fail');
 });
+
+test('an explicitly rejected breaking remediation is exact and advisory scoped', () => {
+  const report = deferredReport();
+  const rejectedFix = { name: 'synthetic-parent', version: '0.26.1', isSemVerMajor: true };
+  report.vulnerabilities['image-size'].fixAvailable = rejectedFix;
+  const approved = [{ ...exceptions[0], rejectedFix }];
+  assert.equal(summarizeNpm(report, helpManifest, reviewTime, approved).verdict, 'pass');
+  for (const fix of [true, { ...rejectedFix, version: '0.26.2' },
+    { ...rejectedFix, name: 'other' }, { ...rejectedFix, isSemVerMajor: false }]) {
+    report.vulnerabilities['image-size'].fixAvailable = fix;
+    assert.equal(summarizeNpm(report, helpManifest, reviewTime, approved).verdict, 'fail');
+  }
+  report.vulnerabilities['image-size'].fixAvailable = rejectedFix;
+  report.vulnerabilities['image-size'].via.push({ url: 'https://example.invalid/new' });
+  assert.equal(summarizeNpm(report, helpManifest, reviewTime, approved).verdict, 'fail');
+  assert.throws(() => summarizeNpm(deferredReport(), helpManifest, reviewTime,
+    [{ ...exceptions[0], rejectedFix: { ...rejectedFix, isSemVerMajor: false } }]), /Malformed/);
+});

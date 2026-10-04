@@ -54,12 +54,20 @@ function npmSummary(report, manifest, now = new Date(), exceptions = []) {
         !Array.isArray(exception.advisories) || !exception.advisories.length ||
         exception.advisories.some(x => typeof x !== 'string' || !x.startsWith('https://')))
       throw Error('Malformed npm exception configuration');
+    const rejected = exception.rejectedFix;
+    if (rejected !== undefined && (!rejected || typeof rejected !== 'object' ||
+        typeof rejected.name !== 'string' || !rejected.name ||
+        !/^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/.test(rejected.version || '') || rejected.isSemVerMajor !== true))
+      throw Error('Malformed npm rejected remediation configuration');
     if (packages.has(exception.package)) throw Error('Duplicate npm exception for manifest and package');
     packages.add(exception.package);
     if (!(now < new Date(reviewBy + 'T00:00:00Z'))) continue;
     const advisories = new Set(exception.advisories);
     const selected = report.vulnerabilities[exception.package];
-    if (!selected || selected.fixAvailable !== false || selected.severity !== exception.severity || !selected.via.length ||
+    const fix = selected?.fixAvailable;
+    const rejectedMatch = rejected && fix && typeof fix === 'object' &&
+      fix.name === rejected.name && fix.version === rejected.version && fix.isSemVerMajor === true;
+    if (!selected || (fix !== false && !rejectedMatch) || selected.severity !== exception.severity || !selected.via.length ||
         !selected.via.every(v => v && typeof v === 'object' && advisories.has(v.url))) continue;
     deferred.set(exception.package, { reason: exception.reason, reviewBy });
   }

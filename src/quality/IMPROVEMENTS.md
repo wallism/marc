@@ -2,7 +2,7 @@
 
 ## 2026-10-04 — Multiple npm package exceptions
 
-Allow distinct packages in one consumer lockfile to have separate, advisory-specific accepted-risk entries. Duplicate manifest/package pairs still fail closed. Expiry, patched dependencies and new advisories disable each entry independently; shared parents require every cause to be deferred and retain reasons plus the earliest deadline.
+Allow distinct packages in one consumer lockfile to have separate, advisory-specific accepted-risk entries. Duplicate manifest/package pairs still fail closed. Expiry, patched dependencies and new advisories disable each entry independently; shared parents require every cause to be deferred and retain reasons plus the earliest deadline. An optional owner-approved rejectedFix binds a breaking remediation to its exact package/version; any different available fix remains blocking.
 
 ## 2026-10-04 — Historical report CI spacing
 
