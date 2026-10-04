@@ -35,7 +35,7 @@ The consumer owns `.marc/config.json`. File references below use forward slashes
 | `agents` | Optional crew model/reasoning overrides; omit by default. See below. |
 | `guidance` | Named paths to project, browser, workflow or improvements instructions. Empty only when no additional guidance is needed. |
 | `scans.secretExceptions` | Optional reviewed fingerprint file. Omitted means no exceptions; a configured missing/invalid file blocks scanning. |
-| `scans.npmExceptions` | Optional consumer-owned JSON: `schema: 1`, matching `repository`, and `exceptions` array. Each entry specifies `manifest`, `package`, `severity: "high"`, exact `advisories`, `reviewBy` UTC date and `reason`. No exceptions are inherited by default. |
+| `scans.npmExceptions` | Optional consumer-owned JSON: `schema: 1`, matching `repository`, and `exceptions` array. Each entry specifies `manifest`, `package`, `severity: "high"`, exact `advisories`, `reviewBy` UTC date and `reason`. Multiple packages may have separate exceptions for one manifest; duplicate manifest/package pairs fail closed. Each exception expires independently or stops applying when a fix is available or an unapproved advisory appears. Parents are deferred only when every cause is deferred; their evidence records the contributing reasons and earliest deadline. No exceptions are inherited by default. |
 | `scans.nugetSolution` | Optional solution path for the NuGet adapter; omit for other stacks. |
 | `state.root` | Absolute parent for durable state; defaults to `~/.marc/state`. A stable repository namespace is appended. |
 | `state.mergeLockName` | Default `marc-merge.lock` in the controller Git common directory. |
