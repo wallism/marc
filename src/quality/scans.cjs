@@ -72,8 +72,8 @@ function npmSummary(report, manifest, now = new Date(), exceptions = []) {
         !selected.via.every(v => v && typeof v === 'object' && advisories.has(v.url))) continue;
     deferred.set(exception.package, { reason: exception.reason, reviewBy });
   }
-  // Only inherit when EVERY cause is deferred. Preserve all reasons and the
-  // earliest deadline; expired, patched, unknown, direct and cyclic causes block.
+  // Inherit only with an accepted cause and no remaining blocking cause. Keep
+  // reasons and the earliest deadline; unknown, direct and cyclic causes block.
   let changed;
   do {
     changed = false;

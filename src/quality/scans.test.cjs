@@ -193,3 +193,13 @@ test('accepted high causes can share a parent with retained nonblocking causes',
     else assert.equal(npmSummary(report, helpManifest, reviewTime).verdict, 'fail');
   }
 });
+
+test('moderate causes alone cannot exempt an inconsistent high parent', () => {
+  const report = deferredReport();
+  report.vulnerabilities.moderate = { severity: 'moderate', via: [{ url: 'https://example.invalid/moderate' }] };
+  report.vulnerabilities.core.via = ['moderate'];
+  const result = npmSummary(report, helpManifest, reviewTime);
+  assert.equal(result.verdict, 'fail');
+  assert.ok(result.findings.some(f => f.package === 'core'));
+  assert.ok(result.findings.some(f => f.package === 'moderate'));
+});
