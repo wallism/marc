@@ -47,6 +47,7 @@ function npmSummary(report, manifest, now = new Date(), exceptions = []) {
   if (!matches.length) return original;
   const packages = new Set();
   const deferred = new Map();
+  const nonblocking = new Set(findings.filter(f => ['low', 'moderate', 'medium'].includes(f.severity)).map(f => f.package));
   for (const exception of matches) {
     const { reviewBy } = exception;
     if (!/^\d{4}-\d{2}-\d{2}$/.test(reviewBy || '') || !Number.isFinite(Date.parse(reviewBy)) ||
@@ -71,15 +72,17 @@ function npmSummary(report, manifest, now = new Date(), exceptions = []) {
         !selected.via.every(v => v && typeof v === 'object' && advisories.has(v.url))) continue;
     deferred.set(exception.package, { reason: exception.reason, reviewBy });
   }
-  // Only inherit when EVERY cause is deferred. Preserve all reasons and the
-  // earliest deadline; expired, patched, unknown, direct and cyclic causes block.
+  // Inherit only with an accepted cause and no remaining blocking cause. Keep
+  // reasons and the earliest deadline; unknown, direct and cyclic causes block.
   let changed;
   do {
     changed = false;
     for (const [name, vulnerability] of Object.entries(report.vulnerabilities)) {
       if (!deferred.has(name) && vulnerability.severity === 'high' && vulnerability.via.length &&
-          vulnerability.via.every(v => typeof v === 'string' && deferred.has(v))) {
-        const causes = vulnerability.via.map(v => deferred.get(v));
+          vulnerability.via.some(v => typeof v === 'string' && deferred.has(v)) &&
+          vulnerability.via.every(v => typeof v === 'string' && (deferred.has(v) || nonblocking.has(v)))) {
+        // Nonblocking causes stay in findings; they are never accepted-risk evidence.
+        const causes = vulnerability.via.filter(v => deferred.has(v)).map(v => deferred.get(v));
         deferred.set(name, {
           reason: [...new Set(causes.map(c => c.reason))].join('; '),
           reviewBy: causes.map(c => c.reviewBy).sort()[0]
