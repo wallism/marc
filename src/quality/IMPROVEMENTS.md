@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-10-08 — Mixed npm causal severities
+
+An accepted high dependency combined with a recorded moderate cause kept shared parents blocking. Defer such parents only when at least one cause is accepted and every cause is accepted or explicitly nonblocking. Retain all moderate findings in normal evidence. Unknown, direct, cyclic, unapproved high and critical causes still block; no thresholds or exception deadlines change.
+
 ## 2026-10-04 — Multiple npm package exceptions
 
 Allow distinct packages in one consumer lockfile to have separate, advisory-specific accepted-risk entries. Duplicate manifest/package pairs still fail closed. Expiry, patched dependencies and new advisories disable each entry independently; shared parents require every cause to be deferred and retain reasons plus the earliest deadline. An optional owner-approved rejectedFix binds a breaking remediation to its exact package/version; any different available fix remains blocking.

@@ -178,3 +178,18 @@ test('an explicitly rejected breaking remediation is exact and advisory scoped',
   assert.throws(() => summarizeNpm(deferredReport(), helpManifest, reviewTime,
     [{ ...exceptions[0], rejectedFix: { ...rejectedFix, isSemVerMajor: false } }]), /Malformed/);
 });
+
+test('accepted high causes can share a parent with retained nonblocking causes', () => {
+  const report = deferredReport();
+  report.vulnerabilities.moderate = { severity: 'moderate', via: [{ url: 'https://example.invalid/moderate' }] };
+  report.vulnerabilities.core.via.push('moderate');
+  const result = npmSummary(report, helpManifest, reviewTime);
+  assert.equal(result.verdict, 'pass');
+  assert.deepEqual(result.findings.map(f => f.package), ['moderate']);
+  assert.ok(result.deferredFindings.some(f => f.package === 'core'));
+  for (const severity of ['high', 'critical', 'unknown']) {
+    report.vulnerabilities.moderate.severity = severity;
+    if (severity === 'unknown') assert.throws(() => npmSummary(report, helpManifest, reviewTime));
+    else assert.equal(npmSummary(report, helpManifest, reviewTime).verdict, 'fail');
+  }
+});

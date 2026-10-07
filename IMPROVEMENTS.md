@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-10-08 | Dependency scanner | Preserve recorded nonblocking causes when adjudicating accepted high dependency parents. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-08--mixed-npm-causal-severities) |
 | 2026-10-04 | Dependency scanner | Support independent package exceptions within one lockfile while preserving fail-closed checks and shared-parent evidence. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-04--multiple-npm-package-exceptions) |
 | 2026-10-04 | Controller and Captain | Restore historical report verification after an incidental spacing change; explain upgrade holds with their practical impact and exact next action. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-04--historical-report-ci-spacing), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-10-04--actionable-upgrade-holds) |
 | 2026-09-28 | Risk assessor, controller and Captain | Add an opt-in independent low/medium/high PR risk rating from tree position, reversibility and sensitivity floors; ratings only harden decisions until merge rules adopt them. | [Work log](docs/work/20260928-risk-assessment-work.md), [risk](skills/marc-crew-risk/IMPROVEMENTS.md), [controller](src/quality/IMPROVEMENTS.md), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md) |
