@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-10-11 | Reports | Show short block reasons and distinguish untouched reviews as Not run while preserving historical report bytes. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-11--short-gate-reasons) |
 | 2026-10-08 | Dependency scanner | Preserve recorded nonblocking causes when adjudicating accepted high dependency parents. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-08--mixed-npm-causal-severities) |
 | 2026-10-04 | Dependency scanner | Support independent package exceptions within one lockfile while preserving fail-closed checks and shared-parent evidence. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-04--multiple-npm-package-exceptions) |
 | 2026-10-04 | Controller and Captain | Restore historical report verification after an incidental spacing change; explain upgrade holds with their practical impact and exact next action. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-04--historical-report-ci-spacing), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-10-04--actionable-upgrade-holds) |

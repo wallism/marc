@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-10-11 — Short gate reasons
+
+New reports display reviewer-recorded one- or two-word block reasons and label untouched controller placeholders `Not run — Awaiting review`. Missing reason metadata stays `Not recorded`; overall CI never supplies a guessed cause for an individual reviewer. The CI line labels its own recorded state. The `gateReasonLabels` marker preserves prepared historical Markdown, and summaries, findings, selection, verdicts and merge requirements remain unchanged. See [report presentation](../../docs/audit-reports.md).
+
 ## 2026-10-08 — Mixed npm causal severities
 
 An accepted high dependency combined with a recorded moderate cause kept shared parents blocking. Defer such parents only when at least one cause is accepted and every cause is accepted or explicitly nonblocking. Retain all moderate findings in normal evidence. Unknown, direct, cyclic, unapproved high and critical causes still block; no thresholds or exception deadlines change.
