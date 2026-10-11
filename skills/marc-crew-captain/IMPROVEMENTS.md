@@ -1,5 +1,9 @@
 # marc-crew-captain improvements
 
+## 2026-10-11 — Delegation authorized by PR processing
+
+At the owner's request, repository instructions allow the Captain to launch the independent reviewers and authorized repair sessions required by trusted MARC skills when asked to process a PR, without another delegation question. Other work still requires an explicit delegation request. Fresh sessions, repair scope, sensitive-path approval and guarded merge requirements remain intact. See [repository instructions](../../AGENTS.md). Validation: reviewed the instruction against the Captain and harness contracts and checked the diff; activation requires landing this change in trusted `master`.
+
 ## 2026-10-04 — Actionable upgrade holds
 
 At the owner's request after an overly technical RoleSage upgrade hold, lead with practical impact, next action and action owner. Investigate cosmetic compatibility differences, honor existing approval and ask only for a concrete decision still needed. Distinguish an approval-only hold from a required check that needs correction; approval does not silently waive verification. Routine compatible fixes proceed within existing authority, with diagnostics linked separately.

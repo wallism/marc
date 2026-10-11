@@ -9,7 +9,7 @@ const repository = path.resolve(__dirname, '../..');
 function fixture(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'marc-catalogue-'));
   t.after(() => fs.rmSync(root, { recursive: true, force: true }));
-  for (const item of ['skills', 'docs', 'README.md', 'IMPROVEMENTS.md'])
+  for (const item of ['skills', 'docs', 'README.md', 'IMPROVEMENTS.md', 'AGENTS.md'])
     fs.cpSync(path.join(repository, item), path.join(root, item), { recursive: true });
   return root;
 }
