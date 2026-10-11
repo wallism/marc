@@ -34,24 +34,40 @@ function npmImpact(base, head, file, readGit, hasOwner) {
       };
       const manifest = (value, prefix) => {
         if (value.workspaces !== undefined) holds.push(`${file}: workspace consumers need explicit scope review.`);
+        // Alias targets affect routing even when the installed/override name is unknown.
+        const specEntry = (key, name, spec, reference = false) => {
+          if (typeof spec !== 'string') throw Error('Invalid dependency spec');
+          add(key, name, spec);
+          if (reference && spec.startsWith('$')) {
+            const dependency = spec.slice(1);
+            if (!object(value.dependencies) || !Object.hasOwn(value.dependencies, dependency) ||
+                typeof value.dependencies[dependency] !== 'string' || value.dependencies[dependency].startsWith('$'))
+              throw Error('Unresolved override dependency reference');
+            spec = value.dependencies[dependency];
+          }
+          if (!spec.startsWith('npm:')) return;
+          const alias = spec.match(/^npm:((?:@[a-z0-9_.-]+\/)?[a-z0-9_.-]+)(?:@[^@:/\r\n]*)?$/);
+          if (!alias) throw Error('Unsupported npm alias');
+          add(`${key}/alias`, alias[1], spec);
+        };
         for (const section of sections) {
           if (value[section] === undefined) continue;
           if (!object(value[section])) throw Error('Invalid dependency map');
           for (const [name, spec] of Object.entries(value[section])) {
-            if (typeof spec !== 'string') throw Error('Invalid dependency spec');
-            add(`${prefix}/${section}/${name}`, name, spec);
-            const alias = spec.match(/^npm:((?:@[^/]+\/)?[^@]+)@/);
-            if (alias) add(`${prefix}/${section}/${name}/alias`, alias[1], spec);
+            specEntry(`${prefix}/${section}/${name}`, name, spec);
           }
         }
         // Overrides can alter nested consumers; keep both outer and inner names.
-        const overrides = (value, prefix) => {
+        const overrides = (value, prefix, parentName) => {
           if (!object(value)) return;
           for (const [selector, spec] of Object.entries(value)) {
-            if (selector === '.') continue;
-            const name = selector.replace(/@[^@/]*$/, '');
-            add(`${prefix}/${selector}`, name, spec);
-            overrides(spec, `${prefix}/${selector}`);
+            if (selector === '.' && !parentName) throw Error('Invalid override self selector');
+            const name = selector === '.' ? parentName : selector.replace(/@[^@/]*$/, '');
+            if (typeof spec === 'string') specEntry(`${prefix}/${selector}`, name, spec, true);
+            else {
+              add(`${prefix}/${selector}`, name, spec);
+              overrides(spec, `${prefix}/${selector}`, name);
+            }
           }
         };
         overrides(value.overrides, `${prefix}/overrides`);
