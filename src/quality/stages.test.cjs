@@ -14,6 +14,56 @@ const original = () => ({ repository: 'example/project', pr: 7, sourceHead: 'a'.
   ci: { verdict: 'pass', runId: 1, runAttempt: 1 } });
 const decision = { eligible: true, merge: true, reasons: [] };
 
+test('new gate tables distinguish pending reviews and show recorded short block reasons', () => {
+  const e = original();
+  e.ci = { verdict: 'blocked', status: 'failed', conclusion: 'failure', runId: 2, runAttempt: 1 };
+  e.gates = {
+    security: { ...gate('security-review'), verdict: 'blocked', blockReason: 'Failed CI', summary: 'Audit failed; no new code defect found' },
+    browser: { ...gate('browser-review'), verdict: 'blocked', blockReason: 'Missing setup', summary: 'Authenticated journeys could not run' },
+    correctness: { verdict: 'blocked', reviewer: '', summary: 'Awaiting independent review', evidence: [], findings: [] },
+    'code-quality': gate('quality-review'),
+    'crew:csharp': { ...gate('csharp-review'), verdict: 'blocked', blockReason: 'Scope limit' }
+  };
+  const before = structuredClone(e), prepared = prepareReport(e), markdown = reportMarkdown(prepared, decision);
+  assert.equal(prepared.gateReasonLabels, true);
+  assert.match(markdown, /\| Gate \| Result \| Reason \| Reviewer \| Summary \|/);
+  assert.match(markdown, /\| security \| blocked \| Failed CI \| security-review \|/);
+  assert.match(markdown, /\| browser \| blocked \| Missing setup \| browser-review \|/);
+  assert.match(markdown, /\| correctness \| Not run \| Awaiting review \|  \|/);
+  assert.match(markdown, /\| code-quality \| pass \|  \| quality-review \|/);
+  assert.match(markdown, /\| crew:csharp \| blocked \| Scope limit \| csharp-review \|/);
+  assert.match(markdown, /Source CI: blocked — Failed CI;/);
+  assert.deepEqual(e, before, 'presentation does not change gate evidence or approval');
+});
+
+test('gate reasons never infer a reviewer cause from another failing gate or guess execution', () => {
+  const e = original();
+  e.ci = { verdict: 'blocked', status: 'failed' };
+  e.gates = {
+    security: { ...gate('security-review'), verdict: 'blocked' },
+    browser: { ...gate(''), verdict: 'blocked', summary: 'Runtime evidence retained; session ID unavailable' },
+    long: { ...gate('review'), verdict: 'blocked', blockReason: 'This reason is too long' },
+    malformed: { ...gate('review'), verdict: 'blocked', blockReason: 'Failed|CI\nforged' }
+  };
+  const markdown = reportMarkdown(prepareReport(e), decision);
+  assert.match(markdown, /\| security \| blocked \| Not recorded \| security-review \|/);
+  assert.match(markdown, /\| browser \| blocked \| Not recorded \|  \|/);
+  for (const name of ['long', 'malformed']) assert.ok(markdown.includes(`| ${name} | blocked | Not recorded |`));
+  assert.doesNotMatch(markdown, /\| Not run \|/);
+});
+
+test('prepared historical gate tables keep their original bytes and CI labels', () => {
+  const e = { ...original(), reportFormat: 'marc-v3', reportCreatedAt: '2026-10-10T00:00:00.000Z' };
+  e.gates = { security: { verdict: 'blocked', reviewer: '', summary: 'Awaiting independent review', evidence: [], findings: [] } };
+  e.ci = { verdict: 'blocked', status: 'failed', runId: 2, runAttempt: 1 };
+  const markdown = reportMarkdown(e, decision);
+  assert.deepEqual(prepareReport(e), e);
+  assert.match(markdown, /\| Gate \| Result \| Reviewer \| Summary \|/);
+  assert.match(markdown, /\| security \| blocked \|  \| Awaiting independent review \|/);
+  assert.match(markdown, /Source CI: blocked; run 2, attempt 1/);
+  assert.doesNotMatch(markdown, /Awaiting review|Failed CI|Not run/);
+});
+
 test('new impact summaries distinguish changed paths from reference evidence without changing historical reports', () => {
   const e = original(), historical = reportMarkdown(prepareReport(e), decision);
   assert.doesNotMatch(historical, /Impact:/);

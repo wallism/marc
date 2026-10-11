@@ -19,6 +19,7 @@ Save only your assigned standalone gate JSON to the external output path. Requir
 ```json
 {
   "verdict": "blocked",
+  "blockReason": "Missing evidence",
   "sourceHead": "captured full SHA",
   "base": "captured full SHA",
   "policyHash": "captured digest",
@@ -30,6 +31,8 @@ Save only your assigned standalone gate JSON to the external output path. Requir
 ```
 
 Use `pass`, `repair`, `human-required` or `blocked`. Findings contain `severity` (`blocking` or `advisory`), `file`, `line`, `detail`, `evidence` and `recommendedChange`. Report observed defects at their owning seam; an improvement idea or speculation is not a bug. A pass needs nonempty evidence and no blocking findings. A clean control may pass; known defects must remain visible regardless of scans or other results. Critical security, privacy or money risks stay explicit.
+
+For a non-pass result, supply `blockReason` as one or two plain-English words naming the primary cause, for example `Failed CI`, `Scope limit`, `Missing setup`, `Stale evidence`, `Code findings` or `Human approval`. Keep all causes and evidence limits in the summary and findings. Use `Failed CI` only when failed CI actually blocks this review; do not copy another gate's cause into a clean control. This label is presentation metadata and never changes the verdict or merge requirements. Omit it for a pass. The controller's untouched `Awaiting independent review` placeholders render as `Not run`; a reviewer that ran and encountered missing evidence still returns `blocked` with its cause.
 
 Specialists also copy `memberVersion`, `memberHash` and `selectionHash` from the packet. Intent and simple-test gates supply their assigned schema's additional fields. The Captain attaches execution telemetry; never estimate it or self-identify a model as host proof. Preserve each blocking result; disagreement is resolved with evidence or a fresh repair/review cycle, never by erasing findings or majority vote.
 
