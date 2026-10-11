@@ -83,7 +83,26 @@ function recordStage(directory, e, decision, event, now = new Date()) {
   } finally { fs.closeSync(lockFd); fs.unlinkSync(lock); }
 }
 
-function stagesMarkdown(stages, repairCommitLinks = false) {
+function gateDisplay(gate) {
+  // Only the controller's untouched placeholder proves that a review has not run.
+  const pending = gate.verdict === 'blocked' && gate.reviewer === '' &&
+    gate.summary === 'Awaiting independent review' && Array.isArray(gate.evidence) && !gate.evidence.length &&
+    Array.isArray(gate.findings) && !gate.findings.length && !gate.execution;
+  if (pending) return { result: 'Not run', reason: 'Awaiting review' };
+  const shortReason = typeof gate.blockReason === 'string' && /^[A-Za-z]+(?:[ -][A-Za-z]+)?$/.test(gate.blockReason) &&
+    gate.blockReason.length <= 40 ? gate.blockReason : 'Not recorded';
+  return { result: gate.verdict, reason: gate.verdict === 'pass' ? '' : shortReason };
+}
+
+function ciReason(ci) {
+  if (ci.verdict === 'pass') return '';
+  if (ci.status === 'failed' || ['failure', 'timed_out', 'startup_failure'].includes(ci.conclusion)) return 'Failed CI';
+  if (ci.status === 'pending' || ['queued', 'in_progress'].includes(ci.status)) return 'Pending CI';
+  if (ci.status === 'missing') return 'Missing CI';
+  return 'Missing evidence';
+}
+
+function stagesMarkdown(stages, repairCommitLinks = false, gateReasonLabels = false) {
   let output = '\n## Assessment stages\n\nHistorical results describe their recorded source/base/policy; they do not approve the current source.\n';
   if (stages[0]?.kind === 'review' && stages[0].repairCycles > 0)
     output += '\nEarlier stages were not recorded by this installation; no earlier crew or outcome is inferred.\n';
@@ -111,11 +130,15 @@ function stagesMarkdown(stages, repairCommitLinks = false) {
         '| Specialist | Selection | Reason |\n| --- | --- | --- |\n' +
         [...stage.crew.selected.map(m => ({ ...m, status: 'Selected' })), ...stage.crew.omitted.map(m => ({ ...m, status: 'Omitted' }))]
           .map(m => `| ${clean(m.id)} | ${m.status} | ${clean((m.reasons || []).join(' '))} |`).join('\n') + '\n\n' +
-        `Source CI: ${clean(stage.ci.verdict || 'unavailable')}; run ${clean(stage.ci.runId)}, attempt ${clean(stage.ci.runAttempt)}. ${clean(stage.ci.runUrl)}\n\n` +
+        `Source CI: ${clean(stage.ci.verdict || 'unavailable')}${gateReasonLabels && ciReason(stage.ci) ? ` — ${ciReason(stage.ci)}` : ''}; run ${clean(stage.ci.runId)}, attempt ${clean(stage.ci.runAttempt)}. ${clean(stage.ci.runUrl)}\n\n` +
         (stage.projectChanges.length ? '| Project file | Classification | Reason |\n| --- | --- | --- |\n' +
           stage.projectChanges.map(p => `| ${clean(p.file)} | ${clean(p.classification)} | ${clean(p.reason)} |`).join('\n') + '\n\n' : '') +
-        '| Gate | Result | Reviewer | Summary |\n| --- | --- | --- | --- |\n' +
-        Object.entries(stage.gates).map(([name, g]) => `| ${clean(name)} | ${clean(g.verdict)} | ${clean(g.reviewer)} | ${clean(g.summary)} |`).join('\n') + '\n' +
+        (gateReasonLabels ? '| Gate | Result | Reason | Reviewer | Summary |\n| --- | --- | --- | --- | --- |\n' :
+          '| Gate | Result | Reviewer | Summary |\n| --- | --- | --- | --- |\n') +
+        Object.entries(stage.gates).map(([name, g]) => {
+          const display = gateReasonLabels ? gateDisplay(g) : { result: g.verdict };
+          return `| ${clean(name)} | ${clean(display.result)} | ${gateReasonLabels ? `${clean(display.reason)} | ` : ''}${clean(g.reviewer)} | ${clean(g.summary)} |`;
+        }).join('\n') + '\n' +
         stage.decision.reasons.map(reason => `\n- ${clean(reason)}`).join('') +
         agentTable({ ...stage, repairExecutions: [] }).replace('## Crew used', '#### Crew used');
     } else if (stage.kind === 'repair') {

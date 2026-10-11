@@ -49,15 +49,14 @@ test('verified application dependency repairs select owning technologies without
   assert.equal(backend.requiresFull, true, 'dependency risk still needs full review without UI impact');
   assert.equal(backend.requiresBrowser, false);
   for (const file of ['package-lock.json', 'unknown/package-lock.json'])
-    assert.equal(route(file).selected.length, members.length, file);
-  for (const bad of ['not json', lock('2.0.3').replace('https://registry.npmjs.org', 'https://unknown.invalid'),
-    lock('2.0.3').replace('"lockfileVersion":3', '"lockfileVersion":2')])
-    assert.equal(route('sites/help/package-lock.json', lock('2.0.2'), bad).impact.uncertain, true);
-  assert.equal(route('sites/help/package.json', '{"scripts":{"build":"old"}}', '{"scripts":{"build":"new"}}').impact.uncertain, true);
+    assert.deepEqual(route(file).selected.map(m => m.id), ['javascript'], file);
+  for (const bad of ['not json', lock('2.0.3').replace('"lockfileVersion":3', '"lockfileVersion":1')])
+    assert.match(route('sites/help/package-lock.json', lock('2.0.2'), bad).holds.join(' '), /npm impact unavailable/);
+  assert.equal(route('sites/help/package.json', '{"scripts":{"build":"old"}}', '{"scripts":{"build":"new"}}').impact.uncertain, false);
   assert.equal(route('sites/help/package-lock.json', lock('2.0.2').replace('"name":"synthetic"', '"workspaces":["apps/*"],"name":"synthetic"'),
-    lock('2.0.3').replace('"name":"synthetic"', '"workspaces":["apps/*"],"name":"synthetic"')).impact.uncertain, true);
+    lock('2.0.3').replace('"name":"synthetic"', '"workspaces":["apps/*"],"name":"synthetic"')).holds.some(h => h.includes('workspace')), true);
   const nonregular = (...args) => args[0] === 'ls-tree' ? `120000 blob ${'d'.repeat(40)}\t${args.at(-1)}` : read(lock('2.0.2'), lock('2.0.3'))(...args);
-  assert.equal(collectImpact(identity.base, identity.sourceHead, ['sites/help/package-lock.json'], scoped, members, nonregular).uncertain, true);
+  assert.equal(collectImpact(identity.base, identity.sourceHead, ['sites/help/package-lock.json'], scoped, members, nonregular).holds.some(h => h.includes('Non-regular')), true);
   assert.deepEqual(route('services/worker/package.json', '{"dependencies":{"example":"^2.0.2"}}',
     '{"dependencies":{"example":"^2.0.3"}}').selected.map(m => m.id), ['javascript']);
   assert.equal(route('sites/help/package-lock.json', undefined, undefined, ['.github/workflows/ci.yml']).impact.uncertain, true);
@@ -159,8 +158,9 @@ test('actual Git changes trace indirect UI callers in both revisions, documentat
   const docs = collectImpact(base, head, ['docs/guide.md'], config, catalogue(), git);
   assert.deepEqual(docs.technologies, []);
   const shared = collectImpact(base, head, ['package.json'], config, catalogue(), git);
-  assert.equal(shared.uncertain, true);
-  assert.equal(selectCrew(identity, config, catalogue(), shared).selected.length, 4);
+  assert.equal(shared.uncertain, false);
+  assert.match(shared.holds.join(' '), /npm impact unavailable/);
+  assert.deepEqual(selectCrew(identity, config, catalogue(), shared).selected.map(m => m.id), ['javascript']);
   const configured = collectImpact(base, head, ['src/Shared/Bridge.cs'], config, catalogue(), git);
   assert.equal(configured.requiresBrowser, true);
   assert.ok(configured.reasons.some(r => r.includes('Shared services')));
