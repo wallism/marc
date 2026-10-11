@@ -1,0 +1,1042 @@
+{
+  "auditSchema": "marc-audit-v1",
+  "evidence": {
+    "schema": 1,
+    "agentExecutionSchema": 1,
+    "repairExecutions": [
+      {
+        "reviewer": "01a12a3e-94f7-7be1-b82c-cf90f0daaac7",
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_repair_1, fork_turns=none, no model/effort override; supported host inheritance. Actual thread 01a12a3e-94f7-7be1-b82c-cf90f0daaac7"
+        }
+      }
+    ],
+    "repository": "wallism/marc",
+    "pr": 26,
+    "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+    "base": "8a973a336a0348f11572878b362152ea38632c0a",
+    "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+    "state": "open",
+    "draft": false,
+    "author": "wallism",
+    "headRepository": "wallism/marc",
+    "branch": "codex/marc-review-delegation",
+    "target": "master",
+    "baseIncluded": true,
+    "files": ["AGENTS.md","IMPROVEMENTS.md","skills/marc-crew-captain/IMPROVEMENTS.md","src/quality/catalogue-validation.test.cjs"],
+    "changedLines": 0,
+    "repairCycles": 1,
+    "projectChanges": [],
+    "intent": {"schema":1,"status":"absent","text":null,"entries":[],"hash":"c108081aab566869e89b75b41d0093724f2028c547b6924cf86da632a1961f8c"},
+    "gates": {
+      "security": {
+        "verdict": "human-required",
+        "blockReason": "Human approval",
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "reviewer": "01a12a44-6f00-7922-af13-ecb52e698d9a",
+        "summary": "No introduced security defect found in the complete frozen diff, catalogue fixture or validator. Exact-source hosted JUnit artifacts contain 276 cases per platform, zero failures/errors, and passing self-review and catalogue security assertions; sanitized secrets evidence has zero findings. The scoped delegation wording preserves trusted-skill, independent-session, repair and approval boundaries. This remains a material agent-policy change with three sensitive changed paths: AGENTS.md, skills/marc-crew-captain/IMPROVEMENTS.md and src/quality/catalogue-validation.test.cjs. The handoff confirms that the prior approval binds 4b6839b, while no fresh source-bound approval for 9adf56c has been received or recorded. Earlier approval cannot be rebound after repair. No candidate code executed; no dependency, authentication, privacy or browser behavior change identified.",
+        "evidence": [
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:13",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:skills/marc-crew-captain/IMPROVEMENTS.md:3",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:12",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.cjs:12",
+          "8a973a336a0348f11572878b362152ea38632c0a:.marc/policy.json humanPathPatterns",
+          "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md Exact identity and Untrusted candidate invariants",
+          "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/references/guarded-actions.md step 8 requires fresh review without carrying forward approval",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/repair-1/repair-evidence.json beforeSha 4b6839beef99bb01338886ef591b59efd995d27d, afterSha 9adf56cb3cf29be04438bf44d11618f67e872e2c; fixture-only repair",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1, exact source 9adf56cb3cf29be04438bf44d11618f67e872e2c",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/quality-scans/secrets.json",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-ubuntu-latest/node-results.xml",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-windows-latest/node-results.xml"
+        ],
+        "findings": [
+          {
+            "severity": "blocking",
+            "file": "AGENTS.md",
+            "line": 13,
+            "detail": "Material agent-policy change requires source-bound human approval. The human authorized the scoped delegation wording and requested landing, but the previous exact approval binds source 4b6839beef99bb01338886ef591b59efd995d27d. The fixture repair changes source to 9adf56cb3cf29be04438bf44d11618f67e872e2c and adds src/quality/catalogue-validation.test.cjs as a third sensitive changed path. No fresh approval for this captured identity has yet been received or recorded, per the handoff; this is an approval hold, not a source defect.",
+            "evidence": [
+              "Trusted security skill: escalate material agent-policy changes as human-required",
+              "Trusted policy humanPathPatterns match AGENTS.md, skills/marc-crew-captain/IMPROVEMENTS.md and src/quality/catalogue-validation.test.cjs",
+              "Repair evidence beforeSha/afterSha and parent authority statement: old approval binds 4b6839b; no fresh source-bound approval for 9adf56c"
+            ],
+            "recommendedChange": "Captain should obtain and record explicit approval bound to the current source 9adf56cb3cf29be04438bf44d11618f67e872e2c, base 8a973a336a0348f11572878b362152ea38632c0a, policy 2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c and all three sensitive paths before guarded landing. Preserve the previous approval at its original identity; no source repair is requested."
+          }
+        ],
+        "requiresBrowser": false,
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_security_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a44-6f00-7922-af13-ecb52e698d9a"
+        }
+      },
+      "correctness": {
+        "verdict": "pass",
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "reviewer": "01a12a44-898f-7c41-8d97-60b35664adfc",
+        "requiresBrowser": false,
+        "summary": "No correctness defects found in the complete four-file PR. The delegation permission is confined to user-requested MARC PR processing and sessions required by the trusted Captain skill; fresh-session, repair, approval and guarded-merge boundaries remain intact. Both improvement entries accurately record scope and trusted-master activation. The fixture now includes AGENTS.md, satisfying the new Captain-register local reference without weakening catalogue validation or negative-test assertions. Exact-source CI artifacts show all seven catalogue tests and both self-review tests passing on Node 24 Linux and Windows, with zero failures/errors across 276 tests per OS. The sole Linux skip concerns Windows short-path installation and does not affect this change. No candidate code was executed locally; no UI or optional browser-hook behavior changes.",
+        "evidence": [
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:13 - Scoped delegation permission preserves trusted skill boundaries and retains explicit delegation for other work.",
+          "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md:42 and references/harnesses.md (Identities and limits) - Trusted Captain requires fresh independent review/authorized repair sessions and separate actual identities.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:9 and src/quality/catalogue-validation.cjs:20 - Shared fixture copies AGENTS.md; unchanged validator resolves local references and continues rejecting missing and escaping files.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:skills/marc-crew-captain/IMPROVEMENTS.md:3 and IMPROVEMENTS.md:11 - Material delegation change recorded with activation limit and matching register link.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:.github/workflows/node-checks.yml:29 - Hosted Node 24 jobs validate the catalogue and run focused module tests plus .marc/self-review.test.cjs.",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1; after-repair-1/ci-38127830387-1/node-test-results-ubuntu-latest/node-results.xml sha256 b3beb5bab72dd4f56da520162466c248e6eb3f9af63f4031e91345636f7a2b95 - 276 test cases, zero failures/errors, all seven catalogue tests and both self-review tests passed; one unrelated Windows-only skip.",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1; after-repair-1/ci-38127830387-1/node-test-results-windows-latest/node-results.xml sha256 20c7557516d8519478467a2223a74bea2510ba42448d969d621509adcf00813c - 276 test cases, zero failures/errors/skips; all seven catalogue tests and both self-review tests passed.",
+          "after-repair-1/ci-38127830387-1/quality-scans/secrets.json sha256 c5db52c3ad692d05b362d0f588ad3c8a100778a3571cf86fab01f16dab9b829a - Sanitized secrets evidence contains verdict pass and an empty findings array."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_correctness_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a44-898f-7c41-8d97-60b35664adfc"
+        }
+      },
+      "code-quality": {
+        "verdict": "pass",
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "reviewer": "01a12a44-a68c-7dd0-a4a9-56432e229592",
+        "summary": "Reviewed the complete four-file PR and repaired fixture independently. Delegation remains scoped to requested MARC PR processing under trusted Captain review, repair and approval boundaries. The fixture now includes the AGENTS.md target referenced by the Captain register, preserving validator behavior, existing negative assertions and cleanup. Exact-source hosted artifacts cover all seven catalogue tests and six self-review tests on both Node 24 platforms without failures or errors. No maintainability, architectural-fit or scope blockers found; no candidate execution or merge approval performed.",
+        "evidence": [
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:3-14 and IMPROVEMENTS.md:3-12: existing governance invariants remain intact, delegation authorization is scoped, and the material authority change is registered.",
+          "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md:13-50 and references/harnesses.md:15-45: trusted rules require fresh independent sessions, authorized repairs, exact identities and unchanged approval boundaries.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:skills/marc-crew-captain/IMPROVEMENTS.md:3-5: new repository-instruction reference explains the fixture dependency and records activation only after trusted-master landing.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:9-69 and catalogue-validation.cjs:10-66: AGENTS.md copy completes the fixture for recursive Markdown reference validation; negative assertions and temporary-root disposal remain unchanged.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/authoring-skill.test.cjs:1-20, package.json:8-13 and .github/workflows/node-checks.yml:13-46: unchanged validator consumers and hosted catalogue/test entry points inspected; no public runtime interface or browser/.NET behavior changes.",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1, exact source 9adf56cb3cf29be04438bf44d11618f67e872e2c: both Node 24 jobs and Quality scans successful.",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-ubuntu-latest/node-results.xml: inspected parsed artifact; 276 testcases, zero failures/errors, one skip; all seven catalogue and six self-review tests passed.",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-windows-latest/node-results.xml: inspected parsed artifact; 276 testcases, zero failures/errors/skips; all seven catalogue and six self-review tests passed.",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/quality-scans/secrets.json: inspected sanitized scan artifact; pass with zero findings."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_code_quality_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a44-a68c-7dd0-a4a9-56432e229592"
+        }
+      },
+      "test-integrity": {
+        "verdict": "pass",
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "reviewer": "01a12a45-fc3b-7e13-ac1e-c07bfff21e01",
+        "summary": "Complete four-file PR reviewed. The fixture now includes AGENTS.md required by the new Captain improvement-register link; all seven catalogue tests retain their meaningful positive and negative assertions. No production validator, test exclusions, snapshots or assertions were weakened. Both exact-source Node 24 artifacts contain 276 tests with zero failures/errors; all seven catalogue cases and self-review coverage passed. The single Ubuntu skip is the existing Windows short-path case, which ran on Windows. Repair red/green logs support fixture restoration only and are not claimed as a production mutation regression. Delegation wording preserves trusted skill and fresh-session/approval boundaries; its activation and guarded landing remain outside this gate. No browser or optional .NET hook behavior changed.",
+        "evidence": [
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:12-70 (fixture copy and unchanged assertions)",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.cjs:11-55 (real local-link validation and catalogue traversal)",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:14; skills/marc-crew-captain/IMPROVEMENTS.md:3-5; IMPROVEMENTS.md:11 (full governance/documentation scope and required AGENTS link)",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:skills/marc-crew-captain/SKILL.md:18-48 (trusted governance, exact identities and independent sessions)",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:.github/workflows/node-checks.yml:29-46; .marc/self-review.test.cjs:38-54 (test registration and sensitive-governance assertions)",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1, exact source 9adf56cb3cf29be04438bf44d11618f67e872e2c: both Node 24 jobs and Quality scans successful",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-ubuntu-latest/node-results.xml sha256 b3beb5bab72dd4f56da520162466c248e6eb3f9af63f4031e91345636f7a2b95: 276 cases, zero failures/errors, seven catalogue passes, self-review cases present, one platform skip",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-windows-latest/node-results.xml sha256 20c7557516d8519478467a2223a74bea2510ba42448d969d621509adcf00813c: 276 cases, zero failures/errors/skips, seven catalogue passes, self-review cases present",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/installation.test.cjs:8 (unchanged Windows-only short-path skip condition)",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/quality-scans/secrets.json sha256 c5db52c3ad692d05b362d0f588ad3c8a100778a3571cf86fab01f16dab9b829a: pass, zero findings",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/repair-1/red-test.log and green-test.log (five fixture setup failures before restoration; seven catalogue passes after)"
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_test_integrity_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a45-fc3b-7e13-ac1e-c07bfff21e01"
+        }
+      },
+      "crew:csharp": {
+        "verdict": "pass",
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "reviewer": "01a12a48-f792-7321-9158-73048dcb6a7f",
+        "memberVersion": "1.1.0",
+        "memberHash": "3fe4d7a84361c4a53d08a639e17985a79b35380ee044ef36054544920c11c62b",
+        "selectionHash": "f1baf0847cd3c3471185ef68804a81ba758fbd26a48a5f5e3b3671f8b6b8187d",
+        "summary": "No C# blocking findings. Complete frozen diff and owning catalogue validator confirm a delegation-instruction change plus an AGENTS.md fixture input repair; no C# runtime, DI, serialization or browser-host contract changes propagate. The optional .NET 10 hook and its project remain unchanged, so no hook build/smoke evidence is required for this change. Exact-source hosted artifacts show both self-review cases and all seven catalogue cases passing on Ubuntu and Windows; candidate code was not executed on the host. This specialist result does not confer sensitive-path or merge approval.",
+        "evidence": [
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:13 preserves trusted-skill review, repair and approval boundaries; 8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md independent-session and trusted-governance contracts inspected",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:9-14 fixture copies AGENTS.md; src/quality/catalogue-validation.cjs:20-25 validates local Markdown targets, explaining the new Captain-register link dependency without weakening assertions",
+          "8a973a336a0348f11572878b362152ea38632c0a..9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/browser-host has no diff; StartupHook.cs:10-17 and Marc.BrowserHost.csproj unchanged; browser-runtime.md:15 and Test-BrowserHost.ps1:56 retain the opt-in runtime binding",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1: node-test-results-ubuntu-latest/node-results.xml (sha256 b3beb5bab72dd4f56da520162466c248e6eb3f9af63f4031e91345636f7a2b95) and node-test-results-windows-latest/node-results.xml (sha256 20c7557516d8519478467a2223a74bea2510ba42448d969d621509adcf00813c): 276 testcases each, no failures/errors; self-review and seven catalogue cases pass on both OSes; Ubuntu has one unrelated skipped case",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1: quality-scans/secrets.json (sha256 c5db52c3ad692d05b362d0f588ad3c8a100778a3571cf86fab01f16dab9b829a) inspected, pass with no findings",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/repair-1/repair-evidence.json binds repair to 9adf56cb3cf29be04438bf44d11618f67e872e2c; green-test.log shows seven focused cases passing in isolated Node 24 execution"
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_csharp_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a48-f792-7321-9158-73048dcb6a7f"
+        }
+      },
+      "crew:github-actions": {
+        "verdict": "pass",
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "reviewer": "01a12a49-1040-7ba0-bc0f-e068cd9eab9a",
+        "memberVersion": "1.0.0",
+        "memberHash": "7129cce6f217f387fb6baaf815ef6e619587d8ddd4488207be756ea691295aa8",
+        "selectionHash": "f1baf0847cd3c3471185ef68804a81ba758fbd26a48a5f5e3b3671f8b6b8187d",
+        "summary": "No GitHub Actions defect observed. Reviewed the complete frozen diff, fixture/link-validation caller chain and unchanged push/PR workflows. Delegation wording preserves trusted-skill review, repair and approval boundaries; the fixture repair restores AGENTS.md for local-link validation without weakening assertions. Exact-source hosted run 38127830387 attempt 1 supplies successful Linux/Windows Node jobs and Quality scans. Inspected both JUnit artifacts: 276 cases each, no failures/errors, seven catalogue cases and two self-review cases on each platform; Ubuntu skips only the Windows short-path case, which passes on Windows. Sanitized secrets evidence reports zero findings. No candidate code executed, workflow dispatched or network contacted; this gate grants no merge or deployment authority.",
+        "evidence": [
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:13 and skills/marc-crew-captain/IMPROVEMENTS.md:5 preserve fresh-session and trusted review/repair/approval boundaries.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:12 adds AGENTS.md to isolated fixture inputs; src/quality/catalogue-validation.cjs:20 checks local references under skills.",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:.github/workflows/node-checks.yml:3 and .github/workflows/pr-checks.yml:3: traced push and pull_request events, default checkout revisions, read-only contents permissions, nonpersisted checkout credentials, pinned actions, required commands and failure propagation. These workflows, package.json and the runtime catalogue validator are unchanged against base 8a973a336a0348f11572878b362152ea38632c0a.",
+          "https://github.com/wallism/marc/actions/runs/38127830387 attempt 1; trusted packet binds sourceHead 9adf56cb3cf29be04438bf44d11618f67e872e2c and successful Node 24 (ubuntu-latest), Node 24 (windows-latest), Quality scans.",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-ubuntu-latest/node-results.xml: inspected 276 cases, zero failures/errors, seven passing catalogue cases, two passing self-review cases and one Windows-only skip.",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-windows-latest/node-results.xml: inspected 276 cases, zero failures/errors/skips, including all seven catalogue cases and both self-review cases.",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/quality-scans/secrets.json: sanitized secrets scanner verdict pass with empty findings.",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/repair-1/repair-evidence.json and green-test.log: afterSha matches frozen source; isolated Node v24.21.0 focused repair proof records seven tests passing."
+        ],
+        "findings": [],
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_github_actions_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a49-1040-7ba0-bc0f-e068cd9eab9a"
+        }
+      },
+      "crew:javascript": {
+        "verdict": "pass",
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "reviewer": "01a12a49-2be3-7753-be39-fbdc25b3e54e",
+        "summary": "No blocking JavaScript findings. The fixture now copies AGENTS.md required by the Captain improvement-register link; isolated per-test roots, cleanup and existing defect assertions remain intact. validateCatalogue, its member validator, production entry point and other caller are unchanged. Generic AGENTS scope uncertainty resolves to documentation/instruction changes plus this test-only dependency; no new browser or infrastructure runtime behavior. Exact-source hosted Node 24 evidence on Ubuntu and Windows contains all seven catalogue tests and both self-review tests passing, 276 cases per platform, no failures/errors; the sole Ubuntu skip is the Windows-short-path installation case and Windows has no skips. Sanitized secrets evidence passes. Independent source/artifact review only; no candidate execution or approval/merge claim.",
+        "evidence": [
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:9-14,24-70 (fixture ownership, cleanup and unchanged assertions)",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:skills/marc-crew-captain/IMPROVEMENTS.md:5 (relative AGENTS.md link motivating fixture dependency)",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.cjs:10-35,57-66 (regular local-reference validation, recursive skill traversal, unchanged export/CLI)",
+          "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/authoring-skill.test.cjs:4-21; package.json:9-11; .github/workflows/node-checks.yml:14-44 (unchanged consumers and hosted registration)",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-ubuntu-latest/node-results.xml (276 cases, 0 failures/errors, 1 platform-specific skip; catalogue and self-review cases inspected)",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/node-test-results-windows-latest/node-results.xml (276 cases, 0 failures/errors/skips; catalogue and self-review cases inspected)",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/after-repair-1/ci-38127830387-1/quality-scans/secrets.json (pass, zero findings)",
+          "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/repair-1/repair-evidence.json; green-test.log (bounded AGENTS fixture repair and seven focused passing tests; hosted artifacts provide subsequent exact-source proof)"
+        ],
+        "findings": [],
+        "memberVersion": "1.0.0",
+        "memberHash": "afe4abbf9a59e1cebcdfd6b6f55e446d38db88614ea656ea19668eeb6ffd1379",
+        "selectionHash": "f1baf0847cd3c3471185ef68804a81ba758fbd26a48a5f5e3b3671f8b6b8187d",
+        "execution": {
+          "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+          "applied": true,
+          "evidence": "Codex collaboration.spawn_agent pr26_javascript_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a49-2be3-7753-be39-fbdc25b3e54e"
+        }
+      }
+    },
+    "ci": {
+      "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+      "runUrl": "https://github.com/wallism/marc/actions/runs/38127830387",
+      "runId": 38127830387,
+      "runAttempt": 1,
+      "conclusion": "success",
+      "verdict": "pass",
+      "status": "complete",
+      "reason": "Reused hosted CI for this exact commit",
+      "jobs": [
+        {"name":"Node 24 (ubuntu-latest)","conclusion":"success"},
+        {"name":"Quality scans","conclusion":"success"},
+        {"name":"Node 24 (windows-latest)","conclusion":"success"}
+      ]
+    },
+    "crew": {
+      "schema": 1,
+      "compatibility": "marc-crew-v1",
+      "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+      "base": "8a973a336a0348f11572878b362152ea38632c0a",
+      "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+      "toolCommit": "8a973a336a0348f11572878b362152ea38632c0a",
+      "impact": {
+        "files": ["AGENTS.md","IMPROVEMENTS.md","skills/marc-crew-captain/IMPROVEMENTS.md","src/quality/catalogue-validation.test.cjs"],
+        "changedFiles": ["AGENTS.md","IMPROVEMENTS.md","skills/marc-crew-captain/IMPROVEMENTS.md","src/quality/catalogue-validation.test.cjs"],
+        "references": [],
+        "lexicalReferences": [],
+        "technologies": ["csharp","github-actions","javascript"],
+        "reasons": [
+          "AGENTS.md: changed shared configuration/instruction/dependency impact.",
+          "Captured 4 changed and 0 referenced files; independent behavioral caller review remains required.",
+          "src/quality/catalogue-validation.test.cjs: CommonJS controller, installer and validation modules execute on Node.js 24."
+        ],
+        "holds": [],
+        "uncertain": true,
+        "incomplete": false,
+        "requiresBrowser": false
+      },
+      "selected": [
+        {
+          "id": "csharp",
+          "version": "1.1.0",
+          "contentHash": "3fe4d7a84361c4a53d08a639e17985a79b35380ee044ef36054544920c11c62b",
+          "skill": "skills/marc-crew-csharp/SKILL.md",
+          "reasons": ["Uncertain impact requires broader configured expertise."]
+        },
+        {
+          "id": "github-actions",
+          "version": "1.0.0",
+          "contentHash": "7129cce6f217f387fb6baaf815ef6e619587d8ddd4488207be756ea691295aa8",
+          "skill": "skills/marc-crew-github-actions/SKILL.md",
+          "reasons": ["Uncertain impact requires broader configured expertise."]
+        },
+        {
+          "id": "javascript",
+          "version": "1.0.0",
+          "contentHash": "afe4abbf9a59e1cebcdfd6b6f55e446d38db88614ea656ea19668eeb6ffd1379",
+          "skill": "skills/marc-crew-javascript/SKILL.md",
+          "reasons": ["Uncertain impact requires broader configured expertise."]
+        }
+      ],
+      "omitted": [],
+      "holds": [],
+      "requiresFull": true,
+      "requiresBrowser": false,
+      "selectionHash": "f1baf0847cd3c3471185ef68804a81ba758fbd26a48a5f5e3b3671f8b6b8187d"
+    },
+    "coordinator": "01a128d1-2738-7e02-a5db-382f915d64a6",
+    "repairReviewers": ["01a12a3e-94f7-7be1-b82c-cf90f0daaac7"],
+    "routing": {
+      "verdict": "pass",
+      "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+      "base": "8a973a336a0348f11572878b362152ea38632c0a",
+      "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+      "reviewer": "01a128d1-2738-7e02-a5db-382f915d64a6",
+      "route": "full",
+      "summary": "Full review after catalogue-fixture repair: complete four-file PR changes shared delegation instructions and updates their existing fixture coverage; no instruction authority or assertions were weakened.",
+      "risks": ["prompts and agent instructions"],
+      "evidence": [
+        "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:12-14 approved scoped delegation wording retained",
+        "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:12 adds AGENTS.md to fixture inputs, assertions unchanged",
+        "9adf56cb3cf29be04438bf44d11618f67e872e2c:IMPROVEMENTS.md and skills/marc-crew-captain/IMPROVEMENTS.md document the process change"
+      ],
+      "findings": [],
+      "execution": {
+        "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+        "applied": true,
+        "evidence": "Actual Captain thread 01a128d1-2738-7e02-a5db-382f915d64a6; root performs routing using inherited current host model/effort; no configured overrides."
+      }
+    },
+    "risk": {
+      "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+      "base": "8a973a336a0348f11572878b362152ea38632c0a",
+      "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+      "reviewer": "01a12a42-8e84-72f0-826f-c6d723b3eb09",
+      "summary": "High risk: AGENTS.md changes the shared delegation default used by the Captain across independent review and authorized repair workflows for every requested MARC PR run. The instruction and fixture edits are revertible, but unchanged assertions or repair proof do not lower their blast radius; pending CI and stale previous-head approval supply no current merge authority.",
+      "evidence": [
+        "9adf56cb3cf29be04438bf44d11618f67e872e2c:AGENTS.md:13 replaces the unconditional delegation restriction at 8a973a336a0348f11572878b362152ea38632c0a:AGENTS.md:11 with a default applying to requested MARC PR processing.",
+        "Both revisions:skills/marc-crew-captain/SKILL.md:42 require a fresh independent session for every review gate and authorized repair cycle; the new root instruction changes permission to initiate these shared workflows.",
+        "Both revisions:skills/marc-crew-captain/references/harnesses.md:35 treat effective local/global instructions and host permissions separately from policy identity, with contradictory instructions holding operation.",
+        "9adf56cb3cf29be04438bf44d11618f67e872e2c:skills/marc-crew-captain/IMPROVEMENTS.md:5 adds a local AGENTS.md reference; src/quality/catalogue-validation.cjs:19-25 and :27-32 inspect those links through the skill tree in both revisions.",
+        "9adf56cb3cf29be04438bf44d11618f67e872e2c:src/quality/catalogue-validation.test.cjs:12 adds AGENTS.md to the existing isolated fixture copies; test assertions at :17-70 are unchanged from the base.",
+        "Both revisions:.github/workflows/node-checks.yml:32-36 execute src/quality/*.test.cjs on both matrix operating systems; the fixture helper is confined to catalogue-validation.test.cjs, and catalogue runtime and harness source are unchanged."
+      ],
+      "level": "high",
+      "position": "trunk",
+      "reversibility": "revertible",
+      "triggers": [
+        "prompts and agent instructions (medium floor): AGENTS.md:13 changes the shared Captain delegation permission for independent reviewers and authorized repairs.",
+        "test execution (medium floor): catalogue-validation.test.cjs:12 changes fixture inputs consumed by the hosted Node test suite without changing its assertions."
+      ],
+      "unknowns": [],
+      "execution": {
+        "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+        "applied": true,
+        "evidence": "Codex collaboration.spawn_agent pr26_risk_after_repair with fork_turns=none and no model/effort override; supported host inheritance. Actual thread 01a12a42-8e84-72f0-826f-c6d723b3eb09"
+      }
+    },
+    "reportFormat": "marc-v3",
+    "auditFormat": "marc-audit-v1",
+    "repairCommitLinks": true,
+    "gateReasonLabels": true,
+    "reportCreatedAt": "2026-10-11T09:29:00.000Z",
+    "reportCiReuse": {"sourceHead":"9adf56cb3cf29be04438bf44d11618f67e872e2c","runId":38127830387,"runAttempt":1},
+    "stages": [
+      {
+        "kind": "review",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "repairCycles": 0,
+        "decision": {
+          "eligible": false,
+          "merge": false,
+          "reasons": [
+            "Sensitive files require a human decision through --operator-approval",
+            "Successful current CI missing",
+            "Risk assessment missing, stale or invalid",
+            "crew:csharp: stale member or selection identity",
+            "crew:github-actions: stale member or selection identity",
+            "crew:javascript: stale member or selection identity",
+            "security: unresolved result cannot be discarded or outvoted",
+            "correctness: unresolved result cannot be discarded or outvoted",
+            "code-quality: unresolved result cannot be discarded or outvoted",
+            "test-integrity: unresolved result cannot be discarded or outvoted",
+            "security: missing, stale or blocking evidence",
+            "correctness: missing, stale or blocking evidence",
+            "code-quality: missing, stale or blocking evidence",
+            "test-integrity: missing, stale or blocking evidence",
+            "crew:csharp: missing, stale or blocking evidence",
+            "crew:github-actions: missing, stale or blocking evidence",
+            "crew:javascript: missing, stale or blocking evidence",
+            "security: agent settings application evidence missing",
+            "security: stale model selection",
+            "security: stale reasoningEffort selection",
+            "correctness: agent settings application evidence missing",
+            "correctness: stale model selection",
+            "correctness: stale reasoningEffort selection",
+            "code-quality: agent settings application evidence missing",
+            "code-quality: stale model selection",
+            "code-quality: stale reasoningEffort selection",
+            "test-integrity: agent settings application evidence missing",
+            "test-integrity: stale model selection",
+            "test-integrity: stale reasoningEffort selection",
+            "crew:csharp: agent settings application evidence missing",
+            "crew:csharp: stale model selection",
+            "crew:csharp: stale reasoningEffort selection",
+            "crew:github-actions: agent settings application evidence missing",
+            "crew:github-actions: stale model selection",
+            "crew:github-actions: stale reasoningEffort selection",
+            "crew:javascript: agent settings application evidence missing",
+            "crew:javascript: stale model selection",
+            "crew:javascript: stale reasoningEffort selection"
+          ]
+        },
+        "routing": {
+          "verdict": "pass",
+          "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+          "base": "8a973a336a0348f11572878b362152ea38632c0a",
+          "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+          "reviewer": "01a128d1-2738-7e02-a5db-382f915d64a6",
+          "route": "full",
+          "summary": "Full review: the complete three-file change authorizes required Captain delegation and changes shared agent instructions; the two improvement-register entries document that process change.",
+          "risks": ["prompts and agent instructions"],
+          "evidence": [
+            "4b6839beef99bb01338886ef591b59efd995d27d:AGENTS.md:12-14 scoped delegation authorization; separate delegation still required for other work",
+            "4b6839beef99bb01338886ef591b59efd995d27d:IMPROVEMENTS.md:12 and skills/marc-crew-captain/IMPROVEMENTS.md:3-5 preserve review/repair/approval boundaries; complete diff is three files, 8 insertions and 1 deletion"
+          ],
+          "findings": [],
+          "execution": null
+        },
+        "crew": {
+          "schema": 1,
+          "compatibility": "marc-crew-v1",
+          "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+          "base": "8a973a336a0348f11572878b362152ea38632c0a",
+          "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+          "toolCommit": "8a973a336a0348f11572878b362152ea38632c0a",
+          "impact": {
+            "files": ["AGENTS.md","IMPROVEMENTS.md","skills/marc-crew-captain/IMPROVEMENTS.md"],
+            "changedFiles": ["AGENTS.md","IMPROVEMENTS.md","skills/marc-crew-captain/IMPROVEMENTS.md"],
+            "references": [],
+            "lexicalReferences": [],
+            "technologies": ["csharp","github-actions","javascript"],
+            "reasons": [
+              "AGENTS.md: changed shared configuration/instruction/dependency impact.",
+              "Captured 3 changed and 0 referenced files; independent behavioral caller review remains required."
+            ],
+            "holds": [],
+            "uncertain": true,
+            "incomplete": false,
+            "requiresBrowser": false
+          },
+          "selected": null,
+          "omitted": [],
+          "holds": [],
+          "requiresFull": true,
+          "requiresBrowser": false,
+          "selectionHash": "b539a50cd7e83ab27c6a0bb83e0bc3a52eb1437fae0e15b7b3f9dacb18021bf5"
+        },
+        "gates": {
+          "security": {
+            "verdict": "blocked",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "",
+            "summary": "Awaiting independent review",
+            "evidence": [],
+            "findings": []
+          },
+          "correctness": null,
+          "code-quality": null,
+          "test-integrity": null
+        },
+        "ci": {
+          "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+          "runUrl": "https://github.com/wallism/marc/actions/runs/38127043429",
+          "runId": 38127043429,
+          "runAttempt": 1,
+          "conclusion": null,
+          "verdict": "blocked",
+          "status": "pending",
+          "reason": "CI is still running or waiting; reuse this run"
+        },
+        "projectChanges": [],
+        "repairExecutions": [],
+        "intent": {"schema":1,"status":"absent","text":null,"entries":[],"hash":"c108081aab566869e89b75b41d0093724f2028c547b6924cf86da632a1961f8c"},
+        "recordedAt": "2026-10-11T09:05:09.809Z",
+        "previousHash": null,
+        "contentHash": "4929d989db47365493ad40a56e0262f8da14590b365f6308d2f3f44a06661760",
+        "hash": "10fbc49496f78dade0b4ae7431177891a218261b576b55e30337ac2eb4a16517"
+      },
+      {
+        "kind": "review",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "repairCycles": 0,
+        "decision": {"eligible":false,"merge":false,"reasons":null},
+        "routing": null,
+        "crew": null,
+        "gates": null,
+        "ci": {
+          "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+          "runUrl": "https://github.com/wallism/marc/actions/runs/38127043429",
+          "runId": 38127043429,
+          "runAttempt": 1,
+          "conclusion": "failure",
+          "verdict": "blocked",
+          "status": "failed",
+          "reason": "CI concluded failure"
+        },
+        "projectChanges": [],
+        "repairExecutions": [],
+        "intent": {"schema":1,"status":"absent","text":null,"entries":[],"hash":"c108081aab566869e89b75b41d0093724f2028c547b6924cf86da632a1961f8c"},
+        "risk": {
+          "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+          "base": "8a973a336a0348f11572878b362152ea38632c0a",
+          "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+          "reviewer": "01a12a35-9524-7e92-b71f-e759a2109fe1",
+          "summary": "High risk: the shared repository delegation rule governs dispatch of every required independent review and authorized repair session during MARC PR processing, so an incorrect rule can affect the whole assurance workflow. An ordinary instruction revert restores the previous rule; retained review, repair and approval boundaries and operator approval do not lower this trunk rating.",
+          "evidence": [
+            "8a973a336a0348f11572878b362152ea38632c0a:AGENTS.md:11 required an explicit user delegation request for all subagent work; 4b6839beef99bb01338886ef591b59efd995d27d:AGENTS.md:13 makes requested MARC PR processing authorize required reviewer and already-authorized repair sessions while retaining the prohibition for other work.",
+            "Both frozen revisions:skills/marc-crew-captain/SKILL.md:42 requires a fresh subagent for every review gate and authorized repair cycle, establishing the shared dispatch relationship rather than an isolated documentation leaf.",
+            "Both frozen revisions:skills/marc-crew-captain/references/guarded-actions.md:19 confines repair agents to approved findings, permitted files and cumulative budgets and requires fresh capture and reviews after repair; :21 retains guarded merge checks.",
+            "4b6839beef99bb01338886ef591b59efd995d27d:IMPROVEMENTS.md:11 and skills/marc-crew-captain/IMPROVEMENTS.md:3 record this same delegation rule; the frozen diff changes no executable controller, runtime, CI, credentials or data contract."
+          ],
+          "level": "high",
+          "position": "trunk",
+          "reversibility": "revertible",
+          "triggers": [
+            "prompts and agent instructions: AGENTS.md:13 changes the shared delegation rule used by the Captain for independent reviews and authorized repairs"
+          ],
+          "unknowns": [],
+          "execution": {
+            "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+            "applied": true,
+            "evidence": "Codex collaboration.spawn_agent pr26_risk, fork_turns=none, no model/effort overrides; supported host inheritance. Actual reviewer thread 01a12a35-9524-7e92-b71f-e759a2109fe1"
+          }
+        },
+        "recordedAt": "2026-10-11T09:07:35.264Z",
+        "previousHash": "10fbc49496f78dade0b4ae7431177891a218261b576b55e30337ac2eb4a16517",
+        "contentHash": "8aee68a27be7a093762b1dd4f9e5a335c4ca984b3d6b10cdade6c73f17629c41",
+        "hash": "d8641a86410f7d4ba59ae3166b8e885ba0dbe3151d42e33953a5a7e06afe71ab"
+      },
+      {
+        "kind": "ci",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "summary": "Node jobs failed five catalogue fixture assertions on both OSes after adding the new AGENTS.md link; secret scan passed.",
+        "evidence": [
+          "C:\\Users\\Admin\\.marc\\state\\wallism-marc-82cb06f5a5ba\\runs\\20261011-pr25-023718\\delegation-pr26\\failed-ci-identity.json",
+          "C:\\Users\\Admin\\.marc\\state\\wallism-marc-82cb06f5a5ba\\runs\\20261011-pr25-023718\\delegation-pr26\\failed-ci.log"
+        ],
+        "phase": "source",
+        "head": "4b6839beef99bb01338886ef591b59efd995d27d",
+        "runId": 38127043429,
+        "runAttempt": 1,
+        "status": "completed",
+        "conclusion": "failure",
+        "recordedAt": "2026-10-11T09:11:59.634Z",
+        "previousHash": "d8641a86410f7d4ba59ae3166b8e885ba0dbe3151d42e33953a5a7e06afe71ab",
+        "contentHash": "9120c89b79a2732c34299d64cf1df8a3361bcca13bef0d8d969a0ade2a5919e1",
+        "hash": "def280d1131bb3ff87c3bbebe8c6a6f269a39e57c4322ec7382e546ed42fc5ce"
+      },
+      {
+        "kind": "review",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "repairCycles": 0,
+        "decision": {
+          "eligible": false,
+          "merge": false,
+          "reasons": [
+            "Sensitive files require a human decision through --operator-approval",
+            "Successful current CI missing",
+            "security: unresolved result cannot be discarded or outvoted",
+            "correctness: unresolved result cannot be discarded or outvoted",
+            "code-quality: unresolved result cannot be discarded or outvoted",
+            "test-integrity: unresolved result cannot be discarded or outvoted",
+            "crew:csharp: unresolved result cannot be discarded or outvoted",
+            "crew:github-actions: unresolved result cannot be discarded or outvoted",
+            "crew:javascript: unresolved result cannot be discarded or outvoted",
+            "security: missing, stale or blocking evidence",
+            "correctness: missing, stale or blocking evidence",
+            "code-quality: missing, stale or blocking evidence",
+            "test-integrity: missing, stale or blocking evidence",
+            "crew:csharp: missing, stale or blocking evidence",
+            "crew:github-actions: missing, stale or blocking evidence",
+            "crew:javascript: missing, stale or blocking evidence"
+          ]
+        },
+        "routing": null,
+        "crew": null,
+        "gates": {
+          "security": {
+            "verdict": "blocked",
+            "blockReason": "Failed CI",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "01a12a38-a1da-7321-ad14-24d583c791b5",
+            "summary": "The scoped delegation instruction preserves trusted-skill authorization, independent fresh sessions and existing review/repair/approval boundaries. Exact external human approval matches this source/base/policy and both sensitive changed paths, and was unexpired at inspection; no additional governance approval is requested. The retained exact-run sanitized secrets artifact passes with no findings, and there are no manifest/dependency changes. Security validation remains blocked: both Node 24 jobs have five catalogue failures caused by the newly added AGENTS.md reference and the incomplete test fixture, including permission and repository-escape rejection tests. Approval does not waive these failures. No candidate code, tests or scans were executed locally; no UI security boundary is affected.",
+            "evidence": [
+              "4b6839beef99bb01338886ef591b59efd995d27d:AGENTS.md:11-13",
+              "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:3-5",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md:22-31,44-46",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/references/harnesses.md:17-41",
+              "8a973a336a0348f11572878b362152ea38632c0a:docs/operator-approval.md",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/operator-approval.json",
+              "https://github.com/wallism/marc/actions/runs/38127043429 (source 4b6839beef99bb01338886ef591b59efd995d27d, attempt 1)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/quality-scans/secrets.json",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-ubuntu-latest/node-results.xml (276 cases, five failures, one skip)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-windows-latest/node-results.xml (276 cases, five failures)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci.log:282-435,717-870",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:19-32,55",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14,24-65"
+            ],
+            "findings": [
+              {
+                "severity": "blocking",
+                "file": "src/quality/catalogue-validation.test.cjs",
+                "line": 12,
+                "detail": "The temporary catalogue fixture copies skills/docs/README.md/IMPROVEMENTS.md but omits AGENTS.md. The new local link in the Captain improvement register makes inspectTree resolve that missing file before reaching the intended malformed-manifest, permission and escaping-reference checks. Both exact-source OS artifacts show five ENOENT failures, so required security-relevant catalogue validation has not passed.",
+                "evidence": [
+                  "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5",
+                  "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:12-13,44-54",
+                  "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:19-24,32,55",
+                  "CI run 38127043429 attempt 1: both node-test-results artifacts, catalogue-validation failure cases"
+                ],
+                "recommendedChange": "Include AGENTS.md in the temporary catalogue fixture without weakening local-reference, permission or repository-escape checks; obtain passing required CI and fresh review for the changed source identity."
+              }
+            ],
+            "execution": {
+              "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+              "applied": true,
+              "evidence": "Codex collaboration.spawn_agent pr26_security with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a38-a1da-7321-ad14-24d583c791b5"
+            }
+          },
+          "correctness": {
+            "verdict": "repair",
+            "blockReason": "Failed CI",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "01a12a38-c23f-7490-9589-3c12023e83c3",
+            "requiresBrowser": false,
+            "summary": "The scoped delegation instruction is consistent with the trusted Captain and harness contracts: fresh independent sessions and existing repair, approval and merge boundaries remain required. Exact-source CI run 38127043429 attempt 1 fails five catalogue tests on both Node 24 operating systems because the new register link to AGENTS.md introduces a file dependency absent from the catalogue test fixture. This is a bounded repairable regression, not infrastructure failure; human landing approval does not waive it. No candidate code was executed or edited.",
+            "evidence": [
+              "4b6839beef99bb01338886ef591b59efd995d27d:AGENTS.md:13",
+              "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:19-25,28-33,55",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md (Invariants and Crew sessions)",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/references/harnesses.md (Handoffs, Dispatch, Identities and limits)",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/references/guarded-actions.md (Repair, publication and merge)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-windows-latest/node-results.xml (five catalogue failures; both self-review cases pass)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-ubuntu-latest/node-results.xml (same five catalogue failures; both self-review cases pass)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci.log:291-435,726-870 (missing AGENTS.md ENOENT on both operating systems)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/quality-scans/secrets.json (pass with no findings)"
+            ],
+            "findings": [
+              {
+                "severity": "blocking",
+                "file": "src/quality/catalogue-validation.test.cjs",
+                "line": 12,
+                "detail": "The catalogue fixture copies skills, docs, README.md and IMPROVEMENTS.md but not AGENTS.md. The new local link in skills/marc-crew-captain/IMPROVEMENTS.md:5 is checked by inspectTree/inspectMarkdown, so validateCatalogue(fixtureRoot) now throws ENOENT for AGENTS.md before the expected manifest, missing-guide, permission and escape checks; the optional-companion test also fails outright. Both exact-source JUnit artifacts and failing logs confirm all five affected tests fail for this same reason.",
+                "evidence": "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14; skills/marc-crew-captain/IMPROVEMENTS.md:5; src/quality/catalogue-validation.cjs:19-25,28-33,55; run 38127043429 attempt 1 node-test-results-windows-latest/node-results.xml and node-test-results-ubuntu-latest/node-results.xml",
+                "recommendedChange": "Add AGENTS.md to the catalogue fixture copy list so the new reference exists, preserving the specific rejection assertions and companion checks. Obtain fresh required exact-source CI evidence after repair and recapture the changed source; do not classify this deterministic test failure as infrastructure or waive it."
+              }
+            ],
+            "execution": {
+              "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+              "applied": true,
+              "evidence": "Codex collaboration.spawn_agent pr26_correctness with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a38-c23f-7490-9589-3c12023e83c3"
+            }
+          },
+          "code-quality": {
+            "verdict": "repair",
+            "blockReason": "Failed CI",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "01a12a38-daa2-76a2-85b3-687f89456c6d",
+            "summary": "The scoped delegation instruction matches the trusted Captain and harness independence, repair and approval boundaries. The new Captain improvement-register link introduces a concrete catalogue-fixture dependency omitted from fixture setup: exact-source CI run 38127043429 fails five tests on each Node 24 OS with missing AGENTS.md. Both retained JUnit artifacts contain 276 cases and five failures; self-review cases pass and sanitized secrets evidence reports pass. Landing remains blocked pending fixture repair and fresh exact-source CI; no candidate code was executed.",
+            "evidence": [
+              "4b6839beef99bb01338886ef591b59efd995d27d:AGENTS.md:14",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md:38-40",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/references/harnesses.md:7-34",
+              "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:19-24,27-33,55",
+              "https://github.com/wallism/marc/actions/runs/38127043429",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-ubuntu-latest/node-results.xml",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-windows-latest/node-results.xml",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/quality-scans/secrets.json"
+            ],
+            "findings": [
+              {
+                "severity": "blocking",
+                "file": "src/quality/catalogue-validation.test.cjs",
+                "line": 12,
+                "detail": "The fixture copies only skills, docs, README.md and IMPROVEMENTS.md. The added ../../AGENTS.md link in the Captain register is traversed by inspectTree/inspectMarkdown, so every fixture-based validation reaches a missing AGENTS.md before its intended assertion. This causes all five recorded failures on both hosted OS jobs and prevents catalogue guard tests from exercising their intended checks.",
+                "evidence": "Source 4b6839beef99bb01338886ef591b59efd995d27d: fixture line 12 has ['skills', 'docs', 'README.md', 'IMPROVEMENTS.md']; Captain IMPROVEMENTS.md:5 adds [repository instructions](../../AGENTS.md); catalogue-validation.cjs:24 calls regular on each local link. Run 38127043429 retained Ubuntu and Windows JUnit failures all report ENOENT for fixture AGENTS.md. The validator and fixture are unchanged relative to captured base; scope expands because the new register link adds their missing input.",
+                "recommendedChange": "Add AGENTS.md to the copied catalogue fixture inputs while preserving local-link and repository-boundary checks. Obtain passing fresh exact-source Node 24 jobs and required scan evidence after the repair."
+              }
+            ],
+            "execution": {
+              "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+              "applied": true,
+              "evidence": "Codex collaboration.spawn_agent pr26_code_quality with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a38-daa2-76a2-85b3-687f89456c6d"
+            }
+          },
+          "test-integrity": {
+            "verdict": "repair",
+            "blockReason": "Failed CI",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "01a12a3a-93bc-7401-af30-35a002fbae59",
+            "summary": "Exact-source CI run 38127043429 attempt 1 fails five catalogue tests on both Node 24 platforms. The added Captain register link to AGENTS.md exposes an incomplete temporary fixture: validation raises ENOENT before intended catalogue assertions. Windows ran 276 tests: 271 passed, 5 failed, none skipped. Ubuntu ran 276: 270 passed, 5 failed, one explicitly Windows-only short-path case skipped. All six self-review tests passed on both platforms; sanitized secrets evidence reports pass. The three-file diff deletes no tests, changes no assertions, exclusions or snapshots, and does not affect UI. Required successful CI is absent; human approval cannot waive these failures. No candidate code executed and no suites rerun.",
+            "requiresBrowser": false,
+            "evidence": [
+              "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:19-25,28-33,55",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/installation.test.cjs:8",
+              "https://github.com/wallism/marc/actions/runs/38127043429 (attempt 1)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-windows-latest/node-results.xml",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-ubuntu-latest/node-results.xml",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/quality-scans/secrets.json",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci.log:282-287,294-434,717-722,729-869"
+            ],
+            "findings": [
+              {
+                "severity": "blocking",
+                "file": "src/quality/catalogue-validation.test.cjs",
+                "line": 12,
+                "detail": "fixture() copies skills, docs, README.md and IMPROVEMENTS.md but omits AGENTS.md. The new ../../AGENTS.md link in the Captain improvement register is traversed by validateCatalogue.inspectTree/inspectMarkdown, producing ENOENT in the temporary root. Both exact-source platform artifacts fail the mandatory-manifest, broken-reference, invalid-permission, escaping-reference and optional-companion tests for this same missing-file error. The negative assertions cannot reach their intended violations and the valid companion case cannot validate.",
+                "evidence": "Source 4b6839beef99bb01338886ef591b59efd995d27d: src/quality/catalogue-validation.test.cjs:9-14; skills/marc-crew-captain/IMPROVEMENTS.md:5; src/quality/catalogue-validation.cjs:19-25,28-33,55. Run 38127043429 attempt 1: both retained node-results.xml artifacts contain five failures with ENOENT for fixture-root AGENTS.md.",
+                "recommendedChange": "Include the newly referenced AGENTS.md in the catalogue fixture's copied inputs, preserving the existing specific negative assertions and validator rules. Obtain passing exact-source Node 24 Linux and Windows CI and freshly capture/review the repaired source."
+              }
+            ],
+            "execution": {
+              "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+              "applied": true,
+              "evidence": "Codex collaboration.spawn_agent pr26_test_integrity with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a3a-93bc-7401-af30-35a002fbae59"
+            }
+          },
+          "crew:csharp": {
+            "verdict": "blocked",
+            "blockReason": "Failed CI",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "01a12a3a-abf0-7873-a2dd-fb83034ad1f4",
+            "memberVersion": "1.1.0",
+            "memberHash": "3fe4d7a84361c4a53d08a639e17985a79b35380ee044ef36054544920c11c62b",
+            "selectionHash": "b539a50cd7e83ab27c6a0bb83e0bc3a52eb1437fae0e15b7b3f9dacb18021bf5",
+            "summary": "No C# architecture, contract or runtime defect is demonstrated by the complete three-file governance/register diff. StartupHook.cs and Marc.BrowserHost.csproj are unchanged, so focused .NET build/smoke evidence is not required for this change. The delegation instruction preserves fresh independent sessions and trusted-skill review, repair and approval boundaries. Required exact-source CI run 38127043429 nevertheless fails: both Node 24 artifacts contain five catalogue-validation failures (271 passing of 276 each). The new Captain register link to ../../AGENTS.md is traversed by catalogue validation, but its temporary test fixture copies skills, docs, README.md and IMPROVEMENTS.md without AGENTS.md, causing ENOENT before the intended assertions. This failed required evidence holds the gate; the demonstrated fixture defect belongs to the JavaScript/test seam rather than C# implementation. No candidate code, tests or build was executed locally.",
+            "evidence": [
+              "4b6839beef99bb01338886ef591b59efd995d27d:AGENTS.md:11-13; unchanged .NET 10/artifact-directory requirement and scoped fresh-session delegation",
+              "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5; new ../../AGENTS.md link",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14; fixture excludes AGENTS.md",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:19-24,28-32,55; local Markdown links are traversed",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/browser-host/StartupHook.cs and src/quality/browser-host/Marc.BrowserHost.csproj; inspected and unchanged from captured base",
+              "8a973a336a0348f11572878b362152ea38632c0a:skills/marc-crew-captain/SKILL.md:13-29; trusted fresh independent review and evidence holds",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-windows-latest/node-results.xml; five catalogue failures with missing AGENTS.md",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-ubuntu-latest/node-results.xml; matching five catalogue failures",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci.log:282-285,717-720; each platform records 276 tests and five failures",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/quality-scans/secrets.json; sanitized secrets verdict pass with no findings"
+            ],
+            "findings": [],
+            "execution": {
+              "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+              "applied": true,
+              "evidence": "Codex collaboration.spawn_agent pr26_csharp with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a3a-abf0-7873-a2dd-fb83034ad1f4"
+            }
+          },
+          "crew:github-actions": {
+            "verdict": "repair",
+            "blockReason": "Failed CI",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "01a12a3a-e26f-7a80-80bc-f476c4165ffa",
+            "memberVersion": "1.0.0",
+            "memberHash": "7129cce6f217f387fb6baaf815ef6e619587d8ddd4488207be756ea691295aa8",
+            "selectionHash": "b539a50cd7e83ab27c6a0bb83e0bc3a52eb1437fae0e15b7b3f9dacb18021bf5",
+            "summary": "The unchanged push/manual Node workflow retains read-only token permissions, immutable action pins, nonpersisted checkout credentials and always-uploaded evidence; no workflow authority defect was found. Exact-source run 38127043429 has five catalogue test failures out of 276 tests on each Node 24 OS. The newly linked AGENTS.md is absent from copied catalogue fixtures, so local-link validation throws ENOENT before the tests reach their intended assertions. The sanitized secrets artifact passes. Required source CI remains failed; human approval does not waive this repair or fresh exact-source evidence.",
+            "evidence": [
+              "4b6839beef99bb01338886ef591b59efd995d27d:.github/workflows/node-checks.yml:3-39 (push/manual source checkout; Node 24 matrix; tests and always-uploaded JUnit); same workflow at base 8a973a336a0348f11572878b362152ea38632c0a",
+              "4b6839beef99bb01338886ef591b59efd995d27d:.github/workflows/node-checks.yml:41-72 (read-only quality scan and sanitized evidence upload)",
+              "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5 -> ../../AGENTS.md",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14; src/quality/catalogue-validation.cjs:19-32,55 (copied fixture and recursive local-link validation)",
+              "https://github.com/wallism/marc/actions/runs/38127043429 attempt 1; retained failed-ci.log:292-435 and 727-870",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-ubuntu-latest/node-results.xml (276 testcases, five failures, all AGENTS.md ENOENT)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-windows-latest/node-results.xml (276 testcases, five failures, all AGENTS.md ENOENT)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/quality-scans/secrets.json (scanner secrets, verdict pass, findings empty)"
+            ],
+            "findings": [
+              {
+                "severity": "blocking",
+                "file": "src/quality/catalogue-validation.test.cjs",
+                "line": 12,
+                "detail": "The fixture copies skills, docs, README.md and IMPROVEMENTS.md but omits AGENTS.md. The candidate adds a local ../../AGENTS.md link in the Captain improvement register; validateCatalogue recursively checks that link in every fixture. Both required Node 24 jobs consequently fail five tests with AGENTS.md ENOENT instead of exercising missing manifests, broken references, invalid permissions, escaping references and optional companions. These are deterministic source failures, not retryable CI infrastructure failures.",
+                "evidence": [
+                  "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:12-13",
+                  "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5",
+                  "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:24,32,55",
+                  "run 38127043429 attempt 1: node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml, five identical failing testcase names and AGENTS.md ENOENT"
+                ],
+                "recommendedChange": "Include AGENTS.md in the catalogue fixture's copied repository inputs, retain the local-link validation and intended negative assertions, and obtain passing required CI for the resulting new source identity before guarded landing."
+              }
+            ],
+            "execution": {
+              "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+              "applied": true,
+              "evidence": "Codex collaboration.spawn_agent pr26_github_actions with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a3a-e26f-7a80-80bc-f476c4165ffa"
+            }
+          },
+          "crew:javascript": {
+            "verdict": "repair",
+            "blockReason": "Failed CI",
+            "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "01a12a3c-509c-7023-b1d9-19d552270b0a",
+            "memberVersion": "1.0.0",
+            "memberHash": "afe4abbf9a59e1cebcdfd6b6f55e446d38db88614ea656ea19668eeb6ffd1379",
+            "selectionHash": "b539a50cd7e83ab27c6a0bb83e0bc3a52eb1437fae0e15b7b3f9dacb18021bf5",
+            "summary": "Confirmed JavaScript test-fixture regression from the new Captain register link. validateCatalogue recursively checks Markdown links; its temporary fixture omits AGENTS.md, causing five failures in each exact-source Node 24 job (276 tests per platform). All six self-review tests pass on each platform; sanitized secrets evidence reports pass. Expanded scope from the changed register to its unchanged JavaScript validator and focused fixture through this concrete resource contract. No candidate code was executed. The frozen brief contains no validated successful CI artifacts, and run 38127043429 fails; landing requires repair and fresh exact-source CI evidence.",
+            "evidence": [
+              "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:14-24,27-32,55",
+              "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:9-14,30,37,47,53,63",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-ubuntu-latest/node-results.xml (run 38127043429, attempt 1)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/node-test-results-windows-latest/node-results.xml (run 38127043429, attempt 1)",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci-artifacts/quality-scans/secrets.json",
+              "C:/Users/Admin/.marc/state/wallism-marc-82cb06f5a5ba/runs/20261011-pr25-023718/delegation-pr26/failed-ci.log"
+            ],
+            "findings": [
+              {
+                "severity": "blocking",
+                "file": "src/quality/catalogue-validation.test.cjs",
+                "line": 12,
+                "detail": "The fixture copies skills, docs, README.md and IMPROVEMENTS.md but omits AGENTS.md. The newly added ../../AGENTS.md link in skills/marc-crew-captain/IMPROVEMENTS.md is traversed by inspectTree/inspectMarkdown, and regular() throws ENOENT before the intended mutation assertions. Both hosted Node jobs show the same five catalogue failures, including the clean companion validation.",
+                "evidence": [
+                  "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.test.cjs:12-13",
+                  "4b6839beef99bb01338886ef591b59efd995d27d:skills/marc-crew-captain/IMPROVEMENTS.md:5",
+                  "4b6839beef99bb01338886ef591b59efd995d27d:src/quality/catalogue-validation.cjs:14,24,32,55",
+                  "run 38127043429 attempt 1: node-test-results-ubuntu-latest/node-results.xml and node-test-results-windows-latest/node-results.xml, five failures per platform with missing fixture AGENTS.md"
+                ],
+                "recommendedChange": "Copy AGENTS.md into the catalogue fixture alongside the existing root resources so the valid new link resolves without weakening link validation. Obtain passing exact-source Node 24 CI on both platforms after the repair."
+              }
+            ],
+            "execution": {
+              "settings": {"model":{"source":"captain","value":null},"reasoningEffort":{"source":"captain","value":null}},
+              "applied": true,
+              "evidence": "Codex collaboration.spawn_agent pr26_javascript with fork_turns=none and no model/effort override; supported host inheritance. Actual reviewer thread 01a12a3c-509c-7023-b1d9-19d552270b0a"
+            }
+          }
+        },
+        "ci": {
+          "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+          "runUrl": "https://github.com/wallism/marc/actions/runs/38127043429",
+          "runId": 38127043429,
+          "runAttempt": 1,
+          "conclusion": "failure",
+          "verdict": "blocked",
+          "status": "failed",
+          "reason": "CI concluded failure"
+        },
+        "projectChanges": [],
+        "repairExecutions": [],
+        "intent": {"schema":1,"status":"absent","text":null,"entries":[],"hash":"c108081aab566869e89b75b41d0093724f2028c547b6924cf86da632a1961f8c"},
+        "risk": null,
+        "recordedAt": "2026-10-11T09:15:00.951Z",
+        "previousHash": "def280d1131bb3ff87c3bbebe8c6a6f269a39e57c4322ec7382e546ed42fc5ce",
+        "contentHash": "1dbe50a5d142a79a143d7c8684316e82b679989dbe37e856d0206b0119139d6c",
+        "hash": "27870790db092f9dff30959dfabe1591cb0dbb628ba38ea355854646d9085014"
+      },
+      {
+        "kind": "repair",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "4b6839beef99bb01338886ef591b59efd995d27d",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "summary": "Added AGENTS.md to existing catalogue fixture inputs without changing assertions; hardened offline Node 24 container: red 2 pass/5 fail, green 7 pass/0 fail.",
+        "evidence": [
+          "C:\\Users\\Admin\\.marc\\state\\wallism-marc-82cb06f5a5ba\\runs\\20261011-pr25-023718\\delegation-pr26/repair-1/repair-evidence.json",
+          "https://github.com/wallism/marc/commit/9adf56cb3cf29be04438bf44d11618f67e872e2c"
+        ],
+        "repairCycle": 1,
+        "toHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "reviewer": "01a12a3e-94f7-7be1-b82c-cf90f0daaac7",
+        "result": "repaired",
+        "execution": null,
+        "recordedAt": "2026-10-11T09:19:00.226Z",
+        "previousHash": "27870790db092f9dff30959dfabe1591cb0dbb628ba38ea355854646d9085014",
+        "contentHash": "efa49a6b920fa1707783b2ed18cc1855c75fc040d87fe86afbc118c1d6eaf671",
+        "hash": "ec0805e3c3f2fdfc588eb6750ae502615958afca3a02fcb5dd7ace5895c9b5fb"
+      },
+      {
+        "kind": "review",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "repairCycles": 1,
+        "decision": null,
+        "routing": null,
+        "crew": null,
+        "gates": {
+          "security": {
+            "verdict": "blocked",
+            "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+            "base": "8a973a336a0348f11572878b362152ea38632c0a",
+            "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+            "reviewer": "",
+            "summary": "Awaiting independent review",
+            "evidence": [],
+            "findings": []
+          },
+          "correctness": null,
+          "code-quality": null,
+          "test-integrity": null
+        },
+        "ci": {
+          "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+          "runUrl": "https://github.com/wallism/marc/actions/runs/38127830387",
+          "runId": 38127830387,
+          "runAttempt": 1,
+          "conclusion": null,
+          "verdict": "blocked",
+          "status": "pending",
+          "reason": "CI is still running or waiting; reuse this run"
+        },
+        "projectChanges": [],
+        "repairExecutions": null,
+        "intent": {"schema":1,"status":"absent","text":null,"entries":[],"hash":"c108081aab566869e89b75b41d0093724f2028c547b6924cf86da632a1961f8c"},
+        "recordedAt": "2026-10-11T09:19:08.595Z",
+        "previousHash": "ec0805e3c3f2fdfc588eb6750ae502615958afca3a02fcb5dd7ace5895c9b5fb",
+        "contentHash": "bf859740aa07d6f38556f0ed50969c1c3ee7e577f3eed0dc8b1fdf886b18431a",
+        "hash": "5695ae41ec6171ce57a033f2e7c2f7b72e5a928dd5067814fe263b3e46cc7d10"
+      },
+      {
+        "kind": "review",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "repairCycles": 1,
+        "decision": {"eligible":false,"merge":false,"reasons":null},
+        "routing": null,
+        "crew": null,
+        "gates": null,
+        "ci": null,
+        "projectChanges": [],
+        "repairExecutions": null,
+        "intent": {"schema":1,"status":"absent","text":null,"entries":[],"hash":"c108081aab566869e89b75b41d0093724f2028c547b6924cf86da632a1961f8c"},
+        "risk": null,
+        "recordedAt": "2026-10-11T09:21:21.512Z",
+        "previousHash": "5695ae41ec6171ce57a033f2e7c2f7b72e5a928dd5067814fe263b3e46cc7d10",
+        "contentHash": "70c0e0b8da9098d653e77253bdaf2774c4ddbc7f3ea7f22a09faee221d86cc42",
+        "hash": "6426ae0527d6d8da95d4409a79b810350d44e34b42678d2dff78337563e74ff7"
+      },
+      {
+        "kind": "review",
+        "repository": "wallism/marc",
+        "pr": 26,
+        "sourceHead": "9adf56cb3cf29be04438bf44d11618f67e872e2c",
+        "base": "8a973a336a0348f11572878b362152ea38632c0a",
+        "policyHash": "2e916254152d446477e1eec9bd0bce54bbf0d844cf42d23e618531233bbdb54c",
+        "repairCycles": 1,
+        "decision": {
+          "eligible": false,
+          "merge": false,
+          "reasons": [
+            "Sensitive files require a human decision through --operator-approval",
+            "security: unresolved result cannot be discarded or outvoted",
+            "security: missing, stale or blocking evidence"
+          ]
+        },
+        "routing": null,
+        "crew": null,
+        "gates": null,
+        "ci": null,
+        "projectChanges": [],
+        "repairExecutions": null,
+        "intent": {"schema":1,"status":"absent","text":null,"entries":[],"hash":"c108081aab566869e89b75b41d0093724f2028c547b6924cf86da632a1961f8c"},
+        "risk": null,
+        "recordedAt": "2026-10-11T09:29:10.889Z",
+        "previousHash": "6426ae0527d6d8da95d4409a79b810350d44e34b42678d2dff78337563e74ff7",
+        "contentHash": "561fd0d3cb3384ae8750322a2eebe2d5b3c0601fbe9b309dee8397d40af51199",
+        "hash": "9796e7306092345338e6b5e0ea193515c50e25a72f23bbb608e5c18b900eb42c"
+      }
+    ]
+  },
+  "references": {
+    "/stages/0/routing/execution": "/routing/execution",
+    "/stages/0/crew/selected": "/crew/selected",
+    "/stages/0/gates/correctness": "/stages/0/gates/security",
+    "/stages/0/gates/code-quality": "/stages/0/gates/security",
+    "/stages/0/gates/test-integrity": "/stages/0/gates/security",
+    "/stages/1/decision/reasons": {"base":"/stages/0/decision/reasons","start":2,"deleteCount":1,"items":[]},
+    "/stages/1/routing": "/stages/0/routing",
+    "/stages/1/crew": "/stages/0/crew",
+    "/stages/1/gates": "/stages/0/gates",
+    "/stages/3/routing": "/stages/0/routing",
+    "/stages/3/crew": "/stages/0/crew",
+    "/stages/3/risk": "/stages/1/risk",
+    "/stages/4/execution": "/repairExecutions/0/execution",
+    "/stages/5/decision": "/stages/0/decision",
+    "/stages/5/routing": "/routing",
+    "/stages/5/crew": "/crew",
+    "/stages/5/gates/correctness": "/stages/5/gates/security",
+    "/stages/5/gates/code-quality": "/stages/5/gates/security",
+    "/stages/5/gates/test-integrity": "/stages/5/gates/security",
+    "/stages/5/repairExecutions": "/repairExecutions",
+    "/stages/6/decision/reasons": {"base":"/stages/0/decision/reasons","start":1,"deleteCount":2,"items":[]},
+    "/stages/6/routing": "/routing",
+    "/stages/6/crew": "/crew",
+    "/stages/6/gates": "/stages/5/gates",
+    "/stages/6/ci": "/ci",
+    "/stages/6/repairExecutions": "/repairExecutions",
+    "/stages/6/risk": "/risk",
+    "/stages/7/routing": "/routing",
+    "/stages/7/crew": "/crew",
+    "/stages/7/gates": "/gates",
+    "/stages/7/ci": "/ci",
+    "/stages/7/repairExecutions": "/repairExecutions",
+    "/stages/7/risk": "/risk"
+  }
+}
