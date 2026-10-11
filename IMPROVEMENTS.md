@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-10-11 | Controller | Route npm changes using changed packages and trusted consumers instead of selecting every reviewer. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-11--package-aware-crew-routing) |
 | 2026-10-11 | Reports | Show short block reasons and distinguish untouched reviews as Not run while preserving historical report bytes. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-11--short-gate-reasons) |
 | 2026-10-08 | Dependency scanner | Preserve recorded nonblocking causes when adjudicating accepted high dependency parents. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-08--mixed-npm-causal-severities) |
 | 2026-10-04 | Dependency scanner | Support independent package exceptions within one lockfile while preserving fail-closed checks and shared-parent evidence. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-04--multiple-npm-package-exceptions) |

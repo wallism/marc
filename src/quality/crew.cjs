@@ -4,7 +4,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { consumerFile } = require('./config.cjs');
 const { isHostInstruction } = require('./host-instructions.cjs');
-const { collectProjectChanges } = require('./project-review.cjs');
+const { npmImpact } = require('./npm-impact.cjs');
 const { discoverReferences } = require('./impact.cjs');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const text = x => typeof x === 'string' && x.trim().length > 0;
@@ -90,24 +90,16 @@ function fileTechnologies(file) {
 function collectImpact(base, head, files, config, catalogue, readGit) {
   const affected = new Set(files), reasons = [], holds = [], technologies = new Set();
   let uncertain = false, shared = false;
-  // A known application's verified dependency-only diff needs full security review,
-  // not every technology in the repository. Never infer frontend from npm alone.
-  const scopedDependencies = new Set();
-  for (const file of files.filter(f => /\/package(?:-lock)?\.json$/i.test(f) &&
+  const npmChanges = new Map();
+  for (const file of files.filter(f => /(^|\/)package(?:-lock)?\.json$/i.test(f) &&
     !isHostInstruction(f) && !/^(\.github|\.agents|\.marc|scripts)\//i.test(f))) {
-    if (!config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file)))) continue;
-    try {
-      const change = collectProjectChanges(base, head, [file], readGit)[0];
-      if (change?.classification !== 'dependency-only') continue;
-      // Workspace manifests can own dependencies beyond this application boundary.
-      if ([base, head].some(revision => {
-        const manifest = JSON.parse(readGit('show', `${revision}:${file}`));
-        return manifest.workspaces !== undefined || manifest.packages?.['']?.workspaces !== undefined;
-      })) continue;
-      scopedDependencies.add(file);
-    } catch { /* Unavailable or unsupported evidence retains broad selection below. */ }
+    const result = npmImpact(base, head, file, readGit,
+      config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file))));
+    npmChanges.set(file, result);
+    holds.push(...result.holds);
+    reasons.push(...result.reasons);
   }
-  const discovery = discoverReferences(base, head, files.filter(file => !scopedDependencies.has(file)), readGit,
+  const discovery = discoverReferences(base, head, files.filter(file => !npmChanges.has(file)), readGit,
     file => fileTechnologies(file).length > 0 || config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file))));
   discovery.files.forEach(file => affected.add(file));
   holds.push(...discovery.holds);
@@ -119,9 +111,8 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
       area.technologies.forEach(t => technologies.add(t));
       if (files.includes(file)) reasons.push(`${file}: ${area.reason}`);
     }
-    if (scopedDependencies.has(file)) {
-      technologies.add('javascript');
-      reasons.push(`${file}: verified application dependency-only change; trusted area selects specialists, full review remains required.`);
+    if (npmChanges.has(file)) {
+      npmChanges.get(file).technologies.forEach(t => technologies.add(t));
     } else if (files.includes(file) && governance(file)) { shared = true; reasons.push(`${file}: changed shared configuration/instruction/dependency impact.`); }
     const detected = fileTechnologies(file);
     detected.forEach(t => technologies.add(t));
@@ -137,6 +128,6 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
     lexicalReferences: discovery.lexicalReferences,
     technologies: [...technologies].sort(), reasons: unique(reasons), holds: unique(holds),
     uncertain: uncertain || shared, incomplete: discovery.incomplete, requiresBrowser,
-    ...(scopedDependencies.size || discovery.incomplete ? { requiresFull: true } : {}) };
+    ...(npmChanges.size || discovery.incomplete ? { requiresFull: true } : {}) };
 }
 module.exports = { validateCrewConfig, validateMember, loadCatalogue, selectCrew, collectImpact, fileTechnologies };

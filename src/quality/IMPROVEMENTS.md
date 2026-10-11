@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-10-11 — Package-aware crew routing
+
+Compare npm manifest and lockfile package deltas, including removals, aliases and overrides, to select JavaScript, package-specific expertise and trusted application consumers. Script-only edits no longer select all crew. Unresolved npm scope holds approval without recruiting unrelated specialists; full review, security checks and other governance routing remain intact. See [crew selection](../../docs/crew.md).
+
 ## 2026-10-11 — Short gate reasons
 
 New reports display reviewer-recorded one- or two-word block reasons and label untouched controller placeholders `Not run — Awaiting review`. Missing reason metadata stays `Not recorded`; overall CI never supplies a guessed cause for an individual reviewer. The CI line labels its own recorded state. The `gateReasonLabels` marker preserves prepared historical Markdown, and summaries, findings, selection, verdicts and merge requirements remain unchanged. See [report presentation](../../docs/audit-reports.md).
