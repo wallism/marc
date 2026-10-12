@@ -13,6 +13,53 @@ const config = { schema: 1, members: ['csharp', 'javascript', 'blazor', 'fronten
 ] };
 const catalogue = loadCatalogue(path.resolve(__dirname, '../..'), config);
 
+test('Razor caller propagation treats generated component names as types, not logger methods', t => {
+  const { write, commit, capture } = fixture(t);
+  write('src/Layout.cs', 'namespace App; class Layout { int Value = 1; }');
+  write('src/Error.razor', '@layout Layout\n<h1>Error</h1>');
+  write('src/Error.razor.cs', 'namespace App; partial class Error {}');
+  write('src/Real.razor', '<Error />');
+  write('src/Qualified.razor', '<App.Error />');
+  write('src/QualifiedLayout.razor', '@layout App.Error\n<p>Body</p>');
+  write('src/Factory.cs', 'namespace App; class Factory { object Create() => new Error(); }');
+  write('src/NamedMethod.cs', 'namespace Driver; class NamedMethod { void Error() {} }');
+  write('src/Anonymous.cs', 'namespace Driver; class Anonymous { object Run() => new { Success = false, Error = "failed" }; }');
+  write('src/Enum.cs', 'namespace Driver; enum Severity { None, Error, Other }');
+  write('src/Tuple.cs', 'namespace Driver; class Tuple { (bool Valid, string? Error) Run() => (true, null); }');
+  write('src/VisibleText.razor', '<p>Error occurred; interface state should be clear.</p>');
+  for (let i = 0; i < 620; i++)
+    write(`src/Logger${i}.cs`, `namespace Driver; class Logger${i} { void Run() { logger.Error(); var level = LogLevel.Error; } }`);
+  const base = commit();
+  write('src/Layout.cs', 'namespace App; class Layout { int Value = 2; }');
+  const result = capture(base, commit(), ['src/Layout.cs']);
+  assert.ok(result.files.includes('src/Error.razor'));
+  assert.ok(result.files.includes('src/Real.razor'), JSON.stringify(result));
+  assert.ok(result.files.includes('src/Qualified.razor'));
+  assert.ok(result.files.includes('src/QualifiedLayout.razor'));
+  assert.ok(result.files.includes('src/Factory.cs'));
+  assert.ok(!result.files.some(file => /Logger\d+\.cs$/.test(file)));
+  assert.ok(!result.files.includes('src/NamedMethod.cs'));
+  assert.ok(!result.files.includes('src/Anonymous.cs'));
+  assert.ok(!result.files.includes('src/Enum.cs'));
+  assert.ok(!result.files.includes('src/Tuple.cs'));
+  assert.ok(!result.files.includes('src/VisibleText.razor'));
+  assert.equal(result.incomplete, false);
+  assert.deepEqual(result.holds, []);
+});
+
+test('Razor markup changes seed their component, not type-like prose declarations', t => {
+  const { write, commit, capture } = fixture(t);
+  write('src/Consent.razor', '<p>Remember interface state.</p>');
+  write('src/Caller.razor', '<Consent />');
+  write('src/State.cs', 'class Consumer { object state = null; }');
+  const base = commit();
+  write('src/Consent.razor', '<p>Remember interface state safely.</p>');
+  const result = capture(base, commit(), ['src/Consent.razor']);
+  assert.ok(result.files.includes('src/Caller.razor'));
+  assert.ok(!result.files.includes('src/State.cs'));
+  assert.equal(result.incomplete, false);
+});
+
 test('diff hunks seed body-only owners without unrelated declarations and retain cross-language leads', t => {
   const { write, commit, capture } = fixture(t);
   write('src/tool.cjs', 'function command() { return 1; }\nfunction identity() { return 1; }\nfunction run() { return 1; }\n');
@@ -36,9 +83,13 @@ test('explicit workflow and cross-language process paths retain genuine indirect
   write('.github/workflows/check.yml', 'steps:\n  - run: node src/check.cjs\n');
   write('src/Host.cs', 'class Host { void Start() { Process.Start("node", "src/check.cjs"); } }');
   write('src/Consumer.cs', 'class Consumer { Host host; }');
+  write('src/Notes.js', 'export function main() { return "Current implementation: src/check.cjs"; }');
+  write('src/Quoted.js', 'exec("node src/check.cjs");');
   const base = commit(); write('src/check.cjs', 'function check() { return 2; }');
   const result = discoverReferences(base, commit(), ['src/check.cjs'], git, () => true);
-  for (const file of ['.github/workflows/check.yml', 'src/Host.cs', 'src/Consumer.cs']) assert.ok(result.files.includes(file), file);
+  for (const file of ['.github/workflows/check.yml', 'src/Host.cs', 'src/Consumer.cs', 'src/Quoted.js']) assert.ok(result.files.includes(file), file);
+  assert.ok(!result.files.includes('src/Notes.js'));
+  assert.ok(result.lexicalReferences.some(r => r.file === 'src/Notes.js' && r.symbol === 'src/check.cjs'));
   assert.ok(result.references.some(r => r.file === 'src/Host.cs' && r.kind === 'module'));
   assert.equal(result.incomplete, false);
 });

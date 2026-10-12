@@ -83,7 +83,7 @@ function source(text, file) {
     const header = code.slice(start + match[0].length, open >= 0 ? open : end);
     const contracts = type ? [...(header.match(/(?::|\bextends\b|\bimplements\b)\s*([^{};\n]+)/)?.[1] || '')
       .matchAll(/\bI[A-Z]\w*\b/g)].map(m => m[0]) : [];
-    declarations.push({ name, start, end, nameStart: start + match[0].lastIndexOf(name), type, contracts });
+    declarations.push({ name, start, end, nameStart: start + match[0].lastIndexOf(name), type, kind: match[1], contracts });
   }
   const modules = [...imports.matchAll(/(?:\bfrom\s*|\brequire\s*\(\s*|\bimport\s*\(\s*|\bimport\s*|\bsrc\s*=\s*|\bhref\s*=\s*)['"]([^'"\n]+)['"]/g)]
     .map(match => {
@@ -168,15 +168,24 @@ function discoverReferences(base, head, changed, readGit, isSource) {
                 line: parsed.code.slice(0, module.offset).split('\n').length });
           }
           const scoped = item.names ?? (depth === 0 ? changedNames(revision, item.file, parsed) : null);
-          const names = scoped ?? parsed.declarations.flatMap(d => [d.name, ...d.contracts]);
+          // Razor callers own the generated component, not declarations guessed
+          // from visible prose such as "interface state" in a consent banner.
+          const names = /\.razor$/i.test(item.file) ? [stem(item.file)] :
+            scoped ?? parsed.declarations.flatMap(d => [d.name, ...d.contracts]);
           for (const name of [...new Set(names)]) {
             const key = `${revision}:${item.file}:${name}`;
             if (!searched.has(key)) {
               const declaration = parsed.declarations.find(d => d.name === name);
+              // Razor's generated component type is not a free function bearing
+              // the filename. Preserve its type/namespace when a layout caller
+              // becomes a seed (Error must not recruit logger.Error/LogLevel.Error).
+              const component = /\.razor(?:\.cs)?$/i.test(item.file) && name === stem(item.file);
+              const companion = component && /\.razor$/i.test(item.file) ? read(revision, item.file + '.cs') : null;
               const contract = !declaration && parsed.declarations.some(d => d.contracts.includes(name));
               if (contract && !localContract(revision, name)) continue;
-              searched.add(key); seeds.push({ file: item.file, name, namespace: declaration ? parsed.namespace : undefined,
-                type: declaration?.type || contract, contract });
+              searched.add(key); seeds.push({ file: item.file, name,
+                namespace: declaration ? parsed.namespace : component ? companion?.namespace : undefined,
+                type: declaration?.type || component || contract, component, contract });
             }
           }
           // Filename searches only establish explicit module/resource references.
@@ -187,9 +196,20 @@ function discoverReferences(base, head, changed, readGit, isSource) {
         if (!tokens.length || incomplete) break;
         if (tokens.length > 128) { stop('Reference token budget reached; resolve missing scope before approval.'); break; }
         let matches;
-        try { matches = readGit('grep', '--no-textconv', '-I', '-l', '-z', '-F',
-          ...(tokens.some(t => t.startsWith('$') || t.endsWith('$')) ? [] : ['-w']),
-          ...tokens.flatMap(t => ['-e', t]), revision, '--'); }
+        // Search component syntax before spending the inspected-source budget.
+        // A word search for Error would collect hundreds of logger/string hits
+        // even when the later type checks correctly reject every one of them.
+        const patterns = [...new Set(seeds.map(seed => {
+          const name = escape(seed.name);
+          if (seed.module) return `(^|[^[:alnum:]_$])${name}([./'"]|$)`;
+          if (!seed.component) return `(^|[^[:alnum:]_$])${name}([^[:alnum:]_$]|$)`;
+          const qualified = `([[:alnum:]_]+\\.)*${name}`;
+          const knownType = seed.namespace ? `(${escape(seed.namespace)}\\.)?${name}` : name;
+          return `(<[/]?[[:space:]]*|@(layout|inherits)[[:space:]]+|new[[:space:]]+|(typeof|nameof)[[:space:]]*\\([[:space:]]*)${qualified}([^[:alnum:]_$]|$)|` +
+            `(^|[<:,([[:space:]])${knownType}([?]?([[:space:]]+[[:alpha:]_]|[>,)\\[;{]|\\.))`;
+        }))];
+        try { matches = readGit('grep', '--no-textconv', '-I', '-l', '-z', '-E',
+          ...patterns.flatMap(pattern => ['-e', pattern]), revision, '--'); }
         catch (error) { if (error.status === 1) matches = ''; else throw error; }
         const next = new Map();
         const candidates = [], namespaces = new Map();
@@ -227,8 +247,20 @@ function discoverReferences(base, head, changed, readGit, isSource) {
             // Explicit repository-relative invocation/resource paths cross language
             // boundaries (workflow commands, process launchers, FFI wrappers).
             if (seed.module) {
-              for (const m of parsed.imports.matchAll(new RegExp(`(?:^|[\\s"'\\x60])(?:\\./)?${escape(seed.file)}(?=$|[\\s"'\\x60])`, 'gm')))
+              for (const m of parsed.imports.matchAll(new RegExp(`(?:^|[\\s"'\\x60])(?:\\./)?${escape(seed.file)}(?=$|[\\s"'\\x60])`, 'gm'))) {
+                const prefix = parsed.imports.slice(Math.max(0, parsed.imports.lastIndexOf('\n', m.index)), m.index + 1);
+                // A path embedded in descriptive string prose is an inspectable
+                // lead, not an invocation. Exact path literals and shell commands
+                // (including quoted node/python commands) remain concrete edges.
+                if (/^\s/.test(m[0]) && !parsed.code.slice(m.index, m.index + m[0].length).trim() &&
+                    !/\b(?:node|python[\d.]*|bash|sh|pwsh|powershell|dotnet|ruby|php|bun|deno)\s+[^"'\n]*$/.test(prefix)) {
+                  if (!lexicalReferences.some(r => r.file === file && r.from === seed.file && r.symbol === seed.file && r.revision === revision))
+                    lexicalReferences.push({ file, from: seed.file, symbol: seed.file, kind: 'lexical', revision,
+                      line: parsed.code.slice(0, m.index).split('\n').length });
+                  continue;
+                }
                 modulePositions.push(m.index);
+              }
             }
             const positions = seed.module ? modulePositions : [...parsed.code.matchAll(new RegExp(`(?<![\\w$])${escape(seed.name)}(?![\\w$])`, 'g'))]
               .map(m => m.index).filter(offset => {
@@ -236,12 +268,31 @@ function discoverReferences(base, head, changed, readGit, isSource) {
                     (parsed.localNames.has(seed.name) || parsed.declarations.some(d => d.name === seed.name))) return false;
                 if (parsed.declarations.some(d => d.nameStart === offset) && !seed.contract) return false;
                 const before = parsed.code.slice(0, offset), after = parsed.code.slice(offset + seed.name.length);
-                const qualified = seed.namespace && before.endsWith(seed.namespace + '.');
+                const componentMarkup = seed.component && /\.razor$/i.test(file) &&
+                  /(?:<\/?\s*|@(?:layout|inherits)\s+)(?:[\w]+\.)*$/.test(before);
+                const qualified = componentMarkup || seed.namespace && before.endsWith(seed.namespace + '.');
+                if (seed.component && /\b[A-Za-z_]\w*\??\s+$/.test(before) &&
+                    /^\s*[,;)=]/.test(after)) return false; // Tuple/parameter names, not types.
+                if (seed.component && /^\s*(?:,|=|})/.test(after) &&
+                    parsed.declarations.some(d => d.kind === 'enum' && d.start < offset && offset < d.end)) return false;
+                // Component names establish markup edges through tags, directives
+                // and explicit C# type expressions, not visible link text.
+                if (seed.component && /\.razor$/i.test(file) &&
+                    !/(?:<\/?\s*|@(?:layout|inherits)\s+|\b(?:new|as|is)\s+|\b(?:typeof|nameof)\s*\(\s*|@)(?:[\w]+\.)*$/.test(before) &&
+                    !/^\s+[A-Za-z_]\w*\s*[;=({]/.test(after)) return false;
                 // A property/field with the same spelling is not a use of a type.
                 if (seed.type && !seed.contract && !qualified && (/\.\s*$/.test(before) ||
-                    /^\s*(?:=|\{|=>)/.test(after) && !/[:,]\s*$/.test(before))) return false;
+                    /^\s*(?:=|=>)/.test(after) ||
+                    /^\s*\{/.test(after) && !/[:,]\s*$/.test(before))) return false;
+                // A same-named method is not a component constructor. Preserve
+                // constructors in the real partial class and explicit new uses.
+                if (seed.component && /^\s*\(/.test(after) &&
+                    !/\bnew\s+(?:[\w.]+\.)?$/.test(before) &&
+                    !parsed.declarations.some(d => d.type && d.name === seed.name &&
+                      d.start < offset && d.end > offset)) return false;
                 if (seed.type && !qualified && parsed.members.has(seed.name) &&
-                    !/(?:\bnew\s+|\btypeof\s*\(\s*|\bas\s+|\bis\s+|[<,:]\s*)$/.test(before) &&
+                    !/(?:\bnew\s+|\btypeof\s*\(\s*|\bas\s+|\bis\s+|[<:]\s*)$/.test(before) &&
+                    !(/,\s*$/.test(before) && /^\s*[>,]/.test(after)) &&
                     !/^\s+[A-Za-z_]\w*\s*(?:[;=({]|$)/.test(after)) return false;
                 if (!seed.namespace || !parsed.namespace || !namespaces.has(seed.name)) return true;
                 // Exclude a proven different C# type, not merely a missing using:

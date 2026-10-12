@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-10-13 — Precise Razor reference discovery
+
+A consumer assessment exposed generated Razor names being treated as free identifiers: `Error` recruited logger methods and anonymous fields, while visible text and `interface state` seeded unrelated callers. Preserve generated component type/companion namespace identity, route Razor propagation through the component, and search component/module syntax before spending bounded inspection capacity. Paths embedded in descriptive strings remain lexical leads, preserving actual process/workflow commands. Stress regressions preserve real tags/constructors and existing exhaustion holds. Budgets, gates, history and consumer pins are unchanged. See [impact discovery](../../docs/impact-discovery.md).
+
 ## 2026-10-11 — Package-aware crew routing
 
 Compare npm manifest and lockfile package deltas, including removals, aliases and overrides, to select JavaScript, package-specific expertise and trusted application consumers. Script-only edits no longer select all crew. Unresolved npm scope holds approval without recruiting unrelated specialists; full review, security checks and other governance routing remain intact. See [crew selection](../../docs/crew.md).
