@@ -1,5 +1,9 @@
 # Shared controller improvements
 
+## 2026-10-13 — Precise Razor reference discovery
+
+A consumer assessment exposed generated Razor names being treated as free identifiers: `Error` recruited logger methods and anonymous fields, while visible text and `interface state` seeded unrelated callers. Preserve generated component type/companion namespace identity, route Razor propagation through the component, and search component/module syntax before spending bounded inspection capacity. Paths embedded in descriptive strings remain lexical leads, preserving actual process/workflow commands. Stress regressions preserve real tags/constructors and existing exhaustion holds. Budgets, gates, history and consumer pins are unchanged. See [impact discovery](../../docs/impact-discovery.md).
+
 ## 2026-10-11 — Package-aware crew routing
 
 Compare npm manifest and lockfile package deltas, including removals, aliases and overrides, to select JavaScript, package-specific expertise and trusted application consumers. Script-only edits no longer select all crew. Unresolved npm scope holds approval without recruiting unrelated specialists; full review, security checks and other governance routing remain intact. See [crew selection](../../docs/crew.md).
@@ -201,3 +205,4 @@ Added focused synthetic impact tests for source/parameter mappings, missing expe
 Reason: the installer only emitted Codex discovery paths, while Claude Code requires `.claude/skills`; host rule/agent files also needed consistent trust coverage. Added explicit `--hosts` selection with the unchanged Codex default, shared Cursor paths and additive Claude forwarders. Existing preservation, replacement, pin and rollback rules remain in force. Tracked root/nested harness inputs now enter the policy digest and broaden crew review; synthetic policy examples protect those paths. Existing consumer policies are not rewritten.
 
 Validation: new installation and host-governance regressions failed before implementation; focused Node tests passed on Node 24/Windows, including Windows short paths. Local validation only; live model smoke checks, hosted CI, publication and consumer activation are not claimed. Upgrading changes the trusted policy digest and requires fresh evidence. Rollback restores the complete consumer pin/config/forwarding integration set while retaining operational state.
+
