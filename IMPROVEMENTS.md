@@ -8,6 +8,7 @@ Do not record routine documentation, infographic, formatting, file moves or repo
 
 | Date | Component | Improvement | Details |
 | --- | --- | --- | --- |
+| 2026-10-17 | Controller and Captain | Make caller expansion a reasoned per-boundary decision, filter type-name collisions and resume reference scans in bounded pages. | [Discovery](docs/impact-discovery.md), [controller](src/quality/IMPROVEMENTS.md), [Captain](skills/marc-crew-captain/IMPROVEMENTS.md) |
 | 2026-10-11 | Captain | Authorize required independent crew sessions when the user requests MARC PR processing. | [Captain](skills/marc-crew-captain/IMPROVEMENTS.md#2026-10-11--delegation-authorized-by-pr-processing) |
 | 2026-10-11 | Controller | Route npm changes using changed packages and trusted consumers instead of selecting every reviewer. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-11--package-aware-crew-routing) |
 | 2026-10-11 | Reports | Show short block reasons and distinguish untouched reviews as Not run while preserving historical report bytes. | [Controller](src/quality/IMPROVEMENTS.md#2026-10-11--short-gate-reasons) |

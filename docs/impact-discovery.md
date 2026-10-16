@@ -1,33 +1,58 @@
 # Relevant impact discovery
 
-MARC uses two complementary checks. The controller deterministically collects lexical reference evidence to select specialists. Independent model reviewers reason about changed behavior, callers, contracts and runtime relationships. Neither a long path list nor a successful text search proves complete coverage.
+MARC combines model judgment about consequences with deterministic, resumable reference searches. The controller captures every changed file. The Captain reads the diff and owning code, then records whether each changed scope needs caller inspection. Independent reviewers verify those decisions; a search result or stop rationale is not approval.
 
-For a change inside `FunctionA` that keeps its name, discovery maps zero-context diff hunks to enclosing declarations in both captured revisions. Body-only changes retain their owners and interface contracts; unrelated declarations no longer become initial search roots. Unrecognized top-level syntax retains conservative file scope. Removed callers remain visible through base-tree inspection. Reviewers still trace actual consequences and boundaries; the captured inventory is not their scope limit.
+## Decide whether to expand
 
-Explicit imports, resource paths and repository-relative workflow/process invocations establish relationships across technologies. Named imports follow changed exports and aliases; unrelated exports do not seed whole modules. Cross-language identifier collisions and JavaScript member spellings remain inspectable `lexicalReferences`, separate from the relationship evidence used to recruit specialists. Local declarations/bindings and native-language keywords prevent incidental name matches. No fixture blanket exclusion or discovery-budget increase is used. Dynamic or unresolved relationships still require reviewer investigation and visible holds; lexical filtering is not semantic proof.
+The rule applies to ordinary functions and public, protected, internal or private class methods, as well as interface members. Inspect the changed behavior first. Follow callers when a changed return contract, exception, side effect, authorization boundary, state transition, dispatch behavior or data contract can affect them. Stop when source evidence establishes that the change is local and no caller assumption changes. Apply the same judgment at each outward step. Do not traverse all uses of a containing class or interface simply because one member changed.
 
-## What enters the inventory
+For a new member, inspect its implementation, dependencies and any new call sites. An interface addition also needs compatibility checks for other implementations, mocks, generated implementations and default/abstract dispatch where applicable. Adding a public method is not blanket proof of safety: overload resolution, inheritance, reflection, initialization and shared state can still be consequential. Evidence of such effects warrants expansion. Existing methods that merely share the interface do not automatically enter scope.
 
-- Every changed file remains visible to review and policy gates, including tests and documentation.
-- Submodule gitlinks remain in that inventory and retain governance, classification and approval checks. Their commit entries are not source blobs, so lexical discovery does not read or recurse into them. Reviewers still assess the pinned dependency change; this is not a review of the submodule's contents. Other nonregular entries and unreadable source still hold discovery.
-- Additional source files need an exact code identifier reference, a locally declared implemented interface, an explicit relative module import, or a local component resource reference. Strings, comments and prose do not establish ordinary symbol dependencies. A changed implementation can therefore reach interface callers without assuming that every implementation of a framework interface is affected.
-- Caller chains propagate through enclosing declarations, rather than every filename or declaration in a matching file. Tests and startup registration files can be relevant evidence but do not start further searches. Known C# namespace collisions and member names that merely share a type's spelling do not join unrelated chains.
-- Base and source trees are traced separately. Removed callers remain visible, without joining edges from different revisions into a chain that never existed.
-- Razor expressions also use member declarations from the matching component in its same-revision `.razor.cs` companion. A property that shares another component's name does not create a type dependency; explicit component tags and type uses remain reference evidence. Unrelated classes in the companion do not supply component members.
-- Trusted area mappings add technology expertise for captured paths. They do not add every file from that directory or prove a particular unchanged file is related. Changed shared governance and unclassified behavior still broaden selection.
+C# method hunks are scoped to recognized members. JavaScript and other recognized functions retain their declaration scopes. Constructors, properties and unsupported syntax conservatively retain type/file scope for the model to inspect. This is lexical assistance, not Roslyn or compiler-level binding.
 
-The audit keeps `changedFiles` separately and records each referenced unchanged path with `from`, `symbol`, `kind`, `line` and `revision`. At most one inclusion witness per file/revision is stored, so this is a compact explanation of inclusion rather than a complete edge graph. The Markdown summarizes changed and referenced counts. Directory-wide explanations are recorded for changed paths; unchanged paths carry their concrete reference evidence instead.
+## Capture and record decisions
 
-## Bounds and limitations
+`capture <PR> <new-evidence.json> [discovery-plan.json]` initially records `crew.impact.reviewScopes`. Each scope has an immutable revision, path, symbol list and ID. Pending decisions hold approval but are normal Captain work, not a request for human approval. The Captain completes them before dispatching the required independent reviews.
 
-All 15 language members read the Captain's evidence contract and its [language-specific scope guidance](../skills/marc-crew-captain/references/language-impact.md). Reviewer expertise is not a claim of compiler-level reference coverage. The guidance names native caller/binding relationships reviewers must verify, including languages whose function syntax is not extracted by the controller.
+A plan is an external JSON file:
 
-Common comment/string masking accounts for Python/R hash comments, VB apostrophe/REM comments, SQL dash comments, Fortran free/fixed-form comments, Delphi comment forms, PHP hash comments and Rust lifetimes/raw strings, alongside C-style comments. Python floor division and SQL double-quoted identifiers remain code. Scratch archives/binary blobs do not supply textual declarations. Common Go/Python/Java test filenames remain evidence but stop automatic propagation. These rules reduce incidental leads; they do not replace review of interpolation, embedded code, dialect-specific literals or dynamic relationships.
+```json
+{
+  "schema": 1,
+  "base": "captured base SHA",
+  "sourceHead": "captured source SHA",
+  "policyHash": "captured policy hash",
+  "decisions": [
+    {
+      "scope": "scope ID from captured evidence",
+      "action": "stop",
+      "reason": "Concrete explanation of why caller assumptions are unchanged",
+      "evidence": ["revision:path:line"]
+    }
+  ]
+}
+```
 
-Discovery reads Git objects only; it does not execute candidate code, build a project, contact services or ask a model. It recognizes common type/function declarations and exported JavaScript variables, exact code identifiers, relative JavaScript/TypeScript module paths and literal local `src`/`href` resources. It does not resolve arbitrary overloads, C# aliases/global usings, inheritance dispatch, reflection, runtime strings, framework conventions, template interpolation or all language syntax. Recognized body-only changes retain declaration seeds, but this is not a guarantee that every language construct is extracted. Trusted mappings and behavioral caller review remain necessary.
+Use `follow` when references need inspection. Recapture with the plan; that search produces immediate reference evidence and new scopes, each requiring its own decision. Repeat until the relevant behavior is understood. Missing evidence, unreadable source or an unresolved boundary remains a hold. Empty rationale/evidence, duplicate scope decisions, stale identities and unreachable decisions are rejected or held. Never generate blanket stop decisions to clear a hold. Independent reviewers inspect the full diff, verify stop rationales and request additional scope when needed. Changed plans require recapture and new matching selection/review evidence. The controller recomputes selection from Git and the plan at decision time; captured inventory fields are not editable authority.
 
-The controller bounds discovery to four rounds, 128 tokens per round, 600 source candidates per round/revision, 20 candidates per local interface lookup and 300 affected files. Exhaustion or unavailable/nonregular inspected source sets `incomplete` and an explicit hold. It requires full review and prevents approval; it does not recruit every specialist to hide incomplete coverage. Resolve the specific source/discovery issue and recapture; a mapping alone cannot clear a traversal-limit hold. Reviewers cannot clear the hold by editing evidence.
+## Precision
 
-Reviewers must check real behavior beyond the lexical inventory: authorization scope, cancellation/errors, indirect consumers, persisted contracts, resource provisioning, dynamic dispatch and relevant tests. Trace upward through callers and downward through dependencies while the change can propagate. Record additional relevant paths and their relationships; missing expertise or unresolved coverage holds the assessment. Reading a registration does not imply every use of `Program` is affected, and a documentation mention does not establish a runtime dependency.
+Exact identifier matches are leads. Namespace/import segments, positional record parameter names, ordinary comments/strings, known C# namespace collisions and unrelated JavaScript local bindings do not establish type dependencies. Real qualified type uses, Razor component tags, explicit local module/resource references, and relevant interface/implementation relationships remain visible. Each captured reference records its source path, symbol, kind, line and revision. Base and source trees stay separate; a removed caller remains inspectable without constructing a chain across revisions.
 
-The compact audit envelope remains unchanged. Historical reports and stage journals are not rewritten. Adopting this discovery change requires a new tool pin and fresh source/base/policy-bound evidence; no consumer configuration or merge authority is changed automatically.
+Tests and registration files remain evidence but do not automatically propagate into more searches. Trusted technology mappings recruit relevant expertise; they do not prove every file in an area is a dependency. Dynamic dispatch, aliases, reflection, framework conventions and unsupported syntax still require reviewer judgment.
+
+## Resumable scans
+
+Discovery reads immutable Git objects and executes no candidate code. Raw token searches are grouped into 128 tokens. Source inspection proceeds in pages of 600 operations (namespace indexing and reference matching); 600 candidates and 300 affected files are no longer terminal coverage limits. The namespace index completes before matching so page boundaries cannot change collision resolution. Completed scope searches automatically drain up to 100 pages per call. A larger search remains explicitly paused, never silently complete.
+
+For a read-only workbench, run:
+
+```powershell
+node <bundle>/src/quality/discovery.cjs <repository> <request.json> <new-output.json> [previous-output.json]
+```
+
+A `review` request contains `mode`, `base`, `sourceHead` and an optional `plan`. It discovers pending scopes and replays their decisions without fetching or changing branches. Formal controller capture uses the consumer's trusted technology mappings and policy identity; this workbench is diagnostic evidence, not a substitute for a captured assessment.
+
+A `scan` request adds explicit `roots` (`revision`, `file`, `names`) and an optional `batchSize` from 1 to 10000. Pass a paused output as the last argument to resume. Checkpoints retain parsed progress metadata, accumulated references, next scopes and cumulative inspection counts, not source text. They are bound to the algorithm, both Git revisions, changed inventory and roots, and checked for accidental corruption. Store them outside candidate checkouts. Checksums are integrity checks, not authentication; checkpoints are never accepted as approval evidence. Final controller decisions replay the plan from Git. Output files are new files so historical evidence is retained.
+
+The legacy exhaustive lexical helper remains available for diagnostics and language regression tests. Production controller capture uses the model-directed path, not its automatic multi-round traversal. Tool upgrades require a new pin and fresh policy/source/base-bound evidence. No CI, independent review, sensitive-path or merge authority is waived.
