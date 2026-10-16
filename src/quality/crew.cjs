@@ -6,6 +6,7 @@ const { consumerFile } = require('./config.cjs');
 const { isHostInstruction } = require('./host-instructions.cjs');
 const { npmImpact } = require('./npm-impact.cjs');
 const { discoverReferences } = require('./impact.cjs');
+const { reviewImpact } = require('./impact-review.cjs');
 const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 const text = x => typeof x === 'string' && x.trim().length > 0;
 const texts = x => Array.isArray(x) && x.every(text);
@@ -87,7 +88,7 @@ function fileTechnologies(file) {
   const extensions = { py: 'python', go: 'go', rs: 'rust', rb: 'ruby', java: 'java', kt: 'kotlin', swift: 'swift', php: 'php', sql: 'sql' };
   return extensions[path.posix.extname(file).slice(1).toLowerCase()] ? [extensions[path.posix.extname(file).slice(1).toLowerCase()]] : [];
 }
-function collectImpact(base, head, files, config, catalogue, readGit) {
+function collectImpact(base, head, files, config, catalogue, readGit, options = {}) {
   const affected = new Set(files), reasons = [], holds = [], technologies = new Set();
   let uncertain = false, shared = false;
   const npmChanges = new Map();
@@ -99,8 +100,9 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
     holds.push(...result.holds);
     reasons.push(...result.reasons);
   }
-  const discovery = discoverReferences(base, head, files.filter(file => !npmChanges.has(file)), readGit,
-    file => fileTechnologies(file).length > 0 || config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file))));
+  const discover = options.reviewDirected ? reviewImpact : discoverReferences;
+  const discovery = discover(base, head, files.filter(file => !npmChanges.has(file)), readGit,
+    file => fileTechnologies(file).length > 0 || config.areas.some(area => area.paths.some(p => new RegExp(p, 'i').test(file))), options.plan);
   discovery.files.forEach(file => affected.add(file));
   holds.push(...discovery.holds);
   for (const reference of discovery.references)
@@ -126,6 +128,7 @@ function collectImpact(base, head, files, config, catalogue, readGit) {
   reasons.push(`Captured ${files.length} changed and ${affected.size - files.length} referenced files; independent behavioral caller review remains required.`);
   return { files: [...affected].sort(), changedFiles: [...files].sort(), references: discovery.references,
     lexicalReferences: discovery.lexicalReferences,
+    ...(options.reviewDirected ? { reviewScopes: discovery.reviewScopes, diagnostics: discovery.diagnostics } : {}),
     technologies: [...technologies].sort(), reasons: unique(reasons), holds: unique(holds),
     uncertain: uncertain || shared, incomplete: discovery.incomplete, requiresBrowser,
     ...(npmChanges.size || discovery.incomplete ? { requiresFull: true } : {}) };

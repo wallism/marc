@@ -429,12 +429,14 @@ function createController(context, adapters = {}) {
     if (!sha(e.base) || !sha(e.sourceHead)) throw Error('Invalid frozen crew source/base identity');
     const catalogue = loadCatalogue(context.bundleRoot, context.crew);
     const files = changedFiles(e.base, e.sourceHead, e.pr, git);
-    const impact = collectImpact(e.base, e.sourceHead, files, context.crew, catalogue, git);
+    if (e.discoveryPlan && e.discoveryPlan.policyHash !== e.policyHash) throw Error('Discovery plan policy changed; recapture');
+    const impact = collectImpact(e.base, e.sourceHead, files, context.crew, catalogue, git,
+      { reviewDirected: true, plan: e.discoveryPlan });
     return selectCrew({ sourceHead: e.sourceHead, base: e.base, policyHash: e.policyHash,
       toolCommit: context.toolCommit || command('git', ['rev-parse', 'HEAD'], context.bundleRoot) },
       context.crew, catalogue, impact);
   }
-  function capture(pr, p, hash) {
+  function capture(pr, p, hash, discoveryPlan) {
     reportPaths(pr, 'a'.repeat(40));
     const live = api(`repos/${REPO}/pulls/${pr}`);
     const base = api(`repos/${REPO}/git/ref/heads/${encodeURIComponent(context.policy.base)}`).object.sha;
@@ -452,6 +454,7 @@ function createController(context, adapters = {}) {
       gates: Object.fromEntries(p.reviewGates.map(name => [name, { verdict: 'blocked', sourceHead: head,
         base, policyHash: hash, reviewer: '', summary: 'Awaiting independent review', evidence: [], findings: [] }])),
       ci: collect(head, pr, p) };
+    if (discoveryPlan) evidence.discoveryPlan = discoveryPlan;
     if (context.crew) Object.assign(evidence, { crew: recruit(evidence), coordinator: '', repairReviewers: [] });
     return evidence;
   }
@@ -488,7 +491,7 @@ function createController(context, adapters = {}) {
     const parsed = parseOperatorApproval(args);
     args = parsed.args;
     const approvalFile = parsed.approvalFile;
-    const [action, first, second] = args;
+    const [action, first, second, planFile] = args;
     if (!['queue', 'capture', 'refresh-intent', 'decide', 'report', 'merge', 'recover-ci', 'checkpoint', 'record-approval'].includes(action))
       throw Error('Usage: node src/quality/marc.cjs queue <queue.json> [completed-keys.json] | capture <PR> <evidence.json> | refresh-intent <previous-evidence.json> <new-evidence.json> | record-approval <evidence.json> --operator-approval <absolute-file> | decide <evidence.json> | report <evidence.json> <PR-worktree> | merge <evidence.json> | recover-ci <current-capture.json> [investigation.json] | checkpoint <evidence.json> [event.json]');
     if (action === 'capture' && !second) throw Error('An external evidence path is required');
@@ -513,7 +516,8 @@ function createController(context, adapters = {}) {
         const result = updater.updatePullRequest(context, live, latest, { registered: registeredProducer });
         console.log(encode({ autoUpdate: result, activeToolCommit: context.toolCommit }));
       }
-      fs.writeFileSync(second, encode(capture(Number(first), p, hash))); return;
+      fs.writeFileSync(second, encode(capture(Number(first), p, hash,
+        planFile ? JSON.parse(fs.readFileSync(planFile, 'utf8')) : undefined))); return;
     }
     const e = JSON.parse(fs.readFileSync(first, 'utf8'));
     if (action === 'refresh-intent') {

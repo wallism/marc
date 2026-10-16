@@ -150,8 +150,19 @@ test('actual Git changes trace indirect UI callers in both revisions, documentat
       head: { sha: head, ref: 'feature/example', repo: { full_name: policy.repository } }, base: { ref: 'master' } } :
       endpoint.includes('/git/ref/') ? { object: { sha: base } } : { workflow_runs: [] }, readJobs: () => []
   });
-  const captured = controller.capture(7, policy, identity.policyHash);
-  assert.deepEqual(captured.crew.impact, result);
+  let captured = controller.capture(7, policy, identity.policyHash);
+  assert.deepEqual(captured.crew.impact.files, ['src/Core/Clock.cs']);
+  assert.equal(captured.crew.impact.incomplete, true, 'Capture waits for a reasoned scope decision');
+  const plan = { schema: 1, base, sourceHead: head, policyHash: identity.policyHash, decisions: [] };
+  for (let i = 0; i < 5 && captured.crew.impact.incomplete; i++) {
+    plan.decisions.push(...captured.crew.impact.reviewScopes.filter(s => !s.decision).map(s => ({ scope: s.id,
+      action: 'follow', reason: 'Fixture value change propagates to this caller.', evidence: [`${s.revision}:${s.file}`] })));
+    captured = controller.capture(7, policy, identity.policyHash, plan);
+  }
+  assert.deepEqual(captured.crew.impact.files, result.files);
+  assert.equal(captured.crew.impact.incomplete, false);
+  assert.deepEqual(controller.recruit(captured), captured.crew, 'Decision recomputes selection from source and plan');
+  assert.throws(() => controller.recruit({ ...captured, discoveryPlan: { ...plan, policyHash: 'other' } }), /policy changed/);
   assert.equal(captured.crew.toolCommit, identity.toolCommit);
   assert.equal(captured.crew.selected.length, 4);
   assert.equal(evaluate(captured, policy, identity.policyHash, captured.crew).merge, false);
@@ -183,22 +194,22 @@ test('a selected specialist cannot waive a simple route or the independent brows
   assert.ok(evaluate(e, policy, identity.policyHash, e.crew).reasons.some(r => r.startsWith('browser:')));
 });
 
-test('reference search bounds collected paths and does not treat unrelated data as source callers', () => {
+test('reference search pages collected paths and does not treat unrelated data as source callers', () => {
   const configWithoutAreas = { ...config, areas: [] };
   const read = (...args) => args[0] === 'ls-tree' ? `100644 blob ${'d'.repeat(40)}\t${args.at(-1)}` :
     args[0] === 'show' ? args[1].endsWith('/Clock.cs') ? 'class Clock {}' : 'class Caller { Clock value; }' :
-      `${identity.base}:data/customer.json\0${identity.base}:docs/notes.md\0` +
-      Array.from({ length: 500 }, (_, i) => `${identity.base}:src/Caller${i}.cs\0`).join('');
+      args[0] === 'diff' ? '@@ -1 +1 @@' :
+      `${args.at(-2)}:data/customer.json\0${args.at(-2)}:docs/notes.md\0` +
+      Array.from({ length: 500 }, (_, i) => `${args.at(-2)}:src/Caller${i}.cs\0`).join('');
   const result = collectImpact(identity.base, identity.sourceHead, ['src/Clock.cs'], configWithoutAreas, catalogue(), read);
-  assert.equal(result.files.length, 300);
+  assert.equal(result.files.length, 501);
   assert.equal(result.uncertain, false);
-  assert.equal(result.incomplete, true);
-  assert.match(result.holds.join(' '), /Affected-file budget reached/);
+  assert.equal(result.incomplete, false);
+  assert.deepEqual(result.holds, []);
   assert.ok(!result.files.includes('data/customer.json'));
   const selected = selectCrew(identity, configWithoutAreas, catalogue(), result);
   assert.deepEqual(selected.selected.map(m => m.id), ['csharp']);
-  assert.ok(selected.holds.length > 0);
-  assert.equal(selected.requiresFull, true);
+  assert.deepEqual(selected.holds, []);
 });
 
 test('configured React hooks require browser evidence even without JSX', () => {

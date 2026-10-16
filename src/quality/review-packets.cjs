@@ -106,6 +106,7 @@ function sharedPrefix(e, { common, project, dependency, ci, artifactFacts, scope
     ...list('Changed files', stats.length ? stats.map(s => `- ${s.lines} ${s.file}`) : e.files.map(f => `- ${f}`)),
     ...list('Referenced unchanged files', (impact.files || []).filter(f => !changed.has(f)).map(f => `- ${f}`)),
     ...list('References', (impact.references || []).map(r => referenceLine(e, r))),
+    ...list('Discovery decisions (independently verify each stop/follow rationale)', (impact.reviewScopes || []).map(s => `- ${JSON.stringify(s)}`)),
     ...list('Lexical leads (confirm before treating as dependencies)', (impact.lexicalReferences || []).map(r => referenceLine(e, r))),
     ...list('Selection reasons', (impact.reasons || []).filter(r => !/: \w+ reference to /.test(r)).map(r => `- ${r}`)),
     ...list('Holds', (e.crew?.holds || []).map(h => `- ${h}`)),

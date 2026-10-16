@@ -1,5 +1,10 @@
 # Shared controller improvements
 
+
+## 2026-10-17 — Reasoned scope and resumable reference discovery
+
+Replace automatic controller caller expansion with source-bound stop/follow decisions at each changed function or member and each subsequent boundary. Keep independent reviewer verification and all other gates. Filter namespace segments and positional record parameters from type references; scope recognized C# method hunks to their member. Page candidate inspection with identity-bound checkpoints instead of terminal 600-candidate/300-file limits. Tests cover the Summary/Skills collisions, new interface members, protected methods, incremental expansion, stale plans and multi-page evidence equivalence. See [impact discovery](../../docs/impact-discovery.md).
+
 ## 2026-10-11 â€” Package-aware crew routing
 
 Compare npm manifest and lockfile package deltas, including removals, aliases and overrides, to select JavaScript, package-specific expertise and trusted application consumers. Script-only edits no longer select all crew. Unresolved npm scope holds approval without recruiting unrelated specialists; full review, security checks and other governance routing remain intact. See [crew selection](../../docs/crew.md).

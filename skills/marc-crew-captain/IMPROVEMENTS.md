@@ -1,5 +1,10 @@
 # marc-crew-captain improvements
 
+
+## 2026-10-17 — Reasoned scope and resumable reference discovery
+
+Replace automatic controller caller expansion with source-bound stop/follow decisions at each changed function or member and each subsequent boundary. Keep independent reviewer verification and all other gates. Filter namespace segments and positional record parameters from type references; scope recognized C# method hunks to their member. Page candidate inspection with identity-bound checkpoints instead of terminal 600-candidate/300-file limits. Tests cover the Summary/Skills collisions, new interface members, protected methods, incremental expansion, stale plans and multi-page evidence equivalence. See [impact discovery](../../docs/impact-discovery.md).
+
 ## 2026-10-11 â€” Delegation authorized by PR processing
 
 At the owner's request, repository instructions allow the Captain to launch the independent reviewers and authorized repair sessions required by trusted MARC skills when asked to process a PR, without another delegation question. Other work still requires an explicit delegation request. Fresh sessions, repair scope, sensitive-path approval and guarded merge requirements remain intact. See [repository instructions](../../AGENTS.md). Validation: reviewed the instruction against the Captain and harness contracts and checked the diff; activation requires landing this change in trusted `master`.
